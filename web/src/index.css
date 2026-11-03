@@ -54,3 +54,10 @@ button { margin-right: 4px; }
 .btn { display: inline-block; border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; cursor: pointer; font-size: 0.85rem; }
 .btn input { display: none; }
 .detail button { margin-left: 8px; }
+.cand { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 8px 0; }
+.cand .meta { color: var(--muted); font-size: 0.85rem; display: flex; gap: 10px; flex-wrap: wrap; }
+.cand blockquote { margin: 6px 0; padding: 6px 10px; border-left: 3px solid var(--line); white-space: pre-wrap; font-size: 0.95rem; }
+.cand blockquote.now { border-color: var(--accent); }
+.grade-high { color: #c0392b; font-weight: 600; }
+.grade-medium { color: #d68910; font-weight: 600; }
+.grade-low { color: var(--muted); }

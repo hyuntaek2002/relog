@@ -1,5 +1,6 @@
 import { pipeline, env, type FeatureExtractionPipeline } from '@huggingface/transformers'
 import { CLASSIFIER_VERSION, SEED_TEXTS, SEED_TYPES, SEED_VERSION, TaskClassifier, type Prediction } from '../classify/classifier.ts'
+import { DETECTOR_VERSION, detect, summarize, type Candidate, type DetectInput, type DetectSummary } from '../detect/detector.ts'
 
 // 모델은 1회 다운로드 후 Cache Storage에 캐시된다(transformers.js 기본 동작).
 env.allowLocalModels = false
@@ -9,12 +10,25 @@ const BATCH = 16
 
 export type EmbedIn =
   | { type: 'embed'; model: string; device: 'wasm' | 'webgpu'; texts: string[] } // 속도 측정용
-  | { type: 'classify'; model: string; device: 'wasm' | 'webgpu'; texts: string[] }
+  | { type: 'classify'; model: string; device: 'wasm' | 'webgpu'; texts: string[]; inputs: DetectInput[] } // inputs[i].text === texts[i]
 export type EmbedOut =
   | { type: 'download'; file: string; percent: number }
   | { type: 'progress'; done: number; total: number }
   | { type: 'done'; loadMs: number; embedMs: number; count: number; dim: number }
-  | { type: 'classified'; centroid: Prediction[]; knn: Prediction[]; embeddings: Float32Array; dim: number; embedMs: number; modelVersion: string; classifierVersion: string }
+  | {
+      type: 'classified'
+      centroid: Prediction[]
+      knn: Prediction[]
+      embeddings: Float32Array
+      dim: number
+      embedMs: number
+      candidates: Candidate[]
+      sims: number[] // 판단 가능 발화별 최대 유사도(임계값 조정용)
+      detectSummary: DetectSummary
+      modelVersion: string
+      classifierVersion: string
+      detectorVersion: string
+    }
   | { type: 'error'; message: string }
 
 type Pipe = FeatureExtractionPipeline
@@ -80,8 +94,24 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
       centroid.push(clf.centroid(v))
       knn.push(clf.knn(v))
     }
+    // 반복 지시 의심 탐지: 같은 대화의 앞선 발화와 비교
+    const pairs = detect(e.data.inputs, (i) => row(data, dim, i))
+    const candidates = pairs.filter((c) => c.grade)
     post(
-      { type: 'classified', centroid, knn, embeddings: data, dim, embedMs: Math.round(performance.now() - t1), modelVersion: `${model}@q8/${device}`, classifierVersion: `${CLASSIFIER_VERSION}+${SEED_VERSION}` },
+      {
+        type: 'classified',
+        centroid,
+        knn,
+        embeddings: data,
+        dim,
+        embedMs: Math.round(performance.now() - t1),
+        candidates,
+        sims: pairs.map((c) => c.similarity),
+        detectSummary: summarize(pairs, e.data.inputs),
+        modelVersion: `${model}@q8/${device}`,
+        classifierVersion: `${CLASSIFIER_VERSION}+${SEED_VERSION}`,
+        detectorVersion: DETECTOR_VERSION,
+      },
       [data.buffer],
     )
   } catch (err) {

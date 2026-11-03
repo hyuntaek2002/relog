@@ -16,6 +16,11 @@ const DEV = new URLSearchParams(location.search).has('dev')
 
 const fmtDate = (ms: number | null) => (ms == null ? '-' : new Date(ms).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' }))
 
+function quantile(xs: number[], q: number) {
+  const s = [...xs].sort((a, b) => a - b)
+  return s.length ? s[Math.min(s.length - 1, Math.floor(q * s.length))] : 0
+}
+
 function countByType(preds: Prediction[]) {
   const c = new Map<string, number>()
   for (const p of preds) c.set(p.type, (c.get(p.type) ?? 0) + 1)
@@ -53,8 +58,11 @@ export default function App() {
 
   // 정규화된 ok 발화 전체를 임베딩하고 과업 유형을 예측한다. 전부 브라우저 안에서.
   function classify(r: Result) {
-    const texts = r.utterances.filter((u) => u.status === 'ok').map((u) => u.text)
+    const ok = r.utterances.filter((u) => u.status === 'ok')
+    const texts = ok.map((u) => u.text)
     if (texts.length === 0) { setStep('done'); return }
+    const tokens = new Map(r.conversations.flatMap((c) => c.turns.map((t) => [t.messageId, t.tokenEstimate])))
+    const inputs = ok.map((u) => ({ conversationId: u.conversationId, messageId: u.messageId, idx: u.idx, createdAt: u.createdAt, text: u.text, tokenEstimate: tokens.get(u.messageId) ?? 0 }))
     setStep('model')
     const w = new Worker(new URL('./worker/embed.worker.ts', import.meta.url), { type: 'module' })
     w.onmessage = (e: MessageEvent<EmbedOut>) => {
@@ -64,7 +72,7 @@ export default function App() {
       else if (m.type === 'classified') { setCls(m); setStep('done'); setDetail('') }
       else if (m.type === 'error') { setError(m.message); setStep('done') }
     }
-    w.postMessage({ type: 'classify', model: DEFAULT_MODEL, device: DEVICE, texts })
+    w.postMessage({ type: 'classify', model: DEFAULT_MODEL, device: DEVICE, texts, inputs })
   }
 
   function runEmbed(model: string, device: 'wasm' | 'webgpu') {
@@ -88,6 +96,10 @@ export default function App() {
   const s = result?.stats
   const n = result?.normStats
   const stepIdx = STEPS.findIndex(([k]) => k === step)
+  const textById = new Map(result?.utterances.map((u) => [u.messageId, u.text]))
+  const titleById = new Map(result?.conversations.map((c) => [c.id, c.title]))
+  const textOf = (id: string) => (textById.get(id) ?? '').slice(0, 400)
+  const titleOf = (id: string) => titleById.get(id) || '(제목 없음)'
   const preds = cls ? cls[method] : null
   const byType = preds ? countByType(preds) : null
   const agree = cls ? cls.knn.filter((p, i) => p.type === cls.centroid[i].type).length / cls.knn.length : 0
@@ -145,6 +157,36 @@ export default function App() {
             </>
           )}
 
+          {cls && (
+            <>
+              <h2>반복 지시 의심</h2>
+              <div className="cards">
+                <div className="card"><b>{cls.candidates.length}</b><span>의심 발화 (높음 {cls.detectSummary.byGrade.high} · 중간 {cls.detectSummary.byGrade.medium} · 낮음 {cls.detectSummary.byGrade.low})</span></div>
+                <div className="card"><b>{cls.detectSummary.ratio.toFixed(1)}%</b><span>반복 비율 (비교 가능한 발화 {cls.detectSummary.judgeable}개 중)</span></div>
+                <div className="card"><b>{cls.detectSummary.tokenEstimate.toLocaleString()}</b><span>재입력 토큰 추정치</span></div>
+              </div>
+              <p className="detail">같은 대화에서 앞서 한 말과 비슷한 발화입니다. 모델 응답이 요구를 따랐는지는 판정하지 않습니다. 아래 내용은 이 화면에만 표시됩니다.</p>
+              {[...cls.candidates]
+                .filter((c) => DEV || c.grade !== 'low') // 낮음 등급은 같은 주제의 후속 발화가 많이 섞여 기본 화면에선 숫자만
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 20)
+                .map((c) => (
+                  <div className="cand" key={c.messageId}>
+                    <div className="meta">
+                      <span className={`grade-${c.grade}`}>{c.grade === 'high' ? '높음' : c.grade === 'medium' ? '중간' : '낮음'}</span>
+                      <span>{titleOf(c.conversationId)}</span>
+                      <span>유사도 {c.similarity.toFixed(2)}</span>
+                      {c.repeatMarker && <span>반복 표지</span>}
+                      {c.newRequestMarker && <span>새 요구 표지</span>}
+                      {c.gapMinutes != null && <span>{c.gapMinutes < 60 ? `${Math.round(c.gapMinutes)}분 뒤` : `${Math.round(c.gapMinutes / 60)}시간 뒤`}</span>}
+                    </div>
+                    <blockquote>{textOf(c.priorMessageId)}</blockquote>
+                    <blockquote className="now">{textOf(c.messageId)}</blockquote>
+                  </div>
+                ))}
+            </>
+          )}
+
           <details>
             <summary>자세히</summary>
             <table>
@@ -168,6 +210,12 @@ export default function App() {
               <h2>개발: 라벨링</h2>
               <Labeler utterances={result.utterances} conversations={result.conversations} />
               <h2>개발: 분류</h2>
+              {cls && (
+                <p className="detail">
+                  유사도 분포(판단 가능 발화 {cls.sims.length}개): {[0.5, 0.75, 0.9, 0.95, 0.98].map((q) => `p${q * 100}=${quantile(cls.sims, q).toFixed(3)}`).join(' ')}
+                  <br />0.80↑ {cls.sims.filter((s) => s >= 0.8).length} · 0.85↑ {cls.sims.filter((s) => s >= 0.85).length} · 0.90↑ {cls.sims.filter((s) => s >= 0.9).length} · 0.95↑ {cls.sims.filter((s) => s >= 0.95).length} · 0.98↑ {cls.sims.filter((s) => s >= 0.98).length}
+                </p>
+              )}
               {cls && (
                 <p>
                   방식: <button onClick={() => setMethod('knn')} disabled={method === 'knn'}>C k-NN</button>

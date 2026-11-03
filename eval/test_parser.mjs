@@ -79,3 +79,23 @@ assert.equal(clf.centroid(unit(10)).type, 'coding')
 assert.equal(clf.knn(unit(80)).type, 'chat')
 assert.equal(clf.knn(unit(180)).type, 'other', '유사도 낮으면 기타')
 console.log('classifier ok')
+
+// 반복 탐지: 같은 대화에서 유사 벡터 + 반복 표지 → 등급, 새 요구 표지는 감점
+const { detect, summarize, REPEAT_RE, NEW_RE } = await import('../web/src/detect/detector.ts')
+const V = { a: unit(0), a2: unit(3), b: unit(90), c: unit(45) }
+const inputs = [
+  { conversationId: 'x', messageId: '1', idx: 0, createdAt: 0, text: '로그인 기능 구현해줘', tokenEstimate: 10 },
+  { conversationId: 'x', messageId: '2', idx: 1, createdAt: 60000, text: '아까 말했듯이 로그인 기능 구현해줘', tokenEstimate: 12 },
+  { conversationId: 'x', messageId: '3', idx: 2, createdAt: 120000, text: '추가로 예외 처리도 넣어줘', tokenEstimate: 8 },
+  { conversationId: 'y', messageId: '4', idx: 0, createdAt: 0, text: '혼자', tokenEstimate: 1 },
+]
+const vecs2 = [V.a, V.a2, unit(10), V.b] // 3번: 유사도 0.985, 새 요구 표지 감점 → 중간
+const cands = detect(inputs, (i) => vecs2[i])
+assert.equal(cands.length, 2, '대화 x의 2·3번만 후보')
+assert.equal(cands[0].messageId, '2'); assert.equal(cands[0].grade, 'high'); assert.ok(cands[0].repeatMarker)
+assert.equal(cands[1].messageId, '3'); assert.ok(cands[1].newRequestMarker); assert.ok(cands[1].score < cands[0].score, '새 요구 표지는 감점')
+assert.ok(REPEAT_RE.test('왜 빠졌어') && REPEAT_RE.test('여전히 안 돼') && !REPEAT_RE.test('로그인 구현해줘'))
+assert.ok(NEW_RE.test('그리고 이번엔 다르게') && !NEW_RE.test('다시 말하면 그리고'))
+const sum = summarize(cands, inputs)
+assert.deepEqual(sum, { byGrade: { low: 0, medium: 1, high: 1 }, tokenEstimate: 20, judgeable: 3, ratio: (200 / 3) })
+console.log('detector ok')
