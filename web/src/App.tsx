@@ -216,7 +216,7 @@ export default function App() {
               {cls && (
                 <p className="detail">
                   유사도 분포(판단 가능 발화 {cls.sims.length}개): {[0.5, 0.75, 0.9, 0.95, 0.98].map((q) => `p${q * 100}=${quantile(cls.sims, q).toFixed(3)}`).join(' ')}
-                  <br />귀무분포(다른 대화 무작위 {cls.nullSims.length}쌍): {[0.5, 0.9, 0.95, 0.99].map((q) => `p${q * 100}=${quantile(cls.nullSims, q).toFixed(3)}`).join(' ')} → 경계 {cls.detectSummary.nullThreshold.toFixed(3)}, 경계 이상 {cls.sims.filter((s) => s >= cls.detectSummary.nullThreshold).length}쌍
+                  <br />귀무분포(같은 대화 비인접 {cls.nullSims.length}쌍): {[0.5, 0.9, 0.95, 0.99].map((q) => `p${q * 100}=${quantile(cls.nullSims, q).toFixed(3)}`).join(' ')} → 경계 {cls.detectSummary.nullThreshold.toFixed(3)}, 경계 이상 {cls.sims.filter((s) => s >= cls.detectSummary.nullThreshold).length}쌍
                   <br />제외: {Object.entries(cls.detectSummary.excluded).map(([k, v]) => `${k} ${v}`).join(' · ')}
                 </p>
               )}

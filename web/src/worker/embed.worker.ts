@@ -1,6 +1,6 @@
 import { pipeline, env, type FeatureExtractionPipeline } from '@huggingface/transformers'
 import { CLASSIFIER_VERSION, SEED_TEXTS, SEED_TYPES, SEED_VERSION, TaskClassifier, type Prediction } from '../classify/classifier.ts'
-import { DEFAULT_OPTIONS, DETECTOR_VERSION, detect, nullDistribution, quantile, summarize, type Candidate, type DetectInput, type DetectSummary } from '../detect/detector.ts'
+import { DEFAULT_OPTIONS, DETECTOR_VERSION, detect, nullDistribution, quantile, summarize, withinConversationNull, type Candidate, type DetectInput, type DetectSummary } from '../detect/detector.ts'
 
 // 모델은 1회 다운로드 후 Cache Storage에 캐시된다(transformers.js 기본 동작).
 env.allowLocalModels = false
@@ -98,9 +98,12 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
     }
     // 반복 지시 의심 탐지: 귀무분포(서로 다른 대화 무작위 쌍) 상위 1%를 경계로, 같은 대화의 앞선 발화와 비교
     const dIn: DetectInput[] = e.data.inputs.map((u, i) => ({ ...u, taskType: knn[i].type }))
-    const nullSims = nullDistribution(dIn, (i) => row(data, dim, i))
-    const nullThreshold = quantile(nullSims, 0.99)
-    const pairs = detect(dIn, (i) => row(data, dim, i), { ...DEFAULT_OPTIONS, nullThreshold })
+    // 경계: 같은 대화 비인접 쌍 분포의 p90(주제 연속 발화의 기본 유사도). 반복 표지가 있는 지시는 다른 대화 쌍 p90만 넘으면 구제.
+    const crossSims = nullDistribution(dIn, (i) => row(data, dim, i))
+    const withinSims = withinConversationNull(dIn, (i) => row(data, dim, i))
+    const nullThreshold = withinSims.length >= 20 ? quantile(withinSims, 0.9) : quantile(crossSims, 0.99)
+    const pairs = detect(dIn, (i) => row(data, dim, i), { ...DEFAULT_OPTIONS, nullThreshold, markerFloor: quantile(crossSims, 0.9) })
+    const nullSims = withinSims.length >= 20 ? withinSims : crossSims
     post(
       {
         type: 'classified',

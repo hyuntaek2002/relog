@@ -81,7 +81,7 @@ assert.equal(clf.knn(unit(180)).type, 'other', '유사도 낮으면 기타')
 console.log('classifier ok')
 
 // 반복 탐지 0.2: 귀무분포 경계·발화 유형·재전송/범용 제외·등급 규칙
-const { detect, summarize, nullDistribution, quantile, kindOf, editRatio, REPEAT_RE, COMPLAINT_RE } = await import('../web/src/detect/detector.ts')
+const { detect, summarize, nullDistribution, quantile, kindOf, editRatio, REPEAT_RE, COMPLAINT_RE, DEFAULT_OPTIONS } = await import('../web/src/detect/detector.ts')
 assert.equal(kindOf('로그인 기능 구현해줘'), 'instruction')
 assert.equal(kindOf('휴학을 하는게 맞지?'), 'question')
 assert.equal(kindOf('오늘 하루 진짜 힘들었어'), 'other')
@@ -106,7 +106,7 @@ const deg = { '1': 0, '2': 2, '3': 0, '4': 3, '5': 0, '6': 0, '7': 90, '8': 90, 
 const vec = (i) => unit(deg[inputs[i].messageId])
 const nullSims = nullDistribution(inputs, vec, 500)
 assert.ok(nullSims.length > 0 && nullSims.every((s, k) => k === 0 || s >= nullSims[k - 1]), '정렬된 귀무분포')
-const pairs = detect(inputs, vec, { nullThreshold: 0.99, resendMinutes: 10, resendEditRatio: 0.15, genericConversations: 3, staleHours: 24 })
+const pairs = detect(inputs, vec, { ...DEFAULT_OPTIONS, nullThreshold: 0.99 })
 const by = Object.fromEntries(pairs.map((p) => [p.messageId, p]))
 assert.equal(by['2'].grade, 'high')
 assert.equal(by['3'].exclusion, 'resend')

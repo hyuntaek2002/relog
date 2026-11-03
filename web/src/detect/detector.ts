@@ -49,7 +49,8 @@ export const REPEAT_RE = /아까\s*말|다시\s*말|전에\s*(요청|말|부탁)
 export const COMPLAINT_RE = /라니까|다니까|자꾸|그게\s*아니|아니\s*(그게|내\s*말은|그런\s*뜻)|이해를?\s*못|못\s*알아|뭔\s*소리|what i meant|that'?s not what/i
 // 새 요구 표지는 유형 판정에만 참고(접두사면 지시여도 새 요청일 가능성) — 0.2에서는 점수 미사용
 
-const INSTRUCTION_RE = /(해\s*줘|해줘|해\s*봐|해봐|해라|하세요|해\s*주세요|주세요|해\s*주|작성|수정|추가|빼\s*줘|빼줘|넣어|바꿔|고쳐|만들어|정리|알려\s*줘|알려줘|설명해|번역해|써\s*줘|써줘|구현|적용|반영|삭제|생성|출력|찾아|보여\s*줘|보여줘|부탁|짜\s*줘|짜줘|뽑아|요약|검토|분석해|확인해|비교해|추천해|^(write|make|add|fix|implement|translate|create|update|remove|change|show|give|list|explain|summarize)\b)/i
+// 지시: 명령형 어미(~줘/주세요/달라/해봐/해라/하자) + 흔한 작업 동사 + 배제·한정 표현(빼고/말고/~만) + 영어 명령문
+const INSTRUCTION_RE = /(줘|주세요|달라|해\s*봐|해봐|해라|하세요|하자|해\s*주|부탁|빼고|말고|으로\s*(해|써|바꿔|다시|정리|작성)|로\s*다시|작성|수정|추가|넣어|바꿔|고쳐|만들어|정리|설명해|번역해|구현|적용|반영|삭제|생성|출력|요약|검토|분석해|확인해|비교해|추천해|줄여|늘려|다듬어|\bonly\b|\bplease\b|^(write|make|add|fix|implement|translate|create|update|remove|change|show|give|list|explain|summarize|keep|use)\b)/i
 const QUESTION_RE = /\?|할까|맞아|맞지|맞나|어떻게\s*생각|뭐야|뭔가요|인가요|일까|나요\s*$|되나|될까|어때|왜\s|어디|언제|누구|뭘\s|무엇|있어\s*$|있나|없나|\b(what|why|how|when|where|which|is it|does|do you|can you|should)\b/i
 
 export function kindOf(text: string): UtteranceKind {
@@ -80,9 +81,12 @@ export interface DetectOptions {
   resendMinutes: number
   resendEditRatio: number
   genericConversations: number // 이 수 이상 대화에 같은 문장이 나오면 범용
+  genericMaxChars: number // 정규화 후 이 길이 이하("수정해줘")는 내용이 없어 범용으로 본다
   staleHours: number
+  markerFloor: number // 반복 표지가 있는 지시는 유사도가 이 값만 넘어도 후보(경계 미만 구제). Infinity면 비활성
+  window: number // 앞선 사용자 발화 중 최근 몇 개와 비교할지. 긴 대화에서 먼 과거와의 우연한 최대값을 막는다
 }
-export const DEFAULT_OPTIONS: DetectOptions = { nullThreshold: 1, resendMinutes: 10, resendEditRatio: 0.15, genericConversations: 3, staleHours: 24 }
+export const DEFAULT_OPTIONS: DetectOptions = { nullThreshold: 1, resendMinutes: 10, resendEditRatio: 0.15, genericConversations: 3, genericMaxChars: 5, staleHours: 24, markerFloor: Infinity, window: 10 }
 
 // 귀무분포: 서로 다른 대화에서 뽑은 무작위 쌍의 코사인. 결정적 난수(LCG)로 재현 가능.
 export function nullDistribution(inputs: DetectInput[], vec: (i: number) => Float32Array, pairs = 3000, seed = 42): number[] {
@@ -97,6 +101,19 @@ export function nullDistribution(inputs: DetectInput[], vec: (i: number) => Floa
     out.push(dot(vec(i), vec(j)))
   }
   return out.sort((a, b) => a - b)
+}
+
+// 같은 대화 안 비인접 쌍(사용자 발화 기준 2칸 이상 떨어진 쌍)의 코사인 분포. 주제를 공유하는 발화들의 기본 유사도.
+// 합성 개발셋(devset-0.1.0)에서 다른 대화 쌍 p99보다 정밀도가 높았다(P .75 vs .55).
+export function withinConversationNull(inputs: DetectInput[], vec: (i: number) => Float32Array, window = DEFAULT_OPTIONS.window, maxPairs = 20000): number[] {
+  const byConv = new Map<string, number[]>()
+  inputs.forEach((u, i) => byConv.set(u.conversationId, [...(byConv.get(u.conversationId) ?? []), i]))
+  const sims: number[] = []
+  for (const idxs of byConv.values()) {
+    // 후보 탐색과 같은 창(window) 안의 비인접 쌍만. 긴 대화의 먼 과거 쌍이 분포를 끌어내리지 않게.
+    for (let a = 0; a < idxs.length && sims.length < maxPairs; a++) for (let b = a + 2; b < idxs.length && b - a <= window; b++) sims.push(dot(vec(idxs[a]), vec(idxs[b])))
+  }
+  return sims.sort((x, y) => x - y)
 }
 
 export const quantile = (sorted: number[], q: number) => (sorted.length ? sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))] : 1)
@@ -124,7 +141,7 @@ export function detect(inputs: DetectInput[], vec: (i: number) => Float32Array, 
       const vj = vec(j)
       let best = -1
       let bestSim = -Infinity
-      for (let b = 0; b < a; b++) {
+      for (let b = Math.max(0, a - (opt.window || Infinity)); b < a; b++) {
         const s = dot(vj, vec(idxs[b]))
         if (s > bestSim) { bestSim = s; best = idxs[b] }
       }
@@ -139,8 +156,9 @@ export function detect(inputs: DetectInput[], vec: (i: number) => Float32Array, 
       let exclusion: Exclusion | null = null
       const ca = canon(prior.text), cb = canon(cur.text)
       const nearSame = cb.startsWith(ca) || ca.startsWith(cb) || editRatio(ca, cb) <= opt.resendEditRatio
-      if (bestSim < opt.nullThreshold) exclusion = 'below_null'
-      else if (isGeneric(cur.text)) exclusion = 'generic'
+      const rescued = repeatMarker && kind === 'instruction' && bestSim >= opt.markerFloor
+      if (bestSim < opt.nullThreshold && !rescued) exclusion = 'below_null'
+      else if (isGeneric(cur.text) || cb.length <= opt.genericMaxChars) exclusion = 'generic'
       else if (nearSame && gapMinutes != null && gapMinutes <= opt.resendMinutes) exclusion = 'resend'
       else if (kind !== 'instruction') exclusion = 'not_instruction'
       else if (cur.taskType === 'chat') exclusion = 'chat_task'
