@@ -3,7 +3,8 @@ import type { WorkerOut } from './worker/analyze.worker'
 import type { EmbedOut } from './worker/embed.worker'
 import { TASK_LABELS, TASK_TYPES, type Method, type Prediction } from './classify/classifier'
 import Labeler from './dev/Labeler'
-import Checklist, { loadContext, saveContext } from './recommend/Checklist'
+import Checklist, { loadContext, saveContext, withDetected } from './recommend/Checklist'
+import { detectFeatures } from './recommend/detectFeatures'
 import Prescriptions, { loadFeedback, saveFeedback } from './recommend/Prescriptions'
 import AbMode from './recommend/AbMode'
 import RecommendDev from './recommend/RecommendDev'
@@ -117,7 +118,8 @@ export default function App() {
   const snapshot = result && cls && s
     ? buildSnapshot({ platform, stats: s, utterances: result.utterances, okIds: result.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: cls.knn, candidates: cls.candidates, detect: cls.detectSummary })
     : null
-  const prescriptions = snapshot && ctx ? recommend(snapshot, ctx, feedback) : []
+  const detected = result ? detectFeatures(result.conversations) : []
+  const prescriptions = snapshot && ctx ? recommend(snapshot, withDetected(ctx, detected), feedback) : []
   function onFeedback(id: string, f: Feedback) {
     const next = { ...feedback, [id]: f }
     setFeedback(next); saveFeedback(next)
@@ -154,7 +156,7 @@ export default function App() {
       {result && ctx && (
         <section>
           <h2>내 설정</h2>
-          <Checklist platform={platform} value={ctx} onChange={onCtx} />
+          <Checklist platform={platform} value={ctx} detected={detected} onChange={onCtx} />
         </section>
       )}
 
@@ -248,7 +250,7 @@ export default function App() {
               {snapshot && ctx && (
                 <>
                   <h2>개발: 처방 점수표</h2>
-                  <RecommendDev snapshot={snapshot} ctx={ctx} feedback={feedback} />
+                  <RecommendDev snapshot={snapshot} ctx={withDetected(ctx, detected)} feedback={feedback} />
                 </>
               )}
               <h2>개발: 라벨링</h2>

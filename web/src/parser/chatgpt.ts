@@ -83,6 +83,7 @@ export function parseConversation(raw: RawConversation): Conversation {
     title: raw.title ?? '',
     createdAt: raw.create_time ? Math.round(raw.create_time * 1000) : null,
     turns,
+    toolNames: [], // ChatGPT 내보내기의 도구 흔적은 실제 파일 확인 후 추가
   }
 }
 

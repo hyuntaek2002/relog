@@ -151,3 +151,10 @@ const r3 = recommend(calm, { plan: 'pro', featuresInUse: [] })
 assert.ok(r3.every((p) => p.grade === '참고'), '문제 신호 없으면 참고만')
 assert.equal(genericDefaults('claude').length, 3)
 console.log('recommend ok', r1.map((p) => `${p.catalogId}:${p.grade}:${p.score}`))
+
+// 기능 자동 감지: 도구 이름 → 카탈로그 id, 대화 수 집계
+const { detectFeatures } = await import('../web/src/recommend/detectFeatures.ts')
+const conv = (id, toolNames) => ({ id, platform: 'claude', title: '', createdAt: null, turns: [], toolNames })
+const det = detectFeatures([conv('a', ['WebSearch', 'Bash', 'WebFetch']), conv('b', ['web_search', 'mcp__claude-artifacts__publish_files', 'Skill']), conv('c', ['integration:Google Drive']), conv('d', [])])
+assert.deepEqual(det, [{ catalogId: 'cl_web_search', conversations: 2 }, { catalogId: 'cl_artifacts', conversations: 1 }, { catalogId: 'cl_skills', conversations: 1 }, { catalogId: 'cl_connectors_google', conversations: 1 }])
+console.log('detectFeatures ok')

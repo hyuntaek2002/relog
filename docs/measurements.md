@@ -83,3 +83,4 @@
 - 처방 3개: 요구사항 첫 메시지 고정(practice, 핵심) / 프로젝트 지침(feature, 핵심) / 긴 작업 대화 나누기(practice, 핵심). "이미 씀" 클릭 후 재실행 시 해당 항목 빠지고 스킬이 올라옴.
 - ?ab=1: 일반 3(프로젝트·아티팩트·메모리) + 개인화 3 → 겹침 없이 6장 무작위, 저장 후 source 공개, CSV 열 catalogId,source,score,order.
 - 한계: 과업 분류가 상담·대화 31%로 잡혀 why 문장의 과업 문구가 실제와 어긋날 수 있음(라벨링 후 개선). 반복 의심 77건은 탐지기 정밀도 미검증 상태의 숫자.
+- 2026-11-03 체크리스트 변경: "이미 쓰는 기능"을 묻지 않고 파일의 tool_use 이름으로 자동 감지(featdet-0.1.0). 실제 파일: 웹 검색 8개 대화, 스킬 1, 아티팩트 1 → 처방에서 '이미 사용 중'으로 제외됨. 메모리·프로젝트 지침·과거 대화 검색·플러그인은 흔적이 없어 감지 불가(카드의 "이미 씀"으로만). 이 파일의 tool_use 이름 분포: WebSearch/WebFetch/web_search, Bash/Read/Write/Edit(Claude Code 연동 181건), create_file/present_files(File Creation 164건), mcp__claude-artifacts__*, Skill, mcp__Claude_Docs__*, 위젯류.

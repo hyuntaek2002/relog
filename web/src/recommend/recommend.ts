@@ -31,8 +31,9 @@ export const CATALOG = catalog.items as CatalogItem[]
 
 export interface UserContext {
   plan: string
-  featuresInUse: string[]
+  featuresInUse: string[] // 자동 감지 + (있다면) 수동. 엔진은 이 목록만 본다
   goals?: string[]
+  ignored?: string[] // 사용자가 "아니다"라고 해제한 감지 항목
 }
 export type Feedback = 'helpful' | 'not_helpful' | 'already_using'
 export type FeedbackMap = Record<string, Feedback>

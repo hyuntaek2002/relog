@@ -8,7 +8,7 @@ interface RawClaudeMessage {
   parent_message_uuid?: string
   sender?: string
   text?: string
-  content?: { type?: string; text?: string }[]
+  content?: { type?: string; text?: string; name?: string; integration_name?: string }[]
   created_at?: string
   attachments?: unknown[]
   files?: unknown[]
@@ -57,5 +57,8 @@ export function parseClaudeConversation(raw: RawClaudeConversation): Conversatio
     if (!text) continue
     turns.push({ idx: turns.length, role, text, createdAt: toMs(m.created_at), messageId: m.uuid ?? `${raw.uuid}:${turns.length}`, tokenEstimate: estimateTokens(text), hasAttachment: (m.attachments?.length ?? 0) > 0 || (m.files?.length ?? 0) > 0 || (m.content?.some((c) => c.type === 'image' || c.type === 'document') ?? false) })
   }
-  return { id: raw.uuid, platform: 'claude', title: raw.name ?? '', createdAt: toMs(raw.created_at), turns }
+  // 도구 이름은 활성 경로·본문 유무와 무관하게 전체 메시지에서 모은다(도구만 있는 메시지는 turns에서 빠지므로)
+  const toolNames = new Set<string>()
+  for (const m of raw.chat_messages) for (const c of m.content ?? []) if (c.type === 'tool_use') { if (c.name) toolNames.add(c.name); if (c.integration_name) toolNames.add('integration:' + c.integration_name) }
+  return { id: raw.uuid, platform: 'claude', title: raw.name ?? '', createdAt: toMs(raw.created_at), turns, toolNames: [...toolNames] }
 }

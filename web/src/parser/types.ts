@@ -15,6 +15,7 @@ export interface Conversation {
   title: string
   createdAt: number | null
   turns: Turn[]
+  toolNames: string[] // 대화 안에서 호출된 도구·연동 이름(본문 없는 메시지 포함). 기능 사용 자동 감지용
 }
 
 export interface ParseError {
