@@ -10,6 +10,8 @@ interface RawClaudeMessage {
   text?: string
   content?: { type?: string; text?: string }[]
   created_at?: string
+  attachments?: unknown[]
+  files?: unknown[]
 }
 export interface RawClaudeConversation {
   uuid?: string
@@ -53,7 +55,7 @@ export function parseClaudeConversation(raw: RawClaudeConversation): Conversatio
     if (!role) continue
     const text = messageText(m)
     if (!text) continue
-    turns.push({ idx: turns.length, role, text, createdAt: toMs(m.created_at), messageId: m.uuid ?? `${raw.uuid}:${turns.length}`, tokenEstimate: estimateTokens(text) })
+    turns.push({ idx: turns.length, role, text, createdAt: toMs(m.created_at), messageId: m.uuid ?? `${raw.uuid}:${turns.length}`, tokenEstimate: estimateTokens(text), hasAttachment: (m.attachments?.length ?? 0) > 0 || (m.files?.length ?? 0) > 0 || (m.content?.some((c) => c.type === 'image' || c.type === 'document') ?? false) })
   }
   return { id: raw.uuid, platform: 'claude', title: raw.name ?? '', createdAt: toMs(raw.created_at), turns }
 }

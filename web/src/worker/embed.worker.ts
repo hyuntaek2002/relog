@@ -1,6 +1,6 @@
 import { pipeline, env, type FeatureExtractionPipeline } from '@huggingface/transformers'
 import { CLASSIFIER_VERSION, SEED_TEXTS, SEED_TYPES, SEED_VERSION, TaskClassifier, type Prediction } from '../classify/classifier.ts'
-import { DETECTOR_VERSION, detect, summarize, type Candidate, type DetectInput, type DetectSummary } from '../detect/detector.ts'
+import { DEFAULT_OPTIONS, DETECTOR_VERSION, detect, nullDistribution, quantile, summarize, type Candidate, type DetectInput, type DetectSummary } from '../detect/detector.ts'
 
 // 모델은 1회 다운로드 후 Cache Storage에 캐시된다(transformers.js 기본 동작).
 env.allowLocalModels = false
@@ -22,8 +22,10 @@ export type EmbedOut =
       embeddings: Float32Array
       dim: number
       embedMs: number
-      candidates: Candidate[]
-      sims: number[] // 판단 가능 발화별 최대 유사도(임계값 조정용)
+      candidates: Candidate[] // grade가 있는 쌍
+      pairs: Candidate[] // 모든 쌍(제외 사유 포함, 개발 화면용)
+      sims: number[] // 판단 가능 발화별 최대 유사도
+      nullSims: number[] // 귀무분포(정렬됨)
       detectSummary: DetectSummary
       modelVersion: string
       classifierVersion: string
@@ -94,9 +96,11 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
       centroid.push(clf.centroid(v))
       knn.push(clf.knn(v))
     }
-    // 반복 지시 의심 탐지: 같은 대화의 앞선 발화와 비교
-    const pairs = detect(e.data.inputs, (i) => row(data, dim, i))
-    const candidates = pairs.filter((c) => c.grade)
+    // 반복 지시 의심 탐지: 귀무분포(서로 다른 대화 무작위 쌍) 상위 1%를 경계로, 같은 대화의 앞선 발화와 비교
+    const dIn: DetectInput[] = e.data.inputs.map((u, i) => ({ ...u, taskType: knn[i].type }))
+    const nullSims = nullDistribution(dIn, (i) => row(data, dim, i))
+    const nullThreshold = quantile(nullSims, 0.99)
+    const pairs = detect(dIn, (i) => row(data, dim, i), { ...DEFAULT_OPTIONS, nullThreshold })
     post(
       {
         type: 'classified',
@@ -105,9 +109,11 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
         embeddings: data,
         dim,
         embedMs: Math.round(performance.now() - t1),
-        candidates,
+        candidates: pairs.filter((c) => c.grade),
+        pairs,
         sims: pairs.map((c) => c.similarity),
-        detectSummary: summarize(pairs, e.data.inputs),
+        nullSims,
+        detectSummary: summarize(pairs, dIn, nullThreshold),
         modelVersion: `${model}@q8/${device}`,
         classifierVersion: `${CLASSIFIER_VERSION}+${SEED_VERSION}`,
         detectorVersion: DETECTOR_VERSION,

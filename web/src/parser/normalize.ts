@@ -17,6 +17,9 @@ export interface Utterance {
   hasCode: boolean
   codeLangs: string[]
   truncated: boolean
+  hasAttachment: boolean
+  tokenEstimate: number
+  prevAssistantIdx: number // 이 발화 직전 모델 응답의 turn idx. 없으면 -1
 }
 
 // 정보량 없는 발화. 구두점·공백 제거 후 완전 일치만 제외한다(글자수 컷 없음).
@@ -52,10 +55,11 @@ export function classifyStatus(text: string, hasCode: boolean): UtteranceStatus 
 export function normalizeConversations(convs: Conversation[]): Utterance[] {
   const out: Utterance[] = []
   for (const c of convs) {
+    let prevAssistantIdx = -1
     for (const t of c.turns) {
-      if (t.role !== 'user') continue
+      if (t.role !== 'user') { prevAssistantIdx = t.idx; continue }
       const n = normalizeText(t.text)
-      out.push({ conversationId: c.id, messageId: t.messageId, idx: t.idx, createdAt: t.createdAt, ...n, status: classifyStatus(n.text, n.hasCode) })
+      out.push({ conversationId: c.id, messageId: t.messageId, idx: t.idx, createdAt: t.createdAt, ...n, status: classifyStatus(n.text, n.hasCode), hasAttachment: t.hasAttachment, tokenEstimate: t.tokenEstimate, prevAssistantIdx })
     }
   }
   return out

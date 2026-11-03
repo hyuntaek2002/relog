@@ -80,22 +80,40 @@ assert.equal(clf.knn(unit(80)).type, 'chat')
 assert.equal(clf.knn(unit(180)).type, 'other', '유사도 낮으면 기타')
 console.log('classifier ok')
 
-// 반복 탐지: 같은 대화에서 유사 벡터 + 반복 표지 → 등급, 새 요구 표지는 감점
-const { detect, summarize, REPEAT_RE, NEW_RE } = await import('../web/src/detect/detector.ts')
-const V = { a: unit(0), a2: unit(3), b: unit(90), c: unit(45) }
+// 반복 탐지 0.2: 귀무분포 경계·발화 유형·재전송/범용 제외·등급 규칙
+const { detect, summarize, nullDistribution, quantile, kindOf, editRatio, REPEAT_RE, COMPLAINT_RE } = await import('../web/src/detect/detector.ts')
+assert.equal(kindOf('로그인 기능 구현해줘'), 'instruction')
+assert.equal(kindOf('휴학을 하는게 맞지?'), 'question')
+assert.equal(kindOf('오늘 하루 진짜 힘들었어'), 'other')
+assert.ok(editRatio('abcdef', 'abcdxf') < 0.2 && editRatio('abc', 'xyz') === 1)
+assert.ok(REPEAT_RE.test('왜 빠졌어') && REPEAT_RE.test('한국어로 하랬잖아'.replace('하랬잖아','했잖아')) && !REPEAT_RE.test('로그인 구현해줘'))
+assert.ok(COMPLAINT_RE.test('궁금해서 물어보는거라니까') && COMPLAINT_RE.test('뭘 자꾸 가래'))
+const mk = (conversationId, messageId, idx, min, text, extra = {}) => ({ conversationId, messageId, idx, createdAt: min * 60000, text, tokenEstimate: 10, hasAttachment: false, prevAssistantIdx: idx - 1, ...extra })
 const inputs = [
-  { conversationId: 'x', messageId: '1', idx: 0, createdAt: 0, text: '로그인 기능 구현해줘', tokenEstimate: 10 },
-  { conversationId: 'x', messageId: '2', idx: 1, createdAt: 60000, text: '아까 말했듯이 로그인 기능 구현해줘', tokenEstimate: 12 },
-  { conversationId: 'x', messageId: '3', idx: 2, createdAt: 120000, text: '추가로 예외 처리도 넣어줘', tokenEstimate: 8 },
-  { conversationId: 'y', messageId: '4', idx: 0, createdAt: 0, text: '혼자', tokenEstimate: 1 },
+  mk('x', '1', 0, 0, '로그인 기능 구현해줘'),
+  mk('x', '2', 2, 5, '아까 말했듯이 로그인 기능 구현해줘'),           // 높음
+  mk('x', '3', 4, 7, '로그인 기능 구현해줘 그리고 테스트도'),       // 재전송(접두어, 2분)
+  mk('x', '4', 6, 9, '휴학을 하는게 맞지?'),                           // 질문형 → 반복 질문
+  mk('x', '5', 8, 20, '로그인 기능 구현해줘', { hasAttachment: true }), // 첨부 → 제외
+  mk('x', '6', 10, 3000, '로그인 기능 구현해줘'),                      // 48시간 뒤 표지 없음 → stale
+  mk('y', '7', 0, 0, '수정해줘'), mk('y', '8', 2, 1, '수정해줘'),
+  mk('z', '9', 0, 0, '수정해줘'), mk('z', '10', 2, 1, '수정해줘'),
+  mk('w', '11', 0, 0, '수정해줘'), mk('w', '12', 2, 1, '수정해줘'),     // 3개 대화 이상 → 범용
+  mk('v', '13', 0, 0, '혼자'),
 ]
-const vecs2 = [V.a, V.a2, unit(10), V.b] // 3번: 유사도 0.985, 새 요구 표지 감점 → 중간
-const cands = detect(inputs, (i) => vecs2[i])
-assert.equal(cands.length, 2, '대화 x의 2·3번만 후보')
-assert.equal(cands[0].messageId, '2'); assert.equal(cands[0].grade, 'high'); assert.ok(cands[0].repeatMarker)
-assert.equal(cands[1].messageId, '3'); assert.ok(cands[1].newRequestMarker); assert.ok(cands[1].score < cands[0].score, '새 요구 표지는 감점')
-assert.ok(REPEAT_RE.test('왜 빠졌어') && REPEAT_RE.test('여전히 안 돼') && !REPEAT_RE.test('로그인 구현해줘'))
-assert.ok(NEW_RE.test('그리고 이번엔 다르게') && !NEW_RE.test('다시 말하면 그리고'))
-const sum = summarize(cands, inputs)
-assert.deepEqual(sum, { byGrade: { low: 0, medium: 1, high: 1 }, tokenEstimate: 20, judgeable: 3, ratio: (200 / 3) })
-console.log('detector ok')
+// 벡터: 로그인 계열은 0도 근처, 휴학은 0도(앞선 발화와 유사하게 강제), 수정해줘는 90도, 혼자는 180도
+const deg = { '1': 0, '2': 2, '3': 0, '4': 3, '5': 0, '6': 0, '7': 90, '8': 90, '9': 90, '10': 90, '11': 90, '12': 90, '13': 180 }
+const vec = (i) => unit(deg[inputs[i].messageId])
+const nullSims = nullDistribution(inputs, vec, 500)
+assert.ok(nullSims.length > 0 && nullSims.every((s, k) => k === 0 || s >= nullSims[k - 1]), '정렬된 귀무분포')
+const pairs = detect(inputs, vec, { nullThreshold: 0.99, resendMinutes: 10, resendEditRatio: 0.15, genericConversations: 3, staleHours: 24 })
+const by = Object.fromEntries(pairs.map((p) => [p.messageId, p]))
+assert.equal(by['2'].grade, 'high')
+assert.equal(by['3'].exclusion, 'resend')
+assert.equal(by['4'].exclusion, 'not_instruction'); assert.equal(by['4'].kind, 'question')
+assert.equal(by['5'].exclusion, 'attachment')
+assert.equal(by['6'].exclusion, 'stale')
+assert.equal(by['8'].exclusion, 'generic'); assert.equal(by['10'].exclusion, 'generic')
+const sum = summarize(pairs, inputs, 0.99)
+assert.equal(sum.byGrade.high, 1); assert.equal(sum.repeatedQuestions, 1); assert.equal(sum.judgeable, 12)
+console.log('detector ok', sum.excluded)

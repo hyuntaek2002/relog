@@ -6,6 +6,7 @@ export interface Turn {
   createdAt: number | null // epoch ms
   messageId: string
   tokenEstimate: number
+  hasAttachment: boolean // 첨부파일·이미지 등 텍스트 외 입력 동반
 }
 
 export interface Conversation {

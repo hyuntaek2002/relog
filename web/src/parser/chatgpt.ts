@@ -16,7 +16,7 @@ interface RawMessage {
   author?: { role?: string }
   create_time?: number | null
   content?: { content_type?: string; parts?: unknown[]; text?: string; language?: string }
-  metadata?: { is_visually_hidden_from_conversation?: boolean }
+  metadata?: { is_visually_hidden_from_conversation?: boolean; attachments?: unknown[] }
   recipient?: string
 }
 interface RawNode { id?: string; message?: RawMessage | null; parent?: string | null; children?: string[] }
@@ -74,6 +74,7 @@ export function parseConversation(raw: RawConversation): Conversation {
       createdAt: m.create_time ? Math.round(m.create_time * 1000) : null,
       messageId: m.id ?? node.id ?? `${id}:${turns.length}`,
       tokenEstimate: estimateTokens(text),
+      hasAttachment: (m.metadata?.attachments?.length ?? 0) > 0 || (Array.isArray(m.content?.parts) && m.content!.parts!.some((p) => typeof p !== 'string')),
     })
   }
   return {

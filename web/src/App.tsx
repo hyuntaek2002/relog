@@ -61,8 +61,7 @@ export default function App() {
     const ok = r.utterances.filter((u) => u.status === 'ok')
     const texts = ok.map((u) => u.text)
     if (texts.length === 0) { setStep('done'); return }
-    const tokens = new Map(r.conversations.flatMap((c) => c.turns.map((t) => [t.messageId, t.tokenEstimate])))
-    const inputs = ok.map((u) => ({ conversationId: u.conversationId, messageId: u.messageId, idx: u.idx, createdAt: u.createdAt, text: u.text, tokenEstimate: tokens.get(u.messageId) ?? 0 }))
+    const inputs = ok.map((u) => ({ conversationId: u.conversationId, messageId: u.messageId, idx: u.idx, createdAt: u.createdAt, text: u.text, tokenEstimate: u.tokenEstimate, hasAttachment: u.hasAttachment, prevAssistantIdx: u.prevAssistantIdx }))
     setStep('model')
     const w = new Worker(new URL('./worker/embed.worker.ts', import.meta.url), { type: 'module' })
     w.onmessage = (e: MessageEvent<EmbedOut>) => {
@@ -165,10 +164,13 @@ export default function App() {
                 <div className="card"><b>{cls.detectSummary.ratio.toFixed(1)}%</b><span>반복 비율 (비교 가능한 발화 {cls.detectSummary.judgeable}개 중)</span></div>
                 <div className="card"><b>{cls.detectSummary.tokenEstimate.toLocaleString()}</b><span>재입력 토큰 추정치</span></div>
               </div>
-              <p className="detail">같은 대화에서 앞서 한 말과 비슷한 발화입니다. 모델 응답이 요구를 따랐는지는 판정하지 않습니다. 아래 내용은 이 화면에만 표시됩니다.</p>
+              <p className="detail">
+                같은 대화에서 앞서 한 지시와 비슷한 지시입니다. 모델 응답이 요구를 따랐는지는 판정하지 않습니다. 아래 내용은 이 화면에만 표시됩니다.
+                <br />따로 센 것: 반복 질문 {cls.detectSummary.repeatedQuestions}건 · 이해 실패 의심(항의 표현) {cls.detectSummary.misunderstanding}건
+              </p>
               {[...cls.candidates]
                 .filter((c) => DEV || c.grade !== 'low') // 낮음 등급은 같은 주제의 후속 발화가 많이 섞여 기본 화면에선 숫자만
-                .sort((a, b) => b.score - a.score)
+                .sort((a, b) => (a.grade === b.grade ? b.similarity - a.similarity : (a.grade === 'high' ? -1 : b.grade === 'high' ? 1 : a.grade === 'medium' ? -1 : 1)))
                 .slice(0, 20)
                 .map((c) => (
                   <div className="cand" key={c.messageId}>
@@ -177,7 +179,8 @@ export default function App() {
                       <span>{titleOf(c.conversationId)}</span>
                       <span>유사도 {c.similarity.toFixed(2)}</span>
                       {c.repeatMarker && <span>반복 표지</span>}
-                      {c.newRequestMarker && <span>새 요구 표지</span>}
+                      {c.complaintMarker && <span>항의 표현</span>}
+                      {!c.responseBetween && <span>사이에 응답 없음</span>}
                       {c.gapMinutes != null && <span>{c.gapMinutes < 60 ? `${Math.round(c.gapMinutes)}분 뒤` : `${Math.round(c.gapMinutes / 60)}시간 뒤`}</span>}
                     </div>
                     <blockquote>{textOf(c.priorMessageId)}</blockquote>
@@ -213,7 +216,8 @@ export default function App() {
               {cls && (
                 <p className="detail">
                   유사도 분포(판단 가능 발화 {cls.sims.length}개): {[0.5, 0.75, 0.9, 0.95, 0.98].map((q) => `p${q * 100}=${quantile(cls.sims, q).toFixed(3)}`).join(' ')}
-                  <br />0.80↑ {cls.sims.filter((s) => s >= 0.8).length} · 0.85↑ {cls.sims.filter((s) => s >= 0.85).length} · 0.90↑ {cls.sims.filter((s) => s >= 0.9).length} · 0.95↑ {cls.sims.filter((s) => s >= 0.95).length} · 0.98↑ {cls.sims.filter((s) => s >= 0.98).length}
+                  <br />귀무분포(다른 대화 무작위 {cls.nullSims.length}쌍): {[0.5, 0.9, 0.95, 0.99].map((q) => `p${q * 100}=${quantile(cls.nullSims, q).toFixed(3)}`).join(' ')} → 경계 {cls.detectSummary.nullThreshold.toFixed(3)}, 경계 이상 {cls.sims.filter((s) => s >= cls.detectSummary.nullThreshold).length}쌍
+                  <br />제외: {Object.entries(cls.detectSummary.excluded).map(([k, v]) => `${k} ${v}`).join(' · ')}
                 </p>
               )}
               {cls && (
