@@ -117,3 +117,37 @@ assert.equal(by['8'].exclusion, 'generic'); assert.equal(by['10'].exclusion, 'ge
 const sum = summarize(pairs, inputs, 0.99)
 assert.equal(sum.byGrade.high, 1); assert.equal(sum.repeatedQuestions, 1); assert.equal(sum.judgeable, 12)
 console.log('detector ok', sum.excluded)
+
+// 처방 엔진: 필터·점수·상한·"이미 씀" 제외
+const { recommend, scoreAll, genericDefaults, CATALOG } = await import('../web/src/recommend/recommend.ts')
+const verifiedCount = CATALOG.filter((c) => c.verified).length
+assert.ok(verifiedCount >= 15, `verified ${verifiedCount} >= 15`)
+assert.ok(CATALOG.filter((c) => c.verified && c.category !== 'practice').every((c) => c.evidenceUrl && c.verifiedAt), 'verified 항목은 evidenceUrl·verifiedAt 필수')
+const snap = {
+  platform: 'claude',
+  taskShare: { coding: 0.1, writing: 0.3, learning: 0.05, workdoc: 0.2, search: 0.05, ideation: 0.1, translation: 0.05, counseling: 0.15 },
+  taskCounts: {}, userTurnCount: 500, conversationCount: 15, longConversationShare: 0.5, avgTurnsPerConversation: 33, codeShare: 0, hourHistogram: new Array(24).fill(0),
+  restatement: { high: 1, mid: 20, low: 2, misunderstanding: 10, repeatedQuestion: 60, perTask: { workdoc: 8 }, tokenEstimate: 8000, ratio: 16 },
+}
+const r1 = recommend(snap, { plan: 'pro', featuresInUse: [] })
+assert.ok(r1.length >= 1 && r1.length <= 3, '0~3개')
+assert.ok(r1.every((p) => /\d/.test(p.why)), 'why에 수치 포함')
+assert.ok(r1.every((p) => !/낭비|잊었|확실히 개선/.test(p.why + p.what + p.how + p.caveat)), '금지어 없음')
+const cats = r1.map((p) => p.category)
+assert.ok(cats.every((c) => cats.filter((x) => x === c).length <= 2), 'category당 최대 2개')
+assert.ok(r1[0].grade === '핵심', '문제 신호 있으면 핵심')
+// 이미 씀 → 다음 실행에서 제외
+const first = r1[0].catalogId
+const r2 = recommend(snap, { plan: 'pro', featuresInUse: [] }, { [first]: 'already_using' })
+assert.ok(!r2.some((p) => p.catalogId === first), '"이미 씀" 항목 제외')
+// 요금제 필터: free면 chat_search(pro+) 탈락
+const sc = scoreAll(snap, { plan: 'free', featuresInUse: [] })
+assert.ok(sc.find((s) => s.item.id === 'cl_chat_search').excluded?.startsWith('요금제'))
+assert.ok(sc.find((s) => s.item.id === 'cg_projects').excluded === '플랫폼 불일치')
+assert.ok(sc.filter((s) => s.excluded === '미검증').length >= 1)
+// 문제 신호 없는 스냅샷 → 과업 신호만으로는 참고 등급
+const calm = { ...snap, longConversationShare: 0, avgTurnsPerConversation: 3, restatement: { high: 0, mid: 0, low: 0, misunderstanding: 0, repeatedQuestion: 0, perTask: {}, tokenEstimate: 0, ratio: 0 } }
+const r3 = recommend(calm, { plan: 'pro', featuresInUse: [] })
+assert.ok(r3.every((p) => p.grade === '참고'), '문제 신호 없으면 참고만')
+assert.equal(genericDefaults('claude').length, 3)
+console.log('recommend ok', r1.map((p) => `${p.catalogId}:${p.grade}:${p.score}`))

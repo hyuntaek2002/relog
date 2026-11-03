@@ -3,6 +3,12 @@ import type { WorkerOut } from './worker/analyze.worker'
 import type { EmbedOut } from './worker/embed.worker'
 import { TASK_LABELS, TASK_TYPES, type Method, type Prediction } from './classify/classifier'
 import Labeler from './dev/Labeler'
+import Checklist, { loadContext, saveContext } from './recommend/Checklist'
+import Prescriptions, { loadFeedback, saveFeedback } from './recommend/Prescriptions'
+import AbMode from './recommend/AbMode'
+import RecommendDev from './recommend/RecommendDev'
+import { buildSnapshot } from './recommend/snapshot'
+import { CATALOG_VERSION, RECOMMENDATION_RULE_VERSION, recommend, type Feedback, type FeedbackMap, type Platform, type UserContext } from './recommend/recommend'
 
 type Result = Extract<WorkerOut, { type: 'result' }>
 type Classified = Extract<EmbedOut, { type: 'classified' }>
@@ -13,6 +19,7 @@ const MODELS = ['Xenova/multilingual-e5-small', 'Xenova/paraphrase-multilingual-
 const DEFAULT_MODEL = MODELS[0]
 const DEVICE: 'wasm' | 'webgpu' = 'gpu' in navigator ? 'webgpu' : 'wasm'
 const DEV = new URLSearchParams(location.search).has('dev')
+const AB = new URLSearchParams(location.search).has('ab')
 
 const fmtDate = (ms: number | null) => (ms == null ? '-' : new Date(ms).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' }))
 
@@ -36,15 +43,17 @@ export default function App() {
   const [error, setError] = useState('')
   const [over, setOver] = useState(false)
   const [embedLog, setEmbedLog] = useState<string[]>([])
+  const [ctx, setCtx] = useState<UserContext | null>(null)
+  const [feedback, setFeedback] = useState<FeedbackMap>(loadFeedback)
 
   async function onFile(file: File | undefined) {
     if (!file) return
-    setError(''); setResult(null); setCls(null); setEmbedLog([]); setStep('read'); setDetail('')
+    setError(''); setResult(null); setCls(null); setEmbedLog([]); setStep('read'); setDetail(''); setCtx(null)
     const w = new Worker(new URL('./worker/analyze.worker.ts', import.meta.url), { type: 'module' })
     w.onmessage = (e: MessageEvent<WorkerOut>) => {
       const m = e.data
       if (m.type === 'progress') setStep(m.stage === 'unzip' ? 'read' : 'analyze')
-      else if (m.type === 'result') { setResult(m); classify(m) }
+      else if (m.type === 'result') { setResult(m); setCtx(loadContext(m.conversations[0]?.platform ?? 'chatgpt')); classify(m) }
       else { setError(m.message); setStep('idle') }
     }
     const buf = await file.arrayBuffer()
@@ -103,6 +112,18 @@ export default function App() {
   const byType = preds ? countByType(preds) : null
   const agree = cls ? cls.knn.filter((p, i) => p.type === cls.centroid[i].type).length / cls.knn.length : 0
 
+  // 처방: 집계 숫자(snapshot) + 체크리스트(ctx) + 로컬 피드백만 입력. 원문 없음.
+  const platform: Platform = result?.conversations[0]?.platform ?? 'chatgpt'
+  const snapshot = result && cls && s
+    ? buildSnapshot({ platform, stats: s, utterances: result.utterances, okIds: result.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: cls.knn, candidates: cls.candidates, detect: cls.detectSummary })
+    : null
+  const prescriptions = snapshot && ctx ? recommend(snapshot, ctx, feedback) : []
+  function onFeedback(id: string, f: Feedback) {
+    const next = { ...feedback, [id]: f }
+    setFeedback(next); saveFeedback(next)
+  }
+  function onCtx(c: UserContext) { setCtx(c); saveContext(platform, c) }
+
   return (
     <main>
       <h1>relog</h1>
@@ -129,6 +150,13 @@ export default function App() {
         </>
       )}
       {error && <p className="err">{error}</p>}
+
+      {result && ctx && (
+        <section>
+          <h2>내 설정</h2>
+          <Checklist platform={platform} value={ctx} onChange={onCtx} />
+        </section>
+      )}
 
       {result && s && n && (
         <section>
@@ -190,6 +218,13 @@ export default function App() {
             </>
           )}
 
+          {snapshot && ctx && (
+            <>
+              <h2>{AB ? '추천 평가' : '처방'}</h2>
+              {AB ? <AbMode platform={platform} personalized={prescriptions} /> : <Prescriptions items={prescriptions} feedback={feedback} onFeedback={onFeedback} />}
+            </>
+          )}
+
           <details>
             <summary>자세히</summary>
             <table>
@@ -202,7 +237,7 @@ export default function App() {
                 <tr><td>앞뒤 문맥이 필요한 짧은 발화</td><td>{n.context_required}</td></tr>
                 <tr><td>코드가 포함된 발화</td><td>{n.hasCode}</td></tr>
                 <tr><td>읽지 못한 대화</td><td>{result.errors.length}</td></tr>
-                <tr><td>버전</td><td>{result.parserVersion}, {result.normalizerVersion}{cls && `, ${cls.modelVersion}, ${cls.classifierVersion}`}</td></tr>
+                <tr><td>버전</td><td>{result.parserVersion}, {result.normalizerVersion}{cls && `, ${cls.modelVersion}, ${cls.classifierVersion}, ${cls.detectorVersion}`}, {CATALOG_VERSION}, {RECOMMENDATION_RULE_VERSION}</td></tr>
               </tbody>
             </table>
             {result.errors.length > 0 && <pre>{JSON.stringify(result.errors.slice(0, 20), null, 2)}</pre>}
@@ -210,6 +245,12 @@ export default function App() {
 
           {DEV && (
             <>
+              {snapshot && ctx && (
+                <>
+                  <h2>개발: 처방 점수표</h2>
+                  <RecommendDev snapshot={snapshot} ctx={ctx} feedback={feedback} />
+                </>
+              )}
               <h2>개발: 라벨링</h2>
               <Labeler utterances={result.utterances} conversations={result.conversations} />
               <h2>개발: 분류</h2>

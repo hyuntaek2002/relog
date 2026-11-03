@@ -61,3 +61,18 @@ button { margin-right: 4px; }
 .grade-high { color: #c0392b; font-weight: 600; }
 .grade-medium { color: #d68910; font-weight: 600; }
 .grade-low { color: var(--muted); }
+.checklist { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 16px 0; }
+.checklist .row { display: flex; gap: 10px; align-items: center; padding: 4px 0; }
+.checklist .row.wrap { flex-wrap: wrap; }
+.checklist .row > span { color: var(--muted); font-size: 0.9rem; min-width: 90px; }
+.checklist label { font-size: 0.9rem; }
+.rx { border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin: 8px 0; }
+.rx .meta { display: flex; gap: 10px; align-items: baseline; color: var(--muted); font-size: 0.85rem; }
+.rx .meta b { color: var(--fg); font-size: 1rem; }
+.rx p { margin: 6px 0; }
+.rx button { margin-right: 4px; }
+.rx button.on { background: var(--accent); color: #fff; }
+table.dev { font-size: 0.8rem; }
+table.dev th { text-align: left; color: var(--muted); font-weight: 600; padding: 4px 0; }
+table.dev td { text-align: left; padding: 3px 6px 3px 0; vertical-align: top; }
+tr.muted { color: var(--muted); }
