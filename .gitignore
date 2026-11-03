@@ -1,0 +1,3 @@
+# 개인 대화 내보내기 파일은 절대 커밋하지 않는다
+exports/
+node_modules/
