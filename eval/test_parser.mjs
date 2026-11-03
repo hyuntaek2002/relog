@@ -17,7 +17,7 @@ assert.ok(long.turns[5].text.startsWith('```python'), 'code content_type 변환'
 assert.equal(long.turns[0].createdAt, (1760000000 + 60) * 1000)
 
 const s = basicStats(r.conversations)
-assert.deepEqual({ ...s, userTokenEstimate: 0 }, { conversations: 3, userTurns: 15, assistantTurns: 15, longConversations: 1, judgeableUserTurns: 14, userTokenEstimate: 0 })
+assert.deepEqual({ ...s, userTokenEstimate: 0 }, { conversations: 3, userTurns: 15, assistantTurns: 15, longConversations: 1, judgeableUserTurns: 14, userTokenEstimate: 0, firstAt: (1760000000 + 60) * 1000, lastAt: (1760000000 + 90 * 12) * 1000 })
 console.log('parser ok', s)
 
 // Claude 형식: 같은 배열에 섞여 있어도 항목별로 판별

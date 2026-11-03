@@ -7,14 +7,20 @@ export interface BasicStats {
   longConversations: number // 사용자 발화 10개 이상
   judgeableUserTurns: number // 사용자 발화 2개 이상인 대화의 사용자 발화 수 (R의 분모)
   userTokenEstimate: number
+  firstAt: number | null // 가장 이른 사용자 발화 시각
+  lastAt: number | null
 }
 
 export function basicStats(convs: Conversation[]): BasicStats {
-  const s: BasicStats = { conversations: convs.length, userTurns: 0, assistantTurns: 0, longConversations: 0, judgeableUserTurns: 0, userTokenEstimate: 0 }
+  const s: BasicStats = { conversations: convs.length, userTurns: 0, assistantTurns: 0, longConversations: 0, judgeableUserTurns: 0, userTokenEstimate: 0, firstAt: null, lastAt: null }
   for (const c of convs) {
     let u = 0
     for (const t of c.turns) {
       if (t.role === 'user') { u++; s.userTokenEstimate += t.tokenEstimate } else s.assistantTurns++
+      if (t.createdAt != null) {
+        if (s.firstAt == null || t.createdAt < s.firstAt) s.firstAt = t.createdAt
+        if (s.lastAt == null || t.createdAt > s.lastAt) s.lastAt = t.createdAt
+      }
     }
     s.userTurns += u
     if (u >= 10) s.longConversations++
