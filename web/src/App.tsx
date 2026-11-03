@@ -2,6 +2,7 @@ import { useState, type DragEvent } from 'react'
 import type { WorkerOut } from './worker/analyze.worker'
 import type { EmbedOut } from './worker/embed.worker'
 import { TASK_LABELS, TASK_TYPES, type Method, type Prediction } from './classify/classifier'
+import Labeler from './dev/Labeler'
 
 type Result = Extract<WorkerOut, { type: 'result' }>
 type Classified = Extract<EmbedOut, { type: 'classified' }>
@@ -164,6 +165,8 @@ export default function App() {
 
           {DEV && (
             <>
+              <h2>개발: 라벨링</h2>
+              <Labeler utterances={result.utterances} conversations={result.conversations} />
               <h2>개발: 분류</h2>
               {cls && (
                 <p>
