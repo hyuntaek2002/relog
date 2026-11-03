@@ -41,3 +41,8 @@ td:last-child { text-align: right; }
 pre { font-size: 0.85rem; white-space: pre-wrap; }
 button { margin-right: 4px; }
 
+.detail { color: var(--muted); font-size: 0.9rem; margin: 4px 0 0; }
+.bars { list-style: none; padding: 0; margin: 0; }
+.bars li { display: grid; grid-template-columns: 110px 1fr 44px; align-items: center; gap: 8px; padding: 4px 0; }
+.bars i { display: block; height: 10px; background: var(--accent); border-radius: 5px; min-width: 2px; }
+.bars em { font-style: normal; color: var(--muted); text-align: right; font-size: 0.9rem; }

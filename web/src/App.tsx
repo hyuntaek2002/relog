@@ -1,31 +1,44 @@
 import { useState, type DragEvent } from 'react'
 import type { WorkerOut } from './worker/analyze.worker'
 import type { EmbedOut } from './worker/embed.worker'
+import { TASK_LABELS, TASK_TYPES, type Method, type Prediction } from './classify/classifier'
 
 type Result = Extract<WorkerOut, { type: 'result' }>
-type Step = 'idle' | 'read' | 'analyze' | 'done'
+type Classified = Extract<EmbedOut, { type: 'classified' }>
+type Step = 'idle' | 'read' | 'analyze' | 'model' | 'classify' | 'done'
 
-const STEPS: [Step, string][] = [['read', '파일 읽기'], ['analyze', '분석'], ['done', '완료']]
+const STEPS: [Step, string][] = [['read', '파일 읽기'], ['analyze', '분석'], ['model', '모델 준비'], ['classify', '분류'], ['done', '완료']]
 const MODELS = ['Xenova/multilingual-e5-small', 'Xenova/paraphrase-multilingual-MiniLM-L12-v2'] as const
+const DEFAULT_MODEL = MODELS[0]
+const DEVICE: 'wasm' | 'webgpu' = 'gpu' in navigator ? 'webgpu' : 'wasm'
 const DEV = new URLSearchParams(location.search).has('dev')
 
 const fmtDate = (ms: number | null) => (ms == null ? '-' : new Date(ms).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' }))
 
+function countByType(preds: Prediction[]) {
+  const c = new Map<string, number>()
+  for (const p of preds) c.set(p.type, (c.get(p.type) ?? 0) + 1)
+  return [...TASK_TYPES, 'other'].map((t) => ({ type: t, label: t === 'other' ? '기타' : TASK_LABELS[t as keyof typeof TASK_LABELS], n: c.get(t) ?? 0 })).sort((a, b) => b.n - a.n)
+}
+
 export default function App() {
   const [step, setStep] = useState<Step>('idle')
+  const [detail, setDetail] = useState('')
   const [result, setResult] = useState<Result | null>(null)
+  const [cls, setCls] = useState<Classified | null>(null)
+  const [method, setMethod] = useState<Method>('knn')
   const [error, setError] = useState('')
   const [over, setOver] = useState(false)
   const [embedLog, setEmbedLog] = useState<string[]>([])
 
   async function onFile(file: File | undefined) {
     if (!file) return
-    setError(''); setResult(null); setEmbedLog([]); setStep('read')
+    setError(''); setResult(null); setCls(null); setEmbedLog([]); setStep('read'); setDetail('')
     const w = new Worker(new URL('./worker/analyze.worker.ts', import.meta.url), { type: 'module' })
     w.onmessage = (e: MessageEvent<WorkerOut>) => {
       const m = e.data
       if (m.type === 'progress') setStep(m.stage === 'unzip' ? 'read' : 'analyze')
-      else if (m.type === 'result') { setResult(m); setStep('done') }
+      else if (m.type === 'result') { setResult(m); classify(m) }
       else { setError(m.message); setStep('idle') }
     }
     const buf = await file.arrayBuffer()
@@ -35,6 +48,22 @@ export default function App() {
   function onDrop(e: DragEvent) {
     e.preventDefault(); setOver(false)
     onFile(e.dataTransfer.files[0])
+  }
+
+  // 정규화된 ok 발화 전체를 임베딩하고 과업 유형을 예측한다. 전부 브라우저 안에서.
+  function classify(r: Result) {
+    const texts = r.utterances.filter((u) => u.status === 'ok').map((u) => u.text)
+    if (texts.length === 0) { setStep('done'); return }
+    setStep('model')
+    const w = new Worker(new URL('./worker/embed.worker.ts', import.meta.url), { type: 'module' })
+    w.onmessage = (e: MessageEvent<EmbedOut>) => {
+      const m = e.data
+      if (m.type === 'download') { setStep('model'); setDetail(`${m.file.split('/').pop()} ${m.percent}%`) }
+      else if (m.type === 'progress') { setStep('classify'); setDetail(`${m.done} / ${m.total}`) }
+      else if (m.type === 'classified') { setCls(m); setStep('done'); setDetail('') }
+      else if (m.type === 'error') { setError(m.message); setStep('done') }
+    }
+    w.postMessage({ type: 'classify', model: DEFAULT_MODEL, device: DEVICE, texts })
   }
 
   function runEmbed(model: string, device: 'wasm' | 'webgpu') {
@@ -50,7 +79,7 @@ export default function App() {
       if (m.type === 'download') setEmbedLog((l) => [...l.slice(0, -1), `${tag}: 다운로드 ${m.file} ${m.percent}%`])
       else if (m.type === 'progress') setEmbedLog((l) => [...l.slice(0, -1), `${tag}: 임베딩 ${m.done}/${m.total}`])
       else if (m.type === 'done') setEmbedLog((l) => [...l, `${tag}: 로드 ${m.loadMs}ms, 임베딩 ${m.count}개 ${m.embedMs}ms (${(m.embedMs / m.count).toFixed(1)}ms/개), dim=${m.dim}`])
-      else setEmbedLog((l) => [...l, `${tag}: 오류 ${m.message}`])
+      else if (m.type === 'error') setEmbedLog((l) => [...l, `${tag}: 오류 ${m.message}`])
     }
     w.postMessage({ type: 'embed', model, device, texts })
   }
@@ -58,6 +87,10 @@ export default function App() {
   const s = result?.stats
   const n = result?.normStats
   const stepIdx = STEPS.findIndex(([k]) => k === step)
+  const preds = cls ? cls[method] : null
+  const byType = preds ? countByType(preds) : null
+  const agree = cls ? cls.knn.filter((p, i) => p.type === cls.centroid[i].type).length / cls.knn.length : 0
+
   return (
     <main>
       <h1>relog</h1>
@@ -74,11 +107,14 @@ export default function App() {
       </label>
 
       {step !== 'idle' && (
-        <ol className="steps">
-          {STEPS.map(([k, label], i) => (
-            <li key={k} className={i < stepIdx ? 'done' : i === stepIdx ? 'active' : ''}>{label}</li>
-          ))}
-        </ol>
+        <>
+          <ol className="steps">
+            {STEPS.map(([k, label], i) => (
+              <li key={k} className={i < stepIdx ? 'done' : i === stepIdx ? 'active' : ''}>{label}</li>
+            ))}
+          </ol>
+          {detail && <p className="detail">{detail}</p>}
+        </>
       )}
       {error && <p className="err">{error}</p>}
 
@@ -91,6 +127,23 @@ export default function App() {
             <div className="card"><b>{s.longConversations}</b><span>긴 대화 (발화 10개 이상)</span></div>
             <div className="card"><b style={{ fontSize: '1rem' }}>{fmtDate(s.firstAt)} ~ {fmtDate(s.lastAt)}</b><span>기간</span></div>
           </div>
+
+          {byType && preds && (
+            <>
+              <h2>무엇을 주로 했나</h2>
+              <ul className="bars">
+                {byType.filter((t) => t.n > 0).map((t) => (
+                  <li key={t.type}>
+                    <span>{t.label}</span>
+                    <i style={{ width: `${(100 * t.n) / preds.length}%` }} />
+                    <em>{Math.round((100 * t.n) / preds.length)}%</em>
+                  </li>
+                ))}
+              </ul>
+              <p className="detail">발화 {preds.length}개 기준. 유형은 자동 추정이라 틀릴 수 있습니다.</p>
+            </>
+          )}
+
           <details>
             <summary>자세히</summary>
             <table>
@@ -103,7 +156,7 @@ export default function App() {
                 <tr><td>앞뒤 문맥이 필요한 짧은 발화</td><td>{n.context_required}</td></tr>
                 <tr><td>코드가 포함된 발화</td><td>{n.hasCode}</td></tr>
                 <tr><td>읽지 못한 대화</td><td>{result.errors.length}</td></tr>
-                <tr><td>버전</td><td>{result.parserVersion}, {result.normalizerVersion}</td></tr>
+                <tr><td>버전</td><td>{result.parserVersion}, {result.normalizerVersion}{cls && `, ${cls.modelVersion}, ${cls.classifierVersion}`}</td></tr>
               </tbody>
             </table>
             {result.errors.length > 0 && <pre>{JSON.stringify(result.errors.slice(0, 20), null, 2)}</pre>}
@@ -111,6 +164,14 @@ export default function App() {
 
           {DEV && (
             <>
+              <h2>개발: 분류</h2>
+              {cls && (
+                <p>
+                  방식: <button onClick={() => setMethod('knn')} disabled={method === 'knn'}>C k-NN</button>
+                  <button onClick={() => setMethod('centroid')} disabled={method === 'centroid'}>B 중심점</button>
+                  B·C 일치율 {Math.round(agree * 100)}%, 임베딩 {cls.embedMs}ms ({(cls.embedMs / cls.knn.length).toFixed(0)}ms/개), {DEVICE}
+                </p>
+              )}
               <h2>개발: 임베딩 속도 (발화 100개)</h2>
               {MODELS.map((m) => (
                 <p key={m}>{m}: <button onClick={() => runEmbed(m, 'wasm')}>wasm</button><button onClick={() => runEmbed(m, 'webgpu')}>webgpu</button></p>

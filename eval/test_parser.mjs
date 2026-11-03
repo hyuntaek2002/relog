@@ -65,3 +65,17 @@ const ns = normalizeStats(us)
 assert.equal(ns.total, 15)
 assert.equal(ns.skipped, 1, '고마워 제외')
 console.log('normalize ok', ns)
+
+// 분류기 B·C: 2차원 단위 벡터로 동작 확인
+const { TaskClassifier, SEED_TEXTS, SEED_TYPES, TASK_TYPES } = await import('../web/src/classify/classifier.ts')
+assert.equal(TASK_TYPES.length, 8)
+assert.equal(SEED_TEXTS.length, SEED_TYPES.length)
+assert.ok(TASK_TYPES.every((t) => SEED_TYPES.filter((s) => s === t).length >= 15), '유형별 15개 이상')
+const unit = (deg) => new Float32Array([Math.cos((deg * Math.PI) / 180), Math.sin((deg * Math.PI) / 180)])
+const vecs = [unit(0), unit(5), unit(-5), unit(90), unit(85), unit(95)]
+const types = ['coding', 'coding', 'coding', 'chat', 'chat', 'chat']
+const clf = new TaskClassifier(vecs, types, { k: 3, otherBelow: 0.5 })
+assert.equal(clf.centroid(unit(10)).type, 'coding')
+assert.equal(clf.knn(unit(80)).type, 'chat')
+assert.equal(clf.knn(unit(180)).type, 'other', '유사도 낮으면 기타')
+console.log('classifier ok')
