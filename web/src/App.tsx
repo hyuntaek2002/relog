@@ -27,15 +27,16 @@ export default function App() {
 
   function runEmbed(model: string, device: 'wasm' | 'webgpu') {
     if (!result) return
-    const all = result.conversations.flatMap((c) => c.turns.filter((t) => t.role === 'user').map((t) => t.text))
+    const all = result.utterances.filter((u) => u.status === 'ok').map((u) => u.text)
     // 속도 측정용으로 정확히 100개. 부족하면 순환해서 채운다.
     const texts = Array.from({ length: 100 }, (_, i) => all[i % all.length])
     const w = new Worker(new URL('./worker/embed.worker.ts', import.meta.url), { type: 'module' })
     const tag = `${model} / ${device}`
-    setEmbedLog((l) => [...l, `${tag}: 시작 (${texts.length}개)`])
+    setEmbedLog((l) => [...l, `${tag}: 시작 (${texts.length}개, 평균 ${Math.round(texts.reduce((a, t) => a + t.length, 0) / texts.length)}자)`])
     w.onmessage = (e: MessageEvent<EmbedOut>) => {
       const m = e.data
       if (m.type === 'download') setEmbedLog((l) => [...l.slice(0, -1), `${tag}: 다운로드 ${m.file} ${m.percent}%`])
+      else if (m.type === 'progress') setEmbedLog((l) => [...l.slice(0, -1), `${tag}: 임베딩 ${m.done}/${m.total}`])
       else if (m.type === 'done') setEmbedLog((l) => [...l, `${tag}: 로드 ${m.loadMs}ms, 임베딩 ${m.count}개 ${m.embedMs}ms (${(m.embedMs / m.count).toFixed(1)}ms/개), dim=${m.dim}`])
       else setEmbedLog((l) => [...l, `${tag}: 오류 ${m.message}`])
     }
@@ -43,6 +44,7 @@ export default function App() {
   }
 
   const s = result?.stats
+  const n = result?.normStats
   return (
     <main style={{ fontFamily: 'sans-serif', maxWidth: 800, margin: '2rem auto', padding: '0 1rem' }}>
       <h1>relog</h1>
@@ -50,7 +52,7 @@ export default function App() {
       <input type="file" accept=".zip" onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
       <p>{progress}</p>
       {error && <p style={{ color: 'crimson' }}>{error}</p>}
-      {result && s && (
+      {result && s && n && (
         <section>
           <h2>기본 통계</h2>
           <table>
@@ -63,7 +65,9 @@ export default function App() {
               <tr><td>판단 가능 사용자 발화(2개 이상인 대화)</td><td>{s.judgeableUserTurns}</td></tr>
               <tr><td>사용자 발화 토큰 추정치</td><td>{s.userTokenEstimate}</td></tr>
               <tr><td>건너뛴 대화</td><td>{result.errors.length}</td></tr>
-              <tr><td>parserVersion</td><td>{result.parserVersion}</td></tr>
+              <tr><td>정규화: ok / 제외 / context_required</td><td>{n.ok} / {n.skipped} / {n.context_required}</td></tr>
+              <tr><td>정규화: 코드 포함 / 앞부분만 사용</td><td>{n.hasCode} / {n.truncated}</td></tr>
+              <tr><td>versions</td><td>{result.parserVersion}, {result.normalizerVersion}</td></tr>
             </tbody>
           </table>
           {result.errors.length > 0 && <pre>{JSON.stringify(result.errors.slice(0, 20), null, 2)}</pre>}

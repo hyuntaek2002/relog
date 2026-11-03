@@ -56,3 +56,16 @@ for (const [name, bytes] of Object.entries(files)) {
   const dates = r.conversations.map((c) => c.createdAt).filter(Boolean).sort()
   if (dates.length) console.log('date range:', new Date(dates[0]).toISOString().slice(0, 10), '~', new Date(dates.at(-1)).toISOString().slice(0, 10))
 }
+
+// 정규화 상태 분포(실제 파일 기준). 원문은 출력하지 않는다.
+const { normalizeConversations, normalizeStats } = await import('../web/src/parser/normalize.ts')
+for (const [name, bytes] of Object.entries(files)) {
+  if (!name.endsWith('.json')) continue
+  const r = parseConversationsJson(JSON.parse(new TextDecoder().decode(bytes)))
+  const us = normalizeConversations(r.conversations)
+  console.log('\nnormalize:', normalizeStats(us))
+  const langs = new Map(); us.forEach((u) => u.codeLangs.forEach((l) => langs.set(l, (langs.get(l) ?? 0) + 1)))
+  console.log('code langs:', Object.fromEntries(langs))
+  console.log('skipped lengths:', us.filter((u) => u.status === 'skipped').map((u) => u.text.length).join(' '))
+  console.log('context_required lengths:', us.filter((u) => u.status === 'context_required').map((u) => u.text.length).join(' '))
+}
