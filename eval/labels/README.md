@@ -27,3 +27,13 @@
 ## 파일
 - `seed_examples`: `web/src/classify/seed.json` 유형별 15~16개. 분류기 B·C의 기준점. 라벨셋과 겹치지 않게 한다.
 - 라벨셋(목표 400건, 대화 단위 240/80/80 분할): `eval/labels/labels.csv` — 열 `conversationId,messageId,type`. 원문은 넣지 않는다(로컬 내보내기 파일에서 messageId로 조회).
+
+## 평가 실행
+1. `?dev=1` 과업 라벨링에서 "CSV 내보내기" → `eval/labels/labels.csv` (열: conversationId,messageId,type).
+2. 실행:
+   ```
+   node eval/classify/run_abc.mjs exports/conversations-000.zip eval/labels/labels.csv
+   ```
+   대화 단위로 240/80/80 비율 분할(결정적 시드) → A(TF-IDF 문자 1~3gram + softmax), B(중심점), C(k-NN) 비교. k·기타 임계값은 조정 분할에서 고르고 평가 분할의 Macro F1·유형별 P/R·혼동행렬을 찍는다.
+3. 라벨 전 파이프라인 확인: `node eval/classify/run_abc.mjs --smoke` (예시 발화를 모의 라벨로 씀. '예시+학습' 변형은 평가 항목이 예시에 포함돼 수치가 의미 없음).
+- `context_required` 라벨은 분류 평가에서 제외. `other`는 예시가 없어 B·C에선 임계값으로만 나온다.

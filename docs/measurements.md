@@ -89,3 +89,15 @@
 - 대장 키 = conversationId#messageId#내용해시(FNV-1a×2). 편집·재생성은 새 키, 같은 키 재전송은 덮어쓰기. 집계는 같은 messageId 중 최신 분석분만.
 - 주 버킷(월요일 시작, 로컬 시간) 8주. 예: 9/7주 발화 127·비교 가능 124·반복 의심 45(36.3%) / 11/2주 153·149·21(14.1%). 9월 초 주의 높은 비율은 탐지기 정밀도 미검증 상태의 숫자.
 - 로컬 보관: IndexedDB 'relog/ledger'에 509개 항목. 새로고침 후 추이 복원, 같은 파일 재업로드 후에도 509개(덮어쓰기), 삭제 시 DB·relog- localStorage 전부 제거 확인.
+
+## 2026-11-04 메모리 실측 (실제 Claude 파일 44대화·509발화, e5-small q8, webgpu, 내장 브라우저)
+- 방법: `performance.measureUserAgentSpecificMemory()`는 cross-origin isolation이 필요한데 Claude 앱 내장 브라우저(Chrome 152 기반)는 COOP/COEP 헤더를 보내도 `crossOriginIsolated=false`라 쓸 수 없었다. 대신 Windows 프로세스 메모리(Get-Process)를 분석 전/후 비교. dev 서버는 헤더를 보내므로 일반 Chrome에서는 `?dev=1`의 "지금 측정" 버튼으로 워커 포함 값을 볼 수 있다.
+- 메인 스레드 JS 힙: 시작 9.4MB → 분석 완료 16.5MB(워커·모델 미포함).
+- 프로세스 Working Set 변화(분석 완료 후 유휴 시에도 유지):
+  | 프로세스 | 전 | 후 | 증가 | Private 증가 |
+  |---|---|---|---|---|
+  | 렌더러(페이지+워커 추정) | 162MB | 895MB | +734MB | +610MB |
+  | GPU 프로세스(WebGPU 버퍼 추정) | 213MB | 531MB | +318MB | +821MB |
+  | 합계 | | | **약 +1.05GB** | |
+- 해석: 모델 가중치(q8 113MB)·토크나이저(16MB)·ORT 런타임보다 훨씬 큰 값. 워커 2개(분석·임베딩)가 모두 살아 있고 dev 모드(소스맵·HMR) 오버헤드가 포함된다. 임베딩 행렬 자체는 493×384×4B = 0.76MB로 무시할 수준.
+- 후속: 임베딩 워커를 분석 후 종료(terminate)하면 얼마나 회수되는지, wasm 모드 비교, 프로덕션 빌드 기준 재측정. 논문용 수치는 일반 Chrome에서 measureUserAgentSpecificMemory로 다시 잰다.

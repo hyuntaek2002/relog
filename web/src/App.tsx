@@ -101,7 +101,7 @@ export default function App() {
       const m = e.data
       if (m.type === 'download') { setStep('model'); setDetail(`${m.file.split('/').pop()} ${m.percent}%`) }
       else if (m.type === 'progress') { setStep('classify'); setDetail(`${m.done} / ${m.total}`) }
-      else if (m.type === 'classified') { setCls(m); setStep('done'); setDetail(''); record(r, m) }
+      else if (m.type === 'classified') { setCls(m); setStep('done'); setDetail(''); record(r, m); if (DEV) measureMemory('분석 완료 직후') }
       else if (m.type === 'error') { setError(m.message); setStep('done') }
     }
     w.postMessage({ type: 'classify', model: DEFAULT_MODEL, device: DEVICE, texts, inputs })
@@ -117,6 +117,22 @@ export default function App() {
     }
     setLedger(all)
     setWeeks(aggregateWeekly(all, versionKey(version)))
+  }
+
+  // 메모리 실측(개발용). crossOriginIsolated일 때 워커까지 포함한 값, 아니면 메인 스레드 JS 힙만.
+  async function measureMemory(tag: string) {
+    const perf = performance as Performance & { measureUserAgentSpecificMemory?: () => Promise<{ bytes: number; breakdown: { bytes: number; attribution: { url?: string; scope?: string }[]; types: string[] }[] }>; memory?: { usedJSHeapSize: number; totalJSHeapSize: number } }
+    const mb = (b: number) => (b / 1048576).toFixed(1) + 'MB'
+    const lines = [`[메모리 ${tag}] crossOriginIsolated=${crossOriginIsolated}`]
+    if (perf.memory) lines.push(`  main JS heap used ${mb(perf.memory.usedJSHeapSize)} / total ${mb(perf.memory.totalJSHeapSize)}`)
+    if (perf.measureUserAgentSpecificMemory) {
+      try {
+        const r = await perf.measureUserAgentSpecificMemory()
+        lines.push(`  agent total ${mb(r.bytes)}`)
+        for (const b of r.breakdown) if (b.bytes > 1048576) lines.push(`    ${mb(b.bytes)} ${b.types.join('+')} ${b.attribution.map((a) => (a.scope ?? '') + ' ' + (a.url ?? '').split('/').slice(-1)[0]).join(',')}`)
+      } catch (e) { lines.push('  measureUserAgentSpecificMemory 실패: ' + (e as Error).message) }
+    } else lines.push('  measureUserAgentSpecificMemory 없음')
+    setEmbedLog((l) => [...l, ...lines])
   }
 
   function runEmbed(model: string, device: 'wasm' | 'webgpu') {
@@ -321,6 +337,8 @@ export default function App() {
                   B·C 일치율 {Math.round(agree * 100)}%, 임베딩 {cls.embedMs}ms ({(cls.embedMs / cls.knn.length).toFixed(0)}ms/개), {DEVICE}
                 </p>
               )}
+              <h2>개발: 메모리</h2>
+              <p><button onClick={() => measureMemory('수동')}>지금 측정</button></p>
               <h2>개발: 임베딩 속도 (발화 100개)</h2>
               {MODELS.map((m) => (
                 <p key={m}>{m}: <button onClick={() => runEmbed(m, 'wasm')}>wasm</button><button onClick={() => runEmbed(m, 'webgpu')}>webgpu</button></p>
