@@ -158,3 +158,39 @@ const conv = (id, toolNames) => ({ id, platform: 'claude', title: '', createdAt:
 const det = detectFeatures([conv('a', ['WebSearch', 'Bash', 'WebFetch']), conv('b', ['web_search', 'mcp__claude-artifacts__publish_files', 'Skill']), conv('c', ['integration:Google Drive']), conv('d', [])])
 assert.deepEqual(det, [{ catalogId: 'cl_web_search', conversations: 2 }, { catalogId: 'cl_artifacts', conversations: 1 }, { catalogId: 'cl_skills', conversations: 1 }, { catalogId: 'cl_connectors_google', conversations: 1 }])
 console.log('detectFeatures ok')
+
+{
+// 발화 대장·주 단위 집계: 해시 키, 편집 덮어쓰기, 주 버킷, 비율
+const { contentHash, buildLedger, aggregateWeekly, mergeLedger, weekStart, versionKey } = await import('../web/src/store/ledger.ts')
+assert.equal(contentHash('abc').length, 16)
+assert.notEqual(contentHash('abc'), contentHash('abd'))
+const ver = { parserVersion: 'p', normalizerVersion: 'n', modelVersion: 'm', classifierVersion: 'c', detectorVersion: 'd', catalogVersion: 'k', recommendationRuleVersion: 'r' }
+const vk = versionKey(ver)
+const MON = new Date(2026, 10, 2, 10).getTime() // 2026-11-02 월요일 10시(로컬)
+assert.equal(new Date(weekStart(MON + 3 * 86400000)).getDay(), 1, '주 시작은 월요일')
+const mkU = (conv, id, text, dayOffset, status = 'ok', hasCode = false) => ({ conversationId: conv, messageId: id, idx: 0, createdAt: MON + dayOffset * 86400000, text, status, hasCode, codeLangs: [], truncated: false, hasAttachment: false, tokenEstimate: 5, prevAssistantIdx: -1 })
+const lu = [mkU('c1', 'a', '첫', 0), mkU('c1', 'b', '둘', 1), mkU('c1', 'c', '셋', 8), mkU('c2', 'd', '홀로', 2), mkU('c2', 'e', '응', 2, 'skipped')]
+const okIds = lu.filter((u) => u.status === 'ok').map((u) => u.messageId)
+const preds = okIds.map(() => ({ type: 'coding', score: 1 }))
+const pairs = [{ conversationId: 'c1', messageId: 'b', priorMessageId: 'a', similarity: 0.95, kind: 'instruction', repeatMarker: true, complaintMarker: false, gapMinutes: 1, responseBetween: true, grade: 'high', exclusion: null, tokenEstimate: 5 }]
+const led = buildLedger({ platform: 'claude', utterances: lu, okIds, preds, pairs, version: ver, analyzedAt: 1 })
+assert.equal(led.length, 5)
+assert.equal(led.find((e) => e.messageId === 'b').grade, 'high')
+let weeks = aggregateWeekly(led, vk)
+assert.equal(weeks.length, 2, '2주 버킷')
+assert.deepEqual([weeks[0].userTurnCount, weeks[0].okCount, weeks[0].judgeable, weeks[0].conversationCount], [4, 3, 2, 2], '1주차: 발화 4(제외 포함), ok 3, 판단 가능 2(c1만), 대화 2')
+assert.equal(weeks[0].restatement.high, 1)
+assert.equal(weeks[0].restatement.ratio, 50, '1/2 × 100')
+assert.equal(weeks[1].userTurnCount, 1)
+// 편집된 메시지(같은 messageId, 다른 해시)는 새 항목으로 들어가되 집계는 최신 것만
+const edited = buildLedger({ platform: 'claude', utterances: [mkU('c1', 'b', '둘(수정)', 1)], okIds: ['b'], preds: [{ type: 'writing', score: 1 }], pairs: [], version: ver, analyzedAt: 2 })
+const merged = mergeLedger(led, edited)
+assert.equal(merged.length, 6, '해시가 달라 새 키')
+weeks = aggregateWeekly(merged, vk)
+assert.equal(weeks[0].taskCounts.writing, 1); assert.equal(weeks[0].taskCounts.coding, 2); assert.equal(weeks[0].restatement.high, 0, '최신 분석엔 후보 없음')
+// 같은 키 재전송 = 덮어쓰기
+assert.equal(mergeLedger(led, led).length, 5)
+// 다른 버전은 집계에서 제외
+assert.equal(aggregateWeekly(led, 'other').length, 0)
+console.log('ledger ok')
+}

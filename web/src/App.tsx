@@ -1,4 +1,4 @@
-import { useState, type DragEvent } from 'react'
+import { useEffect, useState, type DragEvent } from 'react'
 import type { WorkerOut } from './worker/analyze.worker'
 import type { EmbedOut } from './worker/embed.worker'
 import { TASK_LABELS, TASK_TYPES, type Method, type Prediction } from './classify/classifier'
@@ -11,6 +11,9 @@ import AbMode from './recommend/AbMode'
 import RecommendDev from './recommend/RecommendDev'
 import { buildSnapshot } from './recommend/snapshot'
 import { CATALOG_VERSION, RECOMMENDATION_RULE_VERSION, recommend, type Feedback, type FeedbackMap, type Platform, type UserContext } from './recommend/recommend'
+import Trend, { loadStorageMode, STORAGE_MODE_KEY, type StorageMode } from './store/Trend'
+import { aggregateWeekly, buildLedger, versionKey, type LedgerEntry, type PeriodSnapshot } from './store/ledger'
+import { clearAll, getLedger, putLedger } from './store/db'
 
 type Result = Extract<WorkerOut, { type: 'result' }>
 type Classified = Extract<EmbedOut, { type: 'classified' }>
@@ -47,6 +50,25 @@ export default function App() {
   const [embedLog, setEmbedLog] = useState<string[]>([])
   const [ctx, setCtx] = useState<UserContext | null>(null)
   const [feedback, setFeedback] = useState<FeedbackMap>(loadFeedback)
+  const [storageMode, setStorageMode] = useState<StorageMode>(loadStorageMode)
+  const [ledger, setLedger] = useState<LedgerEntry[]>([]) // 보관 모드면 IndexedDB 전체, 아니면 이번 분석분만
+  const [weeks, setWeeks] = useState<PeriodSnapshot[]>([])
+
+  // 보관 모드면 시작할 때 저장된 대장을 불러와 추이를 보여준다
+  useEffect(() => {
+    if (storageMode !== 'local') return
+    getLedger().then((rows) => { setLedger(rows); if (rows.length) setWeeks(aggregateWeekly(rows, rows[rows.length - 1].versionKey)) }).catch(() => {})
+  }, [storageMode])
+
+  function onStorageMode(m: StorageMode) {
+    setStorageMode(m)
+    try { localStorage.setItem(STORAGE_MODE_KEY, m) } catch { /* 무시 */ }
+  }
+  async function onClear() {
+    if (!confirm('이 브라우저에 저장된 분석 데이터, 설정, 피드백, 라벨링 진행 상황을 모두 지웁니다. 계속할까요?')) return
+    await clearAll()
+    setLedger([]); setWeeks([]); setFeedback({}); setStorageMode('none')
+  }
 
   async function onFile(file: File | undefined) {
     if (!file) return
@@ -79,10 +101,22 @@ export default function App() {
       const m = e.data
       if (m.type === 'download') { setStep('model'); setDetail(`${m.file.split('/').pop()} ${m.percent}%`) }
       else if (m.type === 'progress') { setStep('classify'); setDetail(`${m.done} / ${m.total}`) }
-      else if (m.type === 'classified') { setCls(m); setStep('done'); setDetail('') }
+      else if (m.type === 'classified') { setCls(m); setStep('done'); setDetail(''); record(r, m) }
       else if (m.type === 'error') { setError(m.message); setStep('done') }
     }
     w.postMessage({ type: 'classify', model: DEFAULT_MODEL, device: DEVICE, texts, inputs })
+  }
+
+  // 발화 대장 갱신 → 주 단위 집계. 보관 모드면 IndexedDB에 병합(같은 키는 덮어쓰기)하고 전체 대장으로 재계산.
+  async function record(r: Result, m: Classified) {
+    const version = { parserVersion: r.parserVersion, normalizerVersion: r.normalizerVersion, modelVersion: m.modelVersion, classifierVersion: m.classifierVersion, detectorVersion: m.detectorVersion, catalogVersion: CATALOG_VERSION, recommendationRuleVersion: RECOMMENDATION_RULE_VERSION }
+    const entries = buildLedger({ platform: r.conversations[0]?.platform ?? 'chatgpt', utterances: r.utterances, okIds: r.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: m.knn, pairs: m.pairs, version })
+    let all = entries
+    if (storageMode === 'local') {
+      try { await putLedger(entries); all = await getLedger() } catch (e) { setError('로컬 보관 실패: ' + (e as Error).message) }
+    }
+    setLedger(all)
+    setWeeks(aggregateWeekly(all, versionKey(version)))
   }
 
   function runEmbed(model: string, device: 'wasm' | 'webgpu') {
@@ -153,6 +187,13 @@ export default function App() {
         </>
       )}
       {error && <p className="err">{error}</p>}
+
+      {!result && (
+        <section>
+          <h2>보관 방식{weeks.length > 0 && ' · 저장된 추이'}</h2>
+          <Trend weeks={weeks} mode={storageMode} storedCount={ledger.length} onMode={onStorageMode} onClear={onClear} />
+        </section>
+      )}
 
       {result && ctx && (
         <section>
@@ -227,6 +268,9 @@ export default function App() {
               {AB ? <AbMode platform={platform} personalized={prescriptions} /> : <Prescriptions items={prescriptions} feedback={feedback} onFeedback={onFeedback} />}
             </>
           )}
+
+          <h2>기간별 추이</h2>
+          <Trend weeks={weeks} mode={storageMode} storedCount={storageMode === 'local' ? ledger.length : 0} onMode={onStorageMode} onClear={onClear} />
 
           <details>
             <summary>자세히</summary>
