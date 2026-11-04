@@ -76,3 +76,4 @@ table.dev { font-size: 0.8rem; }
 table.dev th { text-align: left; color: var(--muted); font-weight: 600; padding: 4px 0; }
 table.dev td { text-align: left; padding: 3px 6px 3px 0; vertical-align: top; }
 tr.muted { color: var(--muted); }
+.labeler:focus { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 8px; }

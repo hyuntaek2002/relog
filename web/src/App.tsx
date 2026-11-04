@@ -3,6 +3,7 @@ import type { WorkerOut } from './worker/analyze.worker'
 import type { EmbedOut } from './worker/embed.worker'
 import { TASK_LABELS, TASK_TYPES, type Method, type Prediction } from './classify/classifier'
 import Labeler from './dev/Labeler'
+import PairLabeler from './dev/PairLabeler'
 import Checklist, { loadContext, saveContext, withDetected } from './recommend/Checklist'
 import { detectFeatures } from './recommend/detectFeatures'
 import Prescriptions, { loadFeedback, saveFeedback } from './recommend/Prescriptions'
@@ -253,7 +254,13 @@ export default function App() {
                   <RecommendDev snapshot={snapshot} ctx={withDetected(ctx, detected)} feedback={feedback} />
                 </>
               )}
-              <h2>개발: 라벨링</h2>
+              {cls && (
+                <>
+                  <h2>개발: 반복 후보 쌍 라벨링 (유사도 상위 100)</h2>
+                  <PairLabeler pairs={cls.pairs} utterances={result.utterances} conversations={result.conversations} />
+                </>
+              )}
+              <h2>개발: 과업 라벨링</h2>
               <Labeler utterances={result.utterances} conversations={result.conversations} />
               <h2>개발: 분류</h2>
               {cls && (

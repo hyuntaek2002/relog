@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { TASK_LABELS, TASK_TYPES, type TaskType } from '../classify/classifier'
 import type { Utterance } from '../parser/normalize'
 import type { Conversation } from '../parser/types'
@@ -29,19 +29,16 @@ export default function Labeler({ utterances, conversations }: { utterances: Utt
     setI((x) => Math.min(x + 1, items.length - 1))
   }
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement) return
-      const n = Number(e.key)
-      if (n >= 1 && n <= TASK_TYPES.length) set(TASK_TYPES[n - 1])
-      else if (e.key === '0') set('other')
-      else if (e.key === 'c') set('context_required')
-      else if (e.key === 'ArrowLeft') setI((x) => Math.max(0, x - 1))
-      else if (e.key === 'ArrowRight') setI((x) => Math.min(items.length - 1, x + 1))
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  })
+  // 단축키는 이 영역에 포커스가 있을 때만(반복 쌍 라벨링과 숫자키가 겹치므로)
+  function onKey(e: ReactKeyboardEvent) {
+    if (e.target instanceof HTMLInputElement) return
+    const n = Number(e.key)
+    if (n >= 1 && n <= TASK_TYPES.length) set(TASK_TYPES[n - 1])
+    else if (e.key === '0') set('other')
+    else if (e.key === 'c') set('context_required')
+    else if (e.key === 'ArrowLeft') setI((x) => Math.max(0, x - 1))
+    else if (e.key === 'ArrowRight') setI((x) => Math.min(items.length - 1, x + 1))
+  }
 
   function exportCsv() {
     const rows = items.filter((u) => labels[u.messageId]).map((u) => `${u.conversationId},${u.messageId},${labels[u.messageId]}`)
@@ -65,9 +62,9 @@ export default function Labeler({ utterances, conversations }: { utterances: Utt
   if (!cur) return <p>라벨링할 발화가 없음</p>
   const done = items.filter((u) => labels[u.messageId]).length
   return (
-    <div className="labeler">
+    <div className="labeler" tabIndex={0} onKeyDown={onKey}>
       <p className="detail">
-        {i + 1} / {items.length} · 라벨 {done}개 · 숫자키 1~8, 0 기타, c 문맥 필요, ←→ 이동
+        {i + 1} / {items.length} · 라벨 {done}개 · 이 영역을 클릭한 뒤 숫자키 1~8, 0 기타, c 문맥 필요, ←→ 이동
         <button onClick={exportCsv}>CSV 내보내기</button>
         <label className="btn">CSV 불러오기<input type="file" accept=".csv" onChange={(e) => importCsv(e.target.files?.[0])} /></label>
       </p>
