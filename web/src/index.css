@@ -78,3 +78,6 @@ table.dev td { text-align: left; padding: 3px 6px 3px 0; vertical-align: top; }
 tr.muted { color: var(--muted); }
 .labeler:focus { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 8px; }
 th { text-align: left; color: var(--muted); font-weight: 600; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 0.9rem; }
+details.cand > summary { list-style: none; cursor: pointer; }
+details.cand > summary::-webkit-details-marker { display: none; }
+details.cand > summary > span:nth-child(3) { color: var(--fg); }

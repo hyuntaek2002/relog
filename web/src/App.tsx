@@ -77,8 +77,8 @@ export default function App() {
     w.onmessage = (e: MessageEvent<WorkerOut>) => {
       const m = e.data
       if (m.type === 'progress') setStep(m.stage === 'unzip' ? 'read' : 'analyze')
-      else if (m.type === 'result') { setResult(m); setCtx(loadContext(m.conversations[0]?.platform ?? 'chatgpt')); classify(m) }
-      else { setError(m.message); setStep('idle') }
+      else if (m.type === 'result') { setResult(m); setCtx(loadContext(m.conversations[0]?.platform ?? 'chatgpt')); w.terminate(); classify(m) }
+      else { setError(m.message); setStep('idle'); w.terminate() }
     }
     const buf = await file.arrayBuffer()
     w.postMessage({ type: 'parse', data: buf }, [buf])
@@ -101,8 +101,8 @@ export default function App() {
       const m = e.data
       if (m.type === 'download') { setStep('model'); setDetail(`${m.file.split('/').pop()} ${m.percent}%`) }
       else if (m.type === 'progress') { setStep('classify'); setDetail(`${m.done} / ${m.total}`) }
-      else if (m.type === 'classified') { setCls(m); setStep('done'); setDetail(''); record(r, m); if (DEV) measureMemory('분석 완료 직후') }
-      else if (m.type === 'error') { setError(m.message); setStep('done') }
+      else if (m.type === 'classified') { setCls(m); setStep('done'); setDetail(''); record(r, m); w.terminate(); if (DEV) measureMemory('분석 완료 직후') } // 임베딩·모델 메모리 회수
+      else if (m.type === 'error') { setError(m.message); setStep('done'); w.terminate() }
     }
     w.postMessage({ type: 'classify', model: DEFAULT_MODEL, device: DEVICE, texts, inputs })
   }
@@ -261,19 +261,20 @@ export default function App() {
                 .sort((a, b) => (a.grade === b.grade ? b.similarity - a.similarity : (a.grade === 'high' ? -1 : b.grade === 'high' ? 1 : a.grade === 'medium' ? -1 : 1)))
                 .slice(0, 20)
                 .map((c) => (
-                  <div className="cand" key={c.messageId}>
-                    <div className="meta">
+                  // 기본은 한 줄 요약만. 펼쳐야 앞/뒤 발화가 보인다(원문은 이 화면에만).
+                  <details className="cand" key={c.messageId}>
+                    <summary className="meta">
                       <span className={`grade-${c.grade}`}>{c.grade === 'high' ? '높음' : c.grade === 'medium' ? '중간' : '낮음'}</span>
                       <span>{titleOf(c.conversationId)}</span>
-                      <span>유사도 {c.similarity.toFixed(2)}</span>
+                      <span>{textOf(c.messageId).slice(0, 40).replace(/\s+/g, ' ')}{textOf(c.messageId).length > 40 ? '…' : ''}</span>
                       {c.repeatMarker && <span>반복 표지</span>}
                       {c.complaintMarker && <span>항의 표현</span>}
-                      {!c.responseBetween && <span>사이에 응답 없음</span>}
                       {c.gapMinutes != null && <span>{c.gapMinutes < 60 ? `${Math.round(c.gapMinutes)}분 뒤` : `${Math.round(c.gapMinutes / 60)}시간 뒤`}</span>}
-                    </div>
+                    </summary>
+                    <p className="detail">유사도 {c.similarity.toFixed(2)}{!c.responseBetween && ' · 사이에 응답 없음'}</p>
                     <blockquote>{textOf(c.priorMessageId)}</blockquote>
                     <blockquote className="now">{textOf(c.messageId)}</blockquote>
-                  </div>
+                  </details>
                 ))}
             </>
           )}
