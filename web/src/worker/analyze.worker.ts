@@ -1,6 +1,6 @@
 import { Unzip, UnzipInflate } from 'fflate'
 import { parseConversationsJson, PARSER_VERSION } from '../parser/chatgpt.ts'
-import { ClaudeCodeSessionBuilder } from '../parser/claudeCode.ts'
+import { ClaudeCodeSessionBuilder, dedupeForkedSessions } from '../parser/claudeCode.ts'
 import { NORMALIZER_VERSION, normalizeConversations, normalizeStats, type NormalizeStats, type Utterance } from '../parser/normalize.ts'
 import { basicStats, type BasicStats } from '../parser/stats.ts'
 import type { Conversation, ParseError } from '../parser/types.ts'
@@ -83,6 +83,7 @@ self.onmessage = async (e: MessageEvent<WorkerIn>) => {
     const out = { names: [] as string[], conversations: [] as Conversation[], errors: [] as ParseError[] }
     for (const f of e.data.files) await readZip(f, out, post)
     if (out.names.length === 0) throw new Error('zip 안에 conversations*.json(앱 내보내기)이나 *.jsonl(Claude Code 세션)이 없음')
+    out.conversations = dedupeForkedSessions(out.conversations)
     const utterances = normalizeConversations(out.conversations)
     setAuditProbes(utterances.map((u) => u.text))
     post({ type: 'progress', stage: 'normalize', done: 1, total: 1 })

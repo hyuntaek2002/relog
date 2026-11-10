@@ -281,3 +281,38 @@ console.log('ledger ok')
   const noTitle = parseClaudeCodeSession([lines[1]].join('\n'), 'y.jsonl'); assert.equal(noTitle.title, 'demo (Claude Code)')
   console.log('claude code ok')
 }
+
+// 코딩 세부 분류(대화 단위 키워드)와 Claude Code 메시지 코딩 고정
+{
+  const { codingSubtype, pinCodeToCoding, subByConversation } = await import('../web/src/classify/codingSub.ts')
+  const { codingSubPlugin } = await import('../web/src/recommend/taskPluginRules.ts')
+  const conv = (id, client, title, texts, tools = []) => ({ id, platform: 'claude', client, title, createdAt: null, toolNames: tools, turns: texts.map((text, i) => ({ idx: i, role: 'user', text, createdAt: null, messageId: id + ':' + i, tokenEstimate: 1, hasAttachment: false })) })
+  const game = conv('g', 'code', 'minigame (Claude Code)', ['유니티에서 프리팹이 안 보여', '스프라이트 애니메이션 고쳐줘', '캐릭터 점프 구현'])
+  const web = conv('w', 'code', 'relog', ['React 컴포넌트 버튼 레이아웃 고쳐', 'css 정렬이 이상해', '화면에 표가 안 보여'])
+  const vague = conv('v', 'code', 'x', ['이거 고쳐', '다시 해봐'])
+  const app = conv('a', undefined, '글쓰기', ['이 문단 교정해줘'])
+  assert.equal(codingSubtype(game), 'game'); assert.equal(codingSubtype(web), 'web'); assert.equal(codingSubtype(vague), 'other', '키워드 2개 미만은 기타')
+  const okUtts = [{ conversationId: 'g', messageId: 'g:0' }, { conversationId: 'a', messageId: 'a:0' }]
+  const pinned = pinCodeToCoding([{ type: 'writing', score: 0.9 }, { type: 'writing', score: 0.9 }], okUtts, [game, app])
+  assert.deepEqual(pinned.map((p) => p.type), ['coding', 'writing'], 'Code 세션만 코딩으로 고정')
+  const subs = subByConversation([game, web, vague, app]); assert.deepEqual([subs.g, subs.w, subs.v], ['game', 'web', 'other'])
+  assert.equal(codingSubPlugin('game', 25).pick.name, 'Unity'); assert.equal(codingSubPlugin('game', 5), null, '기준 미만'); assert.equal(codingSubPlugin('server', 100), null, '정해진 플러그인 없음')
+  console.log('coding sub ok')
+}
+
+// 갈라진 세션: 같은 메시지 uuid는 턴이 많은 세션에만 남긴다
+{
+  const { dedupeForkedSessions } = await import('../web/src/parser/claudeCode.ts')
+  const T = (id, role, text) => ({ idx: 0, role, text, createdAt: null, messageId: id, tokenEstimate: 1, hasAttachment: false })
+  const short = { id: 's', platform: 'claude', client: 'code', title: '', createdAt: null, toolNames: [], turns: [T('m1', 'user', 'a'), T('r1', 'assistant', 'b')] }
+  const long = { id: 'l', platform: 'claude', client: 'code', title: '', createdAt: null, toolNames: [], turns: [T('m1', 'user', 'a'), T('r1', 'assistant', 'b'), T('m2', 'user', 'c')] }
+  const app = { id: 'p', platform: 'claude', title: '', createdAt: null, toolNames: [], turns: [T('m1', 'user', 'a')] }
+  const out = dedupeForkedSessions([short, long, app])
+  assert.deepEqual(out.map((c) => c.id), ['l', 'p'], '사람 입력이 안 남은 짧은 세션은 제거, 앱 대화는 손대지 않음')
+  assert.equal(out[0].turns.length, 3, "중복을 가져간 쪽은 그대로")
+  const mid = { id: "m", platform: "claude", client: "code", title: "", createdAt: null, toolNames: [], turns: [T("m1", "user", "a"), T("r1", "assistant", "b"), T("m3", "user", "d")] }
+  const long2 = { ...long, turns: [...long.turns, T("r2", "assistant", "e")] }
+  const out2 = dedupeForkedSessions([mid, long2])
+  assert.deepEqual(out2.find((c) => c.id === "m").turns.map((t) => t.messageId + ":" + t.idx), ["r1:0", "m3:1"], "겹친 메시지만 빠지고 idx 재부여")
+  console.log('fork dedupe ok')
+}

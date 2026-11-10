@@ -1,4 +1,5 @@
 import type { Prediction } from '../classify/classifier.ts'
+import type { CodingSub } from '../classify/codingSub.ts'
 import type { Candidate, DetectSummary } from '../detect/detector.ts'
 import type { Utterance } from '../parser/normalize.ts'
 import type { BasicStats } from '../parser/stats.ts'
@@ -16,6 +17,7 @@ export interface UsageSnapshot {
   longConversationShare: number
   avgTurnsPerConversation: number
   codeShare: number
+  codingSub: Partial<Record<CodingSub, number>> // 코딩으로 분류된 내 메시지의 세부(대화 단위 판정) 수
   hourHistogram: number[]
   restatement: {
     high: number
@@ -40,13 +42,17 @@ export function buildSnapshot(args: {
   preds: Prediction[]
   candidates: Candidate[]
   detect: DetectSummary
+  subByConversation?: Record<string, CodingSub>
 }): UsageSnapshot {
-  const { platform, stats, utterances, okIds, preds, candidates, detect } = args
+  const { platform, stats, utterances, okIds, preds, candidates, detect, subByConversation = {} } = args
+  const convById = new Map(utterances.map((u) => [u.messageId, u.conversationId]))
+  const codingSub: Partial<Record<CodingSub, number>> = {}
   const taskCounts = Object.fromEntries(SNAPSHOT_TASKS.map((t) => [t, 0])) as Record<SnapshotTask, number>
   const typeById = new Map<string, SnapshotTask>()
   preds.forEach((p, i) => {
     const t = TASK_MAP[p.type]
     if (t) { taskCounts[t]++; typeById.set(okIds[i], t) }
+    if (t === 'coding') { const s = subByConversation[convById.get(okIds[i]) ?? ''] ?? 'other'; codingSub[s] = (codingSub[s] ?? 0) + 1 }
   })
   const classified = Object.values(taskCounts).reduce((a, b) => a + b, 0)
   const taskShare = Object.fromEntries(SNAPSHOT_TASKS.map((t) => [t, classified ? taskCounts[t] / classified : 0])) as Record<SnapshotTask, number>
@@ -75,6 +81,7 @@ export function buildSnapshot(args: {
     longConversationShare: convsWithTurns ? stats.longConversations / convsWithTurns : 0,
     avgTurnsPerConversation: convsWithTurns ? stats.userTurns / convsWithTurns : 0,
     codeShare: ok ? withCode / ok : 0,
+    codingSub,
     hourHistogram,
     restatement: {
       high: detect.byGrade.high,

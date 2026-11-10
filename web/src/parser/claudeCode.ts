@@ -104,6 +104,23 @@ export class ClaudeCodeSessionBuilder {
   }
 }
 
+// 세션을 이어 가거나 갈라내면 새 sessionId 파일에 앞 메시지(같은 uuid)가 복사된다(실측: 두 세션이 내 메시지 34개 공유).
+// 같은 messageId는 턴이 더 많은 세션에만 남기고 나머지에서 뺀다. 사람 입력이 남지 않은 세션은 버린다.
+export function dedupeForkedSessions(convs: Conversation[]): Conversation[] {
+  const owner = new Map<string, Conversation>()
+  for (const c of convs) {
+    if (c.client !== 'code') continue
+    for (const t of c.turns) if (t.role === 'user') { const o = owner.get(t.messageId); if (!o || o.turns.length < c.turns.length) owner.set(t.messageId, c) }
+  }
+  return convs
+    .map((c) => {
+      if (c.client !== 'code') return c
+      const turns = c.turns.filter((t) => t.role !== 'user' || owner.get(t.messageId) === c)
+      return turns.length === c.turns.length ? c : { ...c, turns: turns.map((t, idx) => ({ ...t, idx })) }
+    })
+    .filter((c) => c.client !== 'code' || c.turns.some((t) => t.role === 'user'))
+}
+
 export function parseClaudeCodeSession(text: string, fileName: string): Conversation | null {
   const b = new ClaudeCodeSessionBuilder(fileName.replace(/^.*[\\/]/, '').replace(/\.jsonl$/i, ''))
   for (const line of text.split('\n')) b.pushLine(line)
