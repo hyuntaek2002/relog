@@ -53,7 +53,7 @@ export default function PairLabeler({ pairs, utterances, conversations }: { pair
         {i + 1} / {items.length} · 라벨 {done}개 · 이 영역을 클릭한 뒤 1 반복 지시, 2 정상 후속, 3 재전송/수정, 0 모름, ←→ 이동
         <button onClick={exportCsv}>CSV 내보내기</button>
       </p>
-      <p className="detail">{titleById.get(cur.conversationId) || '(제목 없음)'} · 유사도 {cur.similarity.toFixed(2)} · {cur.gapMinutes != null ? (cur.gapMinutes < 60 ? `${Math.round(cur.gapMinutes)}분 뒤` : `${Math.round(cur.gapMinutes / 60)}시간 뒤`) : '시각 없음'}{cur.responseBetween ? '' : ' · 사이에 응답 없음'}</p>
+      <p className="detail">{titleById.get(cur.conversationId) || '(제목 없음)'} · 비슷한 정도 {cur.similarity.toFixed(2)} · {cur.gapMinutes != null ? (cur.gapMinutes < 60 ? `${Math.round(cur.gapMinutes)}분 뒤` : `${Math.round(cur.gapMinutes / 60)}시간 뒤`) : '시각 없음'}{cur.responseBetween ? '' : ' · 사이에 응답 없음'}</p>
       <blockquote className="prev">{(textById.get(cur.priorMessageId) ?? '').slice(0, 600)}</blockquote>
       <blockquote className="cur">{(textById.get(cur.messageId) ?? '').slice(0, 600)}</blockquote>
       <div className="choices">
@@ -61,7 +61,7 @@ export default function PairLabeler({ pairs, utterances, conversations }: { pair
           <button key={l} className={labels[cur.messageId] === l ? 'on' : ''} onClick={() => set(l)}>{k} {name}</button>
         ))}
       </div>
-      <p className="detail">기준: 앞 발화에서 이미 말한 지시·정보를 다시 말했으면 '반복 지시'. 새 요구·같은 주제의 다른 요청이면 '정상 후속'. 몇 분 안에 거의 같은 글을 다시 보냈으면 '재전송/수정'.</p>
+      <p className="detail">기준: 앞 메시지에서 이미 말한 지시·정보를 다시 말했으면 '반복 지시'. 새 요구·같은 주제의 다른 요청이면 '정상 후속'. 몇 분 안에 거의 같은 글을 다시 보냈으면 '재전송/수정'.</p>
     </div>
   )
 }

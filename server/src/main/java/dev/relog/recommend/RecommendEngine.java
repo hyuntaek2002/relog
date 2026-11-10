@@ -97,13 +97,13 @@ public final class RecommendEngine {
         var perTaskTop = r.perTask().entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
         java.util.function.Predicate<String> hit = prefix -> sc.problemHits().stream().anyMatch(h -> h.startsWith(prefix));
         if (hit.test("다시 말한 지시") && perTaskTop != null && perTaskTop.getValue() >= 3)
-            return TASK_LABEL.getOrDefault(perTaskTop.getKey(), perTaskTop.getKey()) + " 대화에서 같은 지시를 " + perTaskTop.getValue() + "번 다시 말했어요.";
-        if (hit.test("다시 말한 지시")) return "같은 지시를 다시 말한 메시지가 " + (r.high() + r.mid()) + "건이에요.";
-        if (hit.test("말이 안 통한")) return "AI가 요지를 놓친 듯한 메시지가 " + r.misunderstanding() + "건이에요.";
-        if (hit.test("긴 대화 비율")) return "대화 " + Math.round(s.longConversationShare() * 100) + "%가 메시지 10개를 넘는 긴 대화예요.";
-        if (hit.test("비슷한 질문")) return "비슷한 질문을 " + r.repeatedQuestion() + "번 다시 했어요.";
+            return TASK_LABEL.getOrDefault(perTaskTop.getKey(), perTaskTop.getKey()) + " 대화에서 같은 지시를 " + perTaskTop.getValue() + "번 다시 말했습니다.";
+        if (hit.test("다시 말한 지시")) return "같은 지시를 다시 말한 메시지가 " + (r.high() + r.mid()) + "건입니다.";
+        if (hit.test("말이 안 통한")) return "AI가 요지를 놓친 듯한 메시지가 " + r.misunderstanding() + "건입니다.";
+        if (hit.test("긴 대화 비율")) return "대화 " + Math.round(s.longConversationShare() * 100) + "%가 메시지 10개를 넘는 긴 대화입니다.";
+        if (hit.test("비슷한 질문")) return "비슷한 질문을 " + r.repeatedQuestion() + "번 다시 했습니다.";
         var top = s.taskShare().entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
-        return top != null && top.getValue() > 0 ? TASK_LABEL.getOrDefault(top.getKey(), top.getKey()) + " 대화가 " + Math.round(top.getValue() * 100) + "%로 가장 많아요." : "최근 대화 패턴 기준 추천이에요.";
+        return top != null && top.getValue() > 0 ? TASK_LABEL.getOrDefault(top.getKey(), top.getKey()) + " 대화가 " + Math.round(top.getValue() * 100) + "%로 가장 많습니다." : "최근 대화 패턴 기준 추천입니다.";
     }
 
     /** howTo의 {plugin} 자리에 다시 말한 지시가 가장 몰린 대화 종류의 항목 이름을 넣는다(웹 fillHow와 동일). */

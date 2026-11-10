@@ -217,3 +217,21 @@ console.log('ledger ok')
   assert.equal(c.rows[0].task, 'coding', '발화 많은 순')
   console.log('compare ok')
 }
+
+// 결과 파일 왕복 + 두 묶음 비교
+{
+  const { compareSides } = await import('../web/src/store/ledger.ts')
+  const { buildReport, parseReport, REPORT_FORMAT } = await import('../web/src/store/report.ts')
+  const wk = (start, taskCounts, perTask, medium = 0) => ({ periodStart: start, periodEnd: start + 7 * 86400000, versionKey: 'v', platform: 'claude', userTurnCount: 0, okCount: 0, judgeable: 0, conversationCount: 0, longConversationCount: 0, codeCount: 0, taskCounts, restatement: { high: 0, medium, low: 0, tokenEstimate: 0, ratio: 0, perTask, repeatedQuestion: 0, misunderstanding: 0 }, hourHistogram: [] })
+  const snapshot = { platform: 'claude', taskShare: {}, taskCounts: {}, userTurnCount: 1, conversationCount: 1, longConversationShare: 0, avgTurnsPerConversation: 1, codeShare: 0, hourHistogram: [1, 2], restatement: { high: 0, mid: 0, low: 0, misunderstanding: 0, repeatedQuestion: 0, perTask: {}, tokenEstimate: 0, ratio: 0 } }
+  const version = { parserVersion: 'p', normalizerVersion: 'n', modelVersion: 'm', classifierVersion: 'c', detectorVersion: 'd', catalogVersion: 'k', recommendationRuleVersion: 'r' }
+  const oldWeeks = [wk(0, { coding: 10, writing: 10 }, { coding: 4, writing: 1 }, 5)]
+  const rep = parseReport(JSON.stringify(buildReport(snapshot, oldWeeks, version)))
+  assert.equal(rep.format, REPORT_FORMAT); assert.equal(rep.snapshot.hourHistogram, undefined, '시간대 분포는 넣지 않음'); assert.equal(rep.weeks.length, 1)
+  assert.throws(() => parseReport('{"format":"other"}'), /결과 파일이 아닙니다/)
+  assert.throws(() => parseReport('not json'), /JSON/)
+  const c = compareSides(rep.weeks, [wk(7 * 86400000, { coding: 10, writing: 10 }, { coding: 1, writing: 3 }, 4)])
+  assert.equal(c.rows.find((r) => r.task === 'coding').delta, -30, '코딩 줄어듦')
+  assert.equal(c.rows.find((r) => r.task === 'writing').delta, 20, '글쓰기 늘어남')
+  console.log('report ok')
+}

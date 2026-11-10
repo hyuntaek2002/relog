@@ -124,13 +124,13 @@ function summaryOf(snapshot: UsageSnapshot, s: ScoredItem): string {
   const r = snapshot.restatement
   const perTaskTop = (Object.entries(r.perTask) as [SnapshotTask, number][]).sort((a, b) => b[1] - a[1])[0]
   const hit = (prefix: string) => s.problemHits.find((h) => h.startsWith(prefix))
-  if (hit('다시 말한 지시') && perTaskTop && perTaskTop[1] >= 3) return `${TASK_LABEL[perTaskTop[0]]} 대화에서 같은 지시를 ${perTaskTop[1]}번 다시 말했어요.`
-  if (hit('다시 말한 지시')) return `같은 지시를 다시 말한 메시지가 ${r.high + r.mid}건이에요.`
-  if (hit('말이 안 통한')) return `AI가 요지를 놓친 듯한 메시지가 ${r.misunderstanding}건이에요.`
-  if (hit('긴 대화 비율')) return `대화 ${Math.round(snapshot.longConversationShare * 100)}%가 메시지 10개를 넘는 긴 대화예요.`
-  if (hit('비슷한 질문')) return `비슷한 질문을 ${r.repeatedQuestion}번 다시 했어요.`
+  if (hit('다시 말한 지시') && perTaskTop && perTaskTop[1] >= 3) return `${TASK_LABEL[perTaskTop[0]]} 대화에서 같은 지시를 ${perTaskTop[1]}번 다시 말했습니다.`
+  if (hit('다시 말한 지시')) return `같은 지시를 다시 말한 메시지가 ${r.high + r.mid}건입니다.`
+  if (hit('말이 안 통한')) return `AI가 요지를 놓친 듯한 메시지가 ${r.misunderstanding}건입니다.`
+  if (hit('긴 대화 비율')) return `대화 ${Math.round(snapshot.longConversationShare * 100)}%가 메시지 10개를 넘는 긴 대화입니다.`
+  if (hit('비슷한 질문')) return `비슷한 질문을 ${r.repeatedQuestion}번 다시 했습니다.`
   const top = (Object.entries(snapshot.taskShare) as [SnapshotTask, number][]).sort((a, b) => b[1] - a[1])[0]
-  return top && top[1] > 0 ? `${TASK_LABEL[top[0]]} 대화가 ${Math.round(top[1] * 100)}%로 가장 많아요.` : '최근 대화 패턴 기준 추천이에요.'
+  return top && top[1] > 0 ? `${TASK_LABEL[top[0]]} 대화가 ${Math.round(top[1] * 100)}%로 가장 많습니다.` : '최근 대화 패턴 기준 추천입니다.'
 }
 
 function why(snapshot: UsageSnapshot, s: ScoredItem): string {

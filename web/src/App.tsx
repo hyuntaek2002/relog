@@ -11,9 +11,8 @@ import AbMode from './recommend/AbMode'
 import RecommendDev from './recommend/RecommendDev'
 import { buildSnapshot } from './recommend/snapshot'
 import { CATALOG_VERSION, RECOMMENDATION_RULE_VERSION, recommend, type Feedback, type FeedbackMap, type Platform, type UserContext } from './recommend/recommend'
-import Trend, { StorageChoice, loadStorageMode, STORAGE_MODE_KEY, type StorageMode } from './store/Trend'
+import Trend, { ReportFile, StorageChoice, loadStorageMode, STORAGE_MODE_KEY, type StorageMode } from './store/Trend'
 import { aggregateWeekly, buildLedger, versionKey, type AnalysisVersion, type LedgerEntry, type PeriodSnapshot } from './store/ledger'
-import SyncPanel from './store/SyncPanel'
 import { clearAll, getLedger, putLedger } from './store/db'
 import { peekAuditRecords, setAuditProbes, type NetRecord } from './worker/netaudit'
 
@@ -30,6 +29,8 @@ const AB = new URLSearchParams(location.search).has('ab')
 
 // 화면 용어: 등급은 내부 high/medium/low, 사용자에겐 확실함/가능성 있음/약함
 const GRADE_LABEL = { high: '확실함', medium: '가능성 있음', low: '약함' } as const
+// 탐지기가 후보에서 뺀 이유(detector.ts exclusion) → 쉬운 말
+const EXCLUSION_LABEL: Record<string, string> = { below_null: '기준 미만', generic: '범용 문구(응, 계속 등)', resend: '몇 분 안 재전송', not_instruction: '지시문 아님', chat_task: '잡담', attachment: '첨부 있음', stale: '하루 넘게 지남' }
 
 const fmtDate = (ms: number | null) => (ms == null ? '-' : new Date(ms).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' }))
 
@@ -83,7 +84,7 @@ export default function App() {
   const [storageMode, setStorageMode] = useState<StorageMode>(loadStorageMode)
   const [ledger, setLedger] = useState<LedgerEntry[]>([]) // 보관 모드면 IndexedDB 전체, 아니면 이번 분석분만
   const [weeks, setWeeks] = useState<PeriodSnapshot[]>([])
-  const [version, setVersion] = useState<AnalysisVersion | null>(null) // 이번 분석의 AnalysisVersion(동기화에 함께 보냄)
+  const [version, setVersion] = useState<AnalysisVersion | null>(null) // 이번 분석의 AnalysisVersion(결과 파일에 함께 넣음)
   const [net, setNet] = useState<NetRecord[]>([]) // 네트워크 감사 기록(페이지 + 워커)
 
   // 보관 모드면 시작할 때 저장된 대장을 불러와 추이를 보여준다
@@ -314,13 +315,12 @@ export default function App() {
 
           <h2>변화</h2>
           <Trend weeks={weeks} />
+          {snapshot && version && <ReportFile snapshot={snapshot} weeks={weeks} version={version} />}
 
           <details>
-            <summary>보관 · 서버 동기화 · 자세한 숫자</summary>
+            <summary>보관 · 자세한 숫자</summary>
             <h2>보관 방식</h2>
             <StorageChoice mode={storageMode} storedCount={storageMode === 'local' ? ledger.length : 0} onMode={onStorageMode} onClear={onClear} />
-            <h2>서버 동기화 (선택)</h2>
-            <SyncPanel weeks={weeks} version={version} />
             {byType && preds && (
               <>
                 <h2>대화 종류 비율</h2>
@@ -356,6 +356,7 @@ export default function App() {
           {DEV && (
             <details className="devbox">
               <summary>개발자 패널 (?dev=1)</summary>
+              <p className="detail">주소에 ?dev=1을 붙였을 때만 보이는 영역입니다. 탐지·분류가 얼마나 맞는지 정답을 모으고(라벨링), 원문이 밖으로 나가지 않는지·메모리와 속도가 괜찮은지 재는 데 씁니다. 일반 사용자에게는 보이지 않습니다.</p>
               {snapshot && ctx && (
                 <>
                   <h2>개발: 추천 점수표</h2>
@@ -364,32 +365,38 @@ export default function App() {
               )}
               {cls && (
                 <>
-                  <h2>개발: 반복 후보 쌍 라벨링 (유사도 상위 100)</h2>
+                  <h2>개발: 다시 말한 지시 정답 찍기 (비슷한 정도 상위 100쌍)</h2>
+                  <p className="detail">탐지기가 "앞 메시지와 비슷하다"고 본 쌍을 비슷한 정도가 높은 순으로 100쌍 보여 줍니다. 위 회색 글이 앞 메시지, 아래가 다시 말한 것으로 의심되는 메시지입니다. 사람이 정답을 찍어 두면 탐지가 얼마나 맞는지(정밀도)를 eval/detect/eval_pairs.mjs로 계산할 수 있습니다. 같은 대화에서 여러 쌍이 나오면 그 대화가 여러 번 보입니다. CSV에는 대화·메시지 번호, 비슷한 정도, 정답만 들어가고 본문은 없습니다.</p>
                   <PairLabeler pairs={cls.pairs} utterances={result.utterances} conversations={result.conversations} />
                 </>
               )}
-              <h2>개발: 과업 라벨링</h2>
+              <h2>개발: 대화 종류 정답 찍기</h2>
+              <p className="detail">내 메시지 하나하나가 어떤 종류(코딩·글쓰기 등)인지 사람이 정답을 찍는 화면입니다. 정답이 쌓이면 자동 분류 A/B/C 세 방식 중 무엇이 가장 잘 맞는지 eval/classify/run_abc.mjs로 비교합니다. 목표 400개.</p>
               <Labeler utterances={result.utterances} conversations={result.conversations} />
-              <h2>개발: 분류·탐지</h2>
+              <h2>개발: 분류·탐지 내부 숫자</h2>
+              <p className="detail">비슷한 정도는 0~1이고 1에 가까울수록 앞 메시지와 같은 말입니다. 기준선은 "같은 대화 안에서 서로 떨어진 메시지끼리 보통 얼마나 비슷한가"이고, 그보다 높아야 다시 말한 지시로 봅니다. 뺀 메시지는 기준에 걸려 후보에서 제외된 수입니다.</p>
               {cls && (
                 <p className="detail">
-                  유사도 분포(판단 가능 발화 {cls.sims.length}개): {[0.5, 0.75, 0.9, 0.95, 0.98].map((q) => `p${q * 100}=${quantile(cls.sims, q).toFixed(3)}`).join(' ')}
-                  <br />귀무분포(같은 대화 비인접 {cls.nullSims.length}쌍): {[0.5, 0.9, 0.95, 0.99].map((q) => `p${q * 100}=${quantile(cls.nullSims, q).toFixed(3)}`).join(' ')} → 경계 {cls.detectSummary.nullThreshold.toFixed(3)}, 경계 이상 {cls.sims.filter((s) => s >= cls.detectSummary.nullThreshold).length}쌍
-                  <br />제외: {Object.entries(cls.detectSummary.excluded).map(([k, v]) => `${k} ${v}`).join(' · ')}
+                  비슷한 정도 분포(비교한 내 메시지 {cls.sims.length}개): {[0.5, 0.75, 0.9, 0.95, 0.98].map((q) => `p${q * 100}=${quantile(cls.sims, q).toFixed(3)}`).join(' ')}
+                  <br />기준선(같은 대화 안 떨어진 쌍 {cls.nullSims.length}개): {[0.5, 0.9, 0.95, 0.99].map((q) => `p${q * 100}=${quantile(cls.nullSims, q).toFixed(3)}`).join(' ')} → 기준 {cls.detectSummary.nullThreshold.toFixed(3)}, 기준 넘는 메시지 {cls.sims.filter((s) => s >= cls.detectSummary.nullThreshold).length}개
+                  <br />뺀 메시지: {Object.entries(cls.detectSummary.excluded).map(([k, v]) => `${EXCLUSION_LABEL[k] ?? k} ${v}`).join(' · ')}
                 </p>
               )}
               {cls && (
                 <p>
-                  방식: <button onClick={() => setMethod('knn')} disabled={method === 'knn'}>C k-NN</button>
-                  <button onClick={() => setMethod('centroid')} disabled={method === 'centroid'}>B 중심점</button>
-                  B·C 일치율 {Math.round(agree * 100)}%, 임베딩 {cls.embedMs}ms ({(cls.embedMs / cls.knn.length).toFixed(0)}ms/개), {DEVICE}
+                  대화 종류 분류 방식: <button onClick={() => setMethod('knn')} disabled={method === 'knn'}>C 가까운 예시 투표</button>
+                  <button onClick={() => setMethod('centroid')} disabled={method === 'centroid'}>B 종류별 평균과 비교</button>
+                  두 방식이 같은 답을 낸 비율 {Math.round(agree * 100)}%, 문장을 숫자로 바꾸는 데 {cls.embedMs}ms ({(cls.embedMs / cls.knn.length).toFixed(0)}ms/개), 계산 장치 {DEVICE}
                 </p>
               )}
               <h2>개발: 네트워크 감사</h2>
+              <p className="detail">분석하는 동안 이 페이지가 밖으로 보낸 요청 전부입니다. 모델 파일을 내려받는 요청만 있어야 하고, 본문을 실어 보낸 요청이 0건이어야 통과입니다. "원문 포함"은 요청 본문에 내 메시지 글귀가 들어 있는지 직접 대조한 결과입니다.</p>
               <NetAudit records={[...net, ...peekAuditRecords()]} />
               <h2>개발: 메모리</h2>
+              <p className="detail">이 탭이 쓰는 메모리입니다. 분석 중 모델을 올렸다가 끝나면 내리는데, 내린 뒤 메모리가 돌아오는지 보려고 둔 버튼입니다. 브라우저 제약으로 주 화면(JS heap)만 재고, 모델을 돌린 작업 스레드는 포함되지 않습니다.</p>
               <p><button onClick={() => measureMemory('수동')}>지금 측정</button></p>
-              <h2>개발: 임베딩 속도 (발화 100개)</h2>
+              <h2>개발: 모델별 속도 (내 메시지 100개)</h2>
+              <p className="detail">문장을 숫자로 바꾸는 모델 세 가지를 wasm(CPU)과 webgpu(그래픽카드)로 각각 돌려 100개 처리 시간을 잽니다. 어느 모델·장치를 기본으로 쓸지 정하려고 둔 버튼입니다.</p>
               {MODELS.map((m) => (
                 <p key={m}>{m}: <button onClick={() => runEmbed(m, 'wasm')}>wasm</button><button onClick={() => runEmbed(m, 'webgpu')}>webgpu</button></p>
               ))}

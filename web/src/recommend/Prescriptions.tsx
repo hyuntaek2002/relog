@@ -6,7 +6,8 @@ export const FEEDBACK_KEY = 'relog-feedback-v1'
 export const loadFeedback = (): FeedbackMap => { try { return JSON.parse(localStorage.getItem(FEEDBACK_KEY) ?? '{}') } catch { return {} } }
 export const saveFeedback = (f: FeedbackMap) => { try { localStorage.setItem(FEEDBACK_KEY, JSON.stringify(f)) } catch { /* 무시 */ } }
 
-const FB: [Feedback, string][] = [['helpful', '도움됨'], ['not_helpful', '아님'], ['already_using', '이미 씀']]
+// 피드백은 다음 추천 점수에 반영: 도움됨 +1, 아님 −2, 이미 씀은 그 항목을 뺀다
+const FB: [Feedback, string, string][] = [['helpful', '도움됨', '다음 추천에서 이 항목 점수를 올립니다'], ['not_helpful', '아님', '다음 추천에서 이 항목 점수를 내립니다'], ['already_using', '이미 씀', '이미 쓰는 기능이라 다음부터 추천에서 뺍니다']]
 const CATEGORY: Record<string, string> = { feature: '기능', plugin: '플러그인', connector: '연결', skill: '스킬', practice: '습관' }
 
 // "1) … 2) … 3) …" 형식의 30초 사용법을 단계 배열로
@@ -31,10 +32,10 @@ export default function Prescriptions({ items, feedback, onFeedback }: { items: 
           </ol>
           <p className="detail">{p.caveat}</p>
           <p className="actions">
-            {FB.map(([f, label]) => (
-              <button key={f} className={feedback[p.catalogId] === f ? 'on' : ''} onClick={() => onFeedback(p.catalogId, f)}>{label}</button>
+            {FB.map(([f, label, tip]) => (
+              <button key={f} title={tip} className={feedback[p.catalogId] === f ? 'on' : ''} onClick={() => onFeedback(p.catalogId, f)}>{label}</button>
             ))}
-            <button className="link" onClick={() => setOpen((o) => ({ ...o, [p.catalogId]: !o[p.catalogId] }))}>{open[p.catalogId] ? '근거 숨기기' : '왜 이 추천?'}</button>
+            <button className="link" onClick={() => setOpen((o) => ({ ...o, [p.catalogId]: !o[p.catalogId] }))}>{open[p.catalogId] ? '근거 닫기' : '왜 이걸 추천하나요?'}</button>
           </p>
           {open[p.catalogId] && (
             <div className="detail">

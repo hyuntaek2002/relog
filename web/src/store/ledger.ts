@@ -186,7 +186,11 @@ export interface TaskCompare {
 export function compareTasks(weeks: PeriodSnapshot[], recentWeeks = 2, minSamples = 5): TaskCompare {
   const sorted = [...weeks].sort((a, b) => a.periodStart - b.periodStart)
   const cut = Math.max(0, sorted.length - recentWeeks)
-  const before = sorted.slice(0, cut), after = sorted.slice(cut)
+  return compareSides(sorted.slice(0, cut), sorted.slice(cut), minSamples)
+}
+
+// 두 묶음(예: 예전 결과 파일의 주들 vs 지금 분석의 주들)을 그대로 이전/이후로 놓고 비교
+export function compareSides(before: PeriodSnapshot[], after: PeriodSnapshot[], minSamples = 5): TaskCompare {
   const sum = (ws: PeriodSnapshot[]) => {
     const ok: Record<string, number> = {}, flagged: Record<string, number> = {}
     let okAll = 0, flaggedAll = 0
