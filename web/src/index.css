@@ -93,3 +93,6 @@ td.up { color: #c0392b; }
 .rx-steps li { margin: 3px 0; }
 .rx .actions { margin-top: 8px; }
 .rx button.link { background: none; border: none; color: var(--accent); cursor: pointer; padding: 0 4px; }
+.task-plugins { padding-left: 18px; }
+.task-plugins li { margin: 6px 0; }
+.task-plugins .link { margin-left: 6px; }

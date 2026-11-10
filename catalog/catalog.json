@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "catalog-0.2.0",
+  "catalogVersion": "catalog-0.3.0",
   "verifiedNote": "verified=true 항목은 2026-11-03에 공식 도움말(help.openai.com / support.claude.com)에서 기능명·메뉴 경로·요금제를 대조했다. false 항목은 화면에 내보내지 않는다.",
   "items": [
     {
@@ -1208,6 +1208,191 @@
       "verified": false,
       "isPopularDefault": false,
       "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+    },
+    {
+      "id": "cl_plugin_active_memory",
+      "platform": "claude",
+      "name": "Active Memory 플러그인",
+      "category": "plugin",
+      "oneLiner": "대화가 길어져 새로 열 때, 지금까지 정한 규칙·수정 사항·숫자를 빠짐없이 다음 대화로 넘겨 줍니다.",
+      "howTo30s": "1) 왼쪽 아래 설정 → 왼쪽 사이드바 플러그인 → 탐색 탭에서 'Active Memory'를 찾아 + 추가를 누릅니다. 2) 긴 대화를 끝낼 때 '/amhandoff'라고 적어 인수인계 글을 받습니다. 3) 새 대화 첫 메시지에 그 글을 붙입니다.",
+      "requiresPlan": [
+        "pro",
+        "max",
+        "team"
+      ],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_plugin_active_memory"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 10,
+          "weight": 2
+        },
+        {
+          "signal": "longConversationShare",
+          "op": ">=",
+          "value": 0.4,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [],
+      "priority": 60,
+      "evidenceUrl": "https://github.com/klopyy/active-memory",
+      "evidenceNote": "Claude 앱 설정 → 플러그인 → 탐색 탭 실측 2026-11-10 (Claude 기록 카테고리, 설치 6K)",
+      "verifiedAt": "2026-11-10",
+      "verified": true,
+      "isPopularDefault": false,
+      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     }
-  ]
+  ],
+  "taskPlugins": {
+    "minMessages": 20,
+    "howTo": "1) 왼쪽 아래 설정 → 왼쪽 사이드바 플러그인 → 탐색 탭을 엽니다. 2) 검색창에 '{plugin}'을 입력해 + 추가를 누릅니다. 3) 다음 대화 첫 메시지에 '{plugin} 플러그인 써서'라고 한 번만 적습니다.",
+    "items": [
+      {
+        "task": "coding",
+        "pick": {
+          "name": "Engineering",
+          "kind": "plugin",
+          "maker": "Anthropic",
+          "installs": null,
+          "oneLiner": "코드 리뷰·아키텍처 결정·장애 대응 같은 개발 업무 방식을 묶어 둔 Anthropic 제공 플러그인입니다.",
+          "evidenceUrl": "https://github.com/anthropics/knowledge-work-plugins"
+        },
+        "alt": {
+          "name": "Superpowers",
+          "kind": "plugin",
+          "maker": "obra",
+          "installs": "136.6K",
+          "oneLiner": "TDD·디버깅·협업 패턴 스킬 모음입니다. Claude Code에서 코딩할 때 특히 맞습니다.",
+          "evidenceUrl": "https://github.com/obra/superpowers"
+        },
+        "evidenceNote": "Claude 앱 설정 → 플러그인 → 탐색 탭 실측 2026-11-10"
+      },
+      {
+        "task": "writing",
+        "pick": {
+          "name": "Humanizer",
+          "kind": "plugin",
+          "maker": "blader",
+          "installs": "38.8K",
+          "oneLiner": "AI 티가 나는 문장을 뜻은 그대로 두고 사람이 쓴 글처럼 고칩니다.",
+          "evidenceUrl": "https://github.com/blader/humanizer"
+        },
+        "alt": {
+          "name": "Writing Desk",
+          "kind": "plugin",
+          "maker": "najikay",
+          "installs": "1.6K",
+          "oneLiner": "고친 부분을 변경표로 보여 주고, 내 요구 조건에 맞는지 검토합니다. 지어내지 않는 것이 원칙입니다.",
+          "evidenceUrl": "https://github.com/najikay/claude-writing-desk"
+        },
+        "evidenceNote": "Claude 앱 설정 → 플러그인 → 탐색 탭 실측 2026-11-10"
+      },
+      {
+        "task": "learning",
+        "pick": {
+          "name": "Study Desk",
+          "kind": "plugin",
+          "maker": "najikay",
+          "installs": "6.2K",
+          "oneLiner": "내 노트·슬라이드·교재에서만 플래시카드·연습 문제·모의시험을 만듭니다.",
+          "evidenceUrl": "https://github.com/najikay/claude-study-desk"
+        },
+        "alt": {
+          "name": "learn",
+          "kind": "plugin",
+          "maker": "Anthropic",
+          "installs": null,
+          "oneLiner": "개념을 이해하고 싶을 때 설명·비유·퀴즈로 가르치는 Anthropic 제작 플러그인입니다. 같은 이름의 다른 플러그인이 있으니 \"제작: Anthropic\"을 확인하세요.",
+          "evidenceUrl": ""
+        },
+        "evidenceNote": "Claude 앱 설정 → 플러그인 → 탐색 탭 실측 2026-11-10 (새 플러그인 목록)"
+      },
+      {
+        "task": "workdoc",
+        "pick": {
+          "name": "doc-coauthoring",
+          "kind": "plugin",
+          "maker": "Anthropic",
+          "installs": null,
+          "oneLiner": "문서를 함께 쓰는 방식입니다. 구조 잡기 → 초안 → 검토 순서로 진행해 매번 형식을 설명하지 않아도 됩니다.",
+          "evidenceUrl": ""
+        },
+        "alt": {
+          "name": "PDF Viewer",
+          "kind": "plugin",
+          "maker": "Anthropic",
+          "installs": "1.8M",
+          "oneLiner": "PDF를 보면서 주석·서식 채우기·서명을 하고 내려받습니다.",
+          "evidenceUrl": "https://github.com/anthropics/knowledge-work-plugins"
+        },
+        "evidenceNote": "사용자 탐색 탭 캡처 2026-11-10"
+      },
+      {
+        "task": "search",
+        "pick": {
+          "name": "Exa Deep Research",
+          "kind": "plugin",
+          "maker": "exa-labs",
+          "installs": "119.7K",
+          "oneLiner": "웹 검색, 본문 수집, 여러 단계 조사를 한 번에 합니다.",
+          "evidenceUrl": "https://github.com/exa-labs/exa-mcp-server"
+        },
+        "alt": {
+          "name": "Research Desk",
+          "kind": "plugin",
+          "maker": "najikay",
+          "installs": "10.7K",
+          "oneLiner": "참고문헌이 실제로 있는지 확인하고, 논문을 비교·정리합니다.",
+          "evidenceUrl": "https://github.com/najikay/claude-research-skills"
+        },
+        "evidenceNote": "Claude 앱 설정 → 플러그인 → 탐색 탭 실측 2026-11-10"
+      },
+      {
+        "task": "ideation",
+        "pick": {
+          "name": "Product Management",
+          "kind": "plugin",
+          "maker": "Anthropic",
+          "installs": "1.8M",
+          "oneLiner": "기능 명세, 로드맵, 사용자 조사 정리를 한 틀로 진행합니다.",
+          "evidenceUrl": "https://github.com/anthropics/knowledge-work-plugins"
+        },
+        "alt": {
+          "name": "strategy-frameworks",
+          "kind": "plugin",
+          "maker": "ironyjk",
+          "installs": "4.7K",
+          "oneLiner": "47개 전략 프레임워크 중 상황에 맞는 것을 골라 적용합니다.",
+          "evidenceUrl": "https://github.com/ironyjk/strategy-frameworks"
+        },
+        "evidenceNote": "Claude 앱 설정 → 플러그인 → 탐색 탭 실측 2026-11-10"
+      },
+      {
+        "task": "translation",
+        "pick": {
+          "name": "DeepL",
+          "kind": "plugin",
+          "maker": "DeepL",
+          "installs": null,
+          "oneLiner": "DeepL로 번역·바꿔 쓰기·교정을 합니다. DeepL 계정 연결이 필요합니다.",
+          "evidenceUrl": "https://github.com/deepl/claude-plugin"
+        },
+        "alt": null,
+        "evidenceNote": "Claude 앱 설정 → 플러그인 → 탐색 탭 실측 2026-11-10 (검색 'translat')"
+      },
+      {
+        "task": "counseling",
+        "pick": null,
+        "alt": null,
+        "evidenceNote": "Claude 앱 설정 → 플러그인 → 탐색 탭 실측 2026-11-10 57개 카테고리 중 상담·대화용 없음"
+      }
+    ]
+  }
 }

@@ -235,3 +235,18 @@ console.log('ledger ok')
   assert.equal(c.rows.find((r) => r.task === 'writing').delta, 20, '글쓰기 늘어남')
   console.log('report ok')
 }
+
+// 대화 종류별 플러그인: 기준 미만은 데이터 부족, 상담·대화는 맞는 플러그인 없음
+{
+  const { resolveTaskPlugins, TASK_PLUGIN_MIN_MESSAGES } = await import('../web/src/recommend/taskPluginRules.ts')
+  const rows = resolveTaskPlugins({ taskCounts: { coding: 36, writing: 118, learning: 27, workdoc: 90, search: 5, ideation: 50, translation: 14, counseling: 153 }, taskShare: { coding: 0.07, writing: 0.24, learning: 0.05, workdoc: 0.18, search: 0.01, ideation: 0.1, translation: 0.03, counseling: 0.31 } })
+  assert.equal(rows.length, 8); assert.equal(rows[0].task, 'counseling', '많이 쓴 순')
+  assert.equal(rows[0].status, 'none')
+  const by = Object.fromEntries(rows.map((r) => [r.task, r]))
+  assert.equal(by.translation.status, 'insufficient'); assert.ok(14 < TASK_PLUGIN_MIN_MESSAGES)
+  assert.equal(by.search.status, 'insufficient')
+  assert.equal(by.writing.status, 'recommend'); assert.equal(by.writing.pick.name, 'Humanizer'); assert.ok(by.writing.how.includes("'Humanizer'"))
+  assert.ok(rows.filter((r) => r.status === 'recommend').every((r) => r.pick.evidenceUrl !== '' || r.pick.maker === 'Anthropic'), '근거 URL 또는 Anthropic 제공')
+  assert.ok(!rows.some((r) => /낭비|잊었|확실히 개선/.test((r.pick?.oneLiner ?? '') + (r.alt?.oneLiner ?? ''))))
+  console.log('taskPlugins ok')
+}

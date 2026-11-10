@@ -9,6 +9,7 @@ import { detectFeatures } from './recommend/detectFeatures'
 import Prescriptions, { loadFeedback, saveFeedback } from './recommend/Prescriptions'
 import AbMode from './recommend/AbMode'
 import RecommendDev from './recommend/RecommendDev'
+import TaskPlugins from './recommend/TaskPlugins'
 import { buildSnapshot } from './recommend/snapshot'
 import { CATALOG_VERSION, RECOMMENDATION_RULE_VERSION, recommend, type Feedback, type FeedbackMap, type Platform, type UserContext } from './recommend/recommend'
 import Trend, { ReportFile, StorageChoice, loadStorageMode, STORAGE_MODE_KEY, type StorageMode } from './store/Trend'
@@ -310,6 +311,12 @@ export default function App() {
             <>
               <h2>{AB ? '추천 평가' : '추천'}</h2>
               {AB ? <AbMode platform={platform} personalized={prescriptions} /> : <Prescriptions items={prescriptions} feedback={feedback} onFeedback={onFeedback} />}
+              {!AB && platform === 'claude' && (
+                <>
+                  <h3>대화 종류별 플러그인</h3>
+                  <TaskPlugins snapshot={snapshot} />
+                </>
+              )}
             </>
           )}
 
