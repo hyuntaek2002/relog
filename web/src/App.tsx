@@ -12,7 +12,8 @@ import RecommendDev from './recommend/RecommendDev'
 import { buildSnapshot } from './recommend/snapshot'
 import { CATALOG_VERSION, RECOMMENDATION_RULE_VERSION, recommend, type Feedback, type FeedbackMap, type Platform, type UserContext } from './recommend/recommend'
 import Trend, { loadStorageMode, STORAGE_MODE_KEY, type StorageMode } from './store/Trend'
-import { aggregateWeekly, buildLedger, versionKey, type LedgerEntry, type PeriodSnapshot } from './store/ledger'
+import { aggregateWeekly, buildLedger, versionKey, type AnalysisVersion, type LedgerEntry, type PeriodSnapshot } from './store/ledger'
+import SyncPanel from './store/SyncPanel'
 import { clearAll, getLedger, putLedger } from './store/db'
 import { peekAuditRecords, setAuditProbes, type NetRecord } from './worker/netaudit'
 
@@ -79,6 +80,7 @@ export default function App() {
   const [storageMode, setStorageMode] = useState<StorageMode>(loadStorageMode)
   const [ledger, setLedger] = useState<LedgerEntry[]>([]) // 보관 모드면 IndexedDB 전체, 아니면 이번 분석분만
   const [weeks, setWeeks] = useState<PeriodSnapshot[]>([])
+  const [version, setVersion] = useState<AnalysisVersion | null>(null) // 이번 분석의 AnalysisVersion(동기화에 함께 보냄)
   const [net, setNet] = useState<NetRecord[]>([]) // 네트워크 감사 기록(페이지 + 워커)
 
   // 보관 모드면 시작할 때 저장된 대장을 불러와 추이를 보여준다
@@ -144,6 +146,7 @@ export default function App() {
     }
     setLedger(all)
     setWeeks(aggregateWeekly(all, versionKey(version)))
+    setVersion(version)
   }
 
   // 메모리 실측(개발용). crossOriginIsolated일 때 워커까지 포함한 값, 아니면 메인 스레드 JS 힙만.
@@ -315,6 +318,8 @@ export default function App() {
 
           <h2>기간별 추이</h2>
           <Trend weeks={weeks} mode={storageMode} storedCount={storageMode === 'local' ? ledger.length : 0} onMode={onStorageMode} onClear={onClear} />
+          <h2>서버 동기화 (선택)</h2>
+          <SyncPanel weeks={weeks} version={version} />
 
           <details>
             <summary>자세히</summary>

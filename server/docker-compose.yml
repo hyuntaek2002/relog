@@ -1,0 +1,18 @@
+# 로컬 개발용 MySQL 8. 집계 숫자·카탈로그·추천·피드백만 저장한다(원문·임베딩 없음).
+# 실행: docker compose up -d   (server/ 폴더에서)
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: relog-mysql
+    environment:
+      MYSQL_DATABASE: relog
+      MYSQL_USER: relog
+      MYSQL_PASSWORD: relog-dev
+      MYSQL_ROOT_PASSWORD: root-dev
+    ports:
+      - "3307:3306"
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
+    volumes:
+      - relog-mysql:/var/lib/mysql
+volumes:
+  relog-mysql:

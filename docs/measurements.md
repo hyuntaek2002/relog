@@ -121,3 +121,11 @@
 - Pages Source=GitHub Actions, 워크플로 `pages.yml` 수동 실행으로 배포 성공. 정적 파일만, 서버 없음(로컬 전용 모드).
 - 배포 페이지에서 합성 Claude 형식 zip(4대화·21발화)으로 전 과정 확인: 모델 다운로드(huggingface.co 7건, jsdelivr 2건, 본문 0) → 분류 → 반복 의심 6건(높음 2: "아까 말했잖아", "~했잖아") → 처방 3개 → 네트워크 감사 통과. static-e5 표는 /relog/static-e5/에서 2.5초에 로드, 0.1ms/개.
 - 실제 내보내기 파일은 보안상 배포 페이지로 못 넘겨(개발 서버 CORS 완화 안 함) 합성 데이터로만 확인. 실제 파일 검증은 로컬 dev 서버에서.
+
+## 2026-11-10 서버 1차 (server/, Spring Boot 4.0.9 · Java 21 · MySQL 8 / dev는 H2)
+- 테이블 6개(user_account·usage_snapshot·restatement_stat·feature_catalog·recommendation·feedback). 텍스트 컬럼은 email·버전·카탈로그 JSON·열거형뿐.
+- API: 가입/로그인(불투명 토큰, 해시 저장) · 카탈로그(단일 원본 /catalog/catalog.json, verified만) · 스냅샷 upsert(키 user+periodStart+versionKey) · 추천(규칙 Java 포팅, 웹과 같은 테스트 통과) · 피드백 · 내 데이터 삭제.
+- H2 dev 프로필 스모크: 같은 기간 재전송 → updated 1 / created 0, 추천 3개(pr_pin_requirements·cl_project_instructions·cl_skills, 웹과 동일), "이미 씀" 피드백 후 재추천에서 제외, 삭제 후 401.
+- Spring Boot 3 → 4.0 변경: start.spring.io가 4.x만 제공, 3.5 OSS 지원 종료. Jackson 3(tools.jackson)로 작성.
+- 입력 검증 확인: 허용되지 않은 과업 키·모르는 텍스트 필드 → 400(역직렬화 거부), 음수·잘못된 플랫폼 → 400. /error 경로를 막아 두면 모든 예외가 401로 보이는 함정이 있어 permitAll로 열었다.
+- 미완: MySQL 실연동(Docker Desktop 꺼져 있어 H2로만 확인), 웹 동기화 패널의 실제 호출 확인, A/B 결과 서버 집계 조회.

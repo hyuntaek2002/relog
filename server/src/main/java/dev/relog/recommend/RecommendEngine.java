@@ -1,0 +1,126 @@
+package dev.relog.recommend;
+
+import dev.relog.catalog.CatalogItem;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * 처방 규칙(웹 recommend.ts와 같은 규칙, rec-0.1.0).
+ *  1) 필터: verified, 플랫폼, 요금제, 사용 중 기능
+ *  2) 점수 = Σ 문제 신호 weight×2 + Σ 과업 신호 weight + priority/100 + 피드백(도움됨 +1, 아님 −2)
+ *  3) 점수 > 0 & 신호 1개 이상, 상위 3개, category당 최대 2개. 문제 신호 없으면 '참고'.
+ */
+public final class RecommendEngine {
+    public static final String RULE_VERSION = "rec-0.1.0";
+    public static final String NO_RECOMMENDATION = "지금 데이터로는 추천할 항목이 없습니다. 분석 대화가 더 쌓이면 다시 시도하세요.";
+
+    /** 엔진 입력(웹 UsageSnapshot). 숫자만. */
+    public record Snapshot(String platform, Map<String, Double> taskShare, int userTurnCount, int conversationCount,
+                           double longConversationShare, double avgTurnsPerConversation, double codeShare, Restatement restatement) {}
+    public record Restatement(int high, int mid, int low, int misunderstanding, int repeatedQuestion, Map<String, Integer> perTask, int tokenEstimate, double ratio) {}
+    public record Context(String plan, Set<String> featuresInUse) {}
+    public record Scored(CatalogItem item, double score, List<String> problemHits, List<String> taskHits, String excluded) {}
+    public record Prescription(String catalogId, String name, String category, String grade, String why, String what, String how, String caveat, List<String> signalsUsed, double score) {}
+
+    private static final Map<String, String> TASK_LABEL = Map.of("coding", "코딩", "writing", "글쓰기·교정", "learning", "학습·설명", "workdoc", "업무 문서",
+            "search", "정보 탐색", "ideation", "아이디어·기획", "translation", "번역", "counseling", "상담·대화");
+    private static final Map<String, String> SIGNAL_LABEL = Map.of("restatement.high", "반복 지시 의심(높음)", "restatement.mid", "반복 지시 의심(중간)",
+            "restatement.low", "반복 지시 의심(낮음)", "restatement.misunderstanding", "이해 실패 의심", "restatement.repeatedQuestion", "반복 질문",
+            "longConversationShare", "긴 대화 비율", "avgTurnsPerConversation", "대화당 평균 발화", "codeShare", "코드 포함 비율");
+
+    private RecommendEngine() {}
+
+    static double read(Snapshot s, String path) {
+        return switch (path) {
+            case "restatement.high" -> s.restatement().high();
+            case "restatement.mid" -> s.restatement().mid();
+            case "restatement.low" -> s.restatement().low();
+            case "restatement.misunderstanding" -> s.restatement().misunderstanding();
+            case "restatement.repeatedQuestion" -> s.restatement().repeatedQuestion();
+            case "restatement.tokenEstimate" -> s.restatement().tokenEstimate();
+            case "restatement.ratio" -> s.restatement().ratio();
+            case "longConversationShare" -> s.longConversationShare();
+            case "avgTurnsPerConversation" -> s.avgTurnsPerConversation();
+            case "codeShare" -> s.codeShare();
+            case "userTurnCount" -> s.userTurnCount();
+            case "conversationCount" -> s.conversationCount();
+            default -> 0;
+        };
+    }
+
+    private static boolean cmp(double a, String op, double b) {
+        return switch (op) { case ">=" -> a >= b; case ">" -> a > b; case "<=" -> a <= b; case "<" -> a < b; default -> false; };
+    }
+
+    private static String fmtSignal(String path, double v) {
+        String label = SIGNAL_LABEL.getOrDefault(path, path);
+        if (path.equals("longConversationShare") || path.equals("codeShare")) return label + " " + Math.round(v * 100) + "%";
+        if (path.equals("avgTurnsPerConversation")) return label + " " + String.format(Locale.ROOT, "%.1f", v) + "개";
+        return label + " " + Math.round(v) + "건";
+    }
+
+    public static List<Scored> scoreAll(Snapshot s, Context ctx, Map<String, String> feedback, List<CatalogItem> items) {
+        Set<String> inUse = new HashSet<>(ctx.featuresInUse());
+        feedback.forEach((id, f) -> { if ("already_using".equals(f)) inUse.add(id); });
+        List<Scored> out = new ArrayList<>();
+        for (CatalogItem it : items) {
+            String excluded = null;
+            if (!it.verified()) excluded = "미검증";
+            else if (!it.platform().equals("both") && !it.platform().equals(s.platform())) excluded = "플랫폼 불일치";
+            else if (!it.requiresPlan().isEmpty() && !it.requiresPlan().contains(ctx.plan())) excluded = "요금제 미지원(" + String.join("/", it.requiresPlan()) + ")";
+            else if (inUse.contains(it.id()) || it.hardExclude().featuresInUse().stream().anyMatch(inUse::contains)) excluded = "이미 사용 중";
+
+            List<String> problemHits = new ArrayList<>(), taskHits = new ArrayList<>();
+            double score = 0;
+            for (var ps : it.problemSignals()) {
+                double v = read(s, ps.signal());
+                if (cmp(v, ps.op(), ps.value())) { score += ps.weight() * 2; problemHits.add(fmtSignal(ps.signal(), v)); }
+            }
+            for (var ts : it.taskSignals()) {
+                double share = s.taskShare().getOrDefault(ts.task(), 0.0);
+                if (share >= ts.minShare()) { score += ts.weight(); taskHits.add(TASK_LABEL.getOrDefault(ts.task(), ts.task()) + " " + Math.round(share * 100) + "%"); }
+            }
+            score += it.priority() / 100.0;
+            String fb = feedback.get(it.id());
+            if ("helpful".equals(fb)) score += 1; else if ("not_helpful".equals(fb)) score -= 2;
+            out.add(new Scored(it, score, problemHits, taskHits, excluded));
+        }
+        return out;
+    }
+
+    private static String why(Snapshot s, Scored sc) {
+        List<String> parts = new ArrayList<>();
+        var top = s.taskShare().entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
+        if (!sc.taskHits().isEmpty()) parts.add(String.join(", ", sc.taskHits()) + "으로 과업 비중이 큼");
+        else if (top != null && top.getValue() > 0) parts.add(TASK_LABEL.getOrDefault(top.getKey(), top.getKey()) + " " + Math.round(top.getValue() * 100) + "%가 가장 많음");
+        if (!sc.problemHits().isEmpty()) parts.add(String.join(", ", sc.problemHits()));
+        var perTaskTop = s.restatement().perTask().entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
+        if (sc.problemHits().stream().anyMatch(h -> h.startsWith("반복 지시")) && perTaskTop != null && perTaskTop.getValue() > 0)
+            parts.add("반복 의심은 " + TASK_LABEL.getOrDefault(perTaskTop.getKey(), perTaskTop.getKey()) + "에 " + perTaskTop.getValue() + "건으로 집중");
+        return String.join(". ", parts) + ".";
+    }
+
+    public static List<Prescription> recommend(Snapshot s, Context ctx, Map<String, String> feedback, List<CatalogItem> items) {
+        List<Scored> scored = scoreAll(s, ctx, feedback, items).stream()
+                .filter(x -> x.excluded() == null && x.score() > 0 && (!x.problemHits().isEmpty() || !x.taskHits().isEmpty()))
+                .sorted(Comparator.comparingDouble(Scored::score).reversed())
+                .collect(Collectors.toList());
+        List<Prescription> out = new ArrayList<>();
+        Map<String, Integer> perCategory = new HashMap<>();
+        for (Scored sc : scored) {
+            if (out.size() >= 3) break;
+            int n = perCategory.getOrDefault(sc.item().category(), 0);
+            if (n >= 2) continue;
+            perCategory.put(sc.item().category(), n + 1);
+            List<String> signals = new ArrayList<>(sc.problemHits()); signals.addAll(sc.taskHits());
+            out.add(new Prescription(sc.item().id(), sc.item().name(), sc.item().category(), sc.problemHits().isEmpty() ? "참고" : "핵심",
+                    why(s, sc), sc.item().oneLiner(), sc.item().howTo30s(), sc.item().caveat(), signals, Math.round(sc.score() * 100) / 100.0));
+        }
+        return out;
+    }
+
+    public static List<CatalogItem> genericDefaults(String platform, List<CatalogItem> items) {
+        return items.stream().filter(i -> i.verified() && i.isPopularDefault() && (i.platform().equals(platform) || i.platform().equals("both"))).limit(3).toList();
+    }
+}

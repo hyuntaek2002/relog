@@ -1,0 +1,40 @@
+# 기본: MySQL 8 (server/docker-compose.yml). 개발 중 MySQL이 없으면 `--spring.profiles.active=dev`로 H2 파일 DB.
+# 어느 프로필이든 저장되는 건 서비스 계정·집계 숫자·카탈로그·추천·피드백뿐이다. 원문·임베딩·플랫폼 계정 정보는 스키마에 없다.
+spring:
+  application:
+    name: relog-server
+  datasource:
+    url: jdbc:mysql://localhost:3307/relog?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: relog
+    password: relog-dev
+  jpa:
+    hibernate:
+      ddl-auto: update # ponytail: 프로토타입. 스키마가 굳으면 Flyway로 전환
+    open-in-view: false
+server:
+  port: 8080
+relog:
+  cors-origins: http://localhost:5173,https://hyuntaek2002.github.io
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:h2:file:./data/relog;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ''
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:relog;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ''
+    driver-class-name: org.h2.Driver

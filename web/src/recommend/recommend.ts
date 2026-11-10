@@ -1,4 +1,4 @@
-import catalog from './catalog.json' with { type: 'json' }
+import catalog from '../../../catalog/catalog.json' with { type: 'json' }
 import type { SnapshotTask, UsageSnapshot } from './snapshot.ts'
 
 // 처방 엔진. 순수 함수: (snapshot, context, catalog, feedback) → Prescription[]. 원문 없음, LLM 호출 없음.
