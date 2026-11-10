@@ -1,7 +1,7 @@
 import { parseClaudeConversation, type RawClaudeConversation } from './claude.ts'
 import type { Conversation, ParseError, ParseResult, Turn } from './types.ts'
 
-export const PARSER_VERSION = 'export-0.2.0'
+export const PARSER_VERSION = 'export-0.3.0' // 0.3.0: Claude Code 세션(.jsonl) 지원, zip 여러 개 병합
 
 // 상대 비교용 근사치. 한글 1자 ≈ 1.5, 그 외 4자 ≈ 1 토큰.
 export function estimateTokens(text: string): number {

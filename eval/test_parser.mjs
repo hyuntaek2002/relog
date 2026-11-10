@@ -250,3 +250,34 @@ console.log('ledger ok')
   assert.ok(!rows.some((r) => /낭비|잊었|확실히 개선/.test((r.pick?.oneLiner ?? '') + (r.alt?.oneLiner ?? ''))))
   console.log('taskPlugins ok')
 }
+
+// Claude Code 세션(.jsonl): 사람 입력만 user 턴, 도구 결과·메타·시스템 주입·하위 에이전트 제외, 답변 블록 병합, 도구 이름 수집
+{
+  const { parseClaudeCodeSession } = await import('../web/src/parser/claudeCode.ts')
+  const L = (o) => JSON.stringify(o)
+  const base = { sessionId: 'sess-1', cwd: String.raw`C:\Dev\demo`, userType: 'external', entrypoint: 'claude-desktop' }
+  const lines = [
+    L({ type: 'queue-operation', sessionId: 'sess-1' }),
+    L({ ...base, type: 'user', uuid: 'u1', timestamp: '2026-11-01T01:00:00Z', message: { role: 'user', content: '첫 요청입니다' } }),
+    L({ ...base, type: 'assistant', uuid: 'a1', timestamp: '2026-11-01T01:00:05Z', message: { role: 'assistant', content: [{ type: 'thinking', thinking: 'x' }, { type: 'text', text: '답변 1부' }] } }),
+    L({ ...base, type: 'assistant', uuid: 'a2', timestamp: '2026-11-01T01:00:06Z', message: { role: 'assistant', content: [{ type: 'tool_use', name: 'Bash', input: {} }] } }),
+    L({ ...base, type: 'user', uuid: 'u2', timestamp: '2026-11-01T01:00:07Z', message: { role: 'user', content: [{ type: 'tool_result', tool_use_id: 't', content: 'ls 결과' }] } }),
+    L({ ...base, type: 'assistant', uuid: 'a3', timestamp: '2026-11-01T01:00:08Z', message: { role: 'assistant', content: [{ type: 'text', text: '답변 2부' }, { type: 'tool_use', name: 'Edit', input: {} }] } }),
+    L({ ...base, type: 'user', uuid: 'u3', isMeta: true, timestamp: '2026-11-01T01:00:09Z', message: { role: 'user', content: '<local-command-caveat>메타</local-command-caveat>' } }),
+    L({ ...base, type: 'user', uuid: 'u4', promptSource: 'system', origin: { kind: 'task-notification' }, timestamp: '2026-11-01T01:00:10Z', message: { role: 'user', content: '<task-notification>끝남</task-notification>' } }),
+    L({ ...base, type: 'user', uuid: 'u5', isSidechain: true, timestamp: '2026-11-01T01:00:11Z', message: { role: 'user', content: '하위 에이전트 지시' } }),
+    L({ ...base, type: 'user', uuid: 'u6', timestamp: '2026-11-01T01:01:00Z', message: { role: 'user', content: [{ type: 'image', source: {} }, { type: 'text', text: '<pasted_content id="1">붙여 넣은 글</pasted_content> 이거 고쳐' }] } }),
+    L({ type: 'custom-title', customTitle: '데모 작업', sessionId: 'sess-1' }),
+    '{깨진 줄',
+  ]
+  const c = parseClaudeCodeSession(lines.join('\n'), 'projects/C--Dev-demo/sess-1.jsonl')
+  assert.equal(c.id, 'sess-1'); assert.equal(c.platform, 'claude'); assert.equal(c.client, 'code'); assert.equal(c.title, '데모 작업')
+  assert.deepEqual(c.turns.map((t) => t.role), ['user', 'assistant', 'user'], '도구 결과·메타·시스템·하위 에이전트 제외, 답변 병합')
+  assert.equal(c.turns[1].text, '답변 1부\n답변 2부')
+  assert.equal(c.turns[2].text, '붙여 넣은 글 이거 고쳐'); assert.equal(c.turns[2].hasAttachment, true)
+  assert.deepEqual(c.toolNames.sort(), ['Bash', 'Edit'])
+  assert.equal(c.createdAt, Date.parse('2026-11-01T01:00:00Z'))
+  assert.equal(parseClaudeCodeSession([lines[4]].join('\n'), 'x.jsonl'), null, '사람 입력 없으면 null')
+  const noTitle = parseClaudeCodeSession([lines[1]].join('\n'), 'y.jsonl'); assert.equal(noTitle.title, 'demo (Claude Code)')
+  console.log('claude code ok')
+}

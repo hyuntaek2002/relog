@@ -12,6 +12,7 @@ export interface Turn {
 export interface Conversation {
   id: string
   platform: 'chatgpt' | 'claude'
+  client?: 'app' | 'code' // 없으면 앱(웹·데스크톱) 내보내기. 'code'는 Claude Code 세션 기록
   title: string
   createdAt: number | null
   turns: Turn[]

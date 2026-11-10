@@ -1,5 +1,5 @@
 import { useEffect, useState, type DragEvent } from 'react'
-import type { WorkerOut } from './worker/analyze.worker'
+import type { WorkerIn, WorkerOut } from './worker/analyze.worker'
 import type { EmbedOut } from './worker/embed.worker'
 import { TASK_LABELS, TASK_TYPES, type Method, type Prediction } from './classify/classifier'
 import Labeler from './dev/Labeler'
@@ -104,8 +104,9 @@ export default function App() {
     setLedger([]); setWeeks([]); setFeedback({}); setStorageMode('none')
   }
 
-  async function onFile(file: File | undefined) {
-    if (!file) return
+  async function onFile(list: FileList | File[] | null | undefined) {
+    const files = [...(list ?? [])].filter((f) => /\.zip$/i.test(f.name))
+    if (files.length === 0) return
     setError(''); setResult(null); setCls(null); setEmbedLog([]); setStep('read'); setDetail(''); setCtx(null); setNet([])
     const w = new Worker(new URL('./worker/analyze.worker.ts', import.meta.url), { type: 'module' })
     w.onmessage = (e: MessageEvent<WorkerOut>) => {
@@ -114,13 +115,12 @@ export default function App() {
       else if (m.type === 'result') { setResult(m); setCtx(loadContext(m.conversations[0]?.platform ?? 'chatgpt')); setAuditProbes(m.utterances.map((u) => u.text)); setNet((n) => [...n, ...m.net]); w.terminate(); classify(m) }
       else { setError(m.message); setStep('idle'); w.terminate() }
     }
-    const buf = await file.arrayBuffer()
-    w.postMessage({ type: 'parse', data: buf }, [buf])
+    w.postMessage({ type: 'parse', files } satisfies WorkerIn)
   }
 
   function onDrop(e: DragEvent) {
     e.preventDefault(); setOver(false)
-    onFile(e.dataTransfer.files[0])
+    onFile(e.dataTransfer.files)
   }
 
   // 정규화된 ok 발화 전체를 임베딩하고 과업 유형을 예측한다. 전부 브라우저 안에서.
@@ -229,8 +229,8 @@ export default function App() {
         onDragLeave={() => setOver(false)}
         onDrop={onDrop}
       >
-        <input type="file" accept=".zip" onChange={(e) => onFile(e.target.files?.[0])} />
-        ChatGPT 또는 Claude 내보내기 zip을 여기에 끌어다 놓거나 클릭해서 선택
+        <input type="file" accept=".zip" multiple onChange={(e) => onFile(e.target.files)} />
+        ChatGPT 또는 Claude 내보내기 zip을 여기에 끌어다 놓거나 클릭해서 선택. Claude Code 기록(.claude 폴더 안의 projects 폴더를 zip으로 묶은 것)도 같이 넣을 수 있습니다.
       </label>
 
       {step !== 'idle' && (
