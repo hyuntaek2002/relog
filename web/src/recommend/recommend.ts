@@ -2,7 +2,7 @@ import catalog from '../../../catalog/catalog.json' with { type: 'json' }
 import type { SnapshotTask, UsageSnapshot } from './snapshot.ts'
 
 // 처방 엔진. 순수 함수: (snapshot, context, catalog, feedback) → Prescription[]. 원문 없음, LLM 호출 없음.
-export const RECOMMENDATION_RULE_VERSION = 'rec-0.1.0'
+export const RECOMMENDATION_RULE_VERSION = 'rec-0.1.1' // 0.1.1: restatement.perTask.<task> 신호(대화 종류 집중) 지원
 export const CATALOG_VERSION = catalog.catalogVersion
 
 export type Platform = 'chatgpt' | 'claude'
@@ -61,11 +61,11 @@ export interface ScoredItem {
 
 const TASK_LABEL: Record<SnapshotTask, string> = { coding: '코딩', writing: '글쓰기·교정', learning: '학습·설명', workdoc: '업무 문서', search: '정보 탐색', ideation: '아이디어·기획', translation: '번역', counseling: '상담·대화' }
 const SIGNAL_LABEL: Record<string, string> = {
-  'restatement.high': '반복 지시 의심(높음)',
-  'restatement.mid': '반복 지시 의심(중간)',
-  'restatement.low': '반복 지시 의심(낮음)',
-  'restatement.misunderstanding': '이해 실패 의심',
-  'restatement.repeatedQuestion': '반복 질문',
+  'restatement.high': '다시 말한 지시(확실함)',
+  'restatement.mid': '다시 말한 지시(가능성 있음)',
+  'restatement.low': '다시 말한 지시(약함)',
+  'restatement.misunderstanding': '말이 안 통한 듯한 표현',
+  'restatement.repeatedQuestion': '비슷한 질문 다시 함',
   longConversationShare: '긴 대화 비율',
   avgTurnsPerConversation: '대화당 평균 발화',
   codeShare: '코드 포함 비율',
@@ -80,6 +80,7 @@ export function readSignal(s: UsageSnapshot, path: string): number {
 
 const cmp = (a: number, op: ProblemSignal['op'], b: number) => (op === '>=' ? a >= b : op === '>' ? a > b : op === '<=' ? a <= b : a < b)
 const fmtSignal = (path: string, v: number) => {
+  if (path.startsWith('restatement.perTask.')) return `${TASK_LABEL[path.slice(20) as SnapshotTask] ?? path.slice(20)} 대화에서 다시 말한 지시 ${Math.round(v)}건`
   const label = SIGNAL_LABEL[path] ?? path
   if (path === 'longConversationShare' || path === 'codeShare') return `${label} ${Math.round(v * 100)}%`
   if (path === 'avgTurnsPerConversation') return `${label} ${v.toFixed(1)}개`
@@ -124,7 +125,7 @@ function why(snapshot: UsageSnapshot, s: ScoredItem): string {
   if (s.problemHits.length) parts.push(s.problemHits.join(', '))
   const r = snapshot.restatement
   const perTaskTop = (Object.entries(r.perTask) as [SnapshotTask, number][]).sort((a, b) => b[1] - a[1])[0]
-  if (s.problemHits.some((h) => h.startsWith('반복 지시')) && perTaskTop && perTaskTop[1] > 0) parts.push(`반복 의심은 ${TASK_LABEL[perTaskTop[0]]}에 ${perTaskTop[1]}건으로 집중`)
+  if (s.problemHits.some((h) => h.includes('다시 말한 지시')) && perTaskTop && perTaskTop[1] > 0) parts.push(`다시 말한 지시는 ${TASK_LABEL[perTaskTop[0]]} 대화에 ${perTaskTop[1]}건으로 몰림`)
   return parts.join('. ') + '.'
 }
 

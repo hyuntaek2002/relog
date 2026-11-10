@@ -84,3 +84,5 @@ details.cand > summary > span:nth-child(3) { color: var(--fg); }
 tr.total td { font-weight: 600; }
 td.down { color: #2e8b57; }
 td.up { color: #c0392b; }
+.devbox { margin-top: 32px; border-top: 1px dashed var(--line); padding-top: 8px; }
+.devbox > summary { color: var(--muted); cursor: pointer; }

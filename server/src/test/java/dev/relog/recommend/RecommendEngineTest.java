@@ -45,8 +45,10 @@ class RecommendEngineTest {
         Map<String, Long> cats = new HashMap<>();
         r.forEach(p -> cats.merge(p.category(), 1L, Long::sum));
         assertTrue(cats.values().stream().allMatch(n -> n <= 2), "category당 최대 2");
-        // 웹 테스트와 같은 1순위(pr_pin_requirements: 높음 1 + 중간 20 + priority 95)
-        assertEquals("pr_pin_requirements", r.get(0).catalogId());
+        // 반복이 업무 문서에 몰린 스냅샷이라 rec-0.1.1부터는 스킬(perTask 가산)이 1순위, 요구사항 고정 습관도 상위 3 안
+        var ids = r.stream().map(RecommendEngine.Prescription::catalogId).toList();
+        assertEquals("cl_skills", ids.get(0));
+        assertTrue(ids.contains("pr_pin_requirements"), ids.toString());
     }
 
     @Test

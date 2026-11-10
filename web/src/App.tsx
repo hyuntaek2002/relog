@@ -11,7 +11,7 @@ import AbMode from './recommend/AbMode'
 import RecommendDev from './recommend/RecommendDev'
 import { buildSnapshot } from './recommend/snapshot'
 import { CATALOG_VERSION, RECOMMENDATION_RULE_VERSION, recommend, type Feedback, type FeedbackMap, type Platform, type UserContext } from './recommend/recommend'
-import Trend, { loadStorageMode, STORAGE_MODE_KEY, type StorageMode } from './store/Trend'
+import Trend, { StorageChoice, loadStorageMode, STORAGE_MODE_KEY, type StorageMode } from './store/Trend'
 import { aggregateWeekly, buildLedger, versionKey, type AnalysisVersion, type LedgerEntry, type PeriodSnapshot } from './store/ledger'
 import SyncPanel from './store/SyncPanel'
 import { clearAll, getLedger, putLedger } from './store/db'
@@ -21,12 +21,15 @@ type Result = Extract<WorkerOut, { type: 'result' }>
 type Classified = Extract<EmbedOut, { type: 'classified' }>
 type Step = 'idle' | 'read' | 'analyze' | 'model' | 'classify' | 'done'
 
-const STEPS: [Step, string][] = [['read', '파일 읽기'], ['analyze', '분석'], ['model', '모델 준비'], ['classify', '분류'], ['done', '완료']]
+const STEPS: [Step, string][] = [['read', '파일 읽기'], ['analyze', '정리'], ['model', '모델 준비'], ['classify', '분석'], ['done', '완료']]
 const MODELS = ['Xenova/multilingual-e5-small', 'Xenova/paraphrase-multilingual-MiniLM-L12-v2', 'static-e5'] as const
 const DEFAULT_MODEL = MODELS[0]
 const DEVICE: 'wasm' | 'webgpu' = 'gpu' in navigator ? 'webgpu' : 'wasm'
 const DEV = new URLSearchParams(location.search).has('dev')
 const AB = new URLSearchParams(location.search).has('ab')
+
+// 화면 용어: 등급은 내부 high/medium/low, 사용자에겐 확실함/가능성 있음/약함
+const GRADE_LABEL = { high: '확실함', medium: '가능성 있음', low: '약함' } as const
 
 const fmtDate = (ms: number | null) => (ms == null ? '-' : new Date(ms).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' }))
 
@@ -194,7 +197,7 @@ export default function App() {
   const byType = preds ? countByType(preds) : null
   const agree = cls ? cls.knn.filter((p, i) => p.type === cls.centroid[i].type).length / cls.knn.length : 0
 
-  // 처방: 집계 숫자(snapshot) + 체크리스트(ctx) + 로컬 피드백만 입력. 원문 없음.
+  // 추천: 집계 숫자(snapshot) + 체크리스트(ctx) + 로컬 피드백만 입력. 원문 없음.
   const platform: Platform = result?.conversations[0]?.platform ?? 'chatgpt'
   const snapshot = result && cls && s
     ? buildSnapshot({ platform, stats: s, utterances: result.utterances, okIds: result.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: cls.knn, candidates: cls.candidates, detect: cls.detectSummary })
@@ -206,6 +209,12 @@ export default function App() {
     setFeedback(next); saveFeedback(next)
   }
   function onCtx(c: UserContext) { setCtx(c); saveContext(platform, c) }
+
+  const flagged = cls ? cls.candidates : []
+  const shown = [...flagged]
+    .filter((c) => DEV || c.grade !== 'low') // '약함'은 같은 주제의 후속 발화가 많이 섞여 기본 화면에선 숫자만
+    .sort((a, b) => (a.grade === b.grade ? b.similarity - a.similarity : (a.grade === 'high' ? -1 : b.grade === 'high' ? 1 : a.grade === 'medium' ? -1 : 1)))
+    .slice(0, 20)
 
   return (
     <main>
@@ -236,8 +245,14 @@ export default function App() {
 
       {!result && (
         <section>
-          <h2>보관 방식{weeks.length > 0 && ' · 저장된 추이'}</h2>
-          <Trend weeks={weeks} mode={storageMode} storedCount={ledger.length} onMode={onStorageMode} onClear={onClear} />
+          <h2>보관 방식</h2>
+          <StorageChoice mode={storageMode} storedCount={ledger.length} onMode={onStorageMode} onClear={onClear} />
+          {weeks.length > 0 && (
+            <>
+              <h2>저장된 변화</h2>
+              <Trend weeks={weeks} />
+            </>
+          )}
         </section>
       )}
 
@@ -253,85 +268,84 @@ export default function App() {
           <h2>요약</h2>
           <div className="cards">
             <div className="card"><b>{s.conversations}</b><span>대화</span></div>
-            <div className="card"><b>{s.userTurns}</b><span>내 발화</span></div>
-            <div className="card"><b>{s.longConversations}</b><span>긴 대화 (발화 10개 이상)</span></div>
+            <div className="card"><b>{s.userTurns}</b><span>내 메시지</span></div>
+            <div className="card"><b>{s.longConversations}</b><span>긴 대화 (내 메시지 10개 이상)</span></div>
             <div className="card"><b style={{ fontSize: '1rem' }}>{fmtDate(s.firstAt)} ~ {fmtDate(s.lastAt)}</b><span>기간</span></div>
           </div>
 
-          {byType && preds && (
-            <>
-              <h2>무엇을 주로 했나</h2>
-              <ul className="bars">
-                {byType.filter((t) => t.n > 0).map((t) => (
-                  <li key={t.type}>
-                    <span>{t.label}</span>
-                    <i style={{ width: `${(100 * t.n) / preds.length}%` }} />
-                    <em>{Math.round((100 * t.n) / preds.length)}%</em>
-                  </li>
-                ))}
-              </ul>
-              <p className="detail">발화 {preds.length}개 기준. 유형은 자동 추정이라 틀릴 수 있습니다.</p>
-            </>
-          )}
-
           {cls && (
             <>
-              <h2>반복 지시 의심</h2>
+              <h2>다시 말한 지시</h2>
               <div className="cards">
-                <div className="card"><b>{cls.candidates.length}</b><span>의심 발화 (높음 {cls.detectSummary.byGrade.high} · 중간 {cls.detectSummary.byGrade.medium} · 낮음 {cls.detectSummary.byGrade.low})</span></div>
-                <div className="card"><b>{cls.detectSummary.ratio.toFixed(1)}%</b><span>반복 비율 (비교 가능한 발화 {cls.detectSummary.judgeable}개 중)</span></div>
-                <div className="card"><b>{cls.detectSummary.tokenEstimate.toLocaleString()}</b><span>재입력 토큰 추정치</span></div>
+                <div className="card"><b>{flagged.length}</b><span>다시 말한 지시 (확실함 {cls.detectSummary.byGrade.high} · 가능성 있음 {cls.detectSummary.byGrade.medium} · 약함 {cls.detectSummary.byGrade.low})</span></div>
+                <div className="card"><b>{cls.detectSummary.ratio.toFixed(1)}%</b><span>비교한 내 메시지 {cls.detectSummary.judgeable}개 중 비율</span></div>
+                <div className="card"><b>{cls.detectSummary.tokenEstimate.toLocaleString()}</b><span>다시 친 분량 (토큰, 추정)</span></div>
               </div>
               <p className="detail">
-                같은 대화에서 앞서 한 지시와 비슷한 지시입니다. 모델 응답이 요구를 따랐는지는 판정하지 않습니다. 아래 내용은 이 화면에만 표시됩니다.
-                <br />따로 센 것: 반복 질문 {cls.detectSummary.repeatedQuestions}건 · 이해 실패 의심(항의 표현) {cls.detectSummary.misunderstanding}건
+                같은 대화에서 앞서 한 지시를 다시 말한 것으로 보이는 메시지입니다. AI가 지시를 따랐는지는 판정하지 않습니다. 아래 내용은 이 화면에만 보입니다.
+                <br />따로 센 것: 비슷한 질문 다시 함 {cls.detectSummary.repeatedQuestions}건 · 말이 안 통한 듯한 표현 {cls.detectSummary.misunderstanding}건
               </p>
-              {[...cls.candidates]
-                .filter((c) => DEV || c.grade !== 'low') // 낮음 등급은 같은 주제의 후속 발화가 많이 섞여 기본 화면에선 숫자만
-                .sort((a, b) => (a.grade === b.grade ? b.similarity - a.similarity : (a.grade === 'high' ? -1 : b.grade === 'high' ? 1 : a.grade === 'medium' ? -1 : 1)))
-                .slice(0, 20)
-                .map((c) => (
-                  // 기본은 한 줄 요약만. 펼쳐야 앞/뒤 발화가 보인다(원문은 이 화면에만).
-                  <details className="cand" key={c.messageId}>
-                    <summary className="meta">
-                      <span className={`grade-${c.grade}`}>{c.grade === 'high' ? '높음' : c.grade === 'medium' ? '중간' : '낮음'}</span>
-                      <span>{titleOf(c.conversationId)}</span>
-                      <span>{textOf(c.messageId).slice(0, 40).replace(/\s+/g, ' ')}{textOf(c.messageId).length > 40 ? '…' : ''}</span>
-                      {c.repeatMarker && <span>반복 표지</span>}
-                      {c.complaintMarker && <span>항의 표현</span>}
-                      {c.gapMinutes != null && <span>{c.gapMinutes < 60 ? `${Math.round(c.gapMinutes)}분 뒤` : `${Math.round(c.gapMinutes / 60)}시간 뒤`}</span>}
-                    </summary>
-                    <p className="detail">유사도 {c.similarity.toFixed(2)}{!c.responseBetween && ' · 사이에 응답 없음'}</p>
-                    <blockquote>{textOf(c.priorMessageId)}</blockquote>
-                    <blockquote className="now">{textOf(c.messageId)}</blockquote>
-                  </details>
-                ))}
+              {shown.length === 0 && <p className="detail">확실함·가능성 있음으로 잡힌 메시지가 없습니다.</p>}
+              {shown.map((c) => (
+                // 기본은 한 줄 요약만. 펼쳐야 앞/뒤 메시지가 보인다(원문은 이 화면에만).
+                <details className="cand" key={c.messageId}>
+                  <summary className="meta">
+                    <span className={`grade-${c.grade}`}>{GRADE_LABEL[c.grade ?? 'low']}</span>
+                    <span>{titleOf(c.conversationId)}</span>
+                    <span>{textOf(c.messageId).slice(0, 40).replace(/\s+/g, ' ')}{textOf(c.messageId).length > 40 ? '…' : ''}</span>
+                    {c.repeatMarker && <span>"아까 말했" 같은 표현</span>}
+                    {c.complaintMarker && <span>답답함 표현</span>}
+                    {c.gapMinutes != null && <span>{c.gapMinutes < 60 ? `${Math.round(c.gapMinutes)}분 뒤` : `${Math.round(c.gapMinutes / 60)}시간 뒤`}</span>}
+                  </summary>
+                  <p className="detail">앞 메시지와 비슷한 정도 {c.similarity.toFixed(2)}{!c.responseBetween && ' · 사이에 AI 답이 없음'}</p>
+                  <blockquote>{textOf(c.priorMessageId)}</blockquote>
+                  <blockquote className="now">{textOf(c.messageId)}</blockquote>
+                </details>
+              ))}
             </>
           )}
 
           {snapshot && ctx && (
             <>
-              <h2>{AB ? '추천 평가' : '처방'}</h2>
+              <h2>{AB ? '추천 평가' : '추천'}</h2>
               {AB ? <AbMode platform={platform} personalized={prescriptions} /> : <Prescriptions items={prescriptions} feedback={feedback} onFeedback={onFeedback} />}
             </>
           )}
 
-          <h2>기간별 추이</h2>
-          <Trend weeks={weeks} mode={storageMode} storedCount={storageMode === 'local' ? ledger.length : 0} onMode={onStorageMode} onClear={onClear} />
-          <h2>서버 동기화 (선택)</h2>
-          <SyncPanel weeks={weeks} version={version} />
+          <h2>변화</h2>
+          <Trend weeks={weeks} />
 
           <details>
-            <summary>자세히</summary>
+            <summary>보관 · 서버 동기화 · 자세한 숫자</summary>
+            <h2>보관 방식</h2>
+            <StorageChoice mode={storageMode} storedCount={storageMode === 'local' ? ledger.length : 0} onMode={onStorageMode} onClear={onClear} />
+            <h2>서버 동기화 (선택)</h2>
+            <SyncPanel weeks={weeks} version={version} />
+            {byType && preds && (
+              <>
+                <h2>대화 종류 비율</h2>
+                <ul className="bars">
+                  {byType.filter((t) => t.n > 0).map((t) => (
+                    <li key={t.type}>
+                      <span>{t.label}</span>
+                      <i style={{ width: `${(100 * t.n) / preds.length}%` }} />
+                      <em>{Math.round((100 * t.n) / preds.length)}%</em>
+                    </li>
+                  ))}
+                </ul>
+                <p className="detail">내 메시지 {preds.length}개 기준. 종류는 자동 추정이라 틀릴 수 있습니다.</p>
+              </>
+            )}
+            <h2>자세한 숫자</h2>
             <table>
               <tbody>
                 <tr><td>읽은 파일</td><td>{result.files.join(', ')}</td></tr>
-                <tr><td>모델 응답</td><td>{s.assistantTurns}</td></tr>
-                <tr><td>비교 가능한 발화 (발화 2개 이상인 대화)</td><td>{s.judgeableUserTurns}</td></tr>
-                <tr><td>내 발화 토큰 추정치</td><td>{s.userTokenEstimate.toLocaleString()}</td></tr>
-                <tr><td>분석 제외 발화 (응, 계속 등)</td><td>{n.skipped}</td></tr>
-                <tr><td>앞뒤 문맥이 필요한 짧은 발화</td><td>{n.context_required}</td></tr>
-                <tr><td>코드가 포함된 발화</td><td>{n.hasCode}</td></tr>
+                <tr><td>AI 답변 수</td><td>{s.assistantTurns}</td></tr>
+                <tr><td>비교한 내 메시지 (메시지 2개 이상인 대화)</td><td>{s.judgeableUserTurns}</td></tr>
+                <tr><td>내 메시지 분량 (토큰, 추정)</td><td>{s.userTokenEstimate.toLocaleString()}</td></tr>
+                <tr><td>분석에서 뺀 메시지 (응, 계속 등)</td><td>{n.skipped}</td></tr>
+                <tr><td>앞뒤 문맥이 있어야 뜻을 아는 짧은 메시지</td><td>{n.context_required}</td></tr>
+                <tr><td>코드가 포함된 메시지</td><td>{n.hasCode}</td></tr>
                 <tr><td>읽지 못한 대화</td><td>{result.errors.length}</td></tr>
                 <tr><td>버전</td><td>{result.parserVersion}, {result.normalizerVersion}{cls && `, ${cls.modelVersion}, ${cls.classifierVersion}, ${cls.detectorVersion}`}, {CATALOG_VERSION}, {RECOMMENDATION_RULE_VERSION}</td></tr>
               </tbody>
@@ -340,10 +354,11 @@ export default function App() {
           </details>
 
           {DEV && (
-            <>
+            <details className="devbox">
+              <summary>개발자 패널 (?dev=1)</summary>
               {snapshot && ctx && (
                 <>
-                  <h2>개발: 처방 점수표</h2>
+                  <h2>개발: 추천 점수표</h2>
                   <RecommendDev snapshot={snapshot} ctx={withDetected(ctx, detected)} feedback={feedback} />
                 </>
               )}
@@ -355,7 +370,7 @@ export default function App() {
               )}
               <h2>개발: 과업 라벨링</h2>
               <Labeler utterances={result.utterances} conversations={result.conversations} />
-              <h2>개발: 분류</h2>
+              <h2>개발: 분류·탐지</h2>
               {cls && (
                 <p className="detail">
                   유사도 분포(판단 가능 발화 {cls.sims.length}개): {[0.5, 0.75, 0.9, 0.95, 0.98].map((q) => `p${q * 100}=${quantile(cls.sims, q).toFixed(3)}`).join(' ')}
@@ -379,7 +394,7 @@ export default function App() {
                 <p key={m}>{m}: <button onClick={() => runEmbed(m, 'wasm')}>wasm</button><button onClick={() => runEmbed(m, 'webgpu')}>webgpu</button></p>
               ))}
               <pre>{embedLog.join('\n')}</pre>
-            </>
+            </details>
           )}
         </section>
       )}

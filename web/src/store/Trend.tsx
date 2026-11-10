@@ -11,71 +11,71 @@ const fmtRange = (r: [number, number] | null) => (r ? `${fmt(r[0])} ~ ${fmt(r[1]
 const taskName = (t: string) => (t === 'all' ? '전체' : t === 'other' ? '기타' : (TASK_LABELS as Record<string, string>)[t] ?? t)
 const pct = (v: number | null) => (v == null ? '-' : `${v.toFixed(1)}%`)
 
-// 보관 모드 선택 + 주별 추이 표 + 과업별 전후 비교. 저장되는 건 집계용 대장 항목뿐이고 원문·임베딩은 저장하지 않는다.
-export default function Trend({ weeks, mode, storedCount, onMode, onClear }: { weeks: PeriodSnapshot[]; mode: StorageMode; storedCount: number; onMode: (m: StorageMode) => void; onClear: () => void }) {
+/** 보관 방식 선택(파일 넣기 전·후 공통) */
+export function StorageChoice({ mode, storedCount, onMode, onClear }: { mode: StorageMode; storedCount: number; onMode: (m: StorageMode) => void; onClear: () => void }) {
+  return (
+    <div className="checklist">
+      <div className="row">
+        <span>보관</span>
+        <label><input type="radio" name="storage" checked={mode === 'none'} onChange={() => onMode('none')} /> 이번만 보기 (창을 닫으면 사라짐)</label>
+        <label><input type="radio" name="storage" checked={mode === 'local'} onChange={() => onMode('local')} /> 이 브라우저에 남기기</label>
+      </div>
+      <p className="detail">
+        남기면 메시지별 집계(시각·대화 종류·다시 말한 지시 여부·분량)만 이 브라우저 안에 저장됩니다. 대화 내용은 저장하지 않습니다. 같은 기간을 다시 올리면 덮어쓰고 새 기간만 추가됩니다.
+        {mode === 'local' && storedCount > 0 && <> 저장된 메시지 {storedCount}개. <button onClick={onClear}>이 브라우저의 데이터 삭제</button></>}
+      </p>
+    </div>
+  )
+}
+
+/** 변화: 대화 종류별 이전→최근 비교(3열) + 주별(접힘). 집계 숫자뿐이고 변화의 원인은 판정하지 않는다. */
+export default function Trend({ weeks }: { weeks: PeriodSnapshot[] }) {
   const [recent, setRecent] = useState(2)
   const cmp = weeks.length >= 2 ? compareTasks(weeks, Math.min(recent, weeks.length - 1)) : null
+  if (weeks.length === 0) return <p className="detail">아직 기간별 데이터가 없습니다.</p>
   return (
     <div>
-      <div className="checklist">
-        <div className="row">
-          <span>보관</span>
-          <label><input type="radio" name="storage" checked={mode === 'none'} onChange={() => onMode('none')} /> 일회성 분석 (이 화면을 닫으면 사라짐)</label>
-          <label><input type="radio" name="storage" checked={mode === 'local'} onChange={() => onMode('local')} /> 이 브라우저에 보관</label>
-        </div>
-        <p className="detail">
-          보관 모드에선 발화별 집계 항목(시각·유형·반복 등급·토큰 추정치)만 브라우저 안 IndexedDB에 저장합니다. 대화 내용과 임베딩은 저장하지 않습니다. 같은 기간을 다시 올리면 덮어쓰고 새 기간만 추가됩니다.
-          {mode === 'local' && storedCount > 0 && <> 저장된 발화 {storedCount}개. <button onClick={onClear}>로컬 데이터 삭제</button></>}
-        </p>
-      </div>
-
-      {cmp && (
+      {cmp ? (
         <>
-          <h2>과업별 전후 비교</h2>
           <p className="detail">
-            이전 {fmtRange(cmp.beforeRange)} · 최근 {fmtRange(cmp.afterRange)} ·
-            최근 기간 <select value={recent} onChange={(e) => setRecent(Number(e.target.value))}>{[1, 2, 4].map((n) => <option key={n} value={n}>{n}주</option>)}</select>
-            · 반복 비율 = 반복 의심 ÷ 그 유형 발화. 발화 5개 미만이면 비율을 내지 않습니다. 변화의 원인은 판정하지 않습니다.
+            이전 {fmtRange(cmp.beforeRange)} → 최근 {fmtRange(cmp.afterRange)}
+            <span> · 최근 <select value={recent} onChange={(e) => setRecent(Number(e.target.value))}>{[1, 2, 4].map((n) => <option key={n} value={n}>{n}주</option>)}</select></span>
+            <br />숫자는 "그 종류의 내 메시지 중 다시 말한 지시의 비율"입니다. 메시지 5개 미만이면 비우고, 변한 이유는 판정하지 않습니다.
           </p>
           <table>
-            <thead><tr><th>과업</th><th>이전 발화</th><th>이전 반복</th><th>최근 발화</th><th>최근 반복</th><th>변화</th></tr></thead>
+            <thead><tr><th>대화 종류</th><th>이전 → 최근</th><th>변화</th></tr></thead>
             <tbody>
               {[cmp.total, ...cmp.rows].map((r) => (
-                <tr key={r.task} className={r.task === 'all' ? 'total' : ''}>
+                <tr key={r.task} className={r.task === 'all' ? 'total' : ''} title={`이전: 메시지 ${r.before.ok}개 중 ${r.before.flagged}개 · 최근: 메시지 ${r.after.ok}개 중 ${r.after.flagged}개`}>
                   <td>{taskName(r.task)}</td>
-                  <td>{r.before.ok}</td><td>{r.before.flagged} ({pct(r.before.ratio)})</td>
-                  <td>{r.after.ok}</td><td>{r.after.flagged} ({pct(r.after.ratio)})</td>
-                  <td className={r.delta == null ? '' : r.delta < 0 ? 'down' : r.delta > 0 ? 'up' : ''}>{r.delta == null ? '-' : `${r.delta > 0 ? '+' : ''}${r.delta.toFixed(1)}%p`}</td>
+                  <td>{pct(r.before.ratio)} → {pct(r.after.ratio)}</td>
+                  <td className={r.delta == null ? '' : r.delta < 0 ? 'down' : r.delta > 0 ? 'up' : ''}>{r.delta == null ? '-' : r.delta === 0 ? '그대로' : `${r.delta > 0 ? '늘어남 +' : '줄어듦 '}${r.delta.toFixed(1)}%p`}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </>
+      ) : (
+        <p className="detail">비교하려면 2주 이상의 데이터가 필요합니다.</p>
       )}
-
-      {weeks.length > 0 && (
-        <>
-          <h2>주별 추이</h2>
-          <table>
-            <thead>
-              <tr><th>주 (월요일 시작)</th><th>내 발화</th><th>비교 가능</th><th>반복 의심 (높·중·낮)</th><th>반복 비율</th><th>재입력 토큰</th></tr>
-            </thead>
-            <tbody>
-              {weeks.map((w) => (
-                <tr key={w.periodStart}>
+      <details>
+        <summary>주별로 보기</summary>
+        <table>
+          <thead><tr><th>주 (월요일 시작)</th><th>내 메시지</th><th>다시 말한 지시</th></tr></thead>
+          <tbody>
+            {weeks.map((w) => {
+              const flagged = w.restatement.high + w.restatement.medium + w.restatement.low
+              return (
+                <tr key={w.periodStart} title={`확실함 ${w.restatement.high} · 가능성 있음 ${w.restatement.medium} · 약함 ${w.restatement.low} · 다시 친 분량 약 ${w.restatement.tokenEstimate.toLocaleString()}토큰`}>
                   <td>{fmt(w.periodStart)}</td>
                   <td>{w.userTurnCount}</td>
-                  <td>{w.judgeable}</td>
-                  <td>{w.restatement.high}·{w.restatement.medium}·{w.restatement.low}</td>
-                  <td>{w.judgeable ? `${w.restatement.ratio.toFixed(1)}%` : '-'}</td>
-                  <td>{w.restatement.tokenEstimate.toLocaleString()}</td>
+                  <td>{flagged}건{w.judgeable ? ` (${w.restatement.ratio.toFixed(1)}%)` : ''}</td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
-      )}
-      {weeks.length === 0 && <p className="detail">아직 기간별 데이터가 없습니다.</p>}
+              )
+            })}
+          </tbody>
+        </table>
+      </details>
     </div>
   )
 }

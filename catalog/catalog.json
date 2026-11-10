@@ -1,306 +1,1200 @@
 {
-  "catalogVersion": "catalog-0.1.0",
+  "catalogVersion": "catalog-0.2.0",
   "verifiedNote": "verified=true 항목은 2026-11-03에 공식 도움말(help.openai.com / support.claude.com)에서 기능명·메뉴 경로·요금제를 대조했다. false 항목은 화면에 내보내지 않는다.",
   "items": [
     {
-      "id": "pr_pin_requirements", "platform": "both", "name": "요구사항을 첫 메시지에 고정하기", "category": "practice",
+      "id": "pr_pin_requirements",
+      "platform": "both",
+      "name": "요구사항을 첫 메시지에 고정하기",
+      "category": "practice",
       "oneLiner": "형식·언어·제외 조건 같은 규칙을 첫 메시지에 번호 목록으로 적고, 바뀔 때만 다시 보낸다.",
       "howTo30s": "1) 새 대화 첫 메시지 맨 위에 '규칙:' 블록을 두고 언어·형식·분량·금지 사항을 번호로 적는다. 2) 이후 발화에선 규칙을 반복하지 말고 '규칙 3 적용' 식으로 참조한다. 3) 규칙이 바뀌면 블록 전체를 다시 보낸다.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": [] },
-      "problemSignals": [ { "signal": "restatement.high", "op": ">=", "value": 1, "weight": 3 }, { "signal": "restatement.mid", "op": ">=", "value": 5, "weight": 2 } ],
-      "taskSignals": [], "priority": 95,
-      "evidenceUrl": "", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": []
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.high",
+          "op": ">=",
+          "value": 1,
+          "weight": 3
+        },
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 5,
+          "weight": 2
+        }
+      ],
+      "taskSignals": [],
+      "priority": 95,
+      "evidenceUrl": "",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "pr_split_long", "platform": "both", "name": "긴 작업은 대화를 나누기", "category": "practice",
+      "id": "pr_split_long",
+      "platform": "both",
+      "name": "긴 작업은 대화를 나누기",
+      "category": "practice",
       "oneLiner": "한 대화가 길어지면 앞의 지시가 묻히기 쉬우니, 작업 단위마다 새 대화를 열고 필요한 맥락만 요약해 옮긴다.",
       "howTo30s": "1) 발화 10개를 넘기면 현재 결론을 5줄로 요약해 달라고 한다. 2) 새 대화를 열어 그 요약과 규칙 블록을 첫 메시지로 붙인다. 3) 이전 대화는 참고용으로만 둔다.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": [] },
-      "problemSignals": [ { "signal": "longConversationShare", "op": ">=", "value": 0.15, "weight": 2 }, { "signal": "avgTurnsPerConversation", "op": ">=", "value": 12, "weight": 1 }, { "signal": "restatement.mid", "op": ">=", "value": 5, "weight": 1 } ],
-      "taskSignals": [], "priority": 90,
-      "evidenceUrl": "", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": []
+      },
+      "problemSignals": [
+        {
+          "signal": "longConversationShare",
+          "op": ">=",
+          "value": 0.15,
+          "weight": 2
+        },
+        {
+          "signal": "avgTurnsPerConversation",
+          "op": ">=",
+          "value": 12,
+          "weight": 1
+        },
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 5,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [],
+      "priority": 90,
+      "evidenceUrl": "",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "pr_prompt_template", "platform": "both", "name": "자주 쓰는 지시를 템플릿으로 보관하기", "category": "practice",
+      "id": "pr_prompt_template",
+      "platform": "both",
+      "name": "자주 쓰는 지시를 템플릿으로 보관하기",
+      "category": "practice",
       "oneLiner": "반복해서 치는 지시문을 메모 앱에 템플릿으로 두고 붙여 넣는다.",
       "howTo30s": "1) 이번 리포트의 반복 의심 목록에서 두 번 이상 나온 지시를 고른다. 2) 메모 앱에 '번역용', '코드 리뷰용'처럼 이름 붙여 저장한다. 3) 새 대화 첫 메시지에 붙여 넣는다.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": [] },
-      "problemSignals": [ { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 2 }, { "signal": "restatement.repeatedQuestion", "op": ">=", "value": 10, "weight": 1 } ],
-      "taskSignals": [], "priority": 85,
-      "evidenceUrl": "", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": []
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 2
+        },
+        {
+          "signal": "restatement.repeatedQuestion",
+          "op": ">=",
+          "value": 10,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [],
+      "priority": 85,
+      "evidenceUrl": "",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "pr_clarify_first", "platform": "both", "name": "이해가 어긋나면 지시를 고쳐 쓰기", "category": "practice",
+      "id": "pr_clarify_first",
+      "platform": "both",
+      "name": "이해가 어긋나면 지시를 고쳐 쓰기",
+      "category": "practice",
       "oneLiner": "같은 말을 다시 하기보다 모델이 무엇을 어떻게 이해했는지 먼저 묻고, 지시를 다른 표현으로 바꾼다.",
       "howTo30s": "1) 답이 빗나가면 '내 요청을 네 말로 한 줄로 정리해봐'라고 묻는다. 2) 어긋난 부분만 고쳐 다시 지시한다. 3) 예시를 하나 붙이면 재진술 횟수가 준다.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": [] },
-      "problemSignals": [ { "signal": "restatement.misunderstanding", "op": ">=", "value": 3, "weight": 3 } ],
-      "taskSignals": [], "priority": 80,
-      "evidenceUrl": "", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": []
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.misunderstanding",
+          "op": ">=",
+          "value": 3,
+          "weight": 3
+        }
+      ],
+      "taskSignals": [],
+      "priority": 80,
+      "evidenceUrl": "",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
-
     {
-      "id": "cg_projects", "platform": "chatgpt", "name": "프로젝트", "category": "feature",
+      "id": "cg_projects",
+      "platform": "chatgpt",
+      "name": "프로젝트",
+      "category": "feature",
       "oneLiner": "관련 대화·파일·지침을 한 프로젝트에 묶어 같은 맥락을 여러 대화에서 재사용한다.",
       "howTo30s": "1) 왼쪽 사이드바에서 프로젝트 새로 만들기. 2) 이름을 정하고 파일을 올린다(Free 5개, Go·Plus 25개, Pro 40개). 3) 프로젝트 안에서 새 대화를 시작한다.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cg_projects"] },
-      "problemSignals": [ { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 2 }, { "signal": "longConversationShare", "op": ">=", "value": 0.15, "weight": 1 } ],
-      "taskSignals": [ { "task": "coding", "minShare": 0.2, "weight": 1 }, { "task": "workdoc", "minShare": 0.2, "weight": 1 } ], "priority": 70,
-      "evidenceUrl": "https://help.openai.com/en/articles/10169521-projects-in-chatgpt", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": true,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cg_projects"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 2
+        },
+        {
+          "signal": "longConversationShare",
+          "op": ">=",
+          "value": 0.15,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "coding",
+          "minShare": 0.2,
+          "weight": 1
+        },
+        {
+          "task": "workdoc",
+          "minShare": 0.2,
+          "weight": 1
+        }
+      ],
+      "priority": 70,
+      "evidenceUrl": "https://help.openai.com/en/articles/10169521-projects-in-chatgpt",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": true,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cg_project_instructions", "platform": "chatgpt", "name": "프로젝트 지침", "category": "feature",
+      "id": "cg_project_instructions",
+      "platform": "chatgpt",
+      "name": "프로젝트 지침",
+      "category": "feature",
       "oneLiner": "프로젝트 안의 모든 대화에 적용되는 지침을 한 번만 적어 둔다. 전역 커스텀 지시보다 우선한다.",
       "howTo30s": "1) 프로젝트를 연다. 2) 프로젝트 지침(Instructions)에 언어·형식·금지 사항을 적는다. 3) 그 프로젝트에서 새 대화를 시작하면 자동 적용된다.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cg_project_instructions"] },
-      "problemSignals": [ { "signal": "restatement.high", "op": ">=", "value": 1, "weight": 3 }, { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 2 } ],
-      "taskSignals": [], "priority": 88,
-      "evidenceUrl": "https://help.openai.com/en/articles/10169521-projects-in-chatgpt", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cg_project_instructions"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.high",
+          "op": ">=",
+          "value": 1,
+          "weight": 3
+        },
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 2
+        }
+      ],
+      "taskSignals": [],
+      "priority": 88,
+      "evidenceUrl": "https://help.openai.com/en/articles/10169521-projects-in-chatgpt",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cg_custom_instructions", "platform": "chatgpt", "name": "커스텀 지시(개인 맞춤 설정)", "category": "feature",
+      "id": "cg_custom_instructions",
+      "platform": "chatgpt",
+      "name": "커스텀 지시(개인 맞춤 설정)",
+      "category": "feature",
       "oneLiner": "모든 대화에 적용할 응답 방식과 나에 대한 정보를 설정에 저장한다(Free·Go 1,500자, 유료 5,000자).",
       "howTo30s": "1) 프로필 > 설정 > 개인 맞춤 설정(Personalization). 2) 커스텀 지시에 응답 언어·형식·피해야 할 것을 적는다. 3) 저장하면 기존 대화에도 즉시 적용된다.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cg_custom_instructions"] },
-      "problemSignals": [ { "signal": "restatement.high", "op": ">=", "value": 1, "weight": 2 }, { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 2 } ],
-      "taskSignals": [], "priority": 86,
-      "evidenceUrl": "https://help.openai.com/en/articles/8096356-chatgpt-custom-instructions", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cg_custom_instructions"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.high",
+          "op": ">=",
+          "value": 1,
+          "weight": 2
+        },
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 2
+        }
+      ],
+      "taskSignals": [],
+      "priority": 86,
+      "evidenceUrl": "https://help.openai.com/en/articles/8096356-chatgpt-custom-instructions",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cg_memory", "platform": "chatgpt", "name": "메모리", "category": "feature",
+      "id": "cg_memory",
+      "platform": "chatgpt",
+      "name": "메모리",
+      "category": "feature",
       "oneLiner": "대화에서 드러난 선호와 세부 정보를 ChatGPT가 기억해 다음 대화에 반영한다.",
       "howTo30s": "1) 프로필 > 설정 > 개인 맞춤 설정 > 메모리. 2) '저장된 메모리 참조'를 켠다. 3) 대화에서 '이걸 기억해'라고 직접 말해 저장할 수도 있다.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cg_memory"] },
-      "problemSignals": [ { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 1 } ],
-      "taskSignals": [ { "task": "counseling", "minShare": 0.2, "weight": 1 }, { "task": "writing", "minShare": 0.2, "weight": 1 } ], "priority": 60,
-      "evidenceUrl": "https://help.openai.com/en/articles/8590148-memory-in-chatgpt", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": true,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cg_memory"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "counseling",
+          "minShare": 0.2,
+          "weight": 1
+        },
+        {
+          "task": "writing",
+          "minShare": 0.2,
+          "weight": 1
+        }
+      ],
+      "priority": 60,
+      "evidenceUrl": "https://help.openai.com/en/articles/8590148-memory-in-chatgpt",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": true,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cg_canvas", "platform": "chatgpt", "name": "캔버스", "category": "feature",
+      "id": "cg_canvas",
+      "platform": "chatgpt",
+      "name": "캔버스",
+      "category": "feature",
       "oneLiner": "긴 글이나 코드를 옆 패널에서 부분 선택해 고친다. 전체를 다시 요청하지 않아도 된다.",
       "howTo30s": "1) 메시지에 'use canvas'를 넣거나 입력창에서 '/' 뒤 canvas를 고른다. 2) 패널에서 고칠 부분만 드래그해 수정 요청. 3) 상단 버전 화살표로 이전 버전 복원.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cg_canvas"] },
-      "problemSignals": [ { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 1 }, { "signal": "longConversationShare", "op": ">=", "value": 0.15, "weight": 1 } ],
-      "taskSignals": [ { "task": "writing", "minShare": 0.2, "weight": 2 }, { "task": "coding", "minShare": 0.2, "weight": 2 }, { "task": "workdoc", "minShare": 0.2, "weight": 1 } ], "priority": 65,
-      "evidenceUrl": "https://help.openai.com/en/articles/9930697-what-is-the-canvas-feature-in-chatgpt-and-how-do-i-use-it", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": true,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cg_canvas"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 1
+        },
+        {
+          "signal": "longConversationShare",
+          "op": ">=",
+          "value": 0.15,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "writing",
+          "minShare": 0.2,
+          "weight": 2
+        },
+        {
+          "task": "coding",
+          "minShare": 0.2,
+          "weight": 2
+        },
+        {
+          "task": "workdoc",
+          "minShare": 0.2,
+          "weight": 1
+        }
+      ],
+      "priority": 65,
+      "evidenceUrl": "https://help.openai.com/en/articles/9930697-what-is-the-canvas-feature-in-chatgpt-and-how-do-i-use-it",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": true,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cg_drive", "platform": "chatgpt", "name": "Google Drive 앱(커넥터)", "category": "connector",
+      "id": "cg_drive",
+      "platform": "chatgpt",
+      "name": "Google Drive 앱(커넥터)",
+      "category": "connector",
       "oneLiner": "드라이브의 문서·시트·슬라이드를 다시 올리지 않고 대화에서 바로 찾아 쓴다.",
       "howTo30s": "1) ChatGPT의 앱(Apps) 섹션에서 Google Drive 선택. 2) 파일에 접근 가능한 Google 계정으로 로그인하고 권한 승인. 3) 대화에서 파일 이름으로 요청한다.",
-      "requiresPlan": ["plus", "pro", "business"], "hardExclude": { "featuresInUse": ["cg_drive"] },
-      "problemSignals": [ { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 1 } ],
-      "taskSignals": [ { "task": "workdoc", "minShare": 0.25, "weight": 2 } ], "priority": 50,
-      "evidenceUrl": "https://help.openai.com/en/articles/10929079-google-drive-app-and-setup-in-chatgpt", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [
+        "plus",
+        "pro",
+        "business"
+      ],
+      "hardExclude": {
+        "featuresInUse": [
+          "cg_drive"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "workdoc",
+          "minShare": 0.25,
+          "weight": 2
+        }
+      ],
+      "priority": 50,
+      "evidenceUrl": "https://help.openai.com/en/articles/10929079-google-drive-app-and-setup-in-chatgpt",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cg_scheduled_tasks", "platform": "chatgpt", "name": "예약 작업", "category": "feature",
+      "id": "cg_scheduled_tasks",
+      "platform": "chatgpt",
+      "name": "예약 작업",
+      "category": "feature",
       "oneLiner": "같은 질문을 주기적으로 하고 있다면 한 번 예약해 결과를 받아 본다(Free·Go 3개, Plus 5개, Pro 15개).",
       "howTo30s": "1) 사이드바의 예약(Scheduled) 페이지를 연다. 2) '매주 월요일 아침에 ~ 정리해줘'처럼 요청한다. 3) 확인 메시지를 보고 저장한다.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cg_scheduled_tasks"] },
-      "problemSignals": [ { "signal": "restatement.repeatedQuestion", "op": ">=", "value": 20, "weight": 1 } ],
-      "taskSignals": [ { "task": "search", "minShare": 0.25, "weight": 1 } ], "priority": 40,
-      "evidenceUrl": "https://help.openai.com/en/articles/10291617-scheduled-tasks-in-chatgpt", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cg_scheduled_tasks"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.repeatedQuestion",
+          "op": ">=",
+          "value": 20,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "search",
+          "minShare": 0.25,
+          "weight": 1
+        }
+      ],
+      "priority": 40,
+      "evidenceUrl": "https://help.openai.com/en/articles/10291617-scheduled-tasks-in-chatgpt",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cg_deep_research", "platform": "chatgpt", "name": "딥 리서치", "category": "feature",
+      "id": "cg_deep_research",
+      "platform": "chatgpt",
+      "name": "딥 리서치",
+      "category": "feature",
       "oneLiner": "여러 출처를 읽고 근거가 달린 보고서를 만든다. 조사형 질문을 여러 번 나눠 묻는 대신 한 번에.",
       "howTo30s": "1) 입력창의 도구에서 딥 리서치를 고른다. 2) 질문과 범위를 적고 시작 전 계획을 수정한다. 3) 사용량 카운터로 남은 횟수를 확인한다(요금제별 상이).",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cg_deep_research"] },
-      "problemSignals": [ { "signal": "restatement.repeatedQuestion", "op": ">=", "value": 20, "weight": 1 } ],
-      "taskSignals": [ { "task": "search", "minShare": 0.25, "weight": 2 }, { "task": "learning", "minShare": 0.25, "weight": 1 } ], "priority": 45,
-      "evidenceUrl": "https://help.openai.com/en/articles/10500283-deep-research-in-chatgpt", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cg_deep_research"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.repeatedQuestion",
+          "op": ">=",
+          "value": 20,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "search",
+          "minShare": 0.25,
+          "weight": 2
+        },
+        {
+          "task": "learning",
+          "minShare": 0.25,
+          "weight": 1
+        }
+      ],
+      "priority": 45,
+      "evidenceUrl": "https://help.openai.com/en/articles/10500283-deep-research-in-chatgpt",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cg_branch", "platform": "chatgpt", "name": "대화 분기(Branch in new chat)", "category": "feature",
+      "id": "cg_branch",
+      "platform": "chatgpt",
+      "name": "대화 분기(Branch in new chat)",
+      "category": "feature",
       "oneLiner": "긴 대화의 특정 지점에서 새 대화를 갈라 맥락은 유지하고 뒤는 가볍게 간다.",
       "howTo30s": "1) 웹에서 갈라낼 메시지에 마우스를 올린다. 2) 더보기(⋯) > 'Branch in new chat'. 3) 새 대화에서 이어서 작업한다. 원래 대화는 그대로 남는다.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cg_branch"] },
-      "problemSignals": [ { "signal": "longConversationShare", "op": ">=", "value": 0.15, "weight": 2 }, { "signal": "avgTurnsPerConversation", "op": ">=", "value": 12, "weight": 1 } ],
-      "taskSignals": [], "priority": 72,
-      "evidenceUrl": "https://help.openai.com/en/articles/6825453-chatgpt-release-notes", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cg_branch"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "longConversationShare",
+          "op": ">=",
+          "value": 0.15,
+          "weight": 2
+        },
+        {
+          "signal": "avgTurnsPerConversation",
+          "op": ">=",
+          "value": 12,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [],
+      "priority": 72,
+      "evidenceUrl": "https://help.openai.com/en/articles/6825453-chatgpt-release-notes",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cg_edit_message", "platform": "chatgpt", "name": "메시지 편집", "category": "feature",
+      "id": "cg_edit_message",
+      "platform": "chatgpt",
+      "name": "메시지 편집",
+      "category": "feature",
       "oneLiner": "빗나간 답을 받았을 때 새 메시지로 다시 말하지 않고, 보낸 메시지를 고쳐 다시 보낸다.",
       "howTo30s": "1) 웹에서 내 메시지에 마우스를 올리고 연필 아이콘 클릭. 2) 빠진 조건을 넣어 고친다. 3) 다시 보내면 그 지점부터 응답이 새로 생성된다.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cg_edit_message"] },
-      "problemSignals": [ { "signal": "restatement.misunderstanding", "op": ">=", "value": 2, "weight": 2 }, { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 1 } ],
-      "taskSignals": [], "priority": 75,
-      "evidenceUrl": "https://help.openai.com/en/articles/11909943-gpt-5-5-in-chatgpt", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cg_edit_message"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.misunderstanding",
+          "op": ">=",
+          "value": 2,
+          "weight": 2
+        },
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [],
+      "priority": 75,
+      "evidenceUrl": "https://help.openai.com/en/articles/11909943-gpt-5-5-in-chatgpt",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cg_plugins", "platform": "chatgpt", "name": "플러그인 디렉터리", "category": "plugin",
+      "id": "cg_plugins",
+      "platform": "chatgpt",
+      "name": "플러그인 디렉터리",
+      "category": "plugin",
       "oneLiner": "앱·스킬을 묶은 작업 흐름(플러그인)을 설치해 재사용한다. 2026-07부터 앱 디렉터리를 대체.",
       "howTo30s": "메뉴 경로 미확인",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cg_plugins"] },
-      "problemSignals": [ { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 1 } ],
-      "taskSignals": [], "priority": 50,
-      "evidenceUrl": "https://help.openai.com/en/articles/6825453-chatgpt-release-notes", "verifiedAt": "", "verified": false, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cg_plugins"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 1
+        },
+        {
+          "signal": "restatement.perTask.coding",
+          "op": ">=",
+          "value": 3,
+          "weight": 2
+        },
+        {
+          "signal": "restatement.perTask.workdoc",
+          "op": ">=",
+          "value": 3,
+          "weight": 2
+        }
+      ],
+      "taskSignals": [],
+      "priority": 50,
+      "evidenceUrl": "https://help.openai.com/en/articles/6825453-chatgpt-release-notes",
+      "verifiedAt": "",
+      "verified": false,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cg_voice", "platform": "chatgpt", "name": "음성 모드", "category": "feature",
+      "id": "cg_voice",
+      "platform": "chatgpt",
+      "name": "음성 모드",
+      "category": "feature",
       "oneLiner": "말로 묻고 답을 듣는다.",
       "howTo30s": "메뉴 경로 미확인",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cg_voice"] },
-      "problemSignals": [], "taskSignals": [ { "task": "counseling", "minShare": 0.3, "weight": 1 } ], "priority": 20,
-      "evidenceUrl": "https://help.openai.com/en/articles/20001274", "verifiedAt": "", "verified": false, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cg_voice"
+        ]
+      },
+      "problemSignals": [],
+      "taskSignals": [
+        {
+          "task": "counseling",
+          "minShare": 0.3,
+          "weight": 1
+        }
+      ],
+      "priority": 20,
+      "evidenceUrl": "https://help.openai.com/en/articles/20001274",
+      "verifiedAt": "",
+      "verified": false,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
-
     {
-      "id": "cl_projects", "platform": "claude", "name": "프로젝트", "category": "feature",
+      "id": "cl_projects",
+      "platform": "claude",
+      "name": "프로젝트",
+      "category": "feature",
       "oneLiner": "대화·지식 파일·지침을 프로젝트로 묶는다. 무료 플랜은 5개까지.",
       "howTo30s": "1) 왼쪽 사이드바 'Projects' 또는 claude.ai/projects. 2) 오른쪽 위 '+ New Project', 이름 입력. 3) 프로젝트 안에서 새 대화 시작.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cl_projects"] },
-      "problemSignals": [ { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 2 }, { "signal": "longConversationShare", "op": ">=", "value": 0.15, "weight": 1 } ],
-      "taskSignals": [ { "task": "coding", "minShare": 0.2, "weight": 1 }, { "task": "workdoc", "minShare": 0.2, "weight": 1 }, { "task": "ideation", "minShare": 0.2, "weight": 1 } ], "priority": 70,
-      "evidenceUrl": "https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": true,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_projects"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 2
+        },
+        {
+          "signal": "longConversationShare",
+          "op": ">=",
+          "value": 0.15,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "coding",
+          "minShare": 0.2,
+          "weight": 1
+        },
+        {
+          "task": "workdoc",
+          "minShare": 0.2,
+          "weight": 1
+        },
+        {
+          "task": "ideation",
+          "minShare": 0.2,
+          "weight": 1
+        }
+      ],
+      "priority": 70,
+      "evidenceUrl": "https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": true,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cl_project_instructions", "platform": "claude", "name": "프로젝트 지침", "category": "feature",
+      "id": "cl_project_instructions",
+      "platform": "claude",
+      "name": "프로젝트 지침",
+      "category": "feature",
       "oneLiner": "프로젝트의 모든 대화에 적용되는 역할·톤·규칙을 한 번만 적는다.",
       "howTo30s": "1) 프로젝트를 연다. 2) 'Set project instructions' 클릭. 3) 언어·형식·금지 사항을 적고 'Save instructions'.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cl_project_instructions"] },
-      "problemSignals": [ { "signal": "restatement.high", "op": ">=", "value": 1, "weight": 3 }, { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 2 } ],
-      "taskSignals": [], "priority": 88,
-      "evidenceUrl": "https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_project_instructions"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.high",
+          "op": ">=",
+          "value": 1,
+          "weight": 3
+        },
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 2
+        }
+      ],
+      "taskSignals": [],
+      "priority": 88,
+      "evidenceUrl": "https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cl_project_knowledge", "platform": "claude", "name": "프로젝트 지식 파일", "category": "feature",
+      "id": "cl_project_knowledge",
+      "platform": "claude",
+      "name": "프로젝트 지식 파일",
+      "category": "feature",
       "oneLiner": "문서·코드를 프로젝트에 올려 두면 모든 대화의 배경 지식으로 쓴다. 유료는 용량 초과 시 검색 모드로 자동 확장.",
       "howTo30s": "1) 프로젝트에서 '+' 버튼. 2) 문서·텍스트·코드 조각 업로드. 3) 대화에서 파일 내용을 전제로 질문한다.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cl_project_knowledge"] },
-      "problemSignals": [ { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 1 } ],
-      "taskSignals": [ { "task": "coding", "minShare": 0.2, "weight": 1 }, { "task": "workdoc", "minShare": 0.2, "weight": 2 }, { "task": "learning", "minShare": 0.2, "weight": 1 } ], "priority": 62,
-      "evidenceUrl": "https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_project_knowledge"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "coding",
+          "minShare": 0.2,
+          "weight": 1
+        },
+        {
+          "task": "workdoc",
+          "minShare": 0.2,
+          "weight": 2
+        },
+        {
+          "task": "learning",
+          "minShare": 0.2,
+          "weight": 1
+        }
+      ],
+      "priority": 62,
+      "evidenceUrl": "https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cl_memory", "platform": "claude", "name": "메모리", "category": "feature",
+      "id": "cl_memory",
+      "platform": "claude",
+      "name": "메모리",
+      "category": "feature",
       "oneLiner": "대화 중 드러난 선호를 주제별로 저장해 다음 대화에 반영한다. 무료·Pro·Max 기본 켜짐.",
       "howTo30s": "1) Settings > Your Claude. 2) 'Generate memory from chats' 켜기. 3) 'Your memory' 옆 'Manage'에서 주제를 보고 고치거나 지운다.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cl_memory"] },
-      "problemSignals": [ { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 1 } ],
-      "taskSignals": [ { "task": "counseling", "minShare": 0.2, "weight": 1 }, { "task": "writing", "minShare": 0.2, "weight": 1 } ], "priority": 60,
-      "evidenceUrl": "https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": true,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_memory"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "counseling",
+          "minShare": 0.2,
+          "weight": 1
+        },
+        {
+          "task": "writing",
+          "minShare": 0.2,
+          "weight": 1
+        }
+      ],
+      "priority": 60,
+      "evidenceUrl": "https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": true,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cl_chat_search", "platform": "claude", "name": "과거 대화 검색", "category": "feature",
+      "id": "cl_chat_search",
+      "platform": "claude",
+      "name": "과거 대화 검색",
+      "category": "feature",
       "oneLiner": "예전 대화 내용을 다시 설명하지 않고 '지난번 ~ 대화 참고해서'라고 말하면 Claude가 찾아 쓴다.",
       "howTo30s": "1) Settings > Your Claude에서 'Search and reference chats'가 켜져 있는지 확인. 2) 대화에서 '지난주에 얘기한 발표 구성 이어서'처럼 자연어로 요청. 3) 프로젝트 밖 대화끼리, 프로젝트 안은 그 프로젝트 안에서만 검색된다.",
-      "requiresPlan": ["pro", "max", "team"], "hardExclude": { "featuresInUse": ["cl_chat_search"] },
-      "problemSignals": [ { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 2 } ],
-      "taskSignals": [], "priority": 74,
-      "evidenceUrl": "https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [
+        "pro",
+        "max",
+        "team"
+      ],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_chat_search"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 2
+        }
+      ],
+      "taskSignals": [],
+      "priority": 74,
+      "evidenceUrl": "https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cl_artifacts", "platform": "claude", "name": "아티팩트", "category": "feature",
+      "id": "cl_artifacts",
+      "platform": "claude",
+      "name": "아티팩트",
+      "category": "feature",
       "oneLiner": "문서·코드·간단한 앱을 대화 옆 패널에서 만들고 부분 수정한다.",
       "howTo30s": "1) 문서나 코드, 대시보드를 만들어 달라고 요청하면 옆 패널에 아티팩트로 열린다. 2) 후속 메시지로 바꿀 부분만 말한다. 3) 완성본은 공유하거나 나중에 다시 연다.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cl_artifacts"] },
-      "problemSignals": [ { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 1 }, { "signal": "longConversationShare", "op": ">=", "value": 0.15, "weight": 1 } ],
-      "taskSignals": [ { "task": "writing", "minShare": 0.2, "weight": 2 }, { "task": "coding", "minShare": 0.2, "weight": 2 }, { "task": "workdoc", "minShare": 0.2, "weight": 1 } ], "priority": 65,
-      "evidenceUrl": "https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": true,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_artifacts"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 1
+        },
+        {
+          "signal": "longConversationShare",
+          "op": ">=",
+          "value": 0.15,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "writing",
+          "minShare": 0.2,
+          "weight": 2
+        },
+        {
+          "task": "coding",
+          "minShare": 0.2,
+          "weight": 2
+        },
+        {
+          "task": "workdoc",
+          "minShare": 0.2,
+          "weight": 1
+        }
+      ],
+      "priority": 65,
+      "evidenceUrl": "https://support.claude.com/en/articles/17153992-what-are-artifacts-and-how-do-i-use-them",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": true,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cl_connectors_google", "platform": "claude", "name": "Google Workspace 커넥터", "category": "connector",
+      "id": "cl_connectors_google",
+      "platform": "claude",
+      "name": "Google Workspace 커넥터",
+      "category": "connector",
       "oneLiner": "드라이브의 문서·시트·슬라이드·PDF를 다시 올리지 않고 검색해 쓴다.",
       "howTo30s": "1) 왼쪽 사이드바 Customize > Plugins 페이지. 2) Google Drive 커넥터를 연결하고 Google 계정 권한 승인. 3) 대화에서 파일 이름으로 요청. 공유·이동·삭제는 승인 후 실행.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cl_connectors_google"] },
-      "problemSignals": [ { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 1 } ],
-      "taskSignals": [ { "task": "workdoc", "minShare": 0.25, "weight": 2 } ], "priority": 50,
-      "evidenceUrl": "https://support.claude.com/en/articles/10166901-use-google-workspace-connectors", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_connectors_google"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "workdoc",
+          "minShare": 0.25,
+          "weight": 2
+        }
+      ],
+      "priority": 50,
+      "evidenceUrl": "https://support.claude.com/en/articles/10166901-use-google-workspace-connectors",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cl_skills", "platform": "claude", "name": "스킬", "category": "skill",
+      "id": "cl_skills",
+      "platform": "claude",
+      "name": "스킬",
+      "category": "skill",
       "oneLiner": "반복하는 작업 방식(형식·절차·예시)을 스킬로 묶어 두면 필요할 때 자동으로 불러 쓴다. 무료 포함 전 플랜.",
       "howTo30s": "1) Settings > Capabilities에서 'Create and edit files' 켜기. 2) Customize > Skills에서 Anthropic 기본 스킬을 켠다. 3) 내 방식은 Customize > Skills > '+' > 'Create skill'로 ZIP 업로드.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cl_skills"] },
-      "problemSignals": [ { "signal": "restatement.high", "op": ">=", "value": 1, "weight": 2 }, { "signal": "restatement.mid", "op": ">=", "value": 5, "weight": 2 } ],
-      "taskSignals": [ { "task": "workdoc", "minShare": 0.2, "weight": 1 }, { "task": "coding", "minShare": 0.2, "weight": 1 } ], "priority": 78,
-      "evidenceUrl": "https://support.claude.com/en/articles/12512180-use-skills-in-claude", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_skills"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.high",
+          "op": ">=",
+          "value": 1,
+          "weight": 2
+        },
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 5,
+          "weight": 2
+        },
+        {
+          "signal": "restatement.perTask.workdoc",
+          "op": ">=",
+          "value": 3,
+          "weight": 2
+        },
+        {
+          "signal": "restatement.perTask.writing",
+          "op": ">=",
+          "value": 3,
+          "weight": 2
+        },
+        {
+          "signal": "restatement.perTask.coding",
+          "op": ">=",
+          "value": 3,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "workdoc",
+          "minShare": 0.2,
+          "weight": 1
+        },
+        {
+          "task": "coding",
+          "minShare": 0.2,
+          "weight": 1
+        }
+      ],
+      "priority": 78,
+      "evidenceUrl": "https://support.claude.com/en/articles/12512180-use-skills-in-claude",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cl_plugins", "platform": "claude", "name": "플러그인", "category": "plugin",
+      "id": "cl_plugins",
+      "platform": "claude",
+      "name": "플러그인",
+      "category": "plugin",
       "oneLiner": "스킬·커넥터·서브에이전트를 묶은 플러그인을 설치해 역할별 작업 흐름을 한 번에 갖춘다. 유료 플랜.",
       "howTo30s": "1) 왼쪽 사이드바 Customize 메뉴. 2) Plugins 탭 > Discover 탭. 3) 플러그인을 골라 'Add'.",
-      "requiresPlan": ["pro", "max", "team"], "hardExclude": { "featuresInUse": ["cl_plugins"] },
-      "problemSignals": [ { "signal": "restatement.mid", "op": ">=", "value": 5, "weight": 1 } ],
-      "taskSignals": [ { "task": "coding", "minShare": 0.25, "weight": 1 }, { "task": "workdoc", "minShare": 0.25, "weight": 1 } ], "priority": 55,
-      "evidenceUrl": "https://support.claude.com/en/articles/13837440-use-plugins-in-claude", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [
+        "pro",
+        "max",
+        "team"
+      ],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_plugins"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 5,
+          "weight": 1
+        },
+        {
+          "signal": "restatement.perTask.coding",
+          "op": ">=",
+          "value": 3,
+          "weight": 2
+        },
+        {
+          "signal": "restatement.perTask.workdoc",
+          "op": ">=",
+          "value": 3,
+          "weight": 2
+        },
+        {
+          "signal": "restatement.perTask.writing",
+          "op": ">=",
+          "value": 3,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "coding",
+          "minShare": 0.25,
+          "weight": 1
+        },
+        {
+          "task": "workdoc",
+          "minShare": 0.25,
+          "weight": 1
+        }
+      ],
+      "priority": 55,
+      "evidenceUrl": "https://support.claude.com/en/articles/13837440-use-plugins-in-claude",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cl_research", "platform": "claude", "name": "리서치", "category": "feature",
+      "id": "cl_research",
+      "platform": "claude",
+      "name": "리서치",
+      "category": "feature",
       "oneLiner": "여러 검색을 이어 가며 조사한 결과를 한 번에 받는다. 유료 플랜, 웹 검색 켜져 있어야 함.",
       "howTo30s": "1) 입력창 왼쪽 아래 '+' 버튼. 2) 'Research' 선택(파란 표시). 3) 조사 질문을 보낸다. 끄려면 표시를 다시 클릭.",
-      "requiresPlan": ["pro", "max", "team"], "hardExclude": { "featuresInUse": ["cl_research"] },
-      "problemSignals": [ { "signal": "restatement.repeatedQuestion", "op": ">=", "value": 20, "weight": 1 } ],
-      "taskSignals": [ { "task": "search", "minShare": 0.25, "weight": 2 }, { "task": "learning", "minShare": 0.25, "weight": 1 } ], "priority": 45,
-      "evidenceUrl": "https://support.claude.com/en/articles/11088861-use-research-on-claude", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [
+        "pro",
+        "max",
+        "team"
+      ],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_research"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.repeatedQuestion",
+          "op": ">=",
+          "value": 20,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "search",
+          "minShare": 0.25,
+          "weight": 2
+        },
+        {
+          "task": "learning",
+          "minShare": 0.25,
+          "weight": 1
+        }
+      ],
+      "priority": 45,
+      "evidenceUrl": "https://support.claude.com/en/articles/11088861-use-research-on-claude",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cl_web_search", "platform": "claude", "name": "웹 검색", "category": "feature",
+      "id": "cl_web_search",
+      "platform": "claude",
+      "name": "웹 검색",
+      "category": "feature",
       "oneLiner": "최신 정보가 필요한 질문에 출처가 달린 답을 받는다.",
       "howTo30s": "1) 입력창 '+' 메뉴에서 웹 검색을 켠다(새 Claude 화면은 토글 없이 필요할 때 자동 검색). 2) 질문한다. 3) 응답의 출처 링크로 확인한다.",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cl_web_search"] },
-      "problemSignals": [ { "signal": "restatement.repeatedQuestion", "op": ">=", "value": 20, "weight": 1 } ],
-      "taskSignals": [ { "task": "search", "minShare": 0.25, "weight": 2 } ], "priority": 40,
-      "evidenceUrl": "https://support.claude.com/en/articles/10684626-enable-and-use-web-search", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_web_search"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.repeatedQuestion",
+          "op": ">=",
+          "value": 20,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "search",
+          "minShare": 0.25,
+          "weight": 2
+        }
+      ],
+      "priority": 40,
+      "evidenceUrl": "https://support.claude.com/en/articles/10684626-enable-and-use-web-search",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cl_scheduled", "platform": "claude", "name": "예약 작업(Cowork)", "category": "feature",
+      "id": "cl_scheduled",
+      "platform": "claude",
+      "name": "예약 작업(Cowork)",
+      "category": "feature",
       "oneLiner": "주기적으로 반복하는 조사·정리를 예약해 클라우드에서 돌린다. 컴퓨터를 켜 둘 필요 없음.",
       "howTo30s": "1) 사이드바 'Scheduled' 페이지. 2) 반복 작업을 설명하거나 대화에서 '매주 ~ 해줘'라고 요청. 3) 주기(매시간·매일·평일·수동)를 고른다.",
-      "requiresPlan": ["pro", "max", "team"], "hardExclude": { "featuresInUse": ["cl_scheduled"] },
-      "problemSignals": [ { "signal": "restatement.repeatedQuestion", "op": ">=", "value": 20, "weight": 1 } ],
-      "taskSignals": [ { "task": "search", "minShare": 0.25, "weight": 1 }, { "task": "workdoc", "minShare": 0.25, "weight": 1 } ], "priority": 38,
-      "evidenceUrl": "https://support.claude.com/en/articles/13854387-schedule-recurring-tasks-in-claude-cowork", "verifiedAt": "2026-11-03", "verified": true, "isPopularDefault": false,
+      "requiresPlan": [
+        "pro",
+        "max",
+        "team"
+      ],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_scheduled"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.repeatedQuestion",
+          "op": ">=",
+          "value": 20,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "search",
+          "minShare": 0.25,
+          "weight": 1
+        },
+        {
+          "task": "workdoc",
+          "minShare": 0.25,
+          "weight": 1
+        }
+      ],
+      "priority": 38,
+      "evidenceUrl": "https://support.claude.com/en/articles/13854387-schedule-recurring-tasks-in-claude-cowork",
+      "verifiedAt": "2026-11-03",
+      "verified": true,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cl_preferences", "platform": "claude", "name": "개인 응답 설정", "category": "feature",
+      "id": "cl_preferences",
+      "platform": "claude",
+      "name": "개인 응답 설정",
+      "category": "feature",
       "oneLiner": "모든 대화에 적용할 응답 선호를 설정에 저장한다.",
       "howTo30s": "메뉴 경로 미확인",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cl_preferences"] },
-      "problemSignals": [ { "signal": "restatement.high", "op": ">=", "value": 1, "weight": 2 } ],
-      "taskSignals": [], "priority": 80,
-      "evidenceUrl": "https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features", "verifiedAt": "", "verified": false, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_preferences"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.high",
+          "op": ">=",
+          "value": 1,
+          "weight": 2
+        }
+      ],
+      "taskSignals": [],
+      "priority": 80,
+      "evidenceUrl": "https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features",
+      "verifiedAt": "",
+      "verified": false,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     },
     {
-      "id": "cl_styles", "platform": "claude", "name": "스타일", "category": "feature",
+      "id": "cl_styles",
+      "platform": "claude",
+      "name": "스타일",
+      "category": "feature",
       "oneLiner": "응답 문체를 미리 정해 둔다.",
       "howTo30s": "메뉴 경로 미확인(도움말 페이지 404)",
-      "requiresPlan": [], "hardExclude": { "featuresInUse": ["cl_styles"] },
-      "problemSignals": [ { "signal": "restatement.mid", "op": ">=", "value": 3, "weight": 1 } ],
-      "taskSignals": [ { "task": "writing", "minShare": 0.2, "weight": 1 } ], "priority": 50,
-      "evidenceUrl": "", "verifiedAt": "", "verified": false, "isPopularDefault": false,
+      "requiresPlan": [],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_styles"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "restatement.mid",
+          "op": ">=",
+          "value": 3,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [
+        {
+          "task": "writing",
+          "minShare": 0.2,
+          "weight": 1
+        }
+      ],
+      "priority": 50,
+      "evidenceUrl": "",
+      "verifiedAt": "",
+      "verified": false,
+      "isPopularDefault": false,
       "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
     }
   ]

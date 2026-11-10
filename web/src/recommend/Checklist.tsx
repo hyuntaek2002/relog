@@ -44,7 +44,7 @@ export default function Checklist({ platform, value, detected, onChange }: { pla
           </label>
         ))}
       </div>
-      <p className="detail">파일의 도구 호출 흔적으로 추정한 것이라 메모리·프로젝트 지침처럼 흔적이 없는 기능은 못 잡습니다. 그런 건 처방 카드에서 "이미 씀"을 누르면 됩니다. 설정은 이 브라우저에만 저장됩니다.</p>
+      <p className="detail">파일의 도구 호출 흔적으로 추정한 것이라 메모리·프로젝트 지침처럼 흔적이 없는 기능은 못 잡습니다. 그런 건 추천 카드에서 "이미 씀"을 누르면 됩니다. 설정은 이 브라우저에만 저장됩니다.</p>
       <div className="row wrap">
         <span>목표 (선택)</span>
         {GOALS.map((g) => (

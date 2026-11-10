@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  *  3) 점수 > 0 & 신호 1개 이상, 상위 3개, category당 최대 2개. 문제 신호 없으면 '참고'.
  */
 public final class RecommendEngine {
-    public static final String RULE_VERSION = "rec-0.1.0";
+    public static final String RULE_VERSION = "rec-0.1.1"; // 0.1.1: restatement.perTask.<task> 신호(대화 종류 집중) 지원
     public static final String NO_RECOMMENDATION = "지금 데이터로는 추천할 항목이 없습니다. 분석 대화가 더 쌓이면 다시 시도하세요.";
 
     /** 엔진 입력(웹 UsageSnapshot). 숫자만. */
@@ -25,13 +25,14 @@ public final class RecommendEngine {
 
     private static final Map<String, String> TASK_LABEL = Map.of("coding", "코딩", "writing", "글쓰기·교정", "learning", "학습·설명", "workdoc", "업무 문서",
             "search", "정보 탐색", "ideation", "아이디어·기획", "translation", "번역", "counseling", "상담·대화");
-    private static final Map<String, String> SIGNAL_LABEL = Map.of("restatement.high", "반복 지시 의심(높음)", "restatement.mid", "반복 지시 의심(중간)",
-            "restatement.low", "반복 지시 의심(낮음)", "restatement.misunderstanding", "이해 실패 의심", "restatement.repeatedQuestion", "반복 질문",
+    private static final Map<String, String> SIGNAL_LABEL = Map.of("restatement.high", "다시 말한 지시(확실함)", "restatement.mid", "다시 말한 지시(가능성 있음)",
+            "restatement.low", "다시 말한 지시(약함)", "restatement.misunderstanding", "말이 안 통한 듯한 표현", "restatement.repeatedQuestion", "비슷한 질문 다시 함",
             "longConversationShare", "긴 대화 비율", "avgTurnsPerConversation", "대화당 평균 발화", "codeShare", "코드 포함 비율");
 
     private RecommendEngine() {}
 
     static double read(Snapshot s, String path) {
+        if (path.startsWith("restatement.perTask.")) return s.restatement().perTask().getOrDefault(path.substring(20), 0);
         return switch (path) {
             case "restatement.high" -> s.restatement().high();
             case "restatement.mid" -> s.restatement().mid();
@@ -54,6 +55,7 @@ public final class RecommendEngine {
     }
 
     private static String fmtSignal(String path, double v) {
+        if (path.startsWith("restatement.perTask.")) return TASK_LABEL.getOrDefault(path.substring(20), path.substring(20)) + " 대화에서 다시 말한 지시 " + Math.round(v) + "건";
         String label = SIGNAL_LABEL.getOrDefault(path, path);
         if (path.equals("longConversationShare") || path.equals("codeShare")) return label + " " + Math.round(v * 100) + "%";
         if (path.equals("avgTurnsPerConversation")) return label + " " + String.format(Locale.ROOT, "%.1f", v) + "개";
@@ -96,8 +98,8 @@ public final class RecommendEngine {
         else if (top != null && top.getValue() > 0) parts.add(TASK_LABEL.getOrDefault(top.getKey(), top.getKey()) + " " + Math.round(top.getValue() * 100) + "%가 가장 많음");
         if (!sc.problemHits().isEmpty()) parts.add(String.join(", ", sc.problemHits()));
         var perTaskTop = s.restatement().perTask().entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
-        if (sc.problemHits().stream().anyMatch(h -> h.startsWith("반복 지시")) && perTaskTop != null && perTaskTop.getValue() > 0)
-            parts.add("반복 의심은 " + TASK_LABEL.getOrDefault(perTaskTop.getKey(), perTaskTop.getKey()) + "에 " + perTaskTop.getValue() + "건으로 집중");
+        if (sc.problemHits().stream().anyMatch(h -> h.contains("다시 말한 지시")) && perTaskTop != null && perTaskTop.getValue() > 0)
+            parts.add("다시 말한 지시는 " + TASK_LABEL.getOrDefault(perTaskTop.getKey(), perTaskTop.getKey()) + " 대화에 " + perTaskTop.getValue() + "건으로 몰림");
         return String.join(". ", parts) + ".";
     }
 

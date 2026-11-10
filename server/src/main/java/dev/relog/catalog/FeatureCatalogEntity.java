@@ -20,7 +20,7 @@ public class FeatureCatalogEntity {
     public int priority;
     @Column(nullable = false, length = 32)
     public String catalogVersion;
-    @Lob @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "text") // @Lob String은 MySQL에서 tinytext(255)로 잡히는 문제가 있어 명시
     public String json; // 항목 전체(JSON)
     @Column(nullable = false)
     public Instant updatedAt = Instant.now();
