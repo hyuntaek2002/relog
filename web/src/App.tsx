@@ -21,7 +21,7 @@ type Classified = Extract<EmbedOut, { type: 'classified' }>
 type Step = 'idle' | 'read' | 'analyze' | 'model' | 'classify' | 'done'
 
 const STEPS: [Step, string][] = [['read', '파일 읽기'], ['analyze', '분석'], ['model', '모델 준비'], ['classify', '분류'], ['done', '완료']]
-const MODELS = ['Xenova/multilingual-e5-small', 'Xenova/paraphrase-multilingual-MiniLM-L12-v2'] as const
+const MODELS = ['Xenova/multilingual-e5-small', 'Xenova/paraphrase-multilingual-MiniLM-L12-v2', 'static-e5'] as const
 const DEFAULT_MODEL = MODELS[0]
 const DEVICE: 'wasm' | 'webgpu' = 'gpu' in navigator ? 'webgpu' : 'wasm'
 const DEV = new URLSearchParams(location.search).has('dev')

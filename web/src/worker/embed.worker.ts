@@ -3,6 +3,7 @@ import { CLASSIFIER_VERSION, SEED_TEXTS, SEED_TYPES, SEED_VERSION, TaskClassifie
 import { DEFAULT_OPTIONS, DETECTOR_VERSION, detect, nullDistribution, quantile, summarize, withinConversationNull, type Candidate, type DetectInput, type DetectSummary } from '../detect/detector.ts'
 
 import { installFetchAudit, setAuditProbes, takeAuditRecords, type NetRecord } from './netaudit.ts'
+import { STATIC_MODEL_ID, StaticEmbedder, browserLoader } from '../classify/staticEmbed.ts'
 
 // 모델은 1회 다운로드 후 Cache Storage에 캐시된다(transformers.js 기본 동작).
 env.allowLocalModels = false
@@ -53,34 +54,42 @@ export type EmbedOut =
     }
   | { type: 'error'; message: string }
 
-type Pipe = FeatureExtractionPipeline
+// 임베더: 문장 배열 → (n × dim) 벡터. 문맥 모델(transformers.js)과 정적 표(static-e5)를 같은 모양으로 감싼다.
+type Embedder = (texts: string[]) => Promise<{ data: Float32Array; dim: number }>
 const post = (m: EmbedOut, transfer: Transferable[] = []) => self.postMessage(m, { transfer })
 
-async function load(model: string, device: 'wasm' | 'webgpu'): Promise<Pipe> {
-  return (await pipeline('feature-extraction', model, {
+async function load(model: string, device: 'wasm' | 'webgpu'): Promise<Embedder> {
+  if (model === STATIC_MODEL_ID) {
+    const se = await StaticEmbedder.load(browserLoader())
+    return (texts) => se.embed(texts)
+  }
+  const pipe = (await pipeline('feature-extraction', model, {
     dtype: 'q8',
     device,
     progress_callback: (p: { status: string; file?: string; progress?: number }) => {
       if (p.status === 'progress' && p.file) post({ type: 'download', file: p.file, percent: Math.round(p.progress ?? 0) })
     },
-  })) as Pipe
+  })) as FeatureExtractionPipeline
+  return async (texts) => {
+    const out = await pipe(texts, { pooling: 'mean', normalize: true })
+    return { data: out.data as Float32Array, dim: out.dims[1] }
+  }
 }
 
-// E5 계열은 "query: " 접두어 필수
-const prep = (model: string, texts: string[]) => (model.includes('e5') ? texts.map((t) => 'query: ' + t) : texts)
+// E5 계열은 "query: " 접두어 필수(정적 표는 토큰 평균이라 접두어 불필요)
+const prep = (model: string, texts: string[]) => (model.includes('e5') && model !== STATIC_MODEL_ID ? texts.map((t) => 'query: ' + t) : texts)
 
 // 길이순으로 묶어 임베딩하고 원래 순서로 되돌린다. 결과는 (n × dim) 한 덩어리.
-async function embedAll(pipe: Pipe, texts: string[], onProgress?: (done: number) => void): Promise<{ data: Float32Array; dim: number }> {
+async function embedAll(embed: Embedder, texts: string[], onProgress?: (done: number) => void): Promise<{ data: Float32Array; dim: number }> {
   const order = texts.map((_, i) => i).sort((a, b) => texts[a].length - texts[b].length)
   let data: Float32Array | null = null
   let dim = 0
   for (let i = 0; i < order.length; i += BATCH) {
     const idx = order.slice(i, i + BATCH)
-    const out = await pipe(idx.map((j) => texts[j]), { pooling: 'mean', normalize: true })
-    dim = out.dims[1]
+    const out = await embed(idx.map((j) => texts[j]))
+    dim = out.dim
     data ??= new Float32Array(texts.length * dim)
-    const flat = out.data as Float32Array
-    idx.forEach((j, r) => data!.set(flat.subarray(r * dim, (r + 1) * dim), j * dim))
+    idx.forEach((j, r) => data!.set(out.data.subarray(r * dim, (r + 1) * dim), j * dim))
     onProgress?.(Math.min(i + BATCH, order.length))
   }
   return { data: data ?? new Float32Array(0), dim }

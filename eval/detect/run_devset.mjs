@@ -28,11 +28,21 @@ for (const c of dev.conversations) {
 console.log(`model=${model} utterances=${inputs.length} labeled=${gold.size} repeat=${[...gold.values()].filter((g) => g.gold === 'repeat').length}`)
 
 const t0 = performance.now()
-const pipe = await pipeline('feature-extraction', model, { dtype: 'q8' })
-const texts = model.includes('e5') ? inputs.map((u) => 'query: ' + u.text) : inputs.map((u) => u.text)
-const out = await pipe(texts, { pooling: 'mean', normalize: true })
-const dim = out.dims[1]
-const data = out.data
+let data, dim
+if (model === 'static-e5') {
+  // 정적 표(web/public/static-e5)를 디스크에서 읽는다. 브라우저와 같은 모듈.
+  const { StaticEmbedder } = await import('../../web/src/classify/staticEmbed.ts')
+  const dir = join(here, '../../web/public/static-e5')
+  const se = await StaticEmbedder.load(async (name) => { const b = readFileSync(join(dir, name)); return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength) })
+  const r = await se.embed(inputs.map((u) => u.text))
+  data = r.data; dim = r.dim
+} else {
+  const pipe = await pipeline('feature-extraction', model, { dtype: 'q8' })
+  const texts = model.includes('e5') ? inputs.map((u) => 'query: ' + u.text) : inputs.map((u) => u.text)
+  const out = await pipe(texts, { pooling: 'mean', normalize: true })
+  dim = out.dims[1]
+  data = out.data
+}
 console.log(`embedded in ${Math.round(performance.now() - t0)}ms, dim=${dim}`)
 const row = (d) => (i) => d.subarray(i * dim, (i + 1) * dim)
 
