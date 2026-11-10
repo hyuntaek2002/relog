@@ -9,7 +9,8 @@ import java.util.List;
 public record CatalogItem(
         String id, String platform, String name, String category, String oneLiner, String howTo30s,
         List<String> requiresPlan, HardExclude hardExclude, List<ProblemSignal> problemSignals, List<TaskSignal> taskSignals,
-        int priority, String evidenceUrl, String verifiedAt, boolean verified, boolean isPopularDefault, String caveat) {
+        int priority, String evidenceUrl, String verifiedAt, boolean verified, boolean isPopularDefault, String caveat,
+        java.util.Map<String, String> byTask) {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record HardExclude(List<String> featuresInUse) {}
     @JsonIgnoreProperties(ignoreUnknown = true)

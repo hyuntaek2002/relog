@@ -26,6 +26,7 @@ export interface CatalogItem {
   verified: boolean
   isPopularDefault: boolean
   caveat: string
+  byTask?: Partial<Record<SnapshotTask, string>> // 대화 종류별 구체 항목 이름(howTo의 {plugin}에 치환)
 }
 export const CATALOG = catalog.items as CatalogItem[]
 
@@ -43,7 +44,8 @@ export interface Prescription {
   name: string
   category: Category
   grade: '핵심' | '참고'
-  why: string
+  summary: string // 한 줄 요약(숫자 1~2개). 카드 머리말
+  why: string // 근거 숫자 전체(펼침)
   what: string
   how: string
   caveat: string
@@ -117,6 +119,20 @@ export function scoreAll(snapshot: UsageSnapshot, ctx: UserContext, feedback: Fe
   })
 }
 
+// 카드 머리말: 가장 강한 신호 하나를 쉬운 문장으로. 숫자는 1~2개만.
+function summaryOf(snapshot: UsageSnapshot, s: ScoredItem): string {
+  const r = snapshot.restatement
+  const perTaskTop = (Object.entries(r.perTask) as [SnapshotTask, number][]).sort((a, b) => b[1] - a[1])[0]
+  const hit = (prefix: string) => s.problemHits.find((h) => h.startsWith(prefix))
+  if (hit('다시 말한 지시') && perTaskTop && perTaskTop[1] >= 3) return `${TASK_LABEL[perTaskTop[0]]} 대화에서 같은 지시를 ${perTaskTop[1]}번 다시 말했어요.`
+  if (hit('다시 말한 지시')) return `같은 지시를 다시 말한 메시지가 ${r.high + r.mid}건이에요.`
+  if (hit('말이 안 통한')) return `AI가 요지를 놓친 듯한 메시지가 ${r.misunderstanding}건이에요.`
+  if (hit('긴 대화 비율')) return `대화 ${Math.round(snapshot.longConversationShare * 100)}%가 메시지 10개를 넘는 긴 대화예요.`
+  if (hit('비슷한 질문')) return `비슷한 질문을 ${r.repeatedQuestion}번 다시 했어요.`
+  const top = (Object.entries(snapshot.taskShare) as [SnapshotTask, number][]).sort((a, b) => b[1] - a[1])[0]
+  return top && top[1] > 0 ? `${TASK_LABEL[top[0]]} 대화가 ${Math.round(top[1] * 100)}%로 가장 많아요.` : '최근 대화 패턴 기준 추천이에요.'
+}
+
 function why(snapshot: UsageSnapshot, s: ScoredItem): string {
   const parts: string[] = []
   const top = (Object.entries(snapshot.taskShare) as [SnapshotTask, number][]).sort((a, b) => b[1] - a[1])[0]
@@ -127,6 +143,14 @@ function why(snapshot: UsageSnapshot, s: ScoredItem): string {
   const perTaskTop = (Object.entries(r.perTask) as [SnapshotTask, number][]).sort((a, b) => b[1] - a[1])[0]
   if (s.problemHits.some((h) => h.includes('다시 말한 지시')) && perTaskTop && perTaskTop[1] > 0) parts.push(`다시 말한 지시는 ${TASK_LABEL[perTaskTop[0]]} 대화에 ${perTaskTop[1]}건으로 몰림`)
   return parts.join('. ') + '.'
+}
+
+// howTo의 {plugin} 자리에 다시 말한 지시가 가장 몰린 대화 종류의 항목 이름을 넣는다
+function fillHow(item: CatalogItem, snapshot: UsageSnapshot): string {
+  if (!item.howTo30s.includes('{plugin}')) return item.howTo30s
+  const top = (Object.entries(snapshot.restatement.perTask) as [SnapshotTask, number][]).sort((a, b) => b[1] - a[1])[0]
+  const name = (top && item.byTask?.[top[0]]) || '내 작업에 맞는 플러그인'
+  return item.howTo30s.replaceAll('{plugin}', name)
 }
 
 // 3)·4) 점수 > 0, 상위 3개, category당 최대 2개
@@ -146,9 +170,10 @@ export function recommend(snapshot: UsageSnapshot, ctx: UserContext, feedback: F
       name: s.item.name,
       category: s.item.category,
       grade: s.problemHits.length > 0 ? '핵심' : '참고',
+      summary: summaryOf(snapshot, s),
       why: why(snapshot, s),
       what: s.item.oneLiner,
-      how: s.item.howTo30s,
+      how: fillHow(s.item, snapshot),
       caveat: s.item.caveat,
       signalsUsed: [...s.problemHits, ...s.taskHits],
       score: Math.round(s.score * 100) / 100,

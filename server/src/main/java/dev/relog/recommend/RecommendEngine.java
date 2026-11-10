@@ -21,7 +21,7 @@ public final class RecommendEngine {
     public record Restatement(int high, int mid, int low, int misunderstanding, int repeatedQuestion, Map<String, Integer> perTask, int tokenEstimate, double ratio) {}
     public record Context(String plan, Set<String> featuresInUse) {}
     public record Scored(CatalogItem item, double score, List<String> problemHits, List<String> taskHits, String excluded) {}
-    public record Prescription(String catalogId, String name, String category, String grade, String why, String what, String how, String caveat, List<String> signalsUsed, double score) {}
+    public record Prescription(String catalogId, String name, String category, String grade, String summary, String why, String what, String how, String caveat, List<String> signalsUsed, double score) {}
 
     private static final Map<String, String> TASK_LABEL = Map.of("coding", "코딩", "writing", "글쓰기·교정", "learning", "학습·설명", "workdoc", "업무 문서",
             "search", "정보 탐색", "ideation", "아이디어·기획", "translation", "번역", "counseling", "상담·대화");
@@ -91,6 +91,29 @@ public final class RecommendEngine {
         return out;
     }
 
+    /** 카드 머리말: 가장 강한 신호 하나를 쉬운 문장으로(웹 summaryOf와 동일). */
+    private static String summaryOf(Snapshot s, Scored sc) {
+        var r = s.restatement();
+        var perTaskTop = r.perTask().entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
+        java.util.function.Predicate<String> hit = prefix -> sc.problemHits().stream().anyMatch(h -> h.startsWith(prefix));
+        if (hit.test("다시 말한 지시") && perTaskTop != null && perTaskTop.getValue() >= 3)
+            return TASK_LABEL.getOrDefault(perTaskTop.getKey(), perTaskTop.getKey()) + " 대화에서 같은 지시를 " + perTaskTop.getValue() + "번 다시 말했어요.";
+        if (hit.test("다시 말한 지시")) return "같은 지시를 다시 말한 메시지가 " + (r.high() + r.mid()) + "건이에요.";
+        if (hit.test("말이 안 통한")) return "AI가 요지를 놓친 듯한 메시지가 " + r.misunderstanding() + "건이에요.";
+        if (hit.test("긴 대화 비율")) return "대화 " + Math.round(s.longConversationShare() * 100) + "%가 메시지 10개를 넘는 긴 대화예요.";
+        if (hit.test("비슷한 질문")) return "비슷한 질문을 " + r.repeatedQuestion() + "번 다시 했어요.";
+        var top = s.taskShare().entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
+        return top != null && top.getValue() > 0 ? TASK_LABEL.getOrDefault(top.getKey(), top.getKey()) + " 대화가 " + Math.round(top.getValue() * 100) + "%로 가장 많아요." : "최근 대화 패턴 기준 추천이에요.";
+    }
+
+    /** howTo의 {plugin} 자리에 다시 말한 지시가 가장 몰린 대화 종류의 항목 이름을 넣는다(웹 fillHow와 동일). */
+    private static String fillHow(CatalogItem item, Snapshot s) {
+        if (!item.howTo30s().contains("{plugin}")) return item.howTo30s();
+        var top = s.restatement().perTask().entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
+        String name = top != null && item.byTask() != null ? item.byTask().get(top.getKey()) : null;
+        return item.howTo30s().replace("{plugin}", name != null ? name : "내 작업에 맞는 플러그인");
+    }
+
     private static String why(Snapshot s, Scored sc) {
         List<String> parts = new ArrayList<>();
         var top = s.taskShare().entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
@@ -117,7 +140,7 @@ public final class RecommendEngine {
             perCategory.put(sc.item().category(), n + 1);
             List<String> signals = new ArrayList<>(sc.problemHits()); signals.addAll(sc.taskHits());
             out.add(new Prescription(sc.item().id(), sc.item().name(), sc.item().category(), sc.problemHits().isEmpty() ? "참고" : "핵심",
-                    why(s, sc), sc.item().oneLiner(), sc.item().howTo30s(), sc.item().caveat(), signals, Math.round(sc.score() * 100) / 100.0));
+                    summaryOf(s, sc), why(s, sc), sc.item().oneLiner(), fillHow(sc.item(), s), sc.item().caveat(), signals, Math.round(sc.score() * 100) / 100.0));
         }
         return out;
     }

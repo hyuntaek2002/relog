@@ -33,7 +33,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "pr_split_long",
@@ -72,7 +72,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "pr_prompt_template",
@@ -105,7 +105,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "pr_clarify_first",
@@ -132,7 +132,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cg_projects",
@@ -178,7 +178,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": true,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cg_project_instructions",
@@ -213,7 +213,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cg_custom_instructions",
@@ -248,7 +248,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cg_memory",
@@ -288,7 +288,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": true,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cg_canvas",
@@ -339,7 +339,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": true,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cg_drive",
@@ -378,7 +378,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cg_scheduled_tasks",
@@ -413,7 +413,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cg_deep_research",
@@ -453,7 +453,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cg_branch",
@@ -488,7 +488,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cg_edit_message",
@@ -523,7 +523,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cg_plugins",
@@ -564,7 +564,7 @@
       "verifiedAt": "",
       "verified": false,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cg_voice",
@@ -592,7 +592,7 @@
       "verifiedAt": "",
       "verified": false,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cl_projects",
@@ -643,7 +643,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": true,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cl_project_instructions",
@@ -678,7 +678,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cl_project_knowledge",
@@ -723,7 +723,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cl_memory",
@@ -731,7 +731,7 @@
       "name": "메모리",
       "category": "feature",
       "oneLiner": "대화 중 드러난 선호를 주제별로 저장해 다음 대화에 반영한다. 무료·Pro·Max 기본 켜짐.",
-      "howTo30s": "1) Settings > Your Claude. 2) 'Generate memory from chats' 켜기. 3) 'Your memory' 옆 'Manage'에서 주제를 보고 고치거나 지운다.",
+      "howTo30s": "1) 왼쪽 아래 설정 → 메모리. 2) 대화에서 메모리 생성을 켠다. 3) 저장된 주제를 보고 고치거나 지울 수 있다.",
       "requiresPlan": [],
       "hardExclude": {
         "featuresInUse": [
@@ -760,10 +760,11 @@
       ],
       "priority": 60,
       "evidenceUrl": "https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context",
-      "verifiedAt": "2026-11-03",
+      "verifiedAt": "2026-11-10",
       "verified": true,
       "isPopularDefault": true,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "evidenceNote": "Claude 한국어 데스크톱 앱 화면 실측(설정 → 사용자 지정) 2026-11-10"
     },
     {
       "id": "cl_chat_search",
@@ -796,7 +797,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cl_artifacts",
@@ -847,7 +848,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": true,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cl_connectors_google",
@@ -855,7 +856,7 @@
       "name": "Google Workspace 커넥터",
       "category": "connector",
       "oneLiner": "드라이브의 문서·시트·슬라이드·PDF를 다시 올리지 않고 검색해 쓴다.",
-      "howTo30s": "1) 왼쪽 사이드바 Customize > Plugins 페이지. 2) Google Drive 커넥터를 연결하고 Google 계정 권한 승인. 3) 대화에서 파일 이름으로 요청. 공유·이동·삭제는 승인 후 실행.",
+      "howTo30s": "1) 왼쪽 아래 설정 → 커넥터. 2) Google Drive를 연결하고 Google 계정 권한을 승인한다. 3) 대화에서 파일 이름으로 요청한다. 공유·이동·삭제는 승인 후 실행.",
       "requiresPlan": [],
       "hardExclude": {
         "featuresInUse": [
@@ -879,10 +880,11 @@
       ],
       "priority": 50,
       "evidenceUrl": "https://support.claude.com/en/articles/10166901-use-google-workspace-connectors",
-      "verifiedAt": "2026-11-03",
+      "verifiedAt": "2026-11-10",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "evidenceNote": "Claude 한국어 데스크톱 앱 화면 실측(설정 → 사용자 지정) 2026-11-10"
     },
     {
       "id": "cl_skills",
@@ -890,7 +892,7 @@
       "name": "스킬",
       "category": "skill",
       "oneLiner": "반복하는 작업 방식(형식·절차·예시)을 스킬로 묶어 두면 필요할 때 자동으로 불러 쓴다. 무료 포함 전 플랜.",
-      "howTo30s": "1) Settings > Capabilities에서 'Create and edit files' 켜기. 2) Customize > Skills에서 Anthropic 기본 스킬을 켠다. 3) 내 방식은 Customize > Skills > '+' > 'Create skill'로 ZIP 업로드.",
+      "howTo30s": "1) 왼쪽 아래 설정 → Skills. 2) 자주 쓰는 작업 방식(형식·절차·예시)을 스킬로 만들거나 켠다. 3) 켜 두면 관련 작업에서 자동으로 쓰인다.",
       "requiresPlan": [],
       "hardExclude": {
         "featuresInUse": [
@@ -943,18 +945,19 @@
       ],
       "priority": 78,
       "evidenceUrl": "https://support.claude.com/en/articles/12512180-use-skills-in-claude",
-      "verifiedAt": "2026-11-03",
+      "verifiedAt": "2026-11-10",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "evidenceNote": "Claude 한국어 데스크톱 앱 화면 실측(설정 → 사용자 지정) 2026-11-10"
     },
     {
       "id": "cl_plugins",
       "platform": "claude",
       "name": "플러그인",
       "category": "plugin",
-      "oneLiner": "스킬·커넥터·서브에이전트를 묶은 플러그인을 설치해 역할별 작업 흐름을 한 번에 갖춘다. 유료 플랜.",
-      "howTo30s": "1) 왼쪽 사이드바 Customize 메뉴. 2) Plugins 탭 > Discover 탭. 3) 플러그인을 골라 'Add'.",
+      "oneLiner": "역할별 작업 방식을 묶어 둔 플러그인을 한 번 추가해 두면, 그 종류의 대화에서 매번 설명하지 않아도 됩니다. 유료 플랜.",
+      "howTo30s": "1) 왼쪽 아래 설정 → 플러그인 → 탐색 탭. 2) {plugin}을 찾아 + 추가. 3) 다음 대화 첫 메시지에 '{plugin} 플러그인 써서'라고 한 번만 적는다.",
       "requiresPlan": [
         "pro",
         "max",
@@ -1005,10 +1008,19 @@
       ],
       "priority": 55,
       "evidenceUrl": "https://support.claude.com/en/articles/13837440-use-plugins-in-claude",
-      "verifiedAt": "2026-11-03",
+      "verifiedAt": "2026-11-10",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "evidenceNote": "Claude 한국어 데스크톱 앱 설정→플러그인→탐색 탭 캡처 2026-11-10: Data, UI Design Review, SwiftUI App Design, learn, doc-coauthoring, web-artifacts-builder, Productivity(3.4M), Marketing(2.7M); 내 항목: Engineering, Design, Unity",
+      "byTask": {
+        "workdoc": "doc-coauthoring",
+        "writing": "doc-coauthoring",
+        "coding": "Engineering",
+        "learning": "learn",
+        "search": "Data",
+        "ideation": "Productivity"
+      }
     },
     {
       "id": "cl_research",
@@ -1052,7 +1064,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cl_web_search",
@@ -1087,7 +1099,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cl_scheduled",
@@ -1131,7 +1143,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cl_preferences",
@@ -1160,7 +1172,7 @@
       "verifiedAt": "",
       "verified": false,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
     {
       "id": "cl_styles",
@@ -1195,7 +1207,7 @@
       "verifiedAt": "",
       "verified": false,
       "isPopularDefault": false,
-      "caveat": "효과는 다음 분석의 반복 비율 변화로 확인"
+      "caveat": "효과는 아직 검증되지 않았어요. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     }
   ]
 }
