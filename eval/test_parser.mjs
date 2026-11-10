@@ -194,3 +194,26 @@ assert.equal(mergeLedger(led, led).length, 5)
 assert.equal(aggregateWeekly(led, 'other').length, 0)
 console.log('ledger ok')
 }
+
+// 과업별 전후 비교
+{
+  const { compareTasks } = await import('../web/src/store/ledger.ts')
+  const wk = (start, taskCounts, perTask, high = 0, medium = 0) => ({ periodStart: start, periodEnd: start + 7 * 86400000, versionKey: 'v', platform: 'claude', userTurnCount: 0, okCount: 0, judgeable: 0, conversationCount: 0, longConversationCount: 0, codeCount: 0, taskCounts, restatement: { high, medium, low: 0, tokenEstimate: 0, ratio: 0, perTask, repeatedQuestion: 0, misunderstanding: 0 }, hourHistogram: [] })
+  const weeks = [
+    wk(0, { coding: 10, writing: 5 }, { coding: 4 }, 1, 3),
+    wk(7 * 86400000, { coding: 10 }, { coding: 2 }, 0, 2),
+    wk(14 * 86400000, { coding: 10, writing: 2 }, { coding: 1 }, 0, 1),
+    wk(21 * 86400000, { coding: 10 }, {}, 0, 0),
+  ]
+  const c = compareTasks(weeks, 2)
+  assert.deepEqual(c.beforeRange, [0, 14 * 86400000]); assert.deepEqual(c.afterRange, [14 * 86400000, 28 * 86400000])
+  const coding = c.rows.find((r) => r.task === 'coding')
+  assert.deepEqual([coding.before.ok, coding.before.flagged, coding.before.ratio], [20, 6, 30])
+  assert.deepEqual([coding.after.ok, coding.after.flagged, coding.after.ratio], [20, 1, 5])
+  assert.equal(coding.delta, -25)
+  const writing = c.rows.find((r) => r.task === 'writing')
+  assert.equal(writing.after.ratio, null, '표본 5개 미만이면 비율 없음'); assert.equal(writing.delta, null)
+  assert.equal(c.total.before.flagged, 6); assert.equal(c.total.after.flagged, 1)
+  assert.equal(c.rows[0].task, 'coding', '발화 많은 순')
+  console.log('compare ok')
+}

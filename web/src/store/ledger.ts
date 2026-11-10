@@ -167,4 +167,42 @@ export function mergeLedger(existing: LedgerEntry[], incoming: LedgerEntry[]): L
 }
 
 export const conversationsOf = (entries: LedgerEntry[]) => new Set(entries.map((e) => e.conversationId)).size
+
+// 과업별 전후 비교: 주별 스냅샷을 "이전 기간"(앞쪽 주들)과 "최근 기간"(마지막 recentWeeks주)으로 나눠
+// 과업 유형별 발화 수·반복 의심 수·비율을 나란히 놓는다. 모델 응답 이행 여부와 무관한 집계 숫자.
+export interface TaskCompareRow {
+  task: string
+  before: { ok: number; flagged: number; ratio: number | null }
+  after: { ok: number; flagged: number; ratio: number | null }
+  delta: number | null // after.ratio - before.ratio (퍼센트포인트). 한쪽이라도 표본이 없으면 null
+}
+export interface TaskCompare {
+  beforeRange: [number, number] | null // [첫 주 시작, 마지막 주 끝)
+  afterRange: [number, number] | null
+  rows: TaskCompareRow[]
+  total: TaskCompareRow
+}
+
+export function compareTasks(weeks: PeriodSnapshot[], recentWeeks = 2, minSamples = 5): TaskCompare {
+  const sorted = [...weeks].sort((a, b) => a.periodStart - b.periodStart)
+  const cut = Math.max(0, sorted.length - recentWeeks)
+  const before = sorted.slice(0, cut), after = sorted.slice(cut)
+  const sum = (ws: PeriodSnapshot[]) => {
+    const ok: Record<string, number> = {}, flagged: Record<string, number> = {}
+    let okAll = 0, flaggedAll = 0
+    for (const w of ws) {
+      for (const [t, n] of Object.entries(w.taskCounts)) { ok[t] = (ok[t] ?? 0) + n; okAll += n }
+      for (const [t, n] of Object.entries(w.restatement.perTask)) { flagged[t] = (flagged[t] ?? 0) + n }
+      flaggedAll += w.restatement.high + w.restatement.medium + w.restatement.low
+    }
+    return { ok, flagged, okAll, flaggedAll }
+  }
+  const b = sum(before), a = sum(after)
+  const side = (ok: number, flagged: number) => ({ ok, flagged, ratio: ok >= minSamples ? (100 * flagged) / ok : null })
+  const tasks = [...new Set([...Object.keys(b.ok), ...Object.keys(a.ok)])].sort((x, y) => (a.ok[y] ?? 0) + (b.ok[y] ?? 0) - ((a.ok[x] ?? 0) + (b.ok[x] ?? 0)))
+  const row = (task: string, bs: ReturnType<typeof side>, as: ReturnType<typeof side>): TaskCompareRow => ({ task, before: bs, after: as, delta: bs.ratio != null && as.ratio != null ? as.ratio - bs.ratio : null })
+  const rows = tasks.map((t) => row(t, side(b.ok[t] ?? 0, b.flagged[t] ?? 0), side(a.ok[t] ?? 0, a.flagged[t] ?? 0)))
+  const range = (ws: PeriodSnapshot[]): [number, number] | null => (ws.length ? [ws[0].periodStart, ws[ws.length - 1].periodEnd] : null)
+  return { beforeRange: range(before), afterRange: range(after), rows, total: row('all', side(b.okAll, b.flaggedAll), side(a.okAll, a.flaggedAll)) }
+}
 export type { Conversation }
