@@ -2,8 +2,27 @@ import { pipeline, env, type FeatureExtractionPipeline } from '@huggingface/tran
 import { CLASSIFIER_VERSION, SEED_TEXTS, SEED_TYPES, SEED_VERSION, TaskClassifier, type Prediction } from '../classify/classifier.ts'
 import { DEFAULT_OPTIONS, DETECTOR_VERSION, detect, nullDistribution, quantile, summarize, withinConversationNull, type Candidate, type DetectInput, type DetectSummary } from '../detect/detector.ts'
 
+import { installFetchAudit, setAuditProbes, takeAuditRecords, type NetRecord } from './netaudit.ts'
+
 // 모델은 1회 다운로드 후 Cache Storage에 캐시된다(transformers.js 기본 동작).
 env.allowLocalModels = false
+// 이 워커가 보내는 모든 요청(모델 다운로드 포함)을 감사한다. 원문 조각이 본문에 들어가면 기록된다.
+// transformers.js는 import 시점에 globalThis.fetch를 env.fetch로 잡아두므로, 감싼 뒤 다시 넣어 준다.
+installFetchAudit('embed-worker')
+env.fetch = globalThis.fetch
+
+// fetch로 안 잡히는 로드(ORT wasm 모듈 import 등)까지 전수 확인용: 리소스 타이밍 항목을 합친다(본문은 알 수 없음).
+function allRecords(): NetRecord[] {
+  const recs = takeAuditRecords()
+  const seen = new Set(recs.map((r) => r.url))
+  for (const e of performance.getEntriesByType('resource')) {
+    if (seen.has(e.name)) continue
+    seen.add(e.name)
+    recs.push({ context: 'embed-worker(resource)', url: e.name, method: 'LOAD', bodyBytes: 0, containsText: false, at: Date.now() })
+  }
+  performance.clearResourceTimings()
+  return recs
+}
 
 // 배치 안에서 가장 긴 문장 길이로 패딩되므로 작은 배치 + 길이순 정렬.
 const BATCH = 16
@@ -14,7 +33,7 @@ export type EmbedIn =
 export type EmbedOut =
   | { type: 'download'; file: string; percent: number }
   | { type: 'progress'; done: number; total: number }
-  | { type: 'done'; loadMs: number; embedMs: number; count: number; dim: number }
+  | { type: 'done'; loadMs: number; embedMs: number; count: number; dim: number; net: NetRecord[] }
   | {
       type: 'classified'
       centroid: Prediction[]
@@ -30,6 +49,7 @@ export type EmbedOut =
       modelVersion: string
       classifierVersion: string
       detectorVersion: string
+      net: NetRecord[] // 이 워커의 네트워크 요청 감사 기록
     }
   | { type: 'error'; message: string }
 
@@ -70,6 +90,7 @@ const row = (data: Float32Array, dim: number, i: number) => data.subarray(i * di
 
 self.onmessage = async (e: MessageEvent<EmbedIn>) => {
   const { model, device, texts } = e.data
+  setAuditProbes(texts)
   try {
     const t0 = performance.now()
     const pipe = await load(model, device)
@@ -79,7 +100,7 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
     if (e.data.type === 'embed') {
       const t1 = performance.now()
       const { dim } = await embedAll(pipe, inputs, (done) => post({ type: 'progress', done, total: inputs.length }))
-      post({ type: 'done', loadMs, embedMs: Math.round(performance.now() - t1), count: texts.length, dim })
+      post({ type: 'done', loadMs, embedMs: Math.round(performance.now() - t1), count: texts.length, dim, net: allRecords() })
       return
     }
 
@@ -120,6 +141,7 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
         modelVersion: `${model}@q8/${device}`,
         classifierVersion: `${CLASSIFIER_VERSION}+${SEED_VERSION}`,
         detectorVersion: DETECTOR_VERSION,
+        net: allRecords(),
       },
       [data.buffer],
     )

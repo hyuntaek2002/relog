@@ -14,6 +14,7 @@ import { CATALOG_VERSION, RECOMMENDATION_RULE_VERSION, recommend, type Feedback,
 import Trend, { loadStorageMode, STORAGE_MODE_KEY, type StorageMode } from './store/Trend'
 import { aggregateWeekly, buildLedger, versionKey, type LedgerEntry, type PeriodSnapshot } from './store/ledger'
 import { clearAll, getLedger, putLedger } from './store/db'
+import { peekAuditRecords, setAuditProbes, type NetRecord } from './worker/netaudit'
 
 type Result = Extract<WorkerOut, { type: 'result' }>
 type Classified = Extract<EmbedOut, { type: 'classified' }>
@@ -27,6 +28,31 @@ const DEV = new URLSearchParams(location.search).has('dev')
 const AB = new URLSearchParams(location.search).has('ab')
 
 const fmtDate = (ms: number | null) => (ms == null ? '-' : new Date(ms).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' }))
+
+// 네트워크 감사 표: 요청 전수와 "원문 포함" 판정. 통과 조건 = 원문 포함 0건, 본문 있는 요청은 모델 CDN 범위 밖이면 의심.
+function NetAudit({ records }: { records: NetRecord[] }) {
+  const hosts = new Map<string, number>()
+  for (const r of records) { let h = ''; try { h = new URL(r.url, location.href).host } catch { h = '?' } hosts.set(h, (hosts.get(h) ?? 0) + 1) }
+  const leaks = records.filter((r) => r.containsText)
+  const withBody = records.filter((r) => r.bodyBytes > 0)
+  return (
+    <div>
+      <p className={leaks.length ? 'err' : 'detail'}>
+        요청 {records.length}건 · 본문 있는 요청 {withBody.length}건 · <b>원문 포함 {leaks.length}건</b> {leaks.length === 0 ? '→ 통과' : '→ 실패'} · 호스트: {[...hosts].map(([h, n]) => `${h} ${n}`).join(', ') || '없음'}
+      </p>
+      {records.length > 0 && (
+        <table className="dev">
+          <thead><tr><th>컨텍스트</th><th>메서드</th><th>URL</th><th>본문(B)</th><th>원문</th></tr></thead>
+          <tbody>
+            {records.slice(-60).map((r, i) => (
+              <tr key={i} className={r.containsText ? 'err' : ''}><td>{r.context}</td><td>{r.method}</td><td>{r.url.replace(/^https?:\/\//, '').slice(0, 90)}</td><td>{r.bodyBytes}</td><td>{r.containsText ? '포함' : ''}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  )
+}
 
 function quantile(xs: number[], q: number) {
   const s = [...xs].sort((a, b) => a - b)
@@ -53,6 +79,7 @@ export default function App() {
   const [storageMode, setStorageMode] = useState<StorageMode>(loadStorageMode)
   const [ledger, setLedger] = useState<LedgerEntry[]>([]) // 보관 모드면 IndexedDB 전체, 아니면 이번 분석분만
   const [weeks, setWeeks] = useState<PeriodSnapshot[]>([])
+  const [net, setNet] = useState<NetRecord[]>([]) // 네트워크 감사 기록(페이지 + 워커)
 
   // 보관 모드면 시작할 때 저장된 대장을 불러와 추이를 보여준다
   useEffect(() => {
@@ -72,12 +99,12 @@ export default function App() {
 
   async function onFile(file: File | undefined) {
     if (!file) return
-    setError(''); setResult(null); setCls(null); setEmbedLog([]); setStep('read'); setDetail(''); setCtx(null)
+    setError(''); setResult(null); setCls(null); setEmbedLog([]); setStep('read'); setDetail(''); setCtx(null); setNet([])
     const w = new Worker(new URL('./worker/analyze.worker.ts', import.meta.url), { type: 'module' })
     w.onmessage = (e: MessageEvent<WorkerOut>) => {
       const m = e.data
       if (m.type === 'progress') setStep(m.stage === 'unzip' ? 'read' : 'analyze')
-      else if (m.type === 'result') { setResult(m); setCtx(loadContext(m.conversations[0]?.platform ?? 'chatgpt')); w.terminate(); classify(m) }
+      else if (m.type === 'result') { setResult(m); setCtx(loadContext(m.conversations[0]?.platform ?? 'chatgpt')); setAuditProbes(m.utterances.map((u) => u.text)); setNet((n) => [...n, ...m.net]); w.terminate(); classify(m) }
       else { setError(m.message); setStep('idle'); w.terminate() }
     }
     const buf = await file.arrayBuffer()
@@ -101,7 +128,7 @@ export default function App() {
       const m = e.data
       if (m.type === 'download') { setStep('model'); setDetail(`${m.file.split('/').pop()} ${m.percent}%`) }
       else if (m.type === 'progress') { setStep('classify'); setDetail(`${m.done} / ${m.total}`) }
-      else if (m.type === 'classified') { setCls(m); setStep('done'); setDetail(''); record(r, m); w.terminate(); if (DEV) measureMemory('분석 완료 직후') } // 임베딩·모델 메모리 회수
+      else if (m.type === 'classified') { setCls(m); setStep('done'); setDetail(''); record(r, m); w.terminate(); setNet((n) => [...n, ...m.net]); if (DEV) measureMemory('분석 완료 직후') } // 임베딩·모델 메모리 회수
       else if (m.type === 'error') { setError(m.message); setStep('done'); w.terminate() }
     }
     w.postMessage({ type: 'classify', model: DEFAULT_MODEL, device: DEVICE, texts, inputs })
@@ -338,6 +365,8 @@ export default function App() {
                   B·C 일치율 {Math.round(agree * 100)}%, 임베딩 {cls.embedMs}ms ({(cls.embedMs / cls.knn.length).toFixed(0)}ms/개), {DEVICE}
                 </p>
               )}
+              <h2>개발: 네트워크 감사</h2>
+              <NetAudit records={[...net, ...peekAuditRecords()]} />
               <h2>개발: 메모리</h2>
               <p><button onClick={() => measureMemory('수동')}>지금 측정</button></p>
               <h2>개발: 임베딩 속도 (발화 100개)</h2>

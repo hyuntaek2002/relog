@@ -3,6 +3,9 @@ import { parseConversationsJson } from '../parser/chatgpt.ts'
 import { NORMALIZER_VERSION, normalizeConversations, normalizeStats, type NormalizeStats, type Utterance } from '../parser/normalize.ts'
 import { basicStats, type BasicStats } from '../parser/stats.ts'
 import type { Conversation, ParseError } from '../parser/types.ts'
+import { installFetchAudit, setAuditProbes, takeAuditRecords, type NetRecord } from './netaudit.ts'
+
+installFetchAudit('analyze-worker') // 이 워커는 네트워크를 쓰지 않아야 한다. 기록이 있으면 그 자체가 문제.
 
 // 메인 스레드 ↔ 워커 메시지. 원문은 브라우저 안에서만 오간다.
 export type WorkerIn = { type: 'parse'; data: ArrayBuffer }
@@ -18,6 +21,7 @@ export type WorkerOut =
       normStats: NormalizeStats
       parserVersion: string
       normalizerVersion: string
+      net: NetRecord[]
     }
   | { type: 'error'; message: string }
 
@@ -44,6 +48,7 @@ self.onmessage = (e: MessageEvent<WorkerIn>) => {
       post({ type: 'progress', stage: 'parse', done: i + 1, total: names.length })
     })
     const utterances = normalizeConversations(conversations)
+    setAuditProbes(utterances.map((u) => u.text))
     post({ type: 'progress', stage: 'normalize', done: 1, total: 1 })
     post({
       type: 'result',
@@ -55,6 +60,7 @@ self.onmessage = (e: MessageEvent<WorkerIn>) => {
       normStats: normalizeStats(utterances),
       parserVersion,
       normalizerVersion: NORMALIZER_VERSION,
+      net: takeAuditRecords(),
     })
   } catch (err) {
     post({ type: 'error', message: (err as Error).message })
