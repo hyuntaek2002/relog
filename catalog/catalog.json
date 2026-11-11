@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "catalog-0.3.0",
+  "catalogVersion": "catalog-0.3.1",
   "verifiedNote": "verified=true 항목은 2026-11-03에 공식 도움말(help.openai.com / support.claude.com)에서 기능명·메뉴 경로·요금제를 대조했다. false 항목은 화면에 내보내지 않는다.",
   "items": [
     {
@@ -531,7 +531,7 @@
       "name": "플러그인 디렉터리",
       "category": "plugin",
       "oneLiner": "앱·스킬을 묶은 작업 흐름(플러그인)을 설치해 재사용합니다. 2026-07부터 앱 디렉터리를 대체.",
-      "howTo30s": "메뉴 경로 미확인",
+      "howTo30s": "1) 왼쪽 사이드바에서 Plugins를 엽니다. 2) 내 작업에 맞는 플러그인을 골라 설명과 필요한 앱 연결을 확인한 뒤 Install plugin을 누릅니다. 3) 대화에서 @플러그인 이름으로 부르거나 그냥 요청하면 관련될 때 자동으로 쓰입니다.",
       "requiresPlan": [],
       "hardExclude": {
         "featuresInUse": [
@@ -560,9 +560,9 @@
       ],
       "taskSignals": [],
       "priority": 50,
-      "evidenceUrl": "https://help.openai.com/en/articles/6825453-chatgpt-release-notes",
-      "verifiedAt": "",
-      "verified": false,
+      "evidenceUrl": "https://help.openai.com/en/articles/20001256-plugins-in-chatgpt",
+      "verifiedAt": "2026-11-11",
+      "verified": true,
       "isPopularDefault": false,
       "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
@@ -572,7 +572,7 @@
       "name": "음성 모드",
       "category": "feature",
       "oneLiner": "말로 묻고 답을 듣습니다.",
-      "howTo30s": "메뉴 경로 미확인",
+      "howTo30s": "1) 입력창의 음성(Voice) 아이콘을 누릅니다. 2) 마이크 사용을 허용합니다. 3) 말로 묻고, 마칠 때는 종료 버튼을 누릅니다.",
       "requiresPlan": [],
       "hardExclude": {
         "featuresInUse": [
@@ -588,9 +588,9 @@
         }
       ],
       "priority": 20,
-      "evidenceUrl": "https://help.openai.com/en/articles/20001274",
-      "verifiedAt": "",
-      "verified": false,
+      "evidenceUrl": "https://help.openai.com/en/articles/20001274-chatgpt-voice",
+      "verifiedAt": "2026-11-11",
+      "verified": true,
       "isPopularDefault": false,
       "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
@@ -1150,8 +1150,8 @@
       "platform": "claude",
       "name": "개인 응답 설정",
       "category": "feature",
-      "oneLiner": "모든 대화에 적용할 응답 선호를 설정에 저장합니다.",
-      "howTo30s": "메뉴 경로 미확인",
+      "oneLiner": "모든 대화에 적용할 지침(응답 선호)을 설정에 한 번만 적어 둡니다.",
+      "howTo30s": "1) 왼쪽 아래 내 이름을 눌러 설정을 엽니다. 2) Your Claude(예전 화면은 계정)에서 Instructions 칸을 찾습니다. 3) 모든 대화에 적용할 요구(언어·형식·말투)를 적습니다.",
       "requiresPlan": [],
       "hardExclude": {
         "featuresInUse": [
@@ -1169,8 +1169,8 @@
       "taskSignals": [],
       "priority": 80,
       "evidenceUrl": "https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features",
-      "verifiedAt": "",
-      "verified": false,
+      "verifiedAt": "2026-11-11",
+      "verified": true,
       "isPopularDefault": false,
       "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
     },
@@ -1180,7 +1180,7 @@
       "name": "스타일",
       "category": "feature",
       "oneLiner": "응답 문체를 미리 정해 둡니다.",
-      "howTo30s": "메뉴 경로 미확인(도움말 페이지 404)",
+      "howTo30s": "메뉴 경로 미확인(2026-11-11: 공식 개인화 도움말에 스타일 항목이 없고 예전 도움말은 404. 스킬로 대체된 것으로 보임)",
       "requiresPlan": [],
       "hardExclude": {
         "featuresInUse": [

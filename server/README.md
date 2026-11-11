@@ -16,6 +16,8 @@ cd server && docker compose up -d
 ```
 테스트: `./mvnw test` (H2 메모리 DB, `test` 프로필)
 
+배포(Docker 이미지, 운영용 compose, HTTPS 앞단): [docs/deploy.md](../docs/deploy.md)
+
 ## 테이블
 user_account · usage_snapshot · restatement_stat · feature_catalog · recommendation · feedback
 
@@ -31,7 +33,10 @@ user_account · usage_snapshot · restatement_stat · feature_catalog · recomme
 | POST | /api/recommendations | Bearer | 집계 스냅샷 + {plan, featuresInUse, mode?} → 처방 0~3개(규칙 rec-0.1.0, 웹과 동일). mode=generic/both면 인기 3개도 |
 | POST | /api/feedback | Bearer | [{catalogId, value: helpful/not_helpful/already_using/ab_score, source?, abScore?, abOrder?}] |
 | GET | /api/feedback | Bearer | 내 피드백 |
-| GET | /api/me | Bearer | 계정 요약 |
+| GET | /api/recommendations | Bearer | 가장 최근 추천 요청의 처방 묶음(뷰어용) |
+| GET | /api/trend?recentWeeks=N | Bearer | 이전 기간 대 최근 N주, 대화 종류별 다시 말한 지시 비율 비교 |
+| GET | /api/me | Bearer | 계정 요약(알림 수신 여부 포함) |
+| PUT | /api/me/notify | Bearer | {enabled} 알림 수신 여부 저장 |
 | DELETE | /api/me | Bearer | 서버 데이터 전부 삭제(스냅샷·통계·추천·피드백·계정) |
 
 인증: `Authorization: Bearer rlg_…`. 세션 없음. CORS는 `relog.cors-origins`(localhost:5173, github.io Pages).

@@ -64,6 +64,7 @@ node eval/detect/run_devset.mjs Xenova/multilingual-e5-small testset.json --fina
 - [내보내기 파일 구조](docs/export-format.md)
 - [과업 유형 라벨 기준](eval/labels/README.md)
 - [사용자 평가 동의서](docs/consent-form.md)
+- [서버 배포 안내](docs/deploy.md)
 
 ## 데이터 출처
 

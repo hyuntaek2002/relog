@@ -92,6 +92,10 @@
 			<resource>
 				<directory>${project.basedir}/../catalog</directory>
 				<targetPath>catalog</targetPath>
+				<!-- 수집 원본(sources/)은 jar에 넣지 않는다 -->
+				<includes>
+					<include>catalog.json</include>
+				</includes>
 			</resource>
 		</resources>
 		<plugins>

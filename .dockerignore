@@ -1,0 +1,11 @@
+# 이미지 빌드에 필요한 것은 server/ 와 catalog/catalog.json 뿐이다. 개인 대화 파일은 절대 들어가지 않게 한다.
+.git
+exports
+web
+eval
+docs
+catalog/sources
+server/target
+server/data
+**/node_modules
+**/.env

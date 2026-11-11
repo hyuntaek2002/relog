@@ -7,6 +7,8 @@ import dev.relog.snapshot.RestatementStatRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -28,7 +30,19 @@ public class MeController {
     @GetMapping("/api/me")
     public Map<String, Object> me() {
         UserAccount me = BearerTokenFilter.current();
-        return Map.of("email", me.email, "createdAt", me.createdAt.toString(), "snapshots", snapshots.findByUserOrderByPeriodStartAsc(me).size());
+        return Map.of("email", me.email, "createdAt", me.createdAt.toString(), "snapshots", snapshots.findByUserOrderByPeriodStartAsc(me).size(), "notify", me.notifyEnabled);
+    }
+
+    /** 알림 설정 변경. 수신 여부(참/거짓)만 받는다. */
+    public record NotifyRequest(boolean enabled) {}
+
+    @PutMapping("/api/me/notify")
+    @Transactional
+    public Map<String, Boolean> notify(@RequestBody NotifyRequest r) {
+        UserAccount me = BearerTokenFilter.current();
+        me.notifyEnabled = r.enabled();
+        users.save(me);
+        return Map.of("notify", me.notifyEnabled);
     }
 
     @DeleteMapping("/api/me")

@@ -4,7 +4,7 @@ import type { UsageSnapshot } from '../recommend/snapshot'
 
 // 서버 동기화 클라이언트(선택 기능). 보내는 것은 주별 집계 숫자·추천 엔진 입력 숫자·체크리스트·피드백뿐이다.
 // 대화 내용·임베딩·플랫폼 계정 정보를 담을 필드가 없다. 서버 주소는 빌드 시 VITE_API_BASE, 기본은 로컬 개발 서버.
-export const API_BASE: string = (import.meta.env?.VITE_API_BASE as string | undefined) ?? 'http://localhost:8080'
+export const API_BASE: string = (import.meta.env?.VITE_API_BASE as string | undefined) || 'http://localhost:8080' // 빈 값이면 로컬 개발 서버
 const TOKEN_KEY = 'relog-token'
 
 export const getToken = () => { try { return localStorage.getItem(TOKEN_KEY) } catch { return null } }
@@ -92,5 +92,7 @@ export const listSnapshots = () => call<ServerWeek[]>('/api/snapshots')
 export const sendFeedback = (catalogId: string, value: Feedback | 'ab_score', extra: { source?: string; abScore?: number; abOrder?: number } = {}) =>
   call<{ saved: number }>('/api/feedback', { method: 'POST', body: JSON.stringify([{ catalogId, value, ...extra }]) })
 
-export const me = () => call<{ email: string; createdAt: string; snapshots: number }>('/api/me')
+export const me = () => call<{ email: string; createdAt: string; snapshots: number; notify: boolean }>('/api/me')
+// 알림 설정: 수신 여부만 서버에 둔다(알림 발송은 후속 범위)
+export const setNotify = (enabled: boolean) => call<{ notify: boolean }>('/api/me/notify', { method: 'PUT', body: JSON.stringify({ enabled }) })
 export const deleteMe = async () => { await call<{ deleted: boolean }>('/api/me', { method: 'DELETE' }); setToken(null) }

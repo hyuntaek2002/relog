@@ -37,3 +37,13 @@
    대화 단위로 240/80/80 비율 분할(결정적 시드) → A(TF-IDF 문자 1~3gram + softmax), B(중심점), C(k-NN) 비교. k·기타 임계값은 조정 분할에서 고르고 평가 분할의 Macro F1·유형별 P/R·혼동행렬을 찍는다.
 3. 라벨 전 파이프라인 확인: `node eval/classify/run_abc.mjs --smoke` (예시 발화를 모의 라벨로 씀. '예시+학습' 변형은 평가 항목이 예시에 포함돼 수치가 의미 없음).
 - `context_required` 라벨은 분류 평가에서 제외. `other`는 예시가 없어 B·C에선 임계값으로만 나온다.
+
+## 공개 데이터 400건 라벨링 순서 (WildChat-1M 한국어 표본)
+
+1. 표본 만들기(이미 있으면 생략): `node eval/classify/sample_wildchat.mjs 400` → `exports/public/wildchat-ko-400.zip`. 같은 seed면 `wildchat-ko-400.ids.json`의 대화 해시와 같은 표본이 나온다(데이터 서버가 일부 쪽을 실패시키면 달라질 수 있어 해시 목록으로 확인).
+2. 웹을 띄우고 `http://localhost:5173/?dev=1`에 그 zip을 넣는다.
+3. 개발자 패널 → "대화 종류 정답 찍기"에서 영역을 한 번 누른 뒤 숫자키로 찍는다(1~8 유형, 0 기타, c 문맥 필요, ←→ 이동). 진행 상황은 이 브라우저에 저장된다.
+4. "CSV 내보내기"로 받은 파일을 `eval/labels/wildchat-ko-400.labels.csv`로 둔다(대화 id·메시지 id·유형만 들어 있어 저장소에 올려도 된다).
+5. 비교 실행: `node eval/classify/run_abc.mjs exports/public/wildchat-ko-400.zip eval/labels/wildchat-ko-400.labels.csv`
+
+표본 원문은 타인의 실제 대화라 저장소에 넣지 않는다(ODC-BY, 출처 표기: Allen Institute for AI, WildChat-1M).

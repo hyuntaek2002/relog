@@ -1,0 +1,4 @@
+# RELOG_DOMAIN으로 들어온 요청을 서버로 넘긴다. 인증서는 Caddy가 자동 발급·갱신한다.
+{$RELOG_DOMAIN} {
+	reverse_proxy server:8080
+}

@@ -1,0 +1,55 @@
+# 운영용 구성: MySQL + relog 서버 (+ 선택: HTTPS 앞단 Caddy). 저장되는 것은 서비스 계정·집계 숫자·카탈로그·추천·피드백뿐이다.
+# 준비: cp .env.example .env 후 값을 바꾼다.
+# 실행(server/ 폴더에서):  docker compose -f docker-compose.prod.yml up -d --build
+# HTTPS까지:               docker compose -f docker-compose.prod.yml --profile tls up -d --build   (RELOG_DOMAIN 필요, 80·443 포트 개방)
+name: relog
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: relog
+      MYSQL_USER: relog
+      MYSQL_PASSWORD: ${RELOG_DB_PASSWORD:?RELOG_DB_PASSWORD를 .env에 넣으세요}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD를 .env에 넣으세요}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
+    volumes:
+      - relog-mysql-prod:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -urelog -p$$MYSQL_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  server:
+    build:
+      context: ..
+      dockerfile: server/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/relog?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: relog
+      SPRING_DATASOURCE_PASSWORD: ${RELOG_DB_PASSWORD}
+      # 웹이 열리는 주소만 허용한다(쉼표로 여러 개)
+      RELOG_CORS_ORIGINS: ${RELOG_CORS_ORIGINS:-https://hyuntaek2002.github.io}
+    ports:
+      - "${RELOG_BIND:-127.0.0.1}:${RELOG_PORT:-8080}:8080"
+  # HTTPS 앞단. 웹(GitHub Pages)이 https라 서버도 https여야 브라우저가 요청을 막지 않는다.
+  caddy:
+    image: caddy:2
+    profiles: ["tls"]
+    restart: unless-stopped
+    depends_on: [server]
+    environment:
+      RELOG_DOMAIN: ${RELOG_DOMAIN:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - relog-caddy-data:/data
+volumes:
+  relog-mysql-prod:
+  relog-caddy-data:

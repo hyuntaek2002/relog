@@ -70,7 +70,7 @@
 | 메서드 · 경로 | 내용 |
 |---|---|
 | POST /api/auth/register, /api/auth/login | 서비스 계정. 불투명 토큰 발급(해시로 저장) |
-| GET /api/me · DELETE /api/me | 내 계정 요약 · 내 데이터 전부 삭제 |
+| GET /api/me · DELETE /api/me · PUT /api/me/notify | 내 계정 요약 · 내 데이터 전부 삭제 · 알림 수신 여부 저장 |
 | GET /api/catalog | 확인된 카탈로그 항목(공개) |
 | PUT /api/snapshots · GET /api/snapshots | 주별 집계 올리기(사용자+기간+버전 키로 덮어쓰기) · 조회 |
 | POST /api/recommendations · GET /api/recommendations | 추천 계산(이력 저장) · 최근 처방 묶음 |
@@ -81,7 +81,7 @@
 
 | 테이블 | 주요 컬럼 | 비고 |
 |---|---|---|
-| user_account | id, email, 비밀번호 해시, 토큰 해시, 가입일 | 서비스 계정. 플랫폼 계정 정보 없음 |
+| user_account | id, email, 비밀번호 해시, 토큰 해시, 가입일, 알림 설정(수신 여부) | 서비스 계정. 플랫폼 계정 정보 없음 |
 | usage_snapshot | user, 기간 시작·끝, 플랫폼, 버전 키, 메시지 수, 대화 수, 긴 대화 수, 코드 수, 유형별 수(JSON), 시간대 분포(JSON) | 주 단위. 같은 기간·버전은 덮어쓰기 |
 | restatement_stat | snapshot, 등급별 건수, 분량 추정, 비율, 유형별 건수(JSON) | 숫자만 |
 | feature_catalog | id, 플랫폼, 이름, 설명, 사용법, 요금제 조건, 적용 조건, 우선순위, 근거 URL, 확인일, 버전 | catalog/catalog.json이 단일 원본 |
@@ -90,7 +90,7 @@
 
 ## 7. 버전
 
-분석 버전 = 파서(export-0.3.0) · 정규화(norm-0.1.0) · 모델(multilingual-e5-small@q8/장치) · 분류기(cls-0.1.0+예시 버전) · 탐지기(det-0.3.0) · 카탈로그(catalog-0.3.0) · 추천 규칙(rec-0.1.1). 앞의 다섯 개를 이은 것이 버전 키이며, 키가 다른 기간끼리는 비교하지 않는다.
+분석 버전 = 파서(export-0.3.0) · 정규화(norm-0.1.0) · 모델(multilingual-e5-small@q8/장치) · 분류기(cls-0.1.0+예시 버전) · 탐지기(det-0.3.0) · 카탈로그(catalog-0.3.1) · 추천 규칙(rec-0.1.1). 앞의 다섯 개를 이은 것이 버전 키이며, 키가 다른 기간끼리는 비교하지 않는다.
 
 ## 8. 계획 대비 달라진 점
 

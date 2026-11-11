@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { API_BASE, deleteMe, fetchRecommendations, fetchTrend, getToken, login, logout, me, register, upsertSnapshots } from './sync'
+import { API_BASE, deleteMe, fetchRecommendations, fetchTrend, getToken, login, logout, me, register, setNotify, upsertSnapshots } from './sync'
 import type { AnalysisVersion, PeriodSnapshot, TaskCompare } from './ledger'
 import type { Prescription, UserContext } from '../recommend/recommend'
 import type { UsageSnapshot } from '../recommend/snapshot'
@@ -16,7 +16,7 @@ export default function SyncPanel({ weeks, version, snapshot, ctx, onServer }: {
 }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [who, setWho] = useState<{ email: string; snapshots: number } | null>(null)
+  const [who, setWho] = useState<{ email: string; snapshots: number; notify: boolean } | null>(null)
   const [msg, setMsg] = useState('')
   const [busy, setBusy] = useState(false)
 
@@ -54,6 +54,7 @@ export default function SyncPanel({ weeks, version, snapshot, ctx, onServer }: {
           <>
             <span>{who.email} · 서버 보관 {who.snapshots}주</span>
             <button disabled={busy || !version || weeks.length === 0} onClick={() => run('보내기', sync)}>집계 보내기 ({weeks.length}주)</button>
+            <label title="수신 여부만 저장합니다. 알림 발송 기능은 아직 없습니다."><input type="checkbox" checked={who.notify} disabled={busy} onChange={(e) => run('알림 설정', async () => { await setNotify(e.target.checked); await refresh() })} /> 알림 받기</label>
             <button disabled={busy} onClick={signOut}>로그아웃</button>
             <button disabled={busy} onClick={() => { if (confirm('서버에 저장된 내 데이터(주별 집계·추천 이력·피드백·계정)를 모두 지웁니다. 계속할까요?')) run('서버 데이터 삭제', async () => { await deleteMe(); setWho(null); onServer({ prescriptions: null, trend: null }) }) }}>서버 데이터 삭제</button>
           </>

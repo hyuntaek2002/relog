@@ -19,4 +19,7 @@ public class UserAccount {
     public String tokenHash;
     @Column(nullable = false)
     public Instant createdAt = Instant.now();
+    /** 알림 설정(계획서 표 4). 수신 여부만 저장한다. 알림 발송은 후속 범위 */
+    @Column(nullable = false, columnDefinition = "boolean default false not null")
+    public boolean notifyEnabled = false;
 }

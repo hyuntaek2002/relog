@@ -26,7 +26,7 @@ async function page(offset, length = PAGE) {
   let last = ''
   for (let attempt = 0; attempt < 4; attempt++) {
     try {
-      const r = await fetch(url, { headers: { 'user-agent': 'relog-eval-sampler' } })
+      const r = await fetch(url, { headers: { 'user-agent': 'relog-eval-sampler' }, signal: AbortSignal.timeout(30000) }) // 응답 없는 요청에 걸려 멈추지 않게
       if (r.ok) return await r.json()
       last = `HTTP ${r.status}`
       if (r.status !== 429 && r.status < 500) break
