@@ -1,6 +1,12 @@
 import seed from './seed.json' with { type: 'json' }
+import labeled from './labeled-centroids.json' with { type: 'json' }
 
-export const CLASSIFIER_VERSION = 'cls-0.1.0'
+// 0.2.0: 제품 기본을 C(k-NN, 예시만)에서 B(중심점, 예시 + 라벨 데이터 합)로 바꿈.
+// 근거(docs/measurements.md 2026-11-11): 공개 표본 395건 5겹 교차 검증 Macro F1이 C·예시만 0.357, B·예시+학습 0.451.
+export const CLASSIFIER_VERSION = 'cls-0.2.0'
+// 라벨된 공개 표본의 유형별 임베딩 합(원문 없음). 이 합을 만든 모델로 임베딩했을 때만 쓴다.
+export const LABELED: { version: string; model: string; dim: number; counts: Record<string, number>; sums: Record<string, number[]> } = labeled
+export const labeledFor = (model: string) => (model === LABELED.model ? LABELED : undefined)
 
 export type TaskType = keyof typeof seed.types
 export const TASK_TYPES = Object.keys(seed.types) as TaskType[]
@@ -26,7 +32,8 @@ export class TaskClassifier {
   private seedVecs: Float32Array[]
   private seedTypes: TaskType[]
   private opts: { k: number; otherBelow: number }
-  constructor(seedVecs: Float32Array[], seedTypes: TaskType[], opts = { k: 5, otherBelow: 0.0 }) {
+  // extra: 유형별 임베딩 합(라벨 데이터). 예시 발화의 합에 더한 뒤 정규화해 중심점을 만든다. k-NN에는 영향을 주지 않는다.
+  constructor(seedVecs: Float32Array[], seedTypes: TaskType[], opts = { k: 5, otherBelow: 0.0 }, extra?: { sums: Record<string, number[]> }) {
     this.seedVecs = seedVecs
     this.seedTypes = seedTypes
     this.opts = opts
@@ -36,6 +43,8 @@ export class TaskClassifier {
       const dim = seedVecs[0].length
       const c = new Float32Array(dim)
       for (const i of idx) for (let d = 0; d < dim; d++) c[d] += seedVecs[i][d]
+      const add = extra?.sums[t]
+      if (add && add.length === dim) for (let d = 0; d < dim; d++) c[d] += add[d]
       let n = 0
       for (let d = 0; d < dim; d++) n += c[d] * c[d]
       n = Math.sqrt(n) || 1

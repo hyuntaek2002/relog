@@ -54,6 +54,7 @@ node eval/detect/run_devset.mjs Xenova/multilingual-e5-small testset.json --fina
 ```
 
 - 과업 분류 A/B/C 비교: `node eval/classify/sample_wildchat.mjs 400`으로 공개 데이터 표본을 만들고, 앱(?dev=1)에서 라벨링한 뒤 `node eval/classify/run_abc.mjs <표본 zip> <라벨 csv>`.
+- 추천 블라인드 평가 집계: 참여자들이 보낸 평가·후속 파일을 한 폴더에 모아 `node eval/ab/summarize.mjs <폴더>`.
 - 실측 결과와 한계는 [docs/measurements.md](docs/measurements.md)에 날짜순으로 적습니다.
 
 ## 문서
@@ -65,6 +66,7 @@ node eval/detect/run_devset.mjs Xenova/multilingual-e5-small testset.json --fina
 - [과업 유형 라벨 기준](eval/labels/README.md)
 - [사용자 평가 동의서](docs/consent-form.md)
 - [서버 배포 안내](docs/deploy.md)
+- [결과 보고서 초안](docs/report-draft.md) · [논문 초안](docs/paper-draft.md)
 
 ## 데이터 출처
 

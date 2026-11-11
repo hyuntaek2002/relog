@@ -164,3 +164,7 @@ main.viewer { max-width: 560px; }
 button.link { background: none; border: none; color: var(--accent); cursor: pointer; padding: 0 4px; }
 .cand .actions { margin: 6px 0 0; }
 .checklist input { padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); min-width: 0; }
+
+/* 라벨링: AI 제안 표시 */
+.choices button.suggest { outline: 2px solid var(--accent); outline-offset: 1px; }
+.suggest-line { margin: 8px 0; }

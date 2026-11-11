@@ -42,8 +42,14 @@
 
 1. 표본 만들기(이미 있으면 생략): `node eval/classify/sample_wildchat.mjs 400` → `exports/public/wildchat-ko-400.zip`. 같은 seed면 `wildchat-ko-400.ids.json`의 대화 해시와 같은 표본이 나온다(데이터 서버가 일부 쪽을 실패시키면 달라질 수 있어 해시 목록으로 확인).
 2. 웹을 띄우고 `http://localhost:5173/?dev=1`에 그 zip을 넣는다.
-3. 개발자 패널 → "대화 종류 정답 찍기"에서 영역을 한 번 누른 뒤 숫자키로 찍는다(1~8 유형, 0 기타, c 문맥 필요, ←→ 이동). 진행 상황은 이 브라우저에 저장된다.
+3. 개발자 패널 → "대화 종류 정답 찍기"에서 영역을 한 번 누른다. 화면에 "AI 제안"이 뜨면 맞을 때 Enter, 아니면 숫자키로 고친다(1~8 유형, 0 기타, c 문맥 필요, ←→ 이동). 진행 상황은 이 브라우저에 저장된다.
 4. "CSV 내보내기"로 받은 파일을 `eval/labels/wildchat-ko-400.labels.csv`로 둔다(대화 id·메시지 id·유형만 들어 있어 저장소에 올려도 된다).
 5. 비교 실행: `node eval/classify/run_abc.mjs exports/public/wildchat-ko-400.zip eval/labels/wildchat-ko-400.labels.csv`
 
 표본 원문은 타인의 실제 대화라 저장소에 넣지 않는다(ODC-BY, 출처 표기: Allen Institute for AI, WildChat-1M).
+
+## AI 제안(wildchat-ko-400.suggested.csv)
+
+- 표본 406건을 AI(Claude)가 읽고 이 기준서대로 먼저 찍은 것이다. 라벨링 화면이 이 파일을 읽어 제안으로 보여 준다.
+- 최종 라벨(`wildchat-ko-400.labels.csv`)은 사람이 제안을 보고 확정한 것이다. 제안을 본 상태의 확인이라 제안 쪽으로 쏠릴 수 있으므로, 보고할 때 "AI 제안 후 사람 확인" 방식임과 제안·최종 라벨의 일치율을 함께 밝힌다.
+- 제안 분포: 학습 106 · 정보 탐색 67 · 번역 64 · 글쓰기 59 · 코딩 31 · 상담 30 · 기타 28 · 문맥 필요 9 · 업무 문서 7 · 기획 5. 업무 문서와 기획은 표본이 적어 유형별 점수가 불안정할 수 있다.

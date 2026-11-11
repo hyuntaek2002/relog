@@ -410,3 +410,51 @@ console.log('ledger ok')
   console.log('sync dto ok')
 }
 
+// 추천 블라인드 평가: 카드 합치기·고정 순서, 평가 파일 왕복, 참여자별 비교와 부호 검정
+{
+  const { buildCards, buildEvalFile, parseEvalFile, parseFollowupFile, summarizeEval, signTestP, EVAL_FORMAT, FOLLOWUP_FORMAT } = await import('../web/src/recommend/abEval.ts')
+  const G = (id) => ({ id, name: id, oneLiner: 'w', howTo30s: '1) {plugin}을 엽니다.' })
+  const P = (catalogId) => ({ catalogId, name: catalogId, what: 'w', how: '1) 합니다.' })
+  const cards = buildCards([G('g1'), G('g2'), G('x')], [P('p1'), P('x')], 7)
+  assert.equal(cards.length, 4, '양쪽에 다 있는 항목은 한 장')
+  assert.equal(cards.find((c) => c.catalogId === 'x').source, 'both')
+  assert.deepEqual(cards.map((c) => c.order), [1, 2, 3, 4])
+  assert.deepEqual(buildCards([G('g1'), G('g2'), G('x')], [P('p1'), P('x')], 7).map((c) => c.catalogId), cards.map((c) => c.catalogId), '같은 seed면 같은 순서')
+  assert.ok(cards.every((c) => !c.how.includes('{plugin}')), '일반 카드의 자리표시자는 중립 문구로')
+  const scores = Object.fromEntries(cards.map((c) => [c.catalogId, c.source === 'personalized' ? 5 : 2]))
+  const file = buildEvalFile({ participant: ' 03 ', platform: 'claude', plan: 'pro', featuresInUse: ['cl_web_search'], cards, scores, report: null, now: new Date('2026-12-01T00:00:00Z') })
+  assert.equal(file.format, EVAL_FORMAT); assert.equal(file.participant, '03')
+  assert.deepEqual(Object.keys(file.cards[0]).sort(), ['catalogId', 'order', 'score', 'source'], '카드에는 식별자·출처·점수·순서만(이름·설명 없음)')
+  assert.deepEqual(parseEvalFile(JSON.stringify(file)), file)
+  assert.throws(() => parseEvalFile('{"format":"x"}'), /평가 파일이 아닙니다/)
+  assert.throws(() => parseEvalFile(JSON.stringify({ ...file, cards: [{ ...file.cards[0], score: 9 }] })), /손상/)
+  const mk = (participant, g, pz) => ({ format: EVAL_FORMAT, participant, exportedAt: '', platform: 'claude', plan: 'free', featuresInUse: [], report: null, cards: [{ catalogId: 'a', source: 'generic', score: g, order: 1 }, { catalogId: 'b', source: 'personalized', score: pz, order: 2 }, { catalogId: 'c', source: 'both', score: 3, order: 3 }] })
+  const fu = parseFollowupFile(JSON.stringify({ format: FOLLOWUP_FORMAT, participant: '1', exportedAt: '', evaluatedAt: '', items: [{ catalogId: 'a', source: 'generic', used: false }, { catalogId: 'b', source: 'personalized', used: true }] }))
+  const sum = summarizeEval([mk('1', 2, 5), mk('2', 3, 4), mk('3', 4, 4), mk('4', 5, 2)], [fu])
+  assert.equal(sum.participants, 4); assert.equal(sum.preferPersonalized, 2); assert.equal(sum.preferGeneric, 1); assert.equal(sum.ties, 1)
+  assert.equal(sum.meanGeneric, 3.5); assert.equal(sum.meanPersonalized, 3.75)
+  assert.deepEqual(sum.usage.personalized, { used: 1, total: 1 }); assert.deepEqual(sum.usage.generic, { used: 0, total: 1 })
+  assert.equal(signTestP(2, 1), 1); assert.equal(signTestP(0, 0), 1); assert.ok(Math.abs(signTestP(9, 1) - 0.021484375) < 1e-12, '10명 중 9명이면 p≈0.021')
+  console.log('ab eval ok')
+}
+
+// 라벨 데이터 합(labeled-centroids.json): 형식 검사 + 중심점에 더해지면 판정이 그쪽으로 움직이는지
+{
+  const { TaskClassifier, LABELED, labeledFor, TASK_TYPES, CLASSIFIER_VERSION } = await import('../web/src/classify/classifier.ts')
+  assert.equal(CLASSIFIER_VERSION, 'cls-0.2.0')
+  assert.equal(LABELED.dim, 384); assert.deepEqual(Object.keys(LABELED.sums).sort(), [...TASK_TYPES].sort())
+  assert.ok(Object.values(LABELED.sums).every((v) => v.length === 384 && v.every((x) => Number.isFinite(x))))
+  assert.ok(Object.values(LABELED.counts).reduce((a, b) => a + b, 0) > 300, '라벨 300건 이상')
+  assert.equal(labeledFor('Xenova/multilingual-e5-small'), LABELED); assert.equal(labeledFor('static-e5'), undefined, '다른 모델이면 쓰지 않는다')
+  // 2차원 장난감: 예시만으로는 v가 a에 가깝지만, b 쪽에 큰 합을 더하면 b의 중심점이 v 쪽으로 옮겨 온다
+  const u = (deg) => new Float32Array([Math.cos((deg * Math.PI) / 180), Math.sin((deg * Math.PI) / 180)])
+  const seedVecs = [u(0), u(90)], seedTypes = ['coding', 'writing']
+  const v = u(30)
+  assert.equal(new TaskClassifier(seedVecs, seedTypes).centroid(v).type, 'coding')
+  const moved = new TaskClassifier(seedVecs, seedTypes, undefined, { sums: { writing: [10 * Math.cos(Math.PI / 6), 10 * Math.sin(Math.PI / 6)] } })
+  assert.equal(moved.centroid(v).type, 'writing', '라벨 합이 더해진 유형의 중심점이 이동')
+  assert.equal(moved.knn(v).type, 'coding', 'k-NN은 예시 발화만 쓴다')
+  assert.equal(new TaskClassifier(seedVecs, seedTypes, undefined, { sums: { writing: [1, 2, 3] } }).centroid(v).type, 'coding', '차원이 다르면 무시')
+  console.log('labeled centroids ok')
+}
+

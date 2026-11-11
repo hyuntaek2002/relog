@@ -1,5 +1,5 @@
 import { pipeline, env, type FeatureExtractionPipeline } from '@huggingface/transformers'
-import { CLASSIFIER_VERSION, SEED_TEXTS, SEED_TYPES, SEED_VERSION, TaskClassifier, type Prediction } from '../classify/classifier.ts'
+import { CLASSIFIER_VERSION, SEED_TEXTS, SEED_TYPES, SEED_VERSION, TaskClassifier, labeledFor, type Prediction } from '../classify/classifier.ts'
 import { DEFAULT_OPTIONS, DETECTOR_VERSION, detect, nullDistribution, quantile, summarize, withinConversationNull, type Candidate, type DetectInput, type DetectSummary } from '../detect/detector.ts'
 
 import { installFetchAudit, setAuditProbes, takeAuditRecords, type NetRecord } from './netaudit.ts'
@@ -117,7 +117,8 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
     const t1 = performance.now()
     const seeds = await embedAll(pipe, prep(model, SEED_TEXTS))
     const seedVecs = SEED_TYPES.map((_, i) => row(seeds.data, seeds.dim, i))
-    const clf = new TaskClassifier(seedVecs, SEED_TYPES)
+    const extra = labeledFor(model) // 이 모델로 만든 라벨 데이터 합이 있을 때만 중심점에 더한다
+    const clf = new TaskClassifier(seedVecs, SEED_TYPES, undefined, extra)
     const { data, dim } = await embedAll(pipe, inputs, (done) => post({ type: 'progress', done, total: inputs.length }))
     const centroid: Prediction[] = []
     const knn: Prediction[] = []
@@ -127,7 +128,7 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
       knn.push(clf.knn(v))
     }
     // 반복 지시 의심 탐지: 귀무분포(서로 다른 대화 무작위 쌍) 상위 1%를 경계로, 같은 대화의 앞선 발화와 비교
-    const dIn: DetectInput[] = e.data.inputs.map((u, i) => ({ ...u, taskType: knn[i].type }))
+    const dIn: DetectInput[] = e.data.inputs.map((u, i) => ({ ...u, taskType: centroid[i].type })) // 제품 기본 분류는 B(중심점)
     // 경계: 같은 대화 비인접 쌍 분포의 p90(주제 연속 발화의 기본 유사도). 반복 표지가 있는 지시는 다른 대화 쌍 p90만 넘으면 구제.
     const crossSims = nullDistribution(dIn, (i) => row(data, dim, i))
     const withinSims = withinConversationNull(dIn, (i) => row(data, dim, i))
@@ -155,7 +156,7 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
         nullSims,
         detectSummary: summarize(pairs, dIn, nullThreshold, groupThreshold),
         modelVersion: `${model}@q8/${device}`,
-        classifierVersion: `${CLASSIFIER_VERSION}+${SEED_VERSION}`,
+        classifierVersion: `${CLASSIFIER_VERSION}+${SEED_VERSION}${extra ? '+' + extra.version : ''}`,
         detectorVersion: DETECTOR_VERSION,
         net: allRecords(),
       },

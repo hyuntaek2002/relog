@@ -28,7 +28,7 @@
 | 파서 | web/src/parser/ | chatgpt.ts(mapping + current_node 활성 경로), claude.ts(chat_messages 트리), claudeCode.ts(세션 .jsonl). 공통 출력은 Conversation(id, platform, client, turns, toolNames, pluginNames). 필드가 빠진 대화는 오류로 기록하고 계속한다. |
 | 정규화 | parser/normalize.ts | 코드 블록 → [CODE_BLOCK: 언어], 정보량 없는 메시지 제외(skipped), 짧고 문맥 의존(context_required), 토큰 근사. |
 | 임베딩 | worker/embed.worker.ts | transformers.js(ONNX Runtime Web), multilingual-e5-small q8, "query:" 접두어, WebGPU 우선·WASM 기본. 분석이 끝나면 워커를 종료해 메모리를 돌려준다. 비교군 static-e5(정적 표). |
-| 과업 분류 | classify/classifier.ts | B 유형별 중심점, C k-NN(예시 발화). A(TF-IDF+선형)는 평가 스크립트에만 둔다. Claude Code 세션 메시지는 코딩으로 고정하고 세션 단위 키워드로 코딩 세부를 나눈다(codingSub.ts). |
+| 과업 분류 | classify/classifier.ts | 제품 기본은 B 유형별 중심점(예시 발화의 임베딩 합 + 라벨된 공개 표본의 유형별 임베딩 합, labeled-centroids.json). C k-NN(예시 발화)은 개발 패널에서 비교용. A(TF-IDF+선형)는 평가 스크립트에만 둔다. 비교 실험에서 Macro F1이 B·예시+학습 0.45, C·예시만 0.36이었다. Claude Code 세션 메시지는 코딩으로 고정하고 세션 단위 키워드로 코딩 세부를 나눈다(codingSub.ts). |
 | 반복 탐지 | detect/detector.ts | 아래 3절. |
 | 사용자 보정 | detect/corrections.ts | "반복 아님"으로 고친 메시지 id를 localStorage에 두고 등급을 뗀 결과를 화면·추천·집계에 쓴다. |
 | 집계 | store/ledger.ts, store/db.ts | 발화 대장 키 = 대화 ID#메시지 ID#내용 해시. 메시지 생성일 기준 주 단위 집계, 대장에서 언제든 재계산. IndexedDB 보관은 동의했을 때만. |
@@ -90,7 +90,7 @@
 
 ## 7. 버전
 
-분석 버전 = 파서(export-0.3.0) · 정규화(norm-0.1.0) · 모델(multilingual-e5-small@q8/장치) · 분류기(cls-0.1.0+예시 버전) · 탐지기(det-0.3.0) · 카탈로그(catalog-0.3.1) · 추천 규칙(rec-0.1.1). 앞의 다섯 개를 이은 것이 버전 키이며, 키가 다른 기간끼리는 비교하지 않는다.
+분석 버전 = 파서(export-0.3.0) · 정규화(norm-0.1.0) · 모델(multilingual-e5-small@q8/장치) · 분류기(cls-0.2.0+예시 버전+라벨 합 버전) · 탐지기(det-0.3.0) · 카탈로그(catalog-0.3.1) · 추천 규칙(rec-0.1.1). 앞의 다섯 개를 이은 것이 버전 키이며, 키가 다른 기간끼리는 비교하지 않는다.
 
 ## 8. 계획 대비 달라진 점
 

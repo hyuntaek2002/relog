@@ -5,6 +5,7 @@
 // 사용:
 //   node eval/classify/run_abc.mjs exports/conversations-000.zip eval/labels/labels.csv [model]
 //   node eval/classify/run_abc.mjs --smoke [model]      # seed.json 예시로 모의 라벨 생성(동작 확인용)
+//   … --cv 를 붙이면 240/80/80 분할 결과 뒤에 대화 단위 5겹 교차 검증 결과를 덧붙인다(설정은 고정: k-NN k=3, other 임계값 없음)
 // 라벨 CSV: conversationId,messageId,type  (type: coding|writing|learning|work_doc|search|ideation|translation|chat|other|context_required)
 import { readFileSync } from 'node:fs'
 import { unzipSync } from '../../web/node_modules/fflate/esm/index.mjs'
@@ -13,7 +14,8 @@ import { parseConversationsJson } from '../../web/src/parser/chatgpt.ts'
 import { normalizeConversations } from '../../web/src/parser/normalize.ts'
 import { SEED_TEXTS, SEED_TYPES, TASK_TYPES, TaskClassifier } from '../../web/src/classify/classifier.ts'
 
-const args = process.argv.slice(2)
+const CV = process.argv.includes('--cv') // 대화 단위 5겹 교차 검증(평가 분할에 빠지는 유형이 없도록 전체를 한 번씩 평가)
+const args = process.argv.slice(2).filter((a) => a !== '--cv')
 const smoke = args[0] === '--smoke'
 const model = (smoke ? args[1] : args[2]) ?? 'Xenova/multilingual-e5-small'
 const SPLIT = [240, 80, 80] // 비율로만 쓴다
@@ -170,3 +172,39 @@ for (const [variant, vecs, types] of [
 
 console.log('\n=== summary (test macro F1) ===')
 for (const [n, m] of results.sort((a, b) => b[1] - a[1])) console.log(`${m.toFixed(3)}  ${n}`)
+
+// ---------- 교차 검증(--cv): 한 번의 분할은 평가 80건에 일부 유형이 아예 안 들어갈 수 있다. 전체를 5겹으로 돌려 모든 항목을 한 번씩 평가한다 ----------
+if (CV) {
+  const K = 5
+  const foldOf = new Map(convIds.map((c, i) => [c, i % K])) // convIds는 위에서 결정적으로 섞여 있다
+  const allVecs = []
+  for (let i = 0; i < items.length; i += 64) allVecs.push(...(await embed(items.slice(i, i + 64).map((x) => x.text))))
+  const pred = { A: [], Bseed: [], Cseed: [], Btrain: [], Ctrain: [] }
+  const seedClf = new TaskClassifier(seedVecs, SEED_TYPES) // 제품과 같은 기본 설정(예시 발화만)
+  for (let f = 0; f < K; f++) {
+    const tr = items.map((_, i) => i).filter((i) => foldOf.get(items[i].conversationId) !== f)
+    const te = items.map((_, i) => i).filter((i) => foldOf.get(items[i].conversationId) === f)
+    const tf = tfidfModel(tr.map((i) => items[i].text))
+    const predictFold = trainSoftmax(tr.map((i) => tf.vec(items[i].text)), tr.map((i) => items[i].type), tf.size)
+    const trNo = tr.filter((i) => items[i].type !== 'other')
+    const trainClf = new TaskClassifier([...seedVecs, ...trNo.map((i) => allVecs[i])], [...SEED_TYPES, ...trNo.map((i) => items[i].type)], { k: 3, otherBelow: 0 })
+    for (const i of te) {
+      pred.A[i] = predictFold(tf.vec(items[i].text))
+      pred.Bseed[i] = seedClf.predict(allVecs[i], 'centroid').type
+      pred.Cseed[i] = seedClf.predict(allVecs[i], 'knn').type
+      pred.Btrain[i] = trainClf.predict(allVecs[i], 'centroid').type
+      pred.Ctrain[i] = trainClf.predict(allVecs[i], 'knn').type
+    }
+  }
+  const gold = items.map((x) => x.type)
+  console.log(`\n##### ${K}겹 교차 검증 (대화 단위, 전체 ${items.length}건) #####`)
+  const cv = [
+    ['A TF-IDF+softmax (학습 4겹)', report('CV A: TF-IDF + softmax', gold, pred.A)],
+    ['C k-NN / 예시+학습 4겹 (k=3)', report('CV C: k-NN / 예시+학습', gold, pred.Ctrain)],
+    ['B 중심점 / 예시+학습 4겹', report('CV B: 중심점 / 예시+학습', gold, pred.Btrain)],
+    ['C k-NN / 예시만 (제품 기본 설정)', report('CV C: k-NN / 예시만 (제품 기본 설정)', gold, pred.Cseed)],
+    ['B 중심점 / 예시만', report('CV B: 중심점 / 예시만', gold, pred.Bseed)],
+  ]
+  console.log('\n=== summary (5겹 교차 검증 macro F1) ===')
+  for (const [n, m] of cv.sort((a, b) => b[1] - a[1])) console.log(`${m.toFixed(3)}  ${n}`)
+}

@@ -83,7 +83,7 @@ export default function App() {
   const [detail, setDetail] = useState('')
   const [result, setResult] = useState<Result | null>(null)
   const [cls, setCls] = useState<Classified | null>(null)
-  const [method, setMethod] = useState<Method>('knn')
+  const [method, setMethod] = useState<Method>('centroid') // 제품 기본은 B(중심점). 개발 패널에서 C와 바꿔 볼 수 있다
   const [error, setError] = useState('')
   const [over, setOver] = useState(false)
   const [embedLog, setEmbedLog] = useState<string[]>([])
@@ -156,7 +156,7 @@ export default function App() {
   // dismissedIds: 내가 "반복 아님"으로 고친 메시지. 주별 집계에도 반영되도록 대장을 만들 때 등급을 뗀다.
   async function record(r: Result, m: Classified, dismissedIds: string[]) {
     const version = { parserVersion: r.parserVersion, normalizerVersion: r.normalizerVersion, modelVersion: m.modelVersion, classifierVersion: m.classifierVersion, detectorVersion: m.detectorVersion, catalogVersion: CATALOG_VERSION, recommendationRuleVersion: RECOMMENDATION_RULE_VERSION }
-    const entries = buildLedger({ platform: r.conversations[0]?.platform ?? 'chatgpt', utterances: r.utterances, okIds: r.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: m.knn, pairs: applyDismissed(m.pairs, m.detectSummary, dismissedIds).pairs, version })
+    const entries = buildLedger({ platform: r.conversations[0]?.platform ?? 'chatgpt', utterances: r.utterances, okIds: r.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: m.centroid, pairs: applyDismissed(m.pairs, m.detectSummary, dismissedIds).pairs, version })
     let all = entries
     if (storageMode === 'local') {
       try { await putLedger(entries); all = await getLedger() } catch (e) { setError('로컬 보관 실패: ' + (e as Error).message) }
@@ -221,7 +221,7 @@ export default function App() {
     if (result && cls) record(result, cls, next)
   }
   const snapshot = result && cls && s && eff
-    ? buildSnapshot({ platform, stats: s, utterances: result.utterances, okIds: result.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: cls.knn, candidates: eff.candidates, detect: eff.summary, subByConversation: subByConversation(result.conversations) })
+    ? buildSnapshot({ platform, stats: s, utterances: result.utterances, okIds: result.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: cls.centroid, candidates: eff.candidates, detect: eff.summary, subByConversation: subByConversation(result.conversations) })
     : null
   const detected = result ? detectFeatures(result.conversations) : []
   const installed = result ? installedPlugins(result.conversations) : [] // Claude Code 기록의 설치 플러그인 id
@@ -338,7 +338,7 @@ export default function App() {
           <p className="label wide">{AB ? '추천 평가' : '추천'}</p>
           {snapshot && ctx && (
             <>
-              {AB ? <AbMode platform={platform} personalized={prescriptions} /> : <Prescriptions items={shownRx} feedback={feedback} onFeedback={onFeedback} installed={installed} />}
+              {AB ? <AbMode platform={platform} personalized={prescriptions} snapshot={snapshot} weeks={weeks} version={version} ctx={withDetected(ctx, detected)} /> : <Prescriptions items={shownRx} feedback={feedback} onFeedback={onFeedback} installed={installed} />}
               {!AB && platform === 'claude' && (
                 <>
                   <p className="label">대화 종류별 플러그인<Help text={`많이 쓴 대화 종류 순입니다. 그 종류 메시지가 ${TASK_PLUGIN_MIN_MESSAGES}개 이상일 때만 플러그인을 권합니다. Claude Code 기록의 메시지는 모두 코딩으로 셉니다. 효과는 아직 검증되지 않았습니다.`} /></p>
