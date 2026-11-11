@@ -1,0 +1,1970 @@
+Plugin Management	8693067	엔지니어링 및 API	engineering,apis	Anthropic 작성
+Productivity	3352012	직업 및 경력, 티켓 및 작업, Claude 기록, 이메일 및 메시지 및 API	tickets-tasks,apis,claude-history,email-messages,jobs-career	Anthropic 작성
+Data	2898738	데이터, 데이터베이스 및 파일 및 문서	files-documents,databases,data	Anthropic 작성
+Marketing	2664339	마케팅, 웹사이트, 이메일 및 메시지, 디자인 및 미디어 및 참고 문서	designs-media,reference-docs,websites,marketing,email-messages	Anthropic 작성
+Finance	2119253	재무	finance	Anthropic 작성
+Postiz	1880261	이메일 및 메시지 및 디자인 및 미디어	designs-media,websites,email-messages	Anthropic Directory에서
+PDF Viewer	1754539	법무 및 파일 및 문서	files-documents,legal	Anthropic 작성
+Sales	1576613	영업, 연락처 및 리드, 티켓 및 작업, 이메일 및 메시지, API 및 파일 및 문서	files-documents,tickets-tasks,apis,contacts-leads,email-messages,sales	Anthropic 작성
+Legal	1570392	법무, 참고 문서 및 파일 및 문서	files-documents,reference-docs,legal	Anthropic 작성
+Operations	1528110	운영, 파이프라인 및 작업, 티켓 및 작업 및 참고 문서	tickets-tasks,pipelines-jobs,reference-docs,operations	Anthropic 작성
+Small Business	1223929	운영, 재무, 파일 및 문서, 데이터베이스, 이메일 및 메시지, 연락처 및 리드, 티켓 및 작업, 디자인 및 미디어 및 API	files-documents,designs-media,tickets-tasks,apis,databases,contacts-leads,finance,email-messages,operations	Anthropic 작성
+Enterprise Search	1011440	운영, 이메일 및 메시지, 파일 및 문서, 노트 및 메모리 및 Claude 기록	files-documents,notes-memory,claude-history,email-messages,operations	Anthropic 작성
+Figma	968588	디자인, 디자인 및 미디어, 코드 및 파일 및 문서	code,code,files-documents,designs-media,designs-media,design,design	Anthropic Directory에서
+Human Resources	899784	HR, 연락처 및 리드, 티켓 및 작업 및 재무	tickets-tasks,contacts-leads,finance,hr	Anthropic 작성
+Customer Support	781914	고객 지원, 티켓 및 작업 및 참고 문서	tickets-tasks,reference-docs,customer-support	Anthropic 작성
+Brand Voice	755652	마케팅, 파일 및 문서 및 노트 및 메모리	files-documents,notes-memory,marketing	Anthropic Directory에서
+Bio Research	581785	데이터, 의료 및 생명 과학, 데이터베이스, 파일 및 문서, 연구, 파이프라인 및 작업 및 AI 모델 및 에이전트	files-documents,pipelines-jobs,ai-models-agents,databases,research,data,healthcare-life-sciences	Anthropic 작성
+Adobe	573959	디자인, 디자인 및 미디어 및 파일 및 문서	files-documents,designs-media,design	Anthropic Directory에서
+Canva	527774	마케팅 및 디자인 및 미디어	designs-media,marketing	Anthropic Directory에서
+Slack	465995	이메일 및 메시지	email-messages,email-messages	Anthropic Directory에서
+Desktop Commander	424093	엔지니어링, 코드, 서버 및 클라우드, 로그 및 오류, 파일 및 문서, 파이프라인 및 작업 및 Claude 설정	engineering,code,files-documents,pipelines-jobs,servers-cloud,logs-errors,claude-settings	Anthropic Directory에서
+SearchFit SEO	399823	마케팅, 웹사이트 및 코드	code,websites,websites,marketing,marketing	Anthropic Directory에서
+Bright Data	335494	웹사이트, 파일 및 문서, 코드 및 참고 문서	code,files-documents,apis,reference-docs,websites,websites	Anthropic Directory에서
+Apollo.io	311760	영업 및 연락처 및 리드	contacts-leads,sales	Apollo.io 작성
+Zoom	287324	API 및 코드	code,apis	Zoom 작성
+S&P Global	285838	재무, 금융 서비스 및 참고 문서	reference-docs,finance,financial-services	Anthropic Directory에서
+Product Tracking	266079	제품, 코드, 파일 및 문서 및 API	code,files-documents,apis,product,product	Anthropic Directory에서
+Common Room	255610	영업 및 연락처 및 리드	contacts-leads,sales	Anthropic Directory에서
+Miro	232562	엔지니어링, 코드, 디자인 및 미디어, 파일 및 문서 및 풀 리퀘스트	engineering,code,designs-media,pull-requests,pull-requests	Anthropic Directory에서
+Bigdata.com	227028	재무, 금융 서비스 및 참고 문서	reference-docs,finance,financial-services	Anthropic Directory에서
+Nimble	201048	웹사이트, 연락처 및 리드, 파일 및 문서 및 데이터베이스	files-documents,websites,databases,contacts-leads	Anthropic Directory에서
+Daloopa	192998	재무, 금융 서비스 및 파일 및 문서	files-documents,finance,financial-services	Anthropic Directory에서
+Zapier	187058	API 및 파이프라인 및 작업	pipelines-jobs,apis	Anthropic Directory에서
+Browser Use	176082	웹사이트 및 파일 및 문서	files-documents,websites	Anthropic Directory에서
+Adspirer	166408	마케팅 및 API	apis,marketing	Anthropic Directory에서
+Carta Investors	161854	재무, 금융 서비스, 데이터베이스, 파일 및 문서, 디자인 및 미디어 및 API	files-documents,designs-media,apis,databases,finance,financial-services	Anthropic Directory에서
+LSEG	155728	재무, 금융 서비스 및 API	apis,finance,financial-services	Anthropic Directory에서
+Vibe Prospecting	153601	영업, 연락처 및 리드 및 API	apis,contacts-leads,sales	Anthropic Directory에서
+wix	153434	엔지니어링, 웹사이트, 코드, 파일 및 문서 및 데이터베이스	engineering,code,files-documents,websites,databases	Anthropic Directory에서
+Box	150733	파일 및 문서	files-documents	Anthropic Directory에서
+airtable	148113	데이터베이스, 티켓 및 작업 및 파이프라인 및 작업	tickets-tasks,pipelines-jobs,databases	Anthropic Directory에서
+ZoomInfo	147316	영업, 연락처 및 리드 및 티켓 및 작업	tickets-tasks,contacts-leads,sales	Anthropic Directory에서
+Fastly	141039	엔지니어링, 코드, 서버 및 클라우드, 로그 및 오류 및 API	engineering,code,apis,servers-cloud,logs-errors	Fastly 작성
+frontend-design	140669	디자인 및 디자인 및 미디어	designs-media,design	Anthropic 작성
+Superpowers	136592	엔지니어링, 코드 및 AI 모델 및 에이전트	engineering,code,ai-models-agents	Anthropic Directory에서
+twilio-developer-kit	134586	엔지니어링, 이메일 및 메시지 및 API	engineering,apis,email-messages	Anthropic Directory에서
+github	132739	엔지니어링, 코드, 풀 리퀘스트, 티켓 및 작업 및 API	engineering,code,tickets-tasks,apis,pull-requests	Anthropic Directory에서
+Prisma	130864	엔지니어링, 데이터베이스 및 코드	engineering,code,databases	Anthropic Directory에서
+DataRobot Agent Skills	128265	데이터, AI 모델 및 에이전트, 코드, 데이터베이스, 파이프라인 및 작업 및 로그 및 오류	code,pipelines-jobs,ai-models-agents,databases,logs-errors,data	Anthropic Directory에서
+Sanity	123614	엔지니어링, 파일 및 문서, 코드 및 웹사이트	engineering,code,files-documents,websites	Anthropic Directory에서
+Modern Web Guidance	121881	엔지니어링 및 코드	engineering,code	Google Chrome 작성
+Base44	120210	엔지니어링, 코드, 서버 및 클라우드, 파이프라인 및 작업 및 AI 모델 및 에이전트	engineering,code,pipelines-jobs,ai-models-agents,servers-cloud	
+Security Guidance	119866	엔지니어링, 코드 및 풀 리퀘스트	engineering,code,pull-requests	Anthropic 작성
+Exa Deep Research	119690	데이터, 연구, 웹사이트, 참고 문서 및 연락처 및 리드	reference-docs,websites,contacts-leads,research,data	Anthropic Directory에서
+Cockroachdb	118576	엔지니어링, 데이터베이스 및 코드	engineering,code,databases	Cockroach Labs 작성
+Cloudinary	116893	엔지니어링, 디자인 및 미디어, 파일 및 문서 및 서버 및 클라우드	engineering,files-documents,designs-media,servers-cloud	Anthropic Directory에서
+Claude for Financial Advisors	110473	영업, 금융 서비스, 데이터베이스, 파일 및 문서, 연락처 및 리드, 티켓 및 작업 및 API	files-documents,tickets-tasks,apis,databases,contacts-leads,sales,financial-services	Anthropic 작성
+Intercom	104980	고객 지원, 이메일 및 메시지, 연락처 및 리드 및 티켓 및 작업	tickets-tasks,contacts-leads,email-messages,customer-support	Anthropic Directory에서
+Learn with Coursera	104121	학습	learning	
+Atlan	103558	데이터 및 데이터베이스	databases,data	Anthropic Directory에서
+Carta Cap Table	103181	재무, 금융 서비스, 데이터베이스 및 파일 및 문서	files-documents,databases,finance,financial-services	Anthropic Directory에서
+Datadog	101302	엔지니어링, 로그 및 오류, 서버 및 클라우드 및 파이프라인 및 작업	engineering,pipelines-jobs,servers-cloud,servers-cloud,logs-errors,logs-errors	Anthropic Directory에서
+Carta CRM	97021	영업, 연락처 및 리드, 티켓 및 작업 및 노트 및 메모리	tickets-tasks,notes-memory,contacts-leads,sales	Anthropic Directory에서
+monday.com	95660	티켓 및 작업, 파일 및 문서 및 파이프라인 및 작업	files-documents,tickets-tasks,pipelines-jobs	Anthropic Directory에서
+AI-Firstify	94414	엔지니어링, 코드 및 AI 모델 및 에이전트	engineering,code,ai-models-agents	Anthropic Directory에서
+Vanta	90284	IT 및 보안, 코드, 풀 리퀘스트 및 API	code,apis,pull-requests,it-security	
+PlanetScale	89668	엔지니어링, 데이터베이스, 코드 및 로그 및 오류	engineering,code,databases,logs-errors	Anthropic Directory에서
+Dropbox	88431	파일 및 문서	files-documents	Anthropic Directory에서
+servicenow-sdk	86793	엔지니어링, 코드, 파이프라인 및 작업 및 API	engineering,code,pipelines-jobs,apis	Anthropic Directory에서
+GitKraken	86228	엔지니어링, 코드, 풀 리퀘스트, 티켓 및 작업 및 파이프라인 및 작업	engineering,code,tickets-tasks,pipelines-jobs,pull-requests	Anthropic Directory에서
+Auth0	83408	엔지니어링 및 API	engineering,apis	Anthropic Directory에서
+Tavily	83243	엔지니어링, 웹사이트, 참고 문서 및 AI 모델 및 에이전트	engineering,reference-docs,ai-models-agents,websites	Anthropic Directory에서
+ActiveCampaign	82819	마케팅, 이메일 및 메시지, 연락처 및 리드 및 파이프라인 및 작업	pipelines-jobs,contacts-leads,marketing,email-messages	Anthropic Directory에서
+Qt Development Skills	81015	엔지니어링, 코드 및 디자인 및 미디어	engineering,code,designs-media	Anthropic Directory에서
+monday CRM	79729	영업, 연락처 및 리드, 티켓 및 작업 및 데이터베이스	tickets-tasks,databases,contacts-leads,sales	Anthropic Directory에서
+Remotion	78934	코드 및 디자인 및 미디어	code,designs-media	Anthropic Directory에서
+Langfuse	73509	엔지니어링, AI 모델 및 에이전트 및 로그 및 오류	engineering,ai-models-agents,logs-errors	Anthropic Directory에서
+Buildkite	67133	엔지니어링, 파이프라인 및 작업, 코드 및 로그 및 오류	engineering,code,pipelines-jobs,logs-errors	Anthropic Directory에서
+B12	66755	웹사이트 및 파일 및 문서	files-documents,websites	Anthropic Directory에서
+Qdrant	66666	엔지니어링, 데이터베이스, 서버 및 클라우드, 로그 및 오류 및 AI 모델 및 에이전트	engineering,ai-models-agents,databases,servers-cloud,logs-errors	Qdrant 작성
+Grafana Cloud MCP	62368	엔지니어링, 로그 및 오류, 서버 및 클라우드 및 파이프라인 및 작업	engineering,pipelines-jobs,servers-cloud,logs-errors	Anthropic Directory에서
+Pixeltable	62056	데이터베이스, AI 모델 및 에이전트 및 파일 및 문서	files-documents,ai-models-agents,databases	Anthropic Directory에서
+Airwallex AgentOS	61457	재무, 금융 서비스 및 연락처 및 리드	contacts-leads,finance,financial-services	Anthropic Directory에서
+Lusha	60664	영업 및 연락처 및 리드	contacts-leads,sales	Anthropic Directory에서
+TinyFish	60453	웹사이트 및 파일 및 문서	files-documents,websites	Anthropic Directory에서
+Val Town	59722	서버 및 클라우드, 파일 및 문서, 데이터베이스, 파이프라인 및 작업, 이메일 및 메시지 및 API	files-documents,pipelines-jobs,apis,databases,servers-cloud,email-messages	Anthropic Directory에서
+Qodo	59080	엔지니어링, 코드 및 풀 리퀘스트	engineering,code,pull-requests	Anthropic Directory에서
+ClickHouse	58742	데이터 및 데이터베이스	databases,data	Anthropic Directory에서
+claude-code-setup	58733	엔지니어링, 코드 및 API	engineering,code,apis	Anthropic 작성
+Honeycomb	58614	엔지니어링, 로그 및 오류, 코드 및 AI 모델 및 에이전트	engineering,code,ai-models-agents,logs-errors	Anthropic Directory에서
+playwright	57940	엔지니어링, 웹사이트 및 코드	engineering,code,websites	Anthropic Directory에서
+GrowthBook Skills	56942	제품, 파이프라인 및 작업 및 AI 모델 및 에이전트	pipelines-jobs,ai-models-agents,product	Anthropic Directory에서
+Grafana Assistant	54757	엔지니어링, 로그 및 오류 및 서버 및 클라우드	engineering,servers-cloud,servers-cloud,logs-errors,logs-errors	Anthropic Directory에서
+Grasp	54096	영업, 연락처 및 리드 및 데이터베이스	databases,contacts-leads,sales	Anthropic Directory에서
+BlackRock Advisor Center	52312	영업, 금융 서비스, 재무 및 API	apis,finance,sales,financial-services	Anthropic Directory에서
+Carbone	51203	파일 및 문서	files-documents	Carbone 작성
+SigNoz	50138	엔지니어링, 로그 및 오류 및 서버 및 클라우드	engineering,servers-cloud,logs-errors	SigNoz 작성
+Apify	49451	웹사이트 및 파일 및 문서	files-documents,websites	Anthropic Directory에서
+Synthflow	49080	엔지니어링, AI 모델 및 에이전트, 로그 및 오류 및 참고 문서	engineering,reference-docs,ai-models-agents,logs-errors	Anthropic Directory에서
+stackhawk-hawkscan	47616	엔지니어링, 코드, 로그 및 오류 및 API	engineering,code,apis,logs-errors	Anthropic Directory에서
+Noibu	47553	제품, 소매 및 이커머스, 웹사이트, 로그 및 오류, 파일 및 문서 및 코드	code,files-documents,websites,logs-errors,product,retail-ecommerce	Anthropic Directory에서
+StackHawk API	43957	IT 및 보안, 로그 및 오류 및 티켓 및 작업	tickets-tasks,logs-errors,it-security	Anthropic Directory에서
+GC AI	43671	법무, 파일 및 문서 및 참고 문서	files-documents,reference-docs,legal	Anthropic Directory에서
+NetSuite Finance Analyst	42681	재무, 금융 서비스 및 데이터베이스	databases,finance,financial-services	Anthropic Directory에서
+HubSpot Sales	41637	영업, 연락처 및 리드, 티켓 및 작업 및 이메일 및 메시지	tickets-tasks,contacts-leads,email-messages,sales	Anthropic Directory에서
+Intuit QuickBooks	36148	재무, 티켓 및 작업, 이메일 및 메시지 및 연락처 및 리드	tickets-tasks,contacts-leads,finance,email-messages	Anthropic Directory에서
+Informatica	36067	데이터, 데이터베이스, 파일 및 문서 및 참고 문서	files-documents,reference-docs,databases,data	informatica 작성
+Social Media Skills	35209	마케팅, 디자인 및 미디어, 파일 및 문서 및 노트 및 메모리	files-documents,designs-media,notes-memory,marketing	Anthropic Directory에서
+Qodo Standards	34601	엔지니어링 및 코드	engineering,code	Anthropic Directory에서
+NetSuite AI Companion	34573	운영, 데이터베이스 및 API	apis,databases,operations	Anthropic Directory에서
+Maven Bio	34382	제품, 의료 및 생명 과학, AI 모델 및 에이전트, 참고 문서 및 API	apis,reference-docs,ai-models-agents,product,healthcare-life-sciences	Maven Bio 작성
+Render	33097	엔지니어링, 서버 및 클라우드, 코드, 데이터베이스, 로그 및 오류 및 파이프라인 및 작업	engineering,code,pipelines-jobs,databases,servers-cloud,logs-errors	Anthropic Directory에서
+Amazon Selling Partner	32815	영업, 소매 및 이커머스, 데이터베이스, 파일 및 문서, 티켓 및 작업 및 재무	files-documents,tickets-tasks,databases,finance,sales,retail-ecommerce	Anthropic Directory에서
+Hostinger Connector	32589	엔지니어링, 웹사이트, 코드, 데이터베이스, 이메일 및 메시지, 서버 및 클라우드, 종속성 및 패키지 및 로그 및 오류	engineering,code,websites,databases,servers-cloud,logs-errors,email-messages,dependencies-packages	Anthropic Directory에서
+Unstructured Foundation	32582	파일 및 문서	files-documents	Anthropic Directory에서
+incident.io	30955	엔지니어링, 로그 및 오류, 파이프라인 및 작업, 티켓 및 작업, 파일 및 문서, 참고 문서 및 API	engineering,files-documents,tickets-tasks,pipelines-jobs,apis,reference-docs,logs-errors	Anthropic Directory에서
+design-skills	30675	디자인, 디자인 및 미디어 및 코드	code,designs-media,design	Anthropic Directory에서
+code-review	30206	엔지니어링, 풀 리퀘스트 및 코드	engineering,code,pull-requests	Anthropic 작성
+Chronograph LP	29047	재무 및 금융 서비스	finance,financial-services	Anthropic Directory에서
+Leadfeeder	27858	영업, 연락처 및 리드 및 웹사이트	websites,contacts-leads,sales	Anthropic Directory에서
+Zocks Advisor Intelligence	27350	영업, 금융 서비스, 연락처 및 리드, 재무 및 노트 및 메모리	notes-memory,contacts-leads,finance,sales,financial-services	Anthropic Directory에서
+Chronograph GP	26994	재무, 금융 서비스, 데이터베이스 및 파일 및 문서	files-documents,databases,finance,financial-services	Anthropic Directory에서
+caveman	25887	글쓰기	writing	Anthropic Directory에서
+ADHD Study Coach	25536	학습 및 노트 및 메모리	notes-memory,learning	Anthropic Directory에서
+roblox-dev	25418	엔지니어링, 코드 및 AI 모델 및 에이전트	engineering,code,ai-models-agents	Anthropic Directory에서
+Wingspan	24695	재무 및 연락처 및 리드	contacts-leads,finance	Anthropic Directory에서
+claude-memory	23816	노트 및 메모리 및 파일 및 문서	files-documents,notes-memory	Anthropic Directory에서
+Headroom: Large File and Log Reader	23482	로그 및 오류 및 파일 및 문서	files-documents,logs-errors	Anthropic Directory에서
+humanizer	23398	파일 및 문서	files-documents	Anthropic Directory에서
+Omniout: LLM Retries and Model Fallback	21139	엔지니어링, AI 모델 및 에이전트 및 API	engineering,apis,ai-models-agents	Anthropic Directory에서
+Pendo Orchestrate	21065	마케팅, 이메일 및 메시지 및 파이프라인 및 작업	pipelines-jobs,marketing,email-messages	Pendo 작성
+Superdesign	20666	디자인, 디자인 및 미디어 및 웹사이트	designs-media,websites,design	Anthropic Directory에서
+21st	20238	디자인, 코드 및 디자인 및 미디어	code,designs-media,design	Anthropic Directory에서
+claude-security	20091	엔지니어링, 코드 및 풀 리퀘스트	engineering,code,pull-requests	Anthropic 작성
+Pendo Analytics	20068	제품, 티켓 및 작업 및 AI 모델 및 에이전트	tickets-tasks,ai-models-agents,product	Pendo 작성
+AI Skills	18776	엔지니어링, 코드, 데이터베이스, 파일 및 문서, 디자인 및 미디어, 로그 및 오류, 풀 리퀘스트 및 Claude 기록	engineering,code,files-documents,designs-media,claude-history,databases,logs-errors,pull-requests	Anthropic Directory에서
+image-generation	18764	디자인, AI 모델 및 에이전트 및 디자인 및 미디어	designs-media,ai-models-agents,design	Anthropic Directory에서
+AnimatedWebs	18690	웹사이트, 디자인 및 미디어 및 코드	code,designs-media,websites	Anthropic Directory에서
+Adaptive Agent	18213	Claude 기록, 노트 및 메모리 및 AI 모델 및 에이전트	notes-memory,ai-models-agents,claude-history	Anthropic Directory에서
+Skills For Real Engineers	18194	엔지니어링, 코드, 풀 리퀘스트, 티켓 및 작업 및 참고 문서	engineering,code,tickets-tasks,reference-docs,pull-requests	Anthropic Directory에서
+Pendo Guides	17944	제품 및 디자인 및 미디어	designs-media,product	Pendo 작성
+supabase	17377	엔지니어링, 데이터베이스, 코드 및 서버 및 클라우드	engineering,code,databases,servers-cloud	Anthropic Directory에서
+context7	17115	엔지니어링, 참고 문서 및 코드	engineering,code,reference-docs	Anthropic Directory에서
+design-superpowers	16925	디자인, 디자인 및 미디어 및 코드	code,designs-media,design	Anthropic Directory에서
+Task Observer: Learn Your Preferences	16867	엔지니어링, Claude 설정 및 코드	engineering,code,claude-settings	Anthropic Directory에서
+Abracadabrax AI Image & Video Generator	16406	디자인 및 미디어	designs-media	Anthropic Directory에서
+gitlab	16367	엔지니어링, 코드, 파이프라인 및 작업, 풀 리퀘스트 및 티켓 및 작업	engineering,code,tickets-tasks,pipelines-jobs,pull-requests	Anthropic Directory에서
+Cloudflare	16330	엔지니어링, 코드, 서버 및 클라우드, 웹사이트, API, 파이프라인 및 작업 및 AI 모델 및 에이전트	engineering,code,pipelines-jobs,apis,ai-models-agents,websites,servers-cloud	Anthropic Directory에서
+Setup Audit	16302	엔지니어링, Claude 설정, Claude 기록, 코드 및 종속성 및 패키지	engineering,code,claude-history,claude-settings,dependencies-packages	Anthropic Directory에서
+market-researcher	15461	제품, 파일 및 문서 및 참고 문서	files-documents,reference-docs,product	Anthropic 작성
+3D CAD Converter	15380	파일 및 문서 및 디자인 및 미디어	files-documents,designs-media	Anthropic Directory에서
+instagram	15332	이메일 및 메시지 및 연락처 및 리드	contacts-leads,email-messages	Anthropic Directory에서
+10x-Team	15058	엔지니어링, 코드, 데이터베이스, 서버 및 클라우드 및 파이프라인 및 작업	engineering,code,pipelines-jobs,databases,servers-cloud	Anthropic Directory에서
+firecrawl	14688	웹사이트, 파일 및 문서 및 연구	files-documents,websites,research	Anthropic Directory에서
+Obsidian Notes	14680	연구, 파일 및 문서 및 노트 및 메모리	files-documents,notes-memory,research	Anthropic Directory에서
+skill-creator	14291	엔지니어링 및 AI 모델 및 에이전트	engineering,ai-models-agents	Anthropic 작성
+Notion	14264	노트 및 메모리, 파일 및 문서 및 티켓 및 작업	files-documents,tickets-tasks,notes-memory	Anthropic Directory에서
+YouTube Transcriber	14233	학습 및 디자인 및 미디어	designs-media,learning	Anthropic Directory에서
+Sales Cloud	14000	영업, 연락처 및 리드, 티켓 및 작업, 파일 및 문서 및 API	files-documents,tickets-tasks,apis,contacts-leads,sales	Anthropic Directory에서
+verification-foundation	13890	법무, 참고 문서 및 코드	code,reference-docs,legal	Anthropic Directory에서
+LinkedIn Profile Review & Resume Converter - ResumeNext	13551	HR, 직업 및 경력 및 파일 및 문서	files-documents,jobs-career,hr	Anthropic Directory에서
+equity-research	12996	영업, 금융 서비스, 재무 및 참고 문서	reference-docs,finance,sales,financial-services	Anthropic 작성
+VectorLab UI/UX Skills	12966	디자인, 코드 및 디자인 및 미디어	code,designs-media,design	Anthropic Directory에서
+Vanguard Advisor Tools	12963	영업, 금융 서비스, API 및 파일 및 문서	files-documents,apis,apis,finance,sales,sales,financial-services,financial-services	Vanguard 작성
+AI Logo Maker & Brand Designer	12956	디자인 및 미디어	designs-media	Anthropic Directory에서
+LinkedIn Career Intelligence - rankedin	12899	HR, 직업 및 경력, 연락처 및 리드 및 노트 및 메모리	notes-memory,contacts-leads,jobs-career,hr	Anthropic Directory에서
+Writing Skills	12825	글쓰기, 코드 및 AI 모델 및 에이전트	code,ai-models-agents,writing	Anthropic Directory에서
+GovTribe	12701	영업, 정부, 티켓 및 작업, 참고 문서 및 파일 및 문서	files-documents,tickets-tasks,reference-docs,sales,sales,government,government	Government Executive Media Group LLC 작성
+agent-memory	12483	엔지니어링, Claude 기록 및 AI 모델 및 에이전트	engineering,ai-models-agents,claude-history	Anthropic Directory에서
+8B AI Website Builder	12222	웹사이트 및 파일 및 문서	files-documents,websites	Anthropic Directory에서
+Humanize Kit	12127	글쓰기, 파일 및 문서 및 노트 및 메모리	files-documents,notes-memory,writing	Anthropic Directory에서
+Unreal Engine Skills	11972	엔지니어링, 코드, 서버 및 클라우드 및 AI 모델 및 에이전트	engineering,code,ai-models-agents,servers-cloud	Anthropic Directory에서
+video-shotcraft	11791	디자인 및 미디어 및 코드	code,designs-media	Anthropic Directory에서
+Napkin Math	11678	연구 및 퍼즐	research,puzzles	Anthropic Directory에서
+AI Video Editor & Timeline by ManyMotions	11662	디자인 및 미디어	designs-media	Anthropic Directory에서
+Chrome Extension Builder	11397	엔지니어링, 코드 및 디자인 및 미디어	engineering,code,designs-media	Anthropic Directory에서
+animation-studio	11382	디자인 및 미디어 및 음악	designs-media,music	Anthropic Directory에서
+watch-video	11320	파일 및 문서 및 디자인 및 미디어	files-documents,designs-media	Anthropic Directory에서
+Abracadabrax AI Video Generator	11024	디자인 및 미디어	designs-media	Anthropic Directory에서
+AI Video & Image Generator by Clipwave	10992	디자인 및 미디어	designs-media	Anthropic Directory에서
+/workflow-audit	10967	제품, 코드 및 디자인 및 미디어	code,designs-media,product	Anthropic Directory에서
+agentic-council	10875	엔지니어링, 코드, 데이터베이스, AI 모델 및 에이전트, 파이프라인 및 작업, 디자인 및 미디어 및 API	engineering,code,designs-media,pipelines-jobs,apis,ai-models-agents,databases	Anthropic Directory에서
+Greenhouse	10816	영업, 연락처 및 리드, 티켓 및 작업 및 노트 및 메모리	tickets-tasks,notes-memory,contacts-leads,sales	Anthropic Directory에서
+commercial-legal	10777	법무, 파일 및 문서 및 티켓 및 작업	files-documents,tickets-tasks,legal	Anthropic 작성
+Research Desk	10722	연구, 참고 문서 및 노트 및 메모리	notes-memory,reference-docs,research	Anthropic Directory에서
+Motion Reel	10633	디자인 및 미디어	designs-media	Anthropic Directory에서
+Backend Design	10534	엔지니어링, 코드, 데이터베이스, 서버 및 클라우드, 로그 및 오류 및 API	engineering,code,apis,databases,servers-cloud,logs-errors	Anthropic Directory에서
+Revenue Grid	10410	영업, 연락처 및 리드, 티켓 및 작업 및 이메일 및 메시지	tickets-tasks,contacts-leads,email-messages,sales	Anthropic Directory에서
+pptx-deck-plugin	10349	마케팅, 디자인 및 미디어 및 파일 및 문서	files-documents,designs-media,marketing	Anthropic Directory에서
+obsidian-sync	10324	파일 및 문서 및 노트 및 메모리	files-documents,notes-memory	Anthropic Directory에서
+Eddyter	10281	엔지니어링, 코드 및 API	engineering,code,apis	Anthropic Directory에서
+Finance Tutor	10068	학습 및 노트 및 메모리	notes-memory,learning	Anthropic Directory에서
+claude-md-management	9867	엔지니어링, 파일 및 문서 및 노트 및 메모리	engineering,files-documents,notes-memory	Anthropic 작성
+Agent Protocols	9817	엔지니어링, 코드, 파이프라인 및 작업 및 AI 모델 및 에이전트	engineering,code,pipelines-jobs,ai-models-agents	Anthropic Directory에서
+Codesign	9557	디자인, 디자인 및 미디어 및 파일 및 문서	files-documents,designs-media,design	Anthropic Directory에서
+code-simplifier	9395	엔지니어링 및 코드	engineering,code	Anthropic 작성
+ai-governance-legal	9243	법무, AI 모델 및 에이전트, 참고 문서 및 API	apis,reference-docs,ai-models-agents,legal	Anthropic 작성
+telegram	8992	이메일 및 메시지	email-messages	Anthropic 작성
+Creative Claw	8965	마케팅, 디자인 및 미디어 및 파일 및 문서	files-documents,designs-media,marketing	Anthropic Directory에서
+AI Mentor	8659	엔지니어링, 코드 및 AI 모델 및 에이전트	engineering,code,ai-models-agents	Anthropic Directory에서
+research-superpowers	8127	연구, 파일 및 문서, 참고 문서 및 노트 및 메모리	files-documents,notes-memory,reference-docs,research	Anthropic Directory에서
+Auto Research	8081	AI 모델 및 에이전트 및 코드	code,ai-models-agents	Anthropic Directory에서
+Kling AI	7949	디자인 및 미디어	designs-media	Anthropic Directory에서
+1Password Developer Tools	7919	엔지니어링, 코드 및 서버 및 클라우드	engineering,code,servers-cloud	Anthropic Directory에서
+shopify-ai-toolkit	7891	엔지니어링, 소매 및 이커머스, 코드 및 API	engineering,code,apis,retail-ecommerce	Anthropic Directory에서
+Abracadabrax AI Product Photo Generator	7890	마케팅, 소매 및 이커머스 및 디자인 및 미디어	designs-media,marketing,retail-ecommerce	Anthropic Directory에서
+discord	7856	이메일 및 메시지	email-messages	Anthropic 작성
+Verisk Underwriting Intelligence	7849	제품 및 참고 문서	reference-docs,product	Anthropic Directory에서
+Claude Education Skills Library	7838	교육 및 학습	learning,education	Anthropic Directory에서
+Windsor.ai Ads and Marketing Data	7825	마케팅, 재무, 티켓 및 작업, 연락처 및 리드, 웹사이트, 디자인 및 미디어, 이메일 및 메시지 및 API	designs-media,tickets-tasks,apis,websites,contacts-leads,finance,marketing,email-messages	Anthropic Directory에서
+16minds	7671	노트 및 메모리	notes-memory	Anthropic Directory에서
+analytics-skills	7582	데이터, 파일 및 문서 및 코드	code,files-documents,data	Anthropic Directory에서
+Claude SEO and GEO Site Audit	7543	마케팅, 웹사이트 및 파일 및 문서	files-documents,websites,marketing	Anthropic Directory에서
+Caveman Mode: Short Answers	7481	Claude 설정	claude-settings	Anthropic Directory에서
+investment-banking	7412	영업, 금융 서비스, 파일 및 문서 및 재무	files-documents,finance,sales,financial-services	Anthropic 작성
+Upstash Redis	7373	엔지니어링, 데이터베이스, 서버 및 클라우드, 파일 및 문서, 파이프라인 및 작업 및 코드	engineering,code,files-documents,pipelines-jobs,databases,servers-cloud	Anthropic Directory에서
+vidIQ	7368	마케팅, 웹사이트 및 디자인 및 미디어	designs-media,websites,marketing	Anthropic Directory에서
+Stripe	7336	엔지니어링, 재무 및 API	engineering,apis,finance	Anthropic Directory에서
+Meshy	7327	디자인 및 미디어 및 파일 및 문서	files-documents,designs-media	Anthropic Directory에서
+Abracadabrax AI Background Music Generator	7300	음악 및 디자인 및 미디어	designs-media,music	Anthropic Directory에서
+ffmpeg-llm	7235	디자인 및 미디어	designs-media	Anthropic Directory에서
+AI Employees	7225	파일 및 문서, 파이프라인 및 작업 및 코드	code,files-documents,pipelines-jobs	Anthropic Directory에서
+AI UGC Video Ads Maker	7213	마케팅 및 디자인 및 미디어	designs-media,marketing	Anthropic Directory에서
+Agent Army	7148	엔지니어링, 코드 및 AI 모델 및 에이전트	engineering,code,ai-models-agents	Anthropic Directory에서
+Agency MCP	6931	마케팅, 웹사이트, 재무, 티켓 및 작업, 연락처 및 리드 및 디자인 및 미디어	designs-media,tickets-tasks,websites,contacts-leads,finance,marketing	Anthropic Directory에서
+pubmed	6913	데이터, 의료 및 생명 과학, 연구 및 참고 문서	reference-docs,research,data,healthcare-life-sciences	Anthropic 작성
+ux-ui-audit	6895	디자인 및 웹사이트	websites,design	Anthropic Directory에서
+firebase	6843	엔지니어링, 데이터베이스, 서버 및 클라우드, 코드, 파일 및 문서 및 API	engineering,code,files-documents,apis,databases,servers-cloud	Anthropic Directory에서
+audit-suite	6786	엔지니어링, 코드 및 파일 및 문서	engineering,code,files-documents	Anthropic Directory에서
+Website Copywriting & Positioning	6725	마케팅, 파일 및 문서 및 웹사이트	files-documents,websites,marketing	Anthropic Directory에서
+3DOptix optical design and simulations	6715	엔지니어링 및 디자인 및 미디어	engineering,designs-media	Anthropic Directory에서
+Claude ghost writer	6685	글쓰기, 파일 및 문서 및 노트 및 메모리	files-documents,notes-memory,writing	Anthropic Directory에서
+huggingface-skills	6676	엔지니어링, AI 모델 및 에이전트, 데이터베이스, 코드, 종속성 및 패키지, 연구, 파이프라인 및 작업 및 서버 및 클라우드	engineering,code,pipelines-jobs,ai-models-agents,databases,servers-cloud,research,dependencies-packages	Anthropic Directory에서
+Website Design	6604	웹사이트, 디자인 및 미디어 및 코드	code,designs-media,websites	Anthropic Directory에서
+SEO-AEO-GEO Ultimate	6549	마케팅, 웹사이트, 파일 및 문서 및 참고 문서	files-documents,reference-docs,websites,marketing	Anthropic Directory에서
+AI-Integration-Architect	6329	엔지니어링, 코드, API, AI 모델 및 에이전트, 파이프라인 및 작업 및 서버 및 클라우드	engineering,code,pipelines-jobs,apis,ai-models-agents,servers-cloud	Anthropic Directory에서
+Abracadabrax Social Media Image & Post Maker	6231	디자인 및 미디어	designs-media	Anthropic Directory에서
+Academic PDF Translation	6174	연구 및 파일 및 문서	files-documents,research	Anthropic Directory에서
+Codex Dispatch	6173	엔지니어링, 코드 및 파이프라인 및 작업	engineering,code,pipelines-jobs	Anthropic Directory에서
+Study Desk	6172	학습, 노트 및 메모리, 파일 및 문서 및 퍼즐	files-documents,notes-memory,learning,puzzles	Anthropic Directory에서
+Video Cleanup	6122	디자인 및 미디어 및 파일 및 문서	files-documents,designs-media	Anthropic Directory에서
+feature-dev	6089	엔지니어링 및 코드	engineering,code	Anthropic 작성
+anti-ai-writing	6048	파일 및 문서	files-documents	Anthropic Directory에서
+model-builder	6010	재무 및 파일 및 문서	files-documents,finance	Anthropic 작성
+Active Memory	5951	Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+IT Reelsmaker	5929	디자인 및 미디어 및 파일 및 문서	files-documents,designs-media	Anthropic Directory에서
+AdWhispr Ads & Marketing Agent	5898	마케팅, API 및 재무	apis,finance,marketing	Anthropic Directory에서
+AI Video Enhancer Studio	5876	디자인 및 미디어 및 파일 및 문서	files-documents,designs-media	Anthropic Directory에서
+SEO Audit	5736	마케팅, 웹사이트 및 파일 및 문서	files-documents,websites,marketing	Anthropic Directory에서
+agent-discussion	5731	파일 및 문서 및 AI 모델 및 에이전트	files-documents,ai-models-agents	Anthropic Directory에서
+Power BI Accessibility (PBIP/PBIR)	5712	디자인, 파일 및 문서 및 디자인 및 미디어	files-documents,designs-media,design	Anthropic Directory에서
+A Good Sign	5708	건강 및 피트니스	health-fitness	Anthropic Directory에서
+CV Builder	5676	HR, 직업 및 경력 및 파일 및 문서	files-documents,jobs-career,hr	Anthropic Directory에서
+AI Ready Design System	5634	디자인 및 디자인 및 미디어	designs-media,design	Anthropic Directory에서
+Apodictic	5590	글쓰기, 파일 및 문서 및 노트 및 메모리	files-documents,notes-memory,writing	Anthropic Directory에서
+databricks	5583	데이터, 데이터베이스, 서버 및 클라우드, 파이프라인 및 작업, AI 모델 및 에이전트, 코드, 파일 및 문서 및 디자인 및 미디어	code,files-documents,designs-media,pipelines-jobs,ai-models-agents,databases,servers-cloud,data	Anthropic Directory에서
+Product Marketing	5559	마케팅, 참고 문서 및 노트 및 메모리	notes-memory,reference-docs,marketing	Anthropic Directory에서
+microsoft-docs	5511	엔지니어링, 코드, 참고 문서 및 API	engineering,code,apis,reference-docs	Anthropic Directory에서
+Shepherd	5497	엔지니어링, 코드 및 풀 리퀘스트	engineering,code,pull-requests	Anthropic Directory에서
+Abracadabrax AI Song & Music Maker	5468	음악 및 디자인 및 미디어	designs-media,music	Anthropic Directory에서
+Asset Generator	5460	디자인 및 디자인 및 미디어	designs-media,design	Anthropic Directory에서
+8digit Planner	5428	마케팅, 디자인 및 미디어, 파일 및 문서 및 티켓 및 작업	files-documents,designs-media,tickets-tasks,marketing	Anthropic Directory에서
+AEO Brand Scan	5415	마케팅, 웹사이트 및 AI 모델 및 에이전트	ai-models-agents,websites,marketing	Anthropic Directory에서
+UX Agent Skills	5359	디자인, 파일 및 문서 및 디자인 및 미디어	files-documents,designs-media,design	Anthropic Directory에서
+videodb	5296	엔지니어링 및 디자인 및 미디어	engineering,designs-media	Anthropic Directory에서
+Intuit Developer	5280	엔지니어링, 금융 서비스, API 및 서버 및 클라우드	engineering,apis,servers-cloud,financial-services	Anthropic Directory에서
+video-to-code-skill	5253	엔지니어링, 코드 및 디자인 및 미디어	engineering,code,designs-media	Anthropic Directory에서
+designs-drift	5246	디자인, 디자인 및 미디어 및 코드	code,designs-media,design	Anthropic Directory에서
+litigation-legal	5229	법무, 티켓 및 작업, 파일 및 문서 및 참고 문서	files-documents,tickets-tasks,reference-docs,legal	Anthropic 작성
+AdMakeAI	5182	마케팅, 디자인 및 미디어 및 API	designs-media,apis,marketing	Anthropic Directory에서
+Zentrik	5172	제품, 참고 문서, 티켓 및 작업, 연구 및 노트 및 메모리	tickets-tasks,notes-memory,reference-docs,product,research	Anthropic Directory에서
+Research integrity	5146	데이터, 연구 및 참고 문서	reference-docs,research,data	Anthropic Directory에서
+Claude2Figma	5136	디자인, 디자인 및 미디어 및 Claude 기록	designs-media,claude-history,design	Anthropic Directory에서
+Marketing Psychology Kit	5134	마케팅, 파일 및 문서 및 참고 문서	files-documents,reference-docs,marketing	Anthropic Directory에서
+Marketing Ideas & Growth Experiments	5118	마케팅 및 티켓 및 작업	tickets-tasks,marketing	Anthropic Directory에서
+corporate-legal	5116	법무, 파일 및 문서, 티켓 및 작업 및 참고 문서	files-documents,tickets-tasks,reference-docs,legal	Anthropic 작성
+revit-bim	5098	엔지니어링, 코드, 파일 및 문서 및 디자인 및 미디어	engineering,code,files-documents,designs-media	Anthropic Directory에서
+Diagrams	5054	엔지니어링, 디자인 및 미디어 및 코드	engineering,code,designs-media	Anthropic Directory에서
+Cowork Memory	5035	엔지니어링, 노트 및 메모리 및 Claude 기록	engineering,notes-memory,claude-history	Anthropic Directory에서
+A1 Gallery	5035	디자인, 웹사이트, 디자인 및 미디어 및 참고 문서	designs-media,reference-docs,websites,design	Anthropic Directory에서
+agentic-harness	5029	엔지니어링, 코드, 파이프라인 및 작업, 티켓 및 작업 및 Claude 기록	engineering,code,tickets-tasks,pipelines-jobs,claude-history	Anthropic Directory에서
+Online Writing	5010	글쓰기, 파일 및 문서, 노트 및 메모리 및 디자인 및 미디어	files-documents,designs-media,notes-memory,writing	Anthropic Directory에서
+code-modernization	4919	엔지니어링 및 코드	engineering,code	Anthropic 작성
+Image Deep Research	4901	디자인, 디자인 및 미디어, 웹사이트 및 참고 문서	designs-media,reference-docs,websites,design	Anthropic Directory에서
+learning-framework	4888	학습 및 노트 및 메모리	notes-memory,learning	Anthropic Directory에서
+AI Avatar Presenter & Explainer Video Maker	4863	디자인 및 미디어	designs-media	Anthropic Directory에서
+earnings-reviewer	4862	데이터, 금융 서비스, 재무 및 파일 및 문서	files-documents,finance,financial-services,data	Anthropic 작성
+codex-review	4820	엔지니어링 및 코드	engineering,code	Anthropic Directory에서
+TubeAlfred YouTube	4805	웹사이트, 연구 및 참고 문서	reference-docs,websites,research	Anthropic Directory에서
+posthog	4791	제품, 로그 및 오류, 데이터베이스, 파이프라인 및 작업 및 AI 모델 및 에이전트	pipelines-jobs,ai-models-agents,databases,logs-errors,product	Anthropic Directory에서
+ag2-agent-reviewer	4772	엔지니어링, 코드 및 AI 모델 및 에이전트	engineering,code,ai-models-agents	Anthropic Directory에서
+slack	4764	엔지니어링, 이메일 및 메시지, 코드 및 API	engineering,code,apis,email-messages	Anthropic Directory에서
+Agentforce ADLC	4761	엔지니어링, 코드, AI 모델 및 에이전트 및 로그 및 오류	engineering,code,ai-models-agents,ai-models-agents,logs-errors,logs-errors	Anthropic Directory에서
+ag2-workflow-patterns	4745	엔지니어링, 코드 및 AI 모델 및 에이전트	engineering,code,ai-models-agents	Anthropic Directory에서
+Agentics Beyond Code	4689	엔지니어링, 파이프라인 및 작업, 코드, 티켓 및 작업, 파일 및 문서 및 AI 모델 및 에이전트	engineering,code,files-documents,tickets-tasks,pipelines-jobs,ai-models-agents	Anthropic Directory에서
+Founder OS	4685	운영, 직업 및 경력, 노트 및 메모리, 티켓 및 작업 및 파일 및 문서	files-documents,tickets-tasks,notes-memory,operations,jobs-career	Anthropic Directory에서
+aws-core	4681	엔지니어링, 코드, 데이터베이스, 서버 및 클라우드, 로그 및 오류, AI 모델 및 에이전트, 파이프라인 및 작업 및 API	engineering,code,pipelines-jobs,apis,ai-models-agents,databases,servers-cloud,logs-errors	Anthropic Directory에서
+strategy-frameworks	4681	제품 및 노트 및 메모리	notes-memory,product	Anthropic Directory에서
+management-consulting	4676	운영, 파일 및 문서 및 재무	files-documents,finance,operations	Anthropic Directory에서
+agent-recall	4626	엔지니어링, AI 모델 및 에이전트 및 노트 및 메모리	engineering,notes-memory,ai-models-agents	Anthropic Directory에서
+Anime Story Video Maker: AI Cartoon & Animated Shorts	4611	디자인 및 미디어	designs-media	Anthropic Directory에서
+agent-handoff	4602	엔지니어링, 코드 및 파이프라인 및 작업	engineering,code,pipelines-jobs	Anthropic Directory에서
+expo	4602	엔지니어링, 코드, 서버 및 클라우드, 파이프라인 및 작업, 파일 및 문서 및 종속성 및 패키지	engineering,code,pipelines-jobs,servers-cloud,dependencies-packages	Anthropic Directory에서
+parallel	4566	웹사이트, 파일 및 문서 및 참고 문서	reference-docs,websites	Anthropic Directory에서
+mcp-server-dev	4493	엔지니어링, 코드 및 API	engineering,code,apis	Anthropic 작성
+lovable	4475	엔지니어링, 코드, 서버 및 클라우드, 파이프라인 및 작업 및 API	engineering,pipelines-jobs,apis,servers-cloud	Anthropic Directory에서
+Abracadabrax YouTube Thumbnail Maker	4454	디자인 및 미디어	designs-media	Anthropic Directory에서
+design-is-code	4444	엔지니어링, 코드 및 디자인 및 미디어	engineering,designs-media	Anthropic Directory에서
+KMJ CodeBridge	4398	엔지니어링, 코드, 서버 및 클라우드 및 파이프라인 및 작업	pipelines-jobs,servers-cloud	Anthropic Directory에서
+Cinematic AI Video Maker with Camera Moves	4374	디자인 및 미디어	designs-media	Anthropic Directory에서
+Presenton	4326	디자인 및 미디어 및 파일 및 문서	designs-media	Anthropic Directory에서
+Abracadabrax Poster & Flyer Maker	4319	디자인 및 미디어	designs-media	Anthropic Directory에서
+Adology — Content Intelligence	4294	마케팅, 디자인 및 미디어, 연락처 및 리드 및 웹사이트	designs-media,websites,contacts-leads,marketing	Anthropic Directory에서
+Posty: Social Media Scheduler	4286	디자인 및 미디어 및 이메일 및 메시지	designs-media,email-messages	Anthropic Directory에서
+ATS Resume Checker & Resume Builder - ResumeNext	4232	HR, 직업 및 경력 및 파일 및 문서	jobs-career,hr	Anthropic Directory에서
+Design Steward	4187	디자인, 웹사이트, 코드, 파일 및 문서 및 디자인 및 미디어	designs-media,websites,design	Anthropic Directory에서
+ag2-agent-guide	4126	엔지니어링, AI 모델 및 에이전트 및 참고 문서	reference-docs,ai-models-agents	Anthropic Directory에서
+agent-context-kit	4118	엔지니어링, 코드 및 참고 문서	reference-docs	Anthropic Directory에서
+42crunch-api-security-testing	4055	엔지니어링, API 및 코드	apis	Anthropic Directory에서
+Reverse Engineering	4051	IT 및 보안, 코드 및 파일 및 문서	it-security	Anthropic Directory에서
+Advisory Council	4018	제품, 티켓 및 작업 및 노트 및 메모리	tickets-tasks,notes-memory,product	Anthropic Directory에서
+Achriom	4014	도서, 디자인 및 미디어, 음악 및 노트 및 메모리	designs-media,notes-memory,music,books	Anthropic Directory에서
+AEOTester: AI SEO Audit and Fix	3983	마케팅, 코드 및 웹사이트	websites,marketing	Anthropic Directory에서
+figma-suite	3946	디자인, 디자인 및 미디어, 코드 및 종속성 및 패키지	designs-media,dependencies-packages,design	Anthropic Directory에서
+Agent Engineering	3938	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+AmpUp MCP Plugin	3926	영업, 학습 및 디자인 및 미디어	designs-media,sales,learning	Anthropic Directory에서
+coding-skills	3914	엔지니어링, 코드 및 데이터베이스	databases	Anthropic Directory에서
+SpriteCook	3912	게임, 디자인 및 미디어 및 코드	designs-media,games	Anthropic Directory에서
+GitHub Portfolio Builder	3887	엔지니어링, 직업 및 경력, 코드 및 풀 리퀘스트	pull-requests,jobs-career	Anthropic Directory에서
+ux-superpowers	3882	제품, 파일 및 문서 및 노트 및 메모리	notes-memory,product	Anthropic Directory에서
+private-equity	3839	영업, 금융 서비스, 연락처 및 리드, 데이터베이스, 재무 및 티켓 및 작업	tickets-tasks,databases,contacts-leads,finance,sales,financial-services	Anthropic 작성
+strategy consultant	3830	제품, 파일 및 문서 및 참고 문서	reference-docs,product	Anthropic Directory에서
+ag2-agent-scaffold	3824	엔지니어링, 코드 및 AI 모델 및 에이전트	ai-models-agents	Anthropic Directory에서
+claude-for-msft-365-install	3806	IT 및 보안, 서버 및 클라우드, API 및 Claude 설정	apis,servers-cloud,claude-settings,it-security	Anthropic 작성
+CADBuildr	3773	엔지니어링, 코드 및 디자인 및 미디어	designs-media	Anthropic Directory에서
+agent-architecture-designer	3771	AI 모델 및 에이전트	ai-models-agents	Anthropic Directory에서
+WordPress Dev Skills	3755	엔지니어링, 코드, 풀 리퀘스트 및 종속성 및 패키지	pull-requests,dependencies-packages	Anthropic Directory에서
+AI YouTube OS	3748	음악, 파일 및 문서, 파이프라인 및 작업 및 AI 모델 및 에이전트	pipelines-jobs,ai-models-agents,music	Anthropic Directory에서
+design-dev-bridge	3746	디자인, 코드, 디자인 및 미디어 및 참고 문서	designs-media,reference-docs,design	Anthropic Directory에서
+Agent Archive	3736	엔지니어링, AI 모델 및 에이전트 및 노트 및 메모리	notes-memory,ai-models-agents	Anthropic Directory에서
+paper-search	3719	연구	research	Anthropic Directory에서
+legal-builder-hub	3716	법무, 코드 및 종속성 및 패키지	dependencies-packages,legal	Anthropic 작성
+AdCopilot for Google Ads, Google Analytics, Google Search Console & Google Tag Manager	3708	마케팅, API 및 재무	apis,finance,marketing	Anthropic Directory에서
+Krea	3696	마케팅 및 디자인 및 미디어	designs-media,marketing	Anthropic Directory에서
+claude-code-review-council	3647	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+TradingCalc	3642	재무	finance	Anthropic Directory에서
+ag2-tool-builder	3631	엔지니어링, 코드 및 API	apis	Anthropic Directory에서
+AdaptlyPost	3627	디자인 및 미디어	designs-media	Anthropic Directory에서
+Adapty	3618	제품, 코드, 디자인 및 미디어 및 API	designs-media,apis,product	Anthropic Directory에서
+Agent Debugging	3596	엔지니어링, AI 모델 및 에이전트, 로그 및 오류 및 코드	ai-models-agents,logs-errors	Anthropic Directory에서
+Teach Me	3569	학습	learning	Anthropic Directory에서
+Figma to Code: Design to React, Vue and HTML	3559	디자인, 디자인 및 미디어 및 코드	designs-media,design	Anthropic Directory에서
+token-saver	3550	엔지니어링, Claude 기록 및 노트 및 메모리	notes-memory,claude-history	Anthropic Directory에서
+transcribe-so	3541	파일 및 문서, 음악 및 디자인 및 미디어	designs-media,music	Anthropic Directory에서
+project-artifact	3537	운영, 티켓 및 작업 및 Claude 기록	tickets-tasks,claude-history,operations	Anthropic 작성
+wordpress-mcp	3525	파일 및 문서, 웹사이트 및 티켓 및 작업	tickets-tasks,websites	Anthropic Directory에서
+brand-studio	3519	디자인, 디자인 및 미디어 및 참고 문서	designs-media,reference-docs,design	Anthropic Directory에서
+Mobbin	3516	디자인, 디자인 및 미디어 및 웹사이트	designs-media,websites,design	Anthropic Directory에서
+Crypto Spot Futures Analyzer	3510	개인 재정 및 디자인 및 미디어	designs-media,personal-finance	Anthropic Directory에서
+seal-copilot	3496	마케팅, 소매 및 이커머스, 웹사이트 및 재무	websites,finance,marketing,retail-ecommerce	Anthropic Directory에서
+paper-to-course	3493	교육, 학습, 연구 및 디자인 및 미디어	designs-media,research,learning,education	Anthropic Directory에서
+Career Coaching	3493	HR, 직업 및 경력, 참고 문서 및 연락처 및 리드	reference-docs,contacts-leads,jobs-career,hr	Anthropic Directory에서
+Agentic user research at scale	3489	제품, 참고 문서, 티켓 및 작업, 연락처 및 리드 및 풀 리퀘스트	tickets-tasks,reference-docs,contacts-leads,pull-requests,product	Anthropic Directory에서
+privacy-legal	3469	법무, 파일 및 문서, 참고 문서 및 티켓 및 작업	tickets-tasks,reference-docs,legal	Anthropic 작성
+AgentMail	3462	이메일 및 메시지 및 AI 모델 및 에이전트	ai-models-agents,email-messages	Anthropic Directory에서
+apollo	3434	영업, 연락처 및 리드 및 티켓 및 작업	tickets-tasks,contacts-leads,sales	Anthropic Directory에서
+github-cli-health-check	3414	엔지니어링, 로그 및 오류 및 API	apis,logs-errors	Anthropic Directory에서
+consensus	3406	연구 및 AI 모델 및 에이전트	ai-models-agents,research	Anthropic Directory에서
+Potion	3391	음악 및 파일 및 문서	music	Anthropic Directory에서
+Arcads AI	3385	마케팅, 디자인 및 미디어 및 파일 및 문서	designs-media,marketing	Anthropic Directory에서
+adisinsight	3375	데이터, 의료 및 생명 과학, AI 모델 및 에이전트, 파이프라인 및 작업 및 참고 문서	pipelines-jobs,reference-docs,ai-models-agents,data,healthcare-life-sciences	Anthropic Directory에서
+Corbis	3374	재무, 금융 서비스, 연구 및 참고 문서	reference-docs,finance,research,financial-services	Anthropic Directory에서
+Agent Design	3360	엔지니어링, AI 모델 및 에이전트 및 로그 및 오류	ai-models-agents,logs-errors	Anthropic Directory에서
+law-student	3350	학습, 노트 및 메모리, 참고 문서 및 연구	notes-memory,reference-docs,research,learning	Anthropic 작성
+liquid-skills	3334	엔지니어링, 소매 및 이커머스, 코드, 디자인 및 미디어 및 웹사이트	websites,retail-ecommerce	Anthropic Directory에서
+employment-legal	3317	법무, 파일 및 문서, 티켓 및 작업 및 노트 및 메모리	tickets-tasks,notes-memory,legal	Anthropic 작성
+pitch-agent	3317	영업, 파일 및 문서 및 재무	finance,sales	Anthropic 작성
+cocounsel-legal	3308	법무, 참고 문서 및 API	apis,reference-docs,legal	Anthropic Directory에서
+AgentKeeper	3292	엔지니어링, 코드, 서버 및 클라우드, 로그 및 오류, 종속성 및 패키지 및 Claude 설정	servers-cloud,logs-errors,claude-settings,dependencies-packages	Anthropic Directory에서
+Agentic SDLC Kit	3281	엔지니어링, 코드, 파일 및 문서, 서버 및 클라우드 및 파이프라인 및 작업	pipelines-jobs,servers-cloud	Anthropic Directory에서
+Awesome Ecom Skills	3260	운영, 소매 및 이커머스, 파일 및 문서, 웹사이트 및 디자인 및 미디어	websites,operations,retail-ecommerce	Anthropic Directory에서
+Google Drive → Markdown	3243	파일 및 문서 및 노트 및 메모리	notes-memory	Anthropic Directory에서
+Accountable	3243	재무 및 파일 및 문서	finance	Anthropic Directory에서
+ralph-loop	3242	Claude 기록	claude-history	Anthropic 작성
+B2b Sales Enablement	3234	영업, 파일 및 문서 및 디자인 및 미디어	sales	Anthropic Directory에서
+Meta VR	3231	엔지니어링, 코드, 서버 및 클라우드, 로그 및 오류, 디자인 및 미디어 및 종속성 및 패키지	servers-cloud,logs-errors,dependencies-packages	Anthropic Directory에서
+consistent-ui	3219	디자인, 코드 및 디자인 및 미디어	design	Anthropic Directory에서
+Agent Smith	3214	엔지니어링, 코드 및 Claude 설정	claude-settings	Anthropic Directory에서
+AdvisorPPC - Google Ads, Analytics, Tag Manager, Search Console and YouTube Connector	3205	마케팅, API 및 웹사이트	apis,websites,marketing	Anthropic Directory에서
+SuperMatt	3152	엔지니어링, 코드, 풀 리퀘스트, 티켓 및 작업, 참고 문서 및 Claude 기록	tickets-tasks,reference-docs,claude-history,pull-requests	Anthropic Directory에서
+coding-agent-skills	3143	엔지니어링, 코드, 풀 리퀘스트 및 티켓 및 작업	tickets-tasks,pull-requests	Anthropic Directory에서
+appwrite	3089	엔지니어링, 데이터베이스, 서버 및 클라우드, 코드 및 파일 및 문서	databases,servers-cloud	Anthropic Directory에서
+SEO Writers	3083	마케팅, 파일 및 문서 및 웹사이트	websites,marketing	Anthropic Directory에서
+Career Desk	3078	HR, 직업 및 경력, 파일 및 문서, 티켓 및 작업 및 연락처 및 리드	tickets-tasks,contacts-leads,jobs-career,hr	Anthropic Directory에서
+ABP Sensei	3078	엔지니어링, 코드, 데이터베이스 및 AI 모델 및 에이전트	ai-models-agents,databases	Anthropic Directory에서
+ip-legal	3067	법무, 파일 및 문서, API 및 종속성 및 패키지	apis,dependencies-packages,legal	Anthropic 작성
+Awesome Repositories	3056	엔지니어링, 종속성 및 패키지 및 코드	dependencies-packages	Anthropic Directory에서
+pr-review-toolkit	3024	엔지니어링, 풀 리퀘스트 및 코드	pull-requests	Anthropic 작성
+ui-consistency	3017	디자인, 코드 및 디자인 및 미디어	design	Anthropic Directory에서
+Agent Ingest, Audit & Optimize	3014	AI 모델 및 에이전트, 참고 문서, 웹사이트 및 연구	reference-docs,ai-models-agents,websites,research	Anthropic Directory에서
+Ad Copy & Creative Preflight	3012	마케팅, 파일 및 문서 및 참고 문서	reference-docs,marketing	Anthropic Directory에서
+website-quality-checker	3006	마케팅 및 웹사이트	websites,marketing	Anthropic Directory에서
+Design Council	3005	디자인 및 디자인 및 미디어	design	Anthropic Directory에서
+liquid-glass	2999	디자인, 코드, 디자인 및 미디어 및 참고 문서	reference-docs,design	Anthropic Directory에서
+adb-mcp	2990	엔지니어링, 코드, 서버 및 클라우드 및 로그 및 오류	servers-cloud,logs-errors	Anthropic Directory에서
+githubclip	2971	엔지니어링, 코드, 파이프라인 및 작업, 풀 리퀘스트 및 AI 모델 및 에이전트	pipelines-jobs,ai-models-agents,pull-requests	Anthropic Directory에서
+Analytics Power Hour Librarian	2961	학습 및 음악	learning,music	Anthropic Directory에서
+learning-tutor	2946	학습 및 노트 및 메모리	notes-memory,learning	Anthropic Directory에서
+Factory	2939	엔지니어링, 코드, 풀 리퀘스트, 파이프라인 및 작업 및 티켓 및 작업	tickets-tasks,pipelines-jobs,pull-requests	Anthropic Directory에서
+Greenstack Umbraco	2937	엔지니어링, 서버 및 클라우드, 코드 및 파이프라인 및 작업	pipelines-jobs,servers-cloud	Anthropic Directory에서
+GIA Chief of Staff	2931	운영, 이메일 및 메시지, 티켓 및 작업 및 Claude 기록	tickets-tasks,claude-history,email-messages,operations	Anthropic Directory에서
+docker-skills	2925	엔지니어링, 코드, 서버 및 클라우드, 파일 및 문서, AI 모델 및 에이전트 및 파이프라인 및 작업	pipelines-jobs,ai-models-agents,servers-cloud	Anthropic Directory에서
+Manifold	2918	마케팅, 웹사이트, API, 연락처 및 리드 및 파일 및 문서	apis,websites,contacts-leads,marketing	Anthropic Directory에서
+AssistantLabs — Personal Assistant for Business	2906	영업, 연락처 및 리드, 티켓 및 작업, 이메일 및 메시지, 디자인 및 미디어 및 API	tickets-tasks,apis,contacts-leads,email-messages,sales	Anthropic Directory에서
+cofounders	2905	영업, 직업 및 경력, 재무, 연락처 및 리드 및 참고 문서	reference-docs,contacts-leads,finance,sales,jobs-career	Anthropic Directory에서
+analytics-office	2899	데이터, 데이터베이스, 코드 및 노트 및 메모리	notes-memory,databases,data	Anthropic Directory에서
+google-multi-account	2899	이메일 및 메시지, 이벤트 및 파일 및 문서	email-messages,events	Anthropic Directory에서
+ArcDeck	2897	연구 및 디자인 및 미디어	research	Anthropic Directory에서
+agent-trace-triage	2889	엔지니어링, AI 모델 및 에이전트, 로그 및 오류 및 코드	ai-models-agents,logs-errors	Anthropic Directory에서
+AWS Startup Advisor	2886	엔지니어링, 코드, 서버 및 클라우드 및 AI 모델 및 에이전트	ai-models-agents,servers-cloud	Anthropic Directory에서
+Job Search by Develop21	2885	HR, 직업 및 경력, 연락처 및 리드, 파일 및 문서 및 티켓 및 작업	tickets-tasks,contacts-leads,jobs-career,hr	Anthropic Directory에서
+CellCog	2882	디자인 및 미디어, 파일 및 문서, AI 모델 및 에이전트 및 데이터베이스	ai-models-agents,databases	Anthropic Directory에서
+AgentUI Tools	2861	데이터베이스, 서버 및 클라우드, 파일 및 문서, 파이프라인 및 작업 및 API	pipelines-jobs,apis,databases,servers-cloud	Anthropic Directory에서
+Deep Review	2854	엔지니어링, 연구 및 코드	research	Anthropic Directory에서
+Agentic SDLC	2842	엔지니어링, 코드 및 파이프라인 및 작업	pipelines-jobs	Anthropic Directory에서
+HTML/CSS to Image API	2842	웹사이트, 디자인 및 미디어 및 파일 및 문서	websites	Anthropic Directory에서
+playground	2803	학습, 코드 및 디자인 및 미디어	learning	Anthropic 작성
+Autoresearch	2798	엔지니어링, 코드 및 파이프라인 및 작업	pipelines-jobs	Anthropic Directory에서
+NetSuite SuiteSkills	2796	재무, 연락처 및 리드, 티켓 및 작업, 건강 및 피트니스 및 파이프라인 및 작업	tickets-tasks,pipelines-jobs,contacts-leads,finance,health-fitness	Anthropic Directory에서
+NVIDIA Skills	2773	엔지니어링, AI 모델 및 에이전트, 서버 및 클라우드 및 코드	ai-models-agents,servers-cloud	Anthropic Directory에서
+Voicenter Bot Builder	2754	엔지니어링, 코드 및 AI 모델 및 에이전트	ai-models-agents	Anthropic Directory에서
+Hyper Marketing	2751	마케팅, 웹사이트, 디자인 및 미디어, 이메일 및 메시지, 파일 및 문서, API 및 연락처 및 리드	apis,websites,contacts-leads,marketing,email-messages	Anthropic Directory에서
+Checkvist	2749	티켓 및 작업 및 노트 및 메모리	tickets-tasks,notes-memory	Anthropic Directory에서
+Cairn Memory — CLAUDE.md & agent memory that stays true	2749	엔지니어링, Claude 기록, Claude 설정, 코드, 파일 및 문서 및 노트 및 메모리	notes-memory,claude-history,claude-settings	Anthropic Directory에서
+SEO GSC Wizard	2738	마케팅, 웹사이트 및 로그 및 오류	websites,logs-errors,marketing	Anthropic Directory에서
+GeoAI Skills	2729	데이터, 데이터베이스, 서버 및 클라우드, 파일 및 문서, AI 모델 및 에이전트, 코드 및 로그 및 오류	ai-models-agents,databases,servers-cloud,logs-errors,data	Anthropic Directory에서
+beads-superpowers	2723	엔지니어링, 코드, 파이프라인 및 작업, 티켓 및 작업 및 Claude 기록	tickets-tasks,pipelines-jobs,claude-history	Anthropic Directory에서
+attention-control	2723	학습 및 Claude 설정	claude-settings,learning	Anthropic Directory에서
+Finance & Ops Skills Index	2714	재무 및 티켓 및 작업	tickets-tasks,finance	Anthropic Directory에서
+ai-memory-reader	2712	Claude 기록 및 노트 및 메모리	notes-memory,claude-history	Anthropic Directory에서
+Career Compass	2709	영업, 직업 및 경력, 파일 및 문서, 노트 및 메모리 및 연락처 및 리드	notes-memory,contacts-leads,sales,jobs-career	Anthropic Directory에서
+Job Hunt Copilot (India)	2707	HR, 직업 및 경력, 파일 및 문서, 티켓 및 작업 및 연락처 및 리드	tickets-tasks,contacts-leads,jobs-career,hr	Anthropic Directory에서
+CodeRabbit	2700	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+Abracadabrax Album Cover Art Maker	2696	음악 및 디자인 및 미디어	music	Anthropic Directory에서
+Claude Code Survival Kit	2695	엔지니어링, 코드, 파이프라인 및 작업 및 AI 모델 및 에이전트	pipelines-jobs,ai-models-agents	Anthropic Directory에서
+Prompt Brain	2681	엔지니어링 및 AI 모델 및 에이전트	ai-models-agents	Anthropic Directory에서
+commit-commands	2675	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic 작성
+Autoresearch AI Plugin	2665	엔지니어링, 코드, AI 모델 및 에이전트 및 파이프라인 및 작업	pipelines-jobs,ai-models-agents	Anthropic Directory에서
+inhabited design	2655	디자인, 디자인 및 미디어, 웹사이트 및 코드	websites,design	Anthropic Directory에서
+dataink	2652	데이터, 디자인 및 미디어 및 파일 및 문서	data	Anthropic Directory에서
+meeting-prep-agent	2638	영업, 금융 서비스, 재무, 연락처 및 리드 및 디자인 및 미디어	contacts-leads,finance,sales,financial-services	Anthropic 작성
+render-visual-skill	2637	디자인, 디자인 및 미디어 및 파일 및 문서	design	Anthropic Directory에서
+Blocksize Market Data	2625	재무, 금융 서비스 및 API	apis,finance,financial-services	Anthropic Directory에서
+brand-md	2624	마케팅, 파일 및 문서 및 디자인 및 미디어	marketing	Anthropic Directory에서
+atomic-agents	2622	엔지니어링, 코드 및 AI 모델 및 에이전트	ai-models-agents	Anthropic Directory에서
+Shopify DevKit	2618	엔지니어링, 소매 및 이커머스, 코드, 웹사이트 및 디자인 및 미디어	websites,retail-ecommerce	Anthropic Directory에서
+Content Studio	2615	마케팅, 노트 및 메모리, 이메일 및 메시지 및 연구	notes-memory,marketing,email-messages,research	Anthropic Directory에서
+claude-context-optimizer	2609	엔지니어링, 코드, 파일 및 문서, Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+accelbyte-ai-plugins	2601	엔지니어링, 코드, 서버 및 클라우드 및 API	apis,servers-cloud	Anthropic Directory에서
+imessage	2592	이메일 및 메시지	email-messages	Anthropic 작성
+Matematic Humanizer	2588	글쓰기 및 파일 및 문서	writing	Anthropic Directory에서
+Jira Attachment Plugin	2581	엔지니어링, 파일 및 문서 및 티켓 및 작업	tickets-tasks	Anthropic Directory에서
+linear	2576	엔지니어링, 티켓 및 작업 및 파이프라인 및 작업	tickets-tasks,pipelines-jobs	Anthropic Directory에서
+perception-first-design	2574	디자인 및 디자인 및 미디어	design	Anthropic Directory에서
+Prompt Design	2563	엔지니어링 및 AI 모델 및 에이전트	ai-models-agents	Anthropic Directory에서
+aws-data-analytics	2560	데이터, 데이터베이스, 서버 및 클라우드, 파일 및 문서, 로그 및 오류 및 AI 모델 및 에이전트	ai-models-agents,databases,servers-cloud,logs-errors,data	Anthropic Directory에서
+Fairmind Design	2550	디자인, 코드, 디자인 및 미디어 및 파일 및 문서	design	Anthropic Directory에서
+Agent Verifier	2546	엔지니어링, 코드 및 AI 모델 및 에이전트	ai-models-agents	Anthropic Directory에서
+Agent Formal Verify	2539	엔지니어링, 코드 및 파이프라인 및 작업	pipelines-jobs	Anthropic Directory에서
+AudioPod	2528	디자인 및 미디어 및 음악	music	Anthropic Directory에서
+Claude Skills Exporter	2519	코드 및 AI 모델 및 에이전트	ai-models-agents	Anthropic Directory에서
+Android Emulator QA Plugin	2496	엔지니어링, 코드, 로그 및 오류 및 디자인 및 미디어	logs-errors	Anthropic Directory에서
+Adspirer Advertising Agent	2492	마케팅, API, 웹사이트 및 재무	apis,websites,finance,marketing	Anthropic Directory에서
+novel-studio	2491	미디어 및 엔터테인먼트, 글쓰기, 노트 및 메모리 및 디자인 및 미디어	notes-memory,media-entertainment,writing	Anthropic Directory에서
+Advise Project Approach	2485	엔지니어링, 코드 및 API	apis	Anthropic Directory에서
+Jinkō	2479	데이터, 의료 및 생명 과학, AI 모델 및 에이전트, 코드, 데이터베이스, 파일 및 문서, 연구 및 참고 문서	reference-docs,ai-models-agents,databases,research,data,healthcare-life-sciences	Anthropic Directory에서
+mcp-tunnels	2478	엔지니어링 및 서버 및 클라우드	servers-cloud	Anthropic 작성
+finecomb: exhaustive code review and security audit	2447	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+AgentOne Token Compression	2439	엔지니어링, 로그 및 오류, 코드, 파일 및 문서 및 Claude 기록	claude-history,logs-errors	Anthropic Directory에서
+legal-clinic	2438	법무, 티켓 및 작업, 파일 및 문서, 참고 문서 및 노트 및 메모리	tickets-tasks,notes-memory,reference-docs,legal	Anthropic 작성
+Accelerate AI Toolkit	2423	마케팅, 웹사이트 및 파이프라인 및 작업	pipelines-jobs,websites,marketing	Anthropic Directory에서
+Ayrshare - Unified Social Media API for AI Agents	2422	마케팅, 이메일 및 메시지, 디자인 및 미디어 및 노트 및 메모리	notes-memory,marketing,email-messages	Anthropic Directory에서
+Slop Stopper	2417	글쓰기 및 파일 및 문서	writing	Anthropic Directory에서
+anidoodle	2415	디자인 및 미디어 및 음악	music	Anthropic Directory에서
+AI Adoption	2409	Claude 기록	claude-history	Anthropic Directory에서
+Mobile Design System	2405	디자인, 디자인 및 미디어 및 파일 및 문서	design	Anthropic Directory에서
+Admin Desk	2387	직업 및 경력, 파일 및 문서, 티켓 및 작업 및 노트 및 메모리	tickets-tasks,notes-memory,jobs-career	Anthropic Directory에서
+asana	2382	운영, 티켓 및 작업 및 파이프라인 및 작업	tickets-tasks,pipelines-jobs,operations	Anthropic Directory에서
+product-legal	2381	법무, 파일 및 문서 및 티켓 및 작업	tickets-tasks,legal	Anthropic 작성
+Prompt Optimizer	2380	AI 모델 및 에이전트	ai-models-agents	Anthropic Directory에서
+ai-coding-ok	2380	엔지니어링, 코드 및 Claude 기록	claude-history	Anthropic Directory에서
+Token Shield	2380	엔지니어링, Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+Agentic Beta Testers	2374	엔지니어링, 웹사이트 및 코드	websites	Anthropic Directory에서
+sentry	2374	엔지니어링, 로그 및 오류, 코드 및 서버 및 클라우드	servers-cloud,logs-errors	Anthropic Directory에서
+regulatory-legal	2364	법무, 참고 문서, 파일 및 문서 및 티켓 및 작업	tickets-tasks,reference-docs,legal	Anthropic 작성
+Supermetrics Ads & Marketing Analytics	2356	마케팅, API, 데이터베이스, 파일 및 문서, 웹사이트, 재무, 이메일 및 메시지 및 디자인 및 미디어	apis,websites,databases,finance,marketing,email-messages	Anthropic Directory에서
+Netlify	2355	엔지니어링, 코드, 서버 및 클라우드, 웹사이트 및 API	apis,websites,servers-cloud	Anthropic Directory에서
+token-usage	2352	엔지니어링 및 Claude 기록	claude-history	Anthropic Directory에서
+AI-Native OS	2333	제품, 코드, AI 모델 및 에이전트 및 노트 및 메모리	notes-memory,ai-models-agents,product	Anthropic Directory에서
+learning-planner	2323	학습, 노트 및 메모리 및 파일 및 문서	notes-memory,learning	Anthropic Directory에서
+Prompt Coach	2317	제품 및 노트 및 메모리	notes-memory,product	Anthropic Directory에서
+CutPro	2317	디자인 및 미디어 및 웹사이트	websites	Anthropic Directory에서
+beckett	2310	학습, 노트 및 메모리, 티켓 및 작업, 이벤트, 음식, 연락처 및 리드, 건강 및 피트니스, 도서 및 디자인 및 미디어	tickets-tasks,notes-memory,contacts-leads,learning,events,food,health-fitness,books	Anthropic Directory에서
+Career Navigator	2297	영업, 직업 및 경력, 파일 및 문서, 연락처 및 리드, 이메일 및 메시지 및 노트 및 메모리	notes-memory,contacts-leads,email-messages,sales,jobs-career	Anthropic Directory에서
+Claude Code Bootstrapper	2278	엔지니어링, 코드 및 Claude 설정	claude-settings	Anthropic Directory에서
+backend-performance-review	2254	엔지니어링, 코드, 데이터베이스 및 로그 및 오류	databases,logs-errors	Anthropic Directory에서
+Voicenter API Skills	2250	고객 지원, API, 연락처 및 리드 및 티켓 및 작업	tickets-tasks,apis,contacts-leads,customer-support	Anthropic Directory에서
+ACA Native MCP Skills	2248	영업, 연락처 및 리드, 이메일 및 메시지 및 디자인 및 미디어	contacts-leads,email-messages,sales	Anthropic Directory에서
+Shopify App Builder	2247	엔지니어링, 소매 및 이커머스, 코드, API 및 웹사이트	apis,websites,retail-ecommerce	Anthropic Directory에서
+Decision Council	2231	노트 및 메모리	notes-memory	Anthropic Directory에서
+Crypto & Bitcoin Analyst — Charts & Research	2231	개인 재정, 연구 및 참고 문서	reference-docs,research,personal-finance	Anthropic Directory에서
+Blog Content Strategy, Content Calendar & Content Audit	2216	마케팅, 파일 및 문서 및 노트 및 메모리	notes-memory,marketing	Anthropic Directory에서
+seo-geo-consultant	2211	마케팅, 코드 및 웹사이트	websites,marketing	Anthropic Directory에서
+anchor-memory	2210	엔지니어링, 코드, 파일 및 문서 및 노트 및 메모리	notes-memory	Anthropic Directory에서
+Hunter	2207	영업, 연락처 및 리드 및 API	apis,contacts-leads,sales	Anthropic Directory에서
+Jev	2205	AI 모델 및 에이전트	ai-models-agents	Anthropic Directory에서
+Zero Guess	2201	Claude 기록	claude-history	Anthropic Directory에서
+Mobile App Design (iOS)	2194	디자인 및 디자인 및 미디어	design	Anthropic Directory에서
+Job Hunt HQ	2182	직업 및 경력, 파일 및 문서, 이메일 및 메시지 및 티켓 및 작업	tickets-tasks,email-messages,jobs-career	Anthropic Directory에서
+B2B Research: Market and Account	2175	영업, 참고 문서, 파일 및 문서 및 연락처 및 리드	reference-docs,contacts-leads,sales	Anthropic Directory에서
+clinical-trials	2171	데이터, 의료 및 생명 과학 및 참고 문서	reference-docs,data,healthcare-life-sciences	Anthropic Directory에서
+AI Passport	2164	노트 및 메모리 및 AI 모델 및 에이전트	notes-memory,ai-models-agents	Anthropic Directory에서
+read-paper	2163	연구 및 파일 및 문서	research	Anthropic Directory에서
+LaunchDarkly	2148	엔지니어링, AI 모델 및 에이전트 및 코드	ai-models-agents	Anthropic Directory에서
+AI Search Visibility & Brand Mentions (GEO/AEO)	2142	마케팅, 웹사이트, 파일 및 문서 및 참고 문서	reference-docs,websites,marketing	Anthropic Directory에서
+Claude Review Loop	2140	엔지니어링, 코드, 풀 리퀘스트 및 AI 모델 및 에이전트	ai-models-agents,pull-requests	Anthropic Directory에서
+bigquery-data-analytics	2134	데이터, 데이터베이스 및 AI 모델 및 에이전트	ai-models-agents,databases,data	Anthropic Directory에서
+Car Image API	2127	디자인 및 미디어 및 API	apis	Anthropic Directory에서
+Study with claude	2122	엔지니어링, 학습 및 코드	learning	Anthropic Directory에서
+Ai Playbook	2116	운영, AI 모델 및 에이전트, 노트 및 메모리 및 파일 및 문서	notes-memory,ai-models-agents,operations	Anthropic Directory에서
+amplitude	2109	제품, 코드, 로그 및 오류, AI 모델 및 에이전트, 파이프라인 및 작업, 풀 리퀘스트, 티켓 및 작업 및 노트 및 메모리	tickets-tasks,pipelines-jobs,notes-memory,ai-models-agents,logs-errors,pull-requests,product	Anthropic Directory에서
+Marketing for Life Sciences	2106	마케팅, 의료 및 생명 과학, 디자인 및 미디어 및 참고 문서	reference-docs,marketing,healthcare-life-sciences	Anthropic Directory에서
+BlitzReels	2105	마케팅 및 디자인 및 미디어	marketing	Anthropic Directory에서
+Made For You CV	2104	HR, 직업 및 경력 및 파일 및 문서	jobs-career,hr	Anthropic Directory에서
+cashflow	2103	개인 재정 및 재무	finance,personal-finance	Anthropic Directory에서
+API Contract Forge	2087	엔지니어링, API 및 코드	apis	Anthropic Directory에서
+Apollo Skills	2078	엔지니어링, 코드 및 API	apis	Anthropic Directory에서
+Small Business Operator	2065	운영, 티켓 및 작업, 연락처 및 리드, 재무 및 파이프라인 및 작업	tickets-tasks,pipelines-jobs,contacts-leads,finance,operations	Anthropic Directory에서
+Claude skills updater	2064	엔지니어링 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+dataslayer-marketing-skills	2063	마케팅, 파일 및 문서 및 재무	finance,marketing	Anthropic Directory에서
+AWS Startups Solution Architecture	2062	엔지니어링, 서버 및 클라우드, AI 모델 및 에이전트 및 파이프라인 및 작업	pipelines-jobs,ai-models-agents,servers-cloud	Anthropic Directory에서
+mcp-apps	2059	엔지니어링, 코드 및 API	apis	Anthropic Directory에서
+EULER for Partner Managers	2058	영업, 티켓 및 작업 및 연락처 및 리드	tickets-tasks,contacts-leads,sales	Anthropic Directory에서
+lean-pm-skills	2056	제품, 파이프라인 및 작업 및 티켓 및 작업	tickets-tasks,pipelines-jobs,product	Anthropic Directory에서
+Icon Creator	2044	디자인, 디자인 및 미디어 및 파일 및 문서	design	Anthropic Directory에서
+Mysocial Intelligence	2040	미디어 및 엔터테인먼트, 디자인 및 미디어, 연락처 및 리드 및 노트 및 메모리	notes-memory,contacts-leads,media-entertainment	Anthropic Directory에서
+Minecraft Modding	2027	게임 및 코드	games	Anthropic Directory에서
+Citation Needed	2026	마케팅, 연구 및 참고 문서	reference-docs,marketing,research	Anthropic Directory에서
+ADA PDF Compliance	2018	IT 및 보안 및 파일 및 문서	it-security	Anthropic Directory에서
+securitymaxxing	2017	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+Abracadabrax Podcast Intro & Jingle Maker	2014	음악 및 디자인 및 미디어	music	Anthropic Directory에서
+hookify	2006	Claude 설정	claude-settings	Anthropic 작성
+jp-web-design-guardrails	2005	디자인, 코드, 디자인 및 미디어 및 웹사이트	websites,design	Anthropic Directory에서
+math-olympiad	2004	학습 및 퍼즐	learning,puzzles	Anthropic 작성
+API Doc Generator: OpenAPI from Your Code	2001	엔지니어링, 코드 및 API	apis	Anthropic Directory에서
+paper-review-system	2001	제품, 연구 및 파일 및 문서	product,research	Anthropic Directory에서
+UXKIN	1993	디자인, 디자인 및 미디어 및 웹사이트	websites,design	Anthropic Directory에서
+Ruflo Ai Team	1989	AI 모델 및 에이전트, 파이프라인 및 작업 및 노트 및 메모리	pipelines-jobs,notes-memory,ai-models-agents	Anthropic Directory에서
+operations	1985	IT 및 보안, 금융 서비스, 파일 및 문서 및 티켓 및 작업	tickets-tasks,financial-services,it-security	Anthropic 작성
+Abracadabrax Birthday Song Maker	1968	음악 및 디자인 및 미디어	music	Anthropic Directory에서
+copy-that-sells	1960	마케팅 및 파일 및 문서	marketing	Anthropic Directory에서
+B2B Events, PR and Launches	1959	마케팅, 티켓 및 작업, 파일 및 문서 및 연락처 및 리드	tickets-tasks,contacts-leads,marketing	Anthropic Directory에서
+biorxiv	1950	데이터, 의료 및 생명 과학 및 연구	research,data,healthcare-life-sciences	Anthropic Directory에서
+graph-query-mcp	1947	노트 및 메모리	notes-memory	Anthropic Directory에서
+Arcade	1945	API, 이메일 및 메시지, 티켓 및 작업, 파일 및 문서, 노트 및 메모리, 연락처 및 리드, 풀 리퀘스트 및 파이프라인 및 작업	tickets-tasks,pipelines-jobs,apis,notes-memory,contacts-leads,email-messages,pull-requests	Anthropic Directory에서
+2hongo	1945	학습, 참고 문서 및 노트 및 메모리	notes-memory,reference-docs,learning	Anthropic Directory에서
+Atlassian Teamwork Graph CLI	1944	엔지니어링, 티켓 및 작업, 풀 리퀘스트, 참고 문서, 코드 및 파이프라인 및 작업	tickets-tasks,pipelines-jobs,reference-docs,pull-requests	Anthropic Directory에서
+postman	1911	엔지니어링, API, 코드, 파이프라인 및 작업 및 로그 및 오류	pipelines-jobs,apis,logs-errors	Anthropic Directory에서
+Study Planner	1909	학습 및 노트 및 메모리	notes-memory,learning	Anthropic Directory에서
+adplane	1906	마케팅 및 API	apis,marketing	Anthropic Directory에서
+skill-doctor	1903	엔지니어링, AI 모델 및 에이전트 및 코드	ai-models-agents	Anthropic Directory에서
+codex-hud	1899	엔지니어링 및 AI 모델 및 에이전트	ai-models-agents	Anthropic Directory에서
+MetaFloor Supply Chain	1892	운영, 데이터베이스, 서버 및 클라우드, 파일 및 문서, 파이프라인 및 작업, 티켓 및 작업, 종속성 및 패키지 및 API	tickets-tasks,pipelines-jobs,apis,databases,servers-cloud,operations,dependencies-packages	Anthropic Directory에서
+Agent Evaluation	1878	엔지니어링, AI 모델 및 에이전트 및 로그 및 오류	ai-models-agents,logs-errors	Anthropic Directory에서
+claude-opus-4-5-migration	1872	엔지니어링, 코드 및 Claude 기록	claude-history	Anthropic 작성
+Editorial OS	1869	마케팅, 파일 및 문서, 참고 문서, 디자인 및 미디어 및 파이프라인 및 작업	pipelines-jobs,reference-docs,marketing	Anthropic Directory에서
+FoundRole Jobs	1860	HR, 직업 및 경력, 파일 및 문서 및 연락처 및 리드	contacts-leads,jobs-career,hr	Anthropic Directory에서
+supabase-expert	1858	엔지니어링, 데이터베이스 및 코드	databases	Anthropic Directory에서
+google-cloud-storage	1850	엔지니어링, 서버 및 클라우드 및 파일 및 문서	servers-cloud	Anthropic Directory에서
+n8n Knowledge Base	1835	엔지니어링 및 참고 문서	reference-docs	Anthropic Directory에서
+Market Intelligence	1834	제품, 웹사이트, 참고 문서 및 연락처 및 리드	reference-docs,websites,contacts-leads,product	Anthropic Directory에서
+Mathbox	1830	연구, 코드, 파일 및 문서 및 참고 문서	reference-docs,research	Anthropic Directory에서
+ESP32-AI-Agent-Skill	1828	엔지니어링, 코드 및 서버 및 클라우드	servers-cloud	Anthropic Directory에서
+Odoo Tools	1827	운영, 데이터베이스 및 코드	databases,operations	Anthropic Directory에서
+mindmap-skills	1818	학습, 파일 및 문서 및 노트 및 메모리	notes-memory,learning	Anthropic Directory에서
+Thesis Examiner	1812	학습, 연구 및 참고 문서	reference-docs,research,learning	Anthropic Directory에서
+Game Trend Skills	1812	제품, 퍼즐 및 디자인 및 미디어	product,puzzles	Anthropic Directory에서
+Alexandria	1809	엔지니어링, 코드 및 노트 및 메모리	notes-memory	Anthropic Directory에서
+notion-memory	1807	엔지니어링, 노트 및 메모리, 참고 문서, 티켓 및 작업 및 Claude 기록	tickets-tasks,notes-memory,reference-docs,claude-history	Anthropic Directory에서
+Axe Accessibility	1807	엔지니어링, 코드 및 웹사이트	websites	Anthropic Directory에서
+AgileHero	1803	제품, 파이프라인 및 작업, 티켓 및 작업, 노트 및 메모리 및 디자인 및 미디어	tickets-tasks,pipelines-jobs,notes-memory,product	Anthropic Directory에서
+Vibe Wise	1800	엔지니어링, 학습, 코드 및 노트 및 메모리	notes-memory,learning	Anthropic Directory에서
+GitBook	1795	엔지니어링, 파일 및 문서, 코드, API 및 참고 문서	apis,reference-docs	Anthropic Directory에서
+AEO and GEO Toolkit for B2B Websites	1787	마케팅, 웹사이트 및 파일 및 문서	websites,marketing	Anthropic Directory에서
+rampstack-seo	1777	마케팅, 웹사이트 및 파일 및 문서	websites,marketing	Anthropic Directory에서
+Small Business Ai Rules	1777	운영, Claude 설정 및 Claude 기록	claude-history,operations,claude-settings	Anthropic Directory에서
+AI Adoption Playbook	1772	제품, AI 모델 및 에이전트 및 노트 및 메모리	notes-memory,ai-models-agents,product	Anthropic Directory에서
+TwelveLabs	1772	디자인 및 미디어 및 AI 모델 및 에이전트	ai-models-agents	Anthropic Directory에서
+WEM Price Compare	1771	쇼핑 및 웹사이트	websites,shopping	Anthropic Directory에서
+Java Backend Skills	1770	엔지니어링, 코드, 종속성 및 패키지 및 로그 및 오류	logs-errors,dependencies-packages	Anthropic Directory에서
+azure-sql-developer	1766	엔지니어링, 데이터베이스, 코드 및 파이프라인 및 작업	pipelines-jobs,databases	Anthropic Directory에서
+Upload-Post	1757	디자인 및 미디어 및 이메일 및 메시지	email-messages	Anthropic Directory에서
+AdsAgent	1754	마케팅 및 API	apis,marketing	Anthropic Directory에서
+doc-authoring-skills	1749	엔지니어링, 파일 및 문서, 코드 및 참고 문서	reference-docs	Anthropic Directory에서
+Token Inspector	1748	엔지니어링, Claude 기록, Claude 설정 및 파일 및 문서	claude-history,claude-settings	Anthropic Directory에서
+Distilla Investment Research	1747	재무, 금융 서비스, 개인 재정, 연구 및 음악	finance,research,financial-services,personal-finance,music	Anthropic Directory에서
+UKG Bryte	1744	HR, 연락처 및 리드 및 티켓 및 작업	tickets-tasks,contacts-leads,hr	Anthropic Directory에서
+valuation-reviewer	1743	재무, 금융 서비스 및 파일 및 문서	finance,financial-services	Anthropic 작성
+TickerLayer	1742	개인 재정 및 재무	finance,personal-finance	Anthropic Directory에서
+Aevral	1737	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+comp-skills	1734	HR, 데이터베이스, 파일 및 문서, 티켓 및 작업 및 연락처 및 리드	tickets-tasks,databases,contacts-leads,hr	Anthropic Directory에서
+Ansvar Compliance Skills	1729	IT 및 보안, 금융 서비스, 참고 문서, 파일 및 문서, 코드 및 종속성 및 패키지	reference-docs,financial-services,dependencies-packages,it-security	Anthropic Directory에서
+content-analysis-plugin	1722	데이터, 파일 및 문서 및 연구	research,data	Anthropic Directory에서
+EODHD Financial Data APIs	1720	개인 재정, 재무 및 API	apis,finance,personal-finance	Anthropic Directory에서
+Rayden UI Design Skill	1719	디자인, 코드 및 디자인 및 미디어	design	Anthropic Directory에서
+OpenClips	1710	마케팅, 디자인 및 미디어 및 파일 및 문서	marketing	Anthropic Directory에서
+Runpod	1705	엔지니어링, 서버 및 클라우드, 코드, 파이프라인 및 작업 및 종속성 및 패키지	pipelines-jobs,servers-cloud,dependencies-packages	Anthropic Directory에서
+Duende Agent Skills	1696	엔지니어링, 코드 및 API	apis	Anthropic Directory에서
+neon	1695	엔지니어링, 데이터베이스, 서버 및 클라우드, 코드, 파일 및 문서, AI 모델 및 에이전트 및 API	apis,ai-models-agents,databases,servers-cloud	Anthropic Directory에서
+Cold Email, LinkedIn Outreach & Deliverability	1688	영업, 이메일 및 메시지 및 연락처 및 리드	contacts-leads,email-messages,sales	Anthropic Directory에서
+Skill Discovery	1682	IT 및 보안, AI 모델 및 에이전트 및 코드	ai-models-agents,it-security	Anthropic Directory에서
+building-with-typesafe-jev	1680	엔지니어링, 코드 및 AI 모델 및 에이전트	ai-models-agents	Anthropic Directory에서
+OpenJev for Claude Code	1670	AI 모델 및 에이전트	ai-models-agents	Anthropic Directory에서
+Icons8	1666	디자인, 디자인 및 미디어 및 코드	design	Anthropic Directory에서
+B2B Personal Branding	1665	마케팅, 파일 및 문서, 노트 및 메모리 및 이메일 및 메시지	notes-memory,marketing,email-messages	Anthropic Directory에서
+railway	1656	엔지니어링, 서버 및 클라우드, 데이터베이스, 파이프라인 및 작업 및 로그 및 오류	pipelines-jobs,databases,servers-cloud,logs-errors	Anthropic Directory에서
+token-efficiency-audit	1651	엔지니어링, Claude 기록 및 파이프라인 및 작업	pipelines-jobs,claude-history	Anthropic Directory에서
+zilliz	1651	엔지니어링, 데이터베이스, 파이프라인 및 작업 및 로그 및 오류	pipelines-jobs,databases,logs-errors	Anthropic Directory에서
+TradeOS AI	1651	개인 재정, 재무 및 API	apis,finance,personal-finance	Anthropic Directory에서
+legalzoom	1648	법무, 코드 및 파일 및 문서	legal	Anthropic Directory에서
+SE Ranking	1647	마케팅, 웹사이트, API, 참고 문서 및 파일 및 문서	apis,reference-docs,websites,marketing	Anthropic Directory에서
+facturillo	1641	개인 재정 및 재무	finance,personal-finance	Anthropic Directory에서
+Clean-Backend	1639	엔지니어링, 코드, API 및 서버 및 클라우드	apis,servers-cloud	Anthropic Directory에서
+cloud-coder	1628	엔지니어링, 코드 및 파이프라인 및 작업	pipelines-jobs	Anthropic Directory에서
+Castellano-RAE	1625	학습 및 노트 및 메모리	notes-memory,learning	Anthropic Directory에서
+Writing Desk	1607	글쓰기, 파일 및 문서 및 노트 및 메모리	notes-memory,writing	Anthropic Directory에서
+Annotate	1597	디자인, 파일 및 문서 및 디자인 및 미디어	design	Anthropic Directory에서
+claude-jira-skill	1590	엔지니어링 및 티켓 및 작업	tickets-tasks	Anthropic Directory에서
+megapowers	1585	엔지니어링, 코드, 풀 리퀘스트, AI 모델 및 에이전트, Claude 기록 및 Claude 설정	ai-models-agents,claude-history,pull-requests,claude-settings	Anthropic Directory에서
+system-design-skills	1583	엔지니어링, 코드, 데이터베이스, 서버 및 클라우드, API 및 참고 문서	apis,reference-docs,databases,servers-cloud	Anthropic Directory에서
+Grafana MCP	1573	엔지니어링, 서버 및 클라우드, 로그 및 오류 및 파이프라인 및 작업	pipelines-jobs,servers-cloud,logs-errors	Anthropic Directory에서
+Big If True	1561	마케팅, 파일 및 문서, 웹사이트 및 참고 문서	reference-docs,websites,marketing	Anthropic Directory에서
+Sales Enablement Kit	1556	영업, 티켓 및 작업, 참고 문서 및 노트 및 메모리	tickets-tasks,notes-memory,reference-docs,sales	Anthropic Directory에서
+storefront-theme-kit	1553	디자인, 소매 및 이커머스, 코드, 디자인 및 미디어 및 웹사이트	websites,design,retail-ecommerce	Anthropic Directory에서
+Aikido	1547	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+together-ai-skills	1546	엔지니어링, AI 모델 및 에이전트, 코드, 서버 및 클라우드 및 디자인 및 미디어	ai-models-agents,servers-cloud	Anthropic Directory에서
+CineFlo	1543	운영, 미디어 및 엔터테인먼트, 파일 및 문서, 디자인 및 미디어, 연락처 및 리드, 재무 및 티켓 및 작업	tickets-tasks,contacts-leads,finance,operations,media-entertainment	Anthropic Directory에서
+apiai.me	1542	디자인 및 미디어 및 파이프라인 및 작업	pipelines-jobs	Anthropic Directory에서
+Testing	1535	엔지니어링, 코드, 서버 및 클라우드, 파이프라인 및 작업 및 로그 및 오류	pipelines-jobs,servers-cloud,logs-errors	Anthropic Directory에서
+Extract Alpha	1535	디자인, 디자인 및 미디어 및 AI 모델 및 에이전트	ai-models-agents,design	Anthropic Directory에서
+dataverse	1530	엔지니어링, 데이터베이스, 코드 및 API	apis,databases	Anthropic Directory에서
+app-review	1525	제품, 코드 및 파일 및 문서	product	Anthropic Directory에서
+AI Context Bridge for HubSpot	1521	영업, 데이터베이스, 연락처 및 리드, 티켓 및 작업, 이메일 및 메시지 및 파이프라인 및 작업	tickets-tasks,pipelines-jobs,databases,contacts-leads,email-messages,sales	Anthropic Directory에서
+Worker K	1519	재무, 금융 서비스, 파일 및 문서 및 참고 문서	reference-docs,finance,financial-services	Anthropic Directory에서
+Agent Guardrails	1517	엔지니어링, AI 모델 및 에이전트 및 로그 및 오류	ai-models-agents,logs-errors	Anthropic Directory에서
+New Relic	1514	엔지니어링, 로그 및 오류, 서버 및 클라우드 및 파이프라인 및 작업	pipelines-jobs,servers-cloud,logs-errors	Anthropic Directory에서
+Zernio	1511	마케팅, 이메일 및 메시지, 디자인 및 미디어 및 API	apis,marketing,email-messages	Anthropic Directory에서
+Spreadsheet (DWS Build)	1506	파일 및 문서 및 데이터베이스	databases	Anthropic Directory에서
+CI Optimizer: Faster GitHub Actions and GitLab CI	1497	엔지니어링, 코드, 파이프라인 및 작업 및 로그 및 오류	pipelines-jobs,logs-errors	Anthropic Directory에서
+month-end-closer	1497	재무 및 파일 및 문서	finance	Anthropic 작성
+Higgs Hub	1487	이메일 및 메시지, 파일 및 문서 및 티켓 및 작업	tickets-tasks,email-messages	Anthropic Directory에서
+Mercado Pago	1485	엔지니어링, 금융 서비스, 코드 및 API	apis,financial-services	Anthropic Directory에서
+Usage Bars	1484	Claude 설정	claude-settings	Anthropic Directory에서
+emdash-hater	1481	글쓰기 및 코드	writing	Anthropic Directory에서
+resend	1480	이메일 및 메시지 및 API	apis,email-messages	Anthropic Directory에서
+Writing Intelligence Studio	1476	파일 및 문서, 연구 및 참고 문서	reference-docs,research	Anthropic Directory에서
+Ionden Skills	1474	엔지니어링, 코드 및 AI 모델 및 에이전트	ai-models-agents	Anthropic Directory에서
+aws-serverless	1473	엔지니어링, 서버 및 클라우드, 코드 및 파이프라인 및 작업	pipelines-jobs,servers-cloud	Anthropic Directory에서
+Agile Product	1471	제품 및 참고 문서	reference-docs,product	Anthropic Directory에서
+aws-amplify	1470	엔지니어링, 코드, 서버 및 클라우드, 데이터베이스, 파일 및 문서 및 API	apis,databases,servers-cloud	Anthropic Directory에서
+deploy-on-aws	1470	엔지니어링, 코드, 서버 및 클라우드, 디자인 및 미디어 및 API	apis,servers-cloud	Anthropic Directory에서
+aws-agents-for-devsecops	1470	엔지니어링, 코드, 로그 및 오류, 풀 리퀘스트 및 서버 및 클라우드	servers-cloud,logs-errors,pull-requests	Anthropic Directory에서
+Prompt Enhancer	1468	노트 및 메모리	notes-memory	Anthropic Directory에서
+AI Search Visibility Tracker	1467	마케팅, 웹사이트 및 참고 문서	reference-docs,websites,marketing	Anthropic Directory에서
+coach	1466	건강 및 피트니스 및 노트 및 메모리	notes-memory,health-fitness	Anthropic Directory에서
+aeo	1464	마케팅 및 웹사이트	websites,marketing	Anthropic Directory에서
+Claude Code Feedback	1464	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+Atlassian Forge Skills	1456	엔지니어링, 코드 및 API	apis	Anthropic Directory에서
+MakeBox for Etsy	1455	영업, 소매 및 이커머스, 쇼핑, 파일 및 문서, 디자인 및 미디어, 티켓 및 작업 및 재무	tickets-tasks,finance,sales,retail-ecommerce,shopping	Anthropic Directory에서
+Claude-Trinity	1450	엔지니어링, 코드, AI 모델 및 에이전트 및 파이프라인 및 작업	pipelines-jobs,ai-models-agents	Anthropic Directory에서
+HarborRank SEO	1448	마케팅, 웹사이트 및 API	apis,websites,marketing	Anthropic Directory에서
+Asyntai – AI Support Agent for Websites	1447	고객 지원, 웹사이트, 연락처 및 리드 및 AI 모델 및 에이전트	ai-models-agents,websites,contacts-leads,customer-support	Anthropic Directory에서
+ERP Upgrade & Fit-Gap Advisor	1444	운영 및 데이터베이스	databases,operations	Anthropic Directory에서
+ViralHunt	1443	마케팅, 웹사이트, 디자인 및 미디어 및 노트 및 메모리	notes-memory,websites,marketing	Anthropic Directory에서
+claude-workflow	1431	파이프라인 및 작업 및 코드	pipelines-jobs	Anthropic Directory에서
+Internet Tools	1430	IT 및 보안, API 및 웹사이트	apis,websites,it-security	Anthropic Directory에서
+learning-output-style	1425	학습 및 코드	learning	Anthropic 작성
+Altimate Code	1422	데이터, 코드, 데이터베이스 및 서버 및 클라우드	databases,servers-cloud,data	Anthropic Directory에서
+Artist Portfolio	1420	직업 및 경력, 코드 및 웹사이트	websites,jobs-career	Anthropic Directory에서
+claude-train-prep	1418	마케팅, 파일 및 문서 및 디자인 및 미디어	marketing	Anthropic Directory에서
+Above Security	1412	IT 및 보안, 로그 및 오류 및 티켓 및 작업	tickets-tasks,logs-errors,it-security	Anthropic Directory에서
+Wiser	1410	파일 및 문서, 디자인 및 미디어, 코드, 웹사이트 및 AI 모델 및 에이전트	ai-models-agents,websites	Anthropic Directory에서
+claude-code-audit-stack	1410	엔지니어링, 코드, 로그 및 오류 및 서버 및 클라우드	servers-cloud,logs-errors	Anthropic Directory에서
+Cortex	1409	엔지니어링, AI 모델 및 에이전트, 파일 및 문서, Claude 기록 및 Claude 설정	ai-models-agents,claude-history,claude-settings	Anthropic Directory에서
+Eversince	1409	디자인, 디자인 및 미디어 및 AI 모델 및 에이전트	design	Anthropic Directory에서
+wiley-scholar-gateway	1406	연구 및 참고 문서	reference-docs,research	Anthropic Directory에서
+Cognee Memory	1397	엔지니어링, 코드, 노트 및 메모리 및 Claude 기록	notes-memory,claude-history	Anthropic Directory에서
+Token Weather Usage	1395	엔지니어링, Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+Gas Gauge	1394	Claude 설정	claude-settings	Anthropic Directory에서
+Sales Skills by Arrows	1393	영업, 이메일 및 메시지, 연락처 및 리드 및 티켓 및 작업	tickets-tasks,contacts-leads,email-messages,sales	Anthropic Directory에서
+align	1392	엔지니어링, Claude 기록, Claude 설정 및 노트 및 메모리	notes-memory,claude-history,claude-settings	Anthropic Directory에서
+claude-md-composer	1390	Claude 설정 및 노트 및 메모리	notes-memory,claude-settings	Anthropic Directory에서
+claude-patterns	1387	연구, Claude 기록 및 노트 및 메모리	notes-memory,claude-history,research	Anthropic Directory에서
+bitcoin-companies	1385	재무, 금융 서비스, 개인 재정 및 API	apis,finance,financial-services,personal-finance	Anthropic Directory에서
+Agile Merge Review	1372	엔지니어링, 풀 리퀘스트, 코드 및 티켓 및 작업	tickets-tasks,pull-requests	Anthropic Directory에서
+Socialinsider	1365	마케팅 및 API	apis,marketing	Anthropic Directory에서
+wikipedia	1364	연구 및 참고 문서	reference-docs,research	Anthropic Directory에서
+LR-AI	1363	데이터, 연구 및 파일 및 문서	research,data	Anthropic Directory에서
+Riverside	1358	음악 및 디자인 및 미디어	music	Anthropic Directory에서
+Datarails financeos	1357	재무, 데이터베이스 및 파일 및 문서	databases,finance	Anthropic Directory에서
+Resume Skills & Keywords by Role - ResumeNext	1357	HR, 직업 및 경력 및 파일 및 문서	jobs-career,hr	Anthropic Directory에서
+Supericons	1348	디자인, 디자인 및 미디어 및 코드	design	Anthropic Directory에서
+Bauhaus Digital	1345	디자인 및 디자인 및 미디어	design	Anthropic Directory에서
+Writing With Agents	1343	마케팅, 파일 및 문서 및 노트 및 메모리	notes-memory,marketing	Anthropic Directory에서
+Agile Sprint Close	1339	엔지니어링, 코드, 풀 리퀘스트, 파이프라인 및 작업 및 티켓 및 작업	tickets-tasks,pipelines-jobs,pull-requests	Anthropic Directory에서
+Customer Research Kit	1337	제품, 파일 및 문서, 노트 및 메모리 및 연락처 및 리드	notes-memory,contacts-leads,product	Anthropic Directory에서
+MagicPath	1335	디자인, 디자인 및 미디어 및 코드	design	Anthropic Directory에서
+howtotalk	1334	가족 및 관계 및 노트 및 메모리	notes-memory,family-relationships	Anthropic Directory에서
+AncestralFire	1332	가족 및 관계, 연락처 및 리드, 파일 및 문서 및 노트 및 메모리	notes-memory,contacts-leads,family-relationships	Anthropic Directory에서
+security-watchdog	1332	IT 및 보안, 코드 및 AI 모델 및 에이전트	it-security	Anthropic Directory에서
+senior-developer	1331	엔지니어링, 코드, 풀 리퀘스트 및 API	apis,pull-requests	Anthropic Directory에서
+Azure DevKit	1330	엔지니어링, 코드, 서버 및 클라우드 및 API	servers-cloud	Anthropic Directory에서
+UnifAPI	1329	마케팅, 웹사이트, 연락처 및 리드, 디자인 및 미디어, 연구 및 API	websites,contacts-leads,marketing,research	Anthropic Directory에서
+Agent Recovery	1329	엔지니어링, 로그 및 오류 및 AI 모델 및 에이전트	logs-errors	Anthropic Directory에서
+Fiscal.ai	1325	재무, 금융 서비스 및 참고 문서	reference-docs,finance,financial-services	Anthropic Directory에서
+arn-spark	1322	제품, 코드, 디자인 및 미디어 및 파일 및 문서	product	Anthropic Directory에서
+StreamPay	1320	운영, 미디어 및 엔터테인먼트 및 재무	finance,operations,media-entertainment	Anthropic Directory에서
+Contentstack Agent Skills	1317	엔지니어링, 코드, 데이터베이스, 파일 및 문서, API 및 파이프라인 및 작업	pipelines-jobs,databases	Anthropic Directory에서
+Notion Markdown Sync	1309	파일 및 문서 및 노트 및 메모리	notes-memory	Anthropic Directory에서
+penpot-atomic-design	1305	디자인 및 디자인 및 미디어	design	Anthropic Directory에서
+claude-performance	1300	엔지니어링, 로그 및 오류, 파일 및 문서, Claude 기록 및 Claude 설정	claude-history,logs-errors,claude-settings	Anthropic Directory에서
+Tutor	1299	학습 및 노트 및 메모리	notes-memory,learning	Anthropic Directory에서
+Cover Letter Checker & Builder - ResumeNext	1299	HR, 직업 및 경력 및 파일 및 문서	jobs-career,hr	Anthropic Directory에서
+Project Memory: Long-Term Memory for Claude Code	1295	엔지니어링 및 노트 및 메모리	notes-memory	Anthropic Directory에서
+Ágora Learning	1292	학습 및 노트 및 메모리	notes-memory,learning	Anthropic Directory에서
+youdotcom-agent-skills	1286	웹사이트, 재무, 참고 문서 및 API	reference-docs,websites,finance	Anthropic Directory에서
+OpenSearch Agent Skills	1286	데이터베이스, 서버 및 클라우드, 로그 및 오류, 파일 및 문서 및 AI 모델 및 에이전트	databases,servers-cloud,logs-errors	Anthropic Directory에서
+statement-auditor	1286	재무, 금융 서비스 및 파일 및 문서	finance,financial-services	Anthropic 작성
+Web Vitals Auditor	1279	엔지니어링, 코드, 웹사이트, 종속성 및 패키지 및 디자인 및 미디어	websites,dependencies-packages	Anthropic Directory에서
+Concise Intuitive Answers	1278	Claude 설정	claude-settings	Anthropic Directory에서
+tesserai	1278	디자인, 코드, 디자인 및 미디어 및 파일 및 문서	design	Anthropic Directory에서
+Claude Code Cost	1272	엔지니어링, 로그 및 오류 및 Claude 기록	claude-history,logs-errors	Anthropic Directory에서
+Refero	1270	디자인, 디자인 및 미디어 및 참고 문서	reference-docs,design	Anthropic Directory에서
+Portfolio Interview	1270	제품, 직업 및 경력, 파일 및 문서, 웹사이트 및 디자인 및 미디어	websites,product,jobs-career	Anthropic Directory에서
+ado-testcraft	1267	엔지니어링, 티켓 및 작업 및 코드	tickets-tasks	Anthropic Directory에서
+ClaudeTokenSAP	1267	엔지니어링, 코드 및 Claude 기록	claude-history	Anthropic Directory에서
+Aictrl.dev	1265	엔지니어링, 코드, 풀 리퀘스트, 티켓 및 작업, 디자인 및 미디어 및 파이프라인 및 작업	tickets-tasks,pipelines-jobs,pull-requests	Anthropic Directory에서
+ArcKit Austrian Overlay	1265	법무, 정부 및 참고 문서	reference-docs,legal,government	Anthropic Directory에서
+handoff	1261	Claude 기록	claude-history	Anthropic Directory에서
+Vinktar	1259	엔지니어링, 로그 및 오류 및 코드	logs-errors	Anthropic Directory에서
+Dynatrace	1258	엔지니어링, 로그 및 오류, 서버 및 클라우드, 파이프라인 및 작업 및 AI 모델 및 에이전트	pipelines-jobs,servers-cloud,logs-errors	Anthropic Directory에서
+axiomcore	1256	운영, 직업 및 경력, 파일 및 문서, 노트 및 메모리, 티켓 및 작업, 파이프라인 및 작업 및 코드	tickets-tasks,pipelines-jobs,notes-memory,operations,jobs-career	Anthropic Directory에서
+Calibre Library	1255	도서 및 노트 및 메모리	notes-memory,books	Anthropic Directory에서
+claude-handoff	1255	엔지니어링, 코드, Claude 기록 및 노트 및 메모리	notes-memory,claude-history	Anthropic Directory에서
+laravel-boost	1253	엔지니어링, 코드 및 파이프라인 및 작업	pipelines-jobs	Anthropic Directory에서
+batocera	1246	게임, 서버 및 클라우드, 파일 및 문서 및 디자인 및 미디어	servers-cloud,games	Anthropic Directory에서
+FlashModel	1246	엔지니어링 및 Claude 설정	claude-settings	Anthropic Directory에서
+Pencil Dev Skill	1246	디자인, 디자인 및 미디어 및 코드	design	Anthropic Directory에서
+Elastic	1245	엔지니어링, 서버 및 클라우드, 로그 및 오류, 데이터베이스, AI 모델 및 에이전트 및 파이프라인 및 작업	pipelines-jobs,databases,servers-cloud,logs-errors	Anthropic Directory에서
+Cargo	1239	영업, 데이터베이스, 서버 및 클라우드, 파일 및 문서, AI 모델 및 에이전트, 파이프라인 및 작업, 웹사이트, 티켓 및 작업, 이메일 및 메시지, 연락처 및 리드, API 및 코드	tickets-tasks,pipelines-jobs,websites,databases,contacts-leads,servers-cloud,email-messages,sales	Anthropic Directory에서
+PromptUp	1237	Claude 기록	claude-history	Anthropic Directory에서
+Better Stack	1236	엔지니어링, 로그 및 오류, 서버 및 클라우드 및 파이프라인 및 작업	pipelines-jobs,servers-cloud,logs-errors	Anthropic Directory에서
+claude-meeting-todos	1226	티켓 및 작업 및 노트 및 메모리	tickets-tasks,notes-memory	Anthropic Directory에서
+Probabl Skills	1216	데이터, 코드, 파일 및 문서 및 AI 모델 및 에이전트	data	Anthropic Directory에서
+Anamnese Core	1214	Claude 기록, Claude 설정 및 노트 및 메모리	notes-memory,claude-history,claude-settings	Anthropic Directory에서
+6X6	1213	Claude 기록	claude-history	Anthropic Directory에서
+Conductor	1210	엔지니어링, 코드, 파이프라인 및 작업 및 AI 모델 및 에이전트	pipelines-jobs	Anthropic Directory에서
+arn-code	1210	엔지니어링, 코드, 풀 리퀘스트 및 종속성 및 패키지	pull-requests,dependencies-packages	Anthropic Directory에서
+Competition Checker	1209	법무, 직업 및 경력 및 참고 문서	reference-docs,legal,jobs-career	Anthropic Directory에서
+Ryze AI Marketing Skills	1208	마케팅, API 및 재무	finance,marketing	Anthropic Directory에서
+claude-blog-assistant	1208	마케팅 및 파일 및 문서	marketing	Anthropic Directory에서
+metri: Calorie & Macro Tracker	1206	음식 및 노트 및 메모리	notes-memory,food	Anthropic Directory에서
+snowball	1206	개인 재정 및 재무	finance,personal-finance	Anthropic Directory에서
+claude-code-tokenbudget	1205	엔지니어링, Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+fund-admin	1205	재무, 금융 서비스 및 데이터베이스	databases,finance,financial-services	Anthropic 작성
+carusela	1205	제품, 학습, 파일 및 문서, 디자인 및 미디어 및 AI 모델 및 에이전트	product,learning	Anthropic Directory에서
+AI-Advisors	1204	마케팅, 웹사이트 및 로그 및 오류	websites,logs-errors,marketing	Anthropic Directory에서
+AAA ClauseBuilder	1198	법무 및 파일 및 문서	legal	Anthropic Directory에서
+Astronomer	1195	데이터, 파이프라인 및 작업, 코드 및 데이터베이스	pipelines-jobs,databases,data	Anthropic Directory에서
+Competitive Skills by LMTY	1193	제품, 참고 문서 및 파일 및 문서	reference-docs,product	Anthropic Directory에서
+FullEnrich	1193	영업, 연락처 및 리드 및 파일 및 문서	contacts-leads,sales	Anthropic Directory에서
+Fully SEO optimized Article with FAQ's	1192	마케팅, 파일 및 문서 및 웹사이트	websites,marketing	Anthropic Directory에서
+gl-reconciler	1192	재무, 금융 서비스, 데이터베이스 및 파일 및 문서	databases,finance,financial-services	Anthropic 작성
+claude-backup	1191	Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+Memory Bank	1189	파일 및 문서, 노트 및 메모리 및 Claude 기록	notes-memory,claude-history	Anthropic Directory에서
+AgentAvow Trust	1189	IT 및 보안, 종속성 및 패키지 및 서버 및 클라우드	servers-cloud,dependencies-packages,it-security	Anthropic Directory에서
+asodev	1188	제품, 파일 및 문서, API 및 참고 문서	reference-docs,product	Anthropic Directory에서
+MapMap	1188	운영, API, 서버 및 클라우드 및 파일 및 문서	servers-cloud,operations	Anthropic Directory에서
+boltz	1187	데이터, 의료 및 생명 과학 및 AI 모델 및 에이전트	data,healthcare-life-sciences	Anthropic Directory에서
+https://github.com/chrlss11/claude-socratic-plugin	1183	학습, Claude 기록 및 노트 및 메모리	notes-memory,claude-history,learning	Anthropic Directory에서
+Token Status Line	1183	엔지니어링, Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+WordPress DevKit	1181	엔지니어링, 코드, 데이터베이스 및 파일 및 문서	databases	Anthropic Directory에서
+Postbarrel scripts	1180	글쓰기 및 디자인 및 미디어	writing	Anthropic Directory에서
+AIResearch — Multi-Lens Stock Deep Dive	1179	재무 및 참고 문서	reference-docs,finance	Anthropic Directory에서
+Critic Layer	1178	디자인, 웹사이트, 디자인 및 미디어 및 코드	websites,design	Anthropic Directory에서
+Claude Meter	1173	Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+claude-usage-statusline	1171	Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+thinking-partner	1168	노트 및 메모리 및 퍼즐	notes-memory,puzzles	Anthropic Directory에서
+Docker Image Scan	1166	엔지니어링, 코드, 서버 및 클라우드 및 종속성 및 패키지	servers-cloud,dependencies-packages	Anthropic Directory에서
+One-Shot — Agentic Feature Generation	1162	엔지니어링, 코드 및 파이프라인 및 작업	pipelines-jobs	Anthropic Directory에서
+StockPortfolio.pro — Verified Financial Data	1160	재무	finance	Anthropic Directory에서
+Streamline Icons	1159	디자인 및 디자인 및 미디어	design	Anthropic Directory에서
+ArcKit UK NHS Clinical Safety Overlay	1154	IT 및 보안, 의료 및 생명 과학, 파일 및 문서 및 참고 문서	reference-docs,it-security,healthcare-life-sciences	Anthropic Directory에서
+venture-capital-intelligence	1151	영업, 금융 서비스, 재무 및 AI 모델 및 에이전트	finance,sales,financial-services	Anthropic Directory에서
+Customer Success: Churn and QBRs	1149	고객 지원, 연락처 및 리드, 파일 및 문서 및 티켓 및 작업	tickets-tasks,contacts-leads,customer-support	Anthropic Directory에서
+Ngrok Agent Skills	1147	서버 및 클라우드 및 API	servers-cloud	Anthropic Directory에서
+app-preview-craft	1144	마케팅, 디자인 및 미디어 및 파일 및 문서	marketing	Anthropic Directory에서
+Paper Plugin Dev	1144	게임 및 코드	games	Anthropic Directory에서
+Controller AI	1142	파이프라인 및 작업 및 AI 모델 및 에이전트	pipelines-jobs	Anthropic Directory에서
+Running Race Coach	1139	건강 및 피트니스	health-fitness	Anthropic Directory에서
+MCP Workflow Audit	1137	엔지니어링, 코드, AI 모델 및 에이전트 및 파이프라인 및 작업	pipelines-jobs	Anthropic Directory에서
+skillers	1135	엔지니어링, Claude 기록 및 AI 모델 및 에이전트	claude-history	Anthropic Directory에서
+ALICE by Soundscape	1135	미디어 및 엔터테인먼트, 음악 및 파일 및 문서	music,media-entertainment	Anthropic Directory에서
+XMemo	1134	노트 및 메모리, AI 모델 및 에이전트 및 Claude 기록	claude-history	Anthropic Directory에서
+GDPRGard Compliance Skills	1132	법무, 파일 및 문서 및 참고 문서	reference-docs,legal	Anthropic Directory에서
+akc-cycle	1130	엔지니어링, 코드, 파일 및 문서, AI 모델 및 에이전트 및 참고 문서	reference-docs	Anthropic Directory에서
+D365FO X++ Development	1130	엔지니어링, 코드 및 로그 및 오류	logs-errors	Anthropic Directory에서
+StyleRef	1130	디자인, 디자인 및 미디어, 코드 및 파일 및 문서	design	Anthropic Directory에서
+Catalyst by Zoho	1129	엔지니어링, 서버 및 클라우드, 데이터베이스, 파일 및 문서, 코드, 파이프라인 및 작업 및 API	pipelines-jobs,databases,servers-cloud	Anthropic Directory에서
+ZSL Superpowers	1127	엔지니어링, 코드, 풀 리퀘스트, 티켓 및 작업 및 파일 및 문서	tickets-tasks,pull-requests	Anthropic Directory에서
+fix-cv-find-job-skill	1125	HR, 직업 및 경력, 파일 및 문서, 연락처 및 리드 및 티켓 및 작업	contacts-leads,jobs-career,hr	Anthropic Directory에서
+coinpaprika	1125	데이터, 금융 서비스, 개인 재정, API 및 재무	finance,financial-services,data,personal-finance	Anthropic Directory에서
+POC Architect by ATeam	1125	제품, 코드 및 AI 모델 및 에이전트	product	Anthropic Directory에서
+claud-coach	1122	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+Positioning, GTM and Deal Strategy	1122	영업 및 티켓 및 작업	sales	Anthropic Directory에서
+Arkas	1121	연구, 노트 및 메모리, 파일 및 문서 및 참고 문서	reference-docs,research	Anthropic Directory에서
+Go-to-Market Planner	1118	제품 및 노트 및 메모리	product	Anthropic Directory에서
+platform-skills	1117	엔지니어링, 코드, 서버 및 클라우드, 로그 및 오류, 파이프라인 및 작업 및 API	pipelines-jobs,servers-cloud,logs-errors	Anthropic Directory에서
+AskAiRank	1117	마케팅, 웹사이트 및 AI 모델 및 에이전트	websites,marketing	Anthropic Directory에서
+DunSocial	1117	이메일 및 메시지 및 디자인 및 미디어	email-messages	Anthropic Directory에서
+Canon Check	1117	디자인, 코드, 파일 및 문서 및 디자인 및 미디어	design	Anthropic Directory에서
+Very Good AI Flutter Plugin	1115	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Job Match & Resume Keyword Scanner - ResumeNext	1113	HR, 직업 및 경력 및 파일 및 문서	jobs-career,hr	Anthropic Directory에서
+Cite2FN	1110	법무 및 파일 및 문서	legal	Anthropic Directory에서
+amazon-location-service	1108	엔지니어링, API 및 웹사이트	websites	Anthropic Directory에서
+claude-chat-search	1108	Claude 기록	claude-history	Anthropic Directory에서
+Usage Line	1098	Claude 설정	claude-settings	Anthropic Directory에서
+codeman	1097	엔지니어링, 코드, AI 모델 및 에이전트 및 Claude 기록	claude-history	Anthropic Directory에서
+savvy	1096	재무 및 파이프라인 및 작업	finance	Anthropic Directory에서
+Countz Accounting	1094	재무 및 파일 및 문서	finance	Anthropic Directory에서
+RingCentral	1091	운영, 이메일 및 메시지, 티켓 및 작업, 노트 및 메모리, 이벤트 및 연락처 및 리드	contacts-leads,email-messages,operations,events	Anthropic Directory에서
+ScreenshotOne	1089	웹사이트 및 디자인 및 미디어	websites	Anthropic Directory에서
+liquid-dev	1088	엔지니어링, 소매 및 이커머스, 코드, 웹사이트 및 디자인 및 미디어	websites,retail-ecommerce	Anthropic Directory에서
+seo-check	1088	엔지니어링, 코드, 웹사이트 및 풀 리퀘스트	websites,pull-requests	Anthropic Directory에서
+Resume Bullet Point Checker & Action Verbs - ResumeNext	1088	HR, 직업 및 경력 및 파일 및 문서	jobs-career,hr	Anthropic Directory에서
+Arcmira: YouTube Transcript Search	1087	연구, 웹사이트 및 음악	websites,research,music	Anthropic Directory에서
+MyChatBot	1086	영업, AI 모델 및 에이전트, 티켓 및 작업, 연락처 및 리드, 파일 및 문서, API 및 디자인 및 미디어	contacts-leads,sales	Anthropic Directory에서
+Cruise Itinerary	1079	여행 및 숙박 및 여행	travel-hospitality,travel	Anthropic Directory에서
+Intent	1076	디자인, 디자인 및 미디어 및 파일 및 문서	design	Anthropic Directory에서
+arn-infra	1074	엔지니어링, 코드, 서버 및 클라우드, 로그 및 오류, 파일 및 문서, 파이프라인 및 작업 및 종속성 및 패키지	servers-cloud,logs-errors,dependencies-packages	Anthropic Directory에서
+Bonusly	1073	HR, 연락처 및 리드 및 티켓 및 작업	contacts-leads,hr	Anthropic Directory에서
+Contratos Civiles y Mercantiles	1066	법무, 파일 및 문서 및 참고 문서	reference-docs,legal	Anthropic Directory에서
+llm-wiki-plugin	1064	연구, 파일 및 문서, 노트 및 메모리 및 참고 문서	reference-docs,research	Anthropic Directory에서
+adlane	1064	마케팅 및 API	marketing	Anthropic Directory에서
+career-brand	1064	마케팅, 직업 및 경력, 노트 및 메모리 및 파일 및 문서	marketing,jobs-career	Anthropic Directory에서
+Community & Reddit Marketing	1062	마케팅, 노트 및 메모리 및 참고 문서	reference-docs,marketing	Anthropic Directory에서
+Marky	1062	마케팅, 디자인 및 미디어, 파일 및 문서 및 웹사이트	websites,marketing	Anthropic Directory에서
+SonarQube	1062	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+looker	1061	데이터, 데이터베이스 및 API	databases,data	Anthropic Directory에서
+Economic Mind	1061	데이터, 재무 및 참고 문서	finance,data	Anthropic Directory에서
+Agile Sprint Drain	1061	엔지니어링, 파이프라인 및 작업, 풀 리퀘스트 및 코드	pull-requests	Anthropic Directory에서
+Virlo	1059	웹사이트 및 디자인 및 미디어	websites	Anthropic Directory에서
+cto-toolkit	1058	엔지니어링, 코드, 서버 및 클라우드, 로그 및 오류, 파이프라인 및 작업 및 AI 모델 및 에이전트	servers-cloud,logs-errors	Anthropic Directory에서
+save-to-spotify	1053	음악 및 디자인 및 미디어	music	Anthropic Directory에서
+prepkit-product	1052	제품, 티켓 및 작업 및 참고 문서	product	Anthropic Directory에서
+Claistore	1051	마케팅, 소매 및 이커머스, 웹사이트, 파일 및 문서, 디자인 및 미디어 및 재무	websites,finance,marketing,retail-ecommerce	Anthropic Directory에서
+Security Audit Loop by ATeam	1049	엔지니어링, 코드, 종속성 및 패키지, 서버 및 클라우드 및 로그 및 오류	servers-cloud,logs-errors,dependencies-packages	Anthropic Directory에서
+Mind++ for Claude	1048	노트 및 메모리, 티켓 및 작업 및 Claude 기록	claude-history	Anthropic Directory에서
+claude-mac-chrome	1048	웹사이트 및 이메일 및 메시지	email-messages	Anthropic Directory에서
+Ansight	1046	엔지니어링, 코드 및 서버 및 클라우드	servers-cloud	Anthropic Directory에서
+please-optimize-my-claude	1041	엔지니어링, Claude 설정 및 파일 및 문서	claude-settings	Anthropic Directory에서
+fiftyone	1039	엔지니어링, 데이터베이스, 파일 및 문서, AI 모델 및 에이전트, 코드 및 디자인 및 미디어	databases	Anthropic Directory에서
+create-smartfolder	1038	파일 및 문서, Claude 기록 및 노트 및 메모리	claude-history	Anthropic Directory에서
+StarTap Launch Kit	1035	마케팅, 웹사이트, 코드 및 참고 문서	marketing	Anthropic Directory에서
+scriptorium-cowork	1034	학습, 연구, 참고 문서 및 노트 및 메모리	research,learning	Anthropic Directory에서
+qrp	1034	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+flowy	1030	디자인, 웹사이트, 코드 및 디자인 및 미디어	design	Anthropic Directory에서
+indelible	1028	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+Enpitech AI Tools	1022	엔지니어링, 코드, 풀 리퀘스트, 종속성 및 패키지 및 디자인 및 미디어	pull-requests,dependencies-packages	Anthropic Directory에서
+Talk to Anyone	1020	학습, 웹사이트, 연구, 참고 문서 및 Claude 기록	claude-history,research,learning	Anthropic Directory에서
+cowork-session-fixer	1018	엔지니어링, 로그 및 오류 및 Claude 설정	logs-errors,claude-settings	Anthropic Directory에서
+Appllama	1014	디자인 및 디자인 및 미디어	design	Anthropic Directory에서
+ArcKit EU Overlay	1014	법무 및 참고 문서	legal	Anthropic Directory에서
+plan-review-skill	1011	제품, 코드 및 디자인 및 미디어	product	Anthropic Directory에서
+Copyedit & Proofreading	1008	운영 및 파일 및 문서	operations	Anthropic Directory에서
+DeepEval	1007	엔지니어링, AI 모델 및 에이전트 및 로그 및 오류	logs-errors	Anthropic Directory에서
+chembl	1005	데이터, 의료 및 생명 과학, 데이터베이스 및 AI 모델 및 에이전트	databases,data,healthcare-life-sciences	Anthropic Directory에서
+Music Catalog Diligence	1004	재무, 미디어 및 엔터테인먼트, 파일 및 문서 및 참고 문서	finance,media-entertainment	Anthropic Directory에서
+DemoDay	1002	마케팅, 코드 및 디자인 및 미디어	marketing	Anthropic Directory에서
+airwallex-dev	1002	엔지니어링, 금융 서비스, 코드 및 API	financial-services	Anthropic Directory에서
+Financial Aid Office Workflow	1001	고객 지원, 교육, 티켓 및 작업 및 파일 및 문서	education,customer-support	Anthropic Directory에서
+Morningstar	996	개인 재정 및 재무	finance,personal-finance	Anthropic Directory에서
+naksha-studio	993	디자인, 디자인 및 미디어 및 파일 및 문서	design	Anthropic Directory에서
+braindrain	991	엔지니어링, Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+claude-perfectionist	991	엔지니어링, 코드 및 Claude 설정	claude-settings	Anthropic Directory에서
+Loopky flashcards	987	학습, 노트 및 메모리 및 파일 및 문서	learning	Anthropic Directory에서
+Rig	986	엔지니어링, 서버 및 클라우드, 로그 및 오류 및 파이프라인 및 작업	servers-cloud,logs-errors	Anthropic Directory에서
+datahub-skills	985	데이터, 데이터베이스, 코드, 풀 리퀘스트 및 파이프라인 및 작업	databases,pull-requests,data	Anthropic Directory에서
+The Pragmatic PM Toolkit	984	제품, 티켓 및 작업, 참고 문서 및 노트 및 메모리	product	Anthropic Directory에서
+parenting-frameworks	983	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+Nonprofit Grant Operations	979	운영, 비영리, 티켓 및 작업 및 파일 및 문서	operations,nonprofit	Anthropic Directory에서
+Bankstatemently	975	재무 및 파일 및 문서	finance	Anthropic Directory에서
+Production Engine	973	운영, 미디어 및 엔터테인먼트, 티켓 및 작업, 재무 및 파일 및 문서	finance,operations,media-entertainment	Anthropic Directory에서
+TomeScout Toolkit	973	글쓰기, 도서 및 재무	finance,books,writing	Anthropic Directory에서
+LawDiver	973	법무 및 참고 문서	legal	Anthropic Directory에서
+elmah.io	969	엔지니어링, 로그 및 오류, 서버 및 클라우드 및 파이프라인 및 작업	servers-cloud,logs-errors	Anthropic Directory에서
+terraform	969	엔지니어링, 코드, 서버 및 클라우드, 파이프라인 및 작업, 종속성 및 패키지 및 API	servers-cloud,dependencies-packages	Anthropic Directory에서
+Allium	968	금융 서비스, 데이터베이스 및 API	databases,financial-services	Anthropic Directory에서
+One	963	이메일 및 메시지, 티켓 및 작업, 재무, 연락처 및 리드, 파일 및 문서 및 API	contacts-leads,finance,email-messages	Anthropic Directory에서
+Instant	959	쇼핑 및 API	shopping	Anthropic Directory에서
+Flint	958	디자인, 웹사이트 및 디자인 및 미디어	design	Anthropic Directory에서
+HasData	956	웹사이트, 파일 및 문서, 연락처 및 리드, 티켓 및 작업, 디자인 및 미디어 및 API	contacts-leads	Anthropic Directory에서
+oracle-ai-data-platform-workbench-spark-connectors	954	데이터, 데이터베이스, 서버 및 클라우드, 파일 및 문서 및 API	databases,servers-cloud,data	Anthropic Directory에서
+TRES Finance Plugin	954	재무, 금융 서비스, 데이터베이스, 연락처 및 리드 및 파일 및 문서	databases,contacts-leads,finance,financial-services	Anthropic Directory에서
+Desktop Statusline	953	엔지니어링, Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+Kombai	952	디자인, 디자인 및 미디어 및 코드	design	Anthropic Directory에서
+SiteGPT	951	고객 지원, 웹사이트, 티켓 및 작업, 연락처 및 리드 및 AI 모델 및 에이전트	contacts-leads,customer-support	Anthropic Directory에서
+Atria	949	마케팅, 디자인 및 미디어 및 파일 및 문서	marketing	Anthropic Directory에서
+Banger	947	마케팅, 이메일 및 메시지, 연락처 및 리드 및 디자인 및 미디어	contacts-leads,marketing,email-messages	Anthropic Directory에서
+snowflake-cortex-code	946	데이터, 데이터베이스 및 코드	databases,data	Anthropic Directory에서
+ClickUp	945	운영 및 티켓 및 작업	operations	Anthropic Directory에서
+loop-and-gate-foundation	944	학습, 노트 및 메모리, AI 모델 및 에이전트 및 참고 문서	learning	Anthropic Directory에서
+fable-baton	941	엔지니어링, AI 모델 및 에이전트 및 Claude 설정	claude-settings	Anthropic Directory에서
+Lead Magnets	940	마케팅, 파일 및 문서, 이메일 및 메시지 및 연락처 및 리드	contacts-leads,marketing,email-messages	Anthropic Directory에서
+Travel Vibes: Trip Itineraries	938	여행	travel	Anthropic Directory에서
+guide	935	엔지니어링, 참고 문서, Claude 설정 및 Claude 기록	claude-history,claude-settings	Anthropic Directory에서
+Shield	935	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Chat Auto exporter	931	엔지니어링, Claude 기록 및 파일 및 문서	claude-history	Anthropic Directory에서
+storm	929	연구, 파일 및 문서 및 참고 문서	research	Anthropic Directory에서
+EasedUP	929	파일 및 문서 및 학습	learning	Anthropic Directory에서
+Birthday Video Maker: AI Birthday Tribute & Wishes Video	928	가족 및 관계 및 디자인 및 미디어	family-relationships	Anthropic Directory에서
+Odometer	925	Claude 기록	claude-history	Anthropic Directory에서
+Prompt Color	920	Claude 기록	claude-history	Anthropic Directory에서
+AgentPricing Connector	920	영업 및 파일 및 문서	sales	Anthropic Directory에서
+post bridge	919	이메일 및 메시지, 디자인 및 미디어 및 API	email-messages	Anthropic Directory에서
+venture	919	제품 및 노트 및 메모리	product	Anthropic Directory에서
+InsightPins for Pinterest	918	마케팅, 디자인 및 미디어, 파일 및 문서 및 음식	marketing,food	Anthropic Directory에서
+databases-on-aws	917	엔지니어링, 데이터베이스 및 코드	databases	Anthropic Directory에서
+Oak National Academy	916	교육, 학습, 참고 문서 및 디자인 및 미디어	learning,education	Anthropic Directory에서
+Mixpanel	915	제품, 데이터베이스, 파이프라인 및 작업 및 AI 모델 및 에이전트	databases,product	Anthropic Directory에서
+CodeQR	914	마케팅 및 API	marketing	Anthropic Directory에서
+ai-pm-skills	911	제품 및 AI 모델 및 에이전트	product	Anthropic Directory에서
+Voicenter MCP	909	고객 지원, API 및 티켓 및 작업	customer-support	Anthropic Directory에서
+Create State	908	학습, 노트 및 메모리 및 Claude 기록	claude-history,learning	Anthropic Directory에서
+claude-forge	908	엔지니어링, 코드, 파이프라인 및 작업 및 로그 및 오류	logs-errors	Anthropic Directory에서
+Legalcode	906	법무, 참고 문서 및 연구	research,legal	Anthropic Directory에서
+Resume Examples & Templates - ResumeNext	905	HR, 직업 및 경력 및 파일 및 문서	jobs-career,hr	Anthropic Directory에서
+Contratos Laborales y Asesoría Empresarial	904	법무, 파일 및 문서 및 티켓 및 작업	legal	Anthropic Directory에서
+SerpApi Claude Plugin	903	연구, 웹사이트, 참고 문서 및 API	research	Anthropic Directory에서
+YourGPT	903	고객 지원, AI 모델 및 에이전트 및 티켓 및 작업	customer-support	Anthropic Directory에서
+Context.dev	901	웹사이트, 파일 및 문서 및 로그 및 오류	logs-errors	Anthropic Directory에서
+Flow Studio Power Automate	899	엔지니어링, 파이프라인 및 작업 및 로그 및 오류	logs-errors	Anthropic Directory에서
+php-lsp — Claude Code Plugin	898	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Cache Guard	897	엔지니어링, Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+flight-deck	897	Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+StudyPath	895	학습, 노트 및 메모리, 퍼즐 및 이벤트	learning,events,puzzles	Anthropic Directory에서
+FlyBest Hotels — AI Travel Booking	894	여행 및 이벤트	events,travel	Anthropic Directory에서
+Anson	893	이메일 및 메시지, 노트 및 메모리 및 API	email-messages	Anthropic Directory에서
+Boardroom	892	AI 모델 및 에이전트 및 Claude 기록	claude-history	Anthropic Directory에서
+me — write like me	892	이메일 및 메시지, 풀 리퀘스트 및 노트 및 메모리	email-messages,pull-requests	Anthropic Directory에서
+Replo	891	제품, 소매 및 이커머스, 웹사이트, 파일 및 문서, 디자인 및 미디어 및 코드	product,retail-ecommerce	Anthropic Directory에서
+NetSuite SuiteCloud	889	엔지니어링, 코드 및 데이터베이스	databases	Anthropic Directory에서
+Mokaru	889	직업 및 경력, 파일 및 문서, 티켓 및 작업 및 연락처 및 리드	contacts-leads,jobs-career	Anthropic Directory에서
+aws-transform	888	엔지니어링, 코드, 서버 및 클라우드, 데이터베이스 및 종속성 및 패키지	databases,servers-cloud,dependencies-packages	Anthropic Directory에서
+Preset API Skills	888	데이터, 데이터베이스, 서버 및 클라우드 및 API	databases,servers-cloud,data	Anthropic Directory에서
+Glean	888	엔지니어링, 코드, 참고 문서, 노트 및 메모리 및 연락처 및 리드	contacts-leads	Anthropic Directory에서
+Pitch Deck Advisor	888	영업 및 파일 및 문서	sales	Anthropic Directory에서
+Airship Agent Tools	885	마케팅, 이메일 및 메시지, 파이프라인 및 작업, 연락처 및 리드 및 API	contacts-leads,marketing,email-messages	Anthropic Directory에서
+baba Hebrew	884	학습, 참고 문서 및 연구	research,learning	Anthropic Directory에서
+jevmem	881	엔지니어링, 코드, 파일 및 문서 및 Claude 기록	claude-history	Anthropic Directory에서
+Intuitive Software Design	881	디자인, 코드, 웹사이트 및 디자인 및 미디어	design	Anthropic Directory에서
+skill-campfire	878	게임 및 AI 모델 및 에이전트	games	Anthropic Directory에서
+Kube by Kuberno	877	법무, 연락처 및 리드 및 참고 문서	contacts-leads,legal	Anthropic Directory에서
+HYPD AI - Paid Ads & Analytics	875	마케팅, API 및 웹사이트	marketing	Anthropic Directory에서
+Adaption	873	엔지니어링, 데이터베이스 및 AI 모델 및 에이전트	databases	Anthropic Directory에서
+Cerebrium Skills	873	엔지니어링, 코드, 서버 및 클라우드, AI 모델 및 에이전트, 파이프라인 및 작업 및 로그 및 오류	servers-cloud,logs-errors	Anthropic Directory에서
+project-setup	871	엔지니어링, 코드, 파일 및 문서 및 서버 및 클라우드	servers-cloud	Anthropic Directory에서
+MLflow Skills	870	엔지니어링, AI 모델 및 에이전트, 로그 및 오류 및 코드	logs-errors	Anthropic Directory에서
+Decibel Superpowers	870	엔지니어링, 코드, 파이프라인 및 작업 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+Altertable	869	데이터, 데이터베이스, 로그 및 오류, 파이프라인 및 작업, 코드 및 파일 및 문서	databases,logs-errors,data	Anthropic Directory에서
+Litigación Civil España	869	법무, 티켓 및 작업, 파일 및 문서 및 노트 및 메모리	legal	Anthropic Directory에서
+euxlab-skills	868	디자인, 파일 및 문서, 디자인 및 미디어 및 노트 및 메모리	design	Anthropic Directory에서
+kyc-screener	867	IT 및 보안, 금융 서비스, 파일 및 문서 및 연락처 및 리드	contacts-leads,financial-services,it-security	Anthropic 작성
+Deep Refactor	866	엔지니어링, 코드, 파일 및 문서 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+SoundWeaver	866	디자인 및 디자인 및 미디어	design	Anthropic Directory에서
+KnowMine — Personal Knowledge Base	865	학습, 노트 및 메모리 및 Claude 기록	claude-history,learning	Anthropic Directory에서
+athena-tools	865	엔지니어링, 의료 및 생명 과학, 코드, 데이터베이스 및 API	databases,healthcare-life-sciences	Anthropic Directory에서
+Kuliko AI	865	학습, 파일 및 문서 및 노트 및 메모리	learning	Anthropic Directory에서
+AppFollow AI Toolkit	863	제품, 웹사이트 및 티켓 및 작업	product	Anthropic Directory에서
+ProseShape	863	글쓰기 및 파일 및 문서	writing	Anthropic Directory에서
+Customer.io	861	마케팅, 이메일 및 메시지, 파이프라인 및 작업, 연락처 및 리드 및 코드	contacts-leads,marketing,email-messages	Anthropic Directory에서
+Email Triage	861	이메일 및 메시지	email-messages	Anthropic Directory에서
+Social Post Flow	860	마케팅 및 이메일 및 메시지	marketing,email-messages	Anthropic Directory에서
+mcp-gsc	859	마케팅, 웹사이트 및 API	marketing	Anthropic Directory에서
+Meeting.ai	853	운영, 노트 및 메모리, 파일 및 문서 및 티켓 및 작업	operations	Anthropic Directory에서
+Persona	850	Claude 설정	claude-settings	Anthropic Directory에서
+Mentor Mode for Claude Code	849	엔지니어링, 학습 및 코드	learning	Anthropic Directory에서
+Celigo	848	엔지니어링, 파이프라인 및 작업, API, 데이터베이스, 서버 및 클라우드, 코드, 종속성 및 패키지 및 AI 모델 및 에이전트	databases,servers-cloud,dependencies-packages	Anthropic Directory에서
+QuanterLab	845	개인 재정, 재무 및 연구	finance,research,personal-finance	Anthropic Directory에서
+lesslop	844	Claude 기록	claude-history	Anthropic Directory에서
+ccaf	842	엔지니어링 및 학습	learning	Anthropic Directory에서
+ACI Risk Indicators	837	재무, 금융 서비스 및 참고 문서	finance,financial-services	Anthropic Directory에서
+project-pilot	833	엔지니어링, 코드, 파이프라인 및 작업 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+php harmony	832	엔지니어링, 코드, 데이터베이스 및 파이프라인 및 작업	databases	Anthropic Directory에서
+DataHub Cloud	831	데이터, 데이터베이스, 파이프라인 및 작업 및 API	databases,data	Anthropic Directory에서
+planning-skills-for-agents-and-humans	830	제품, 노트 및 메모리, 파일 및 문서 및 디자인 및 미디어	product	Anthropic Directory에서
+BOLD Studios	829	이메일 및 메시지, 파일 및 문서, 웹사이트, 연락처 및 리드, 티켓 및 작업, 디자인 및 미디어, 노트 및 메모리 및 API	contacts-leads,email-messages	Anthropic Directory에서
+Lark/Feishu Integration	828	이메일 및 메시지, 파일 및 문서, 데이터베이스, 티켓 및 작업, 이벤트, 연락처 및 리드 및 Claude 기록	claude-history,databases,contacts-leads,email-messages,events	Anthropic Directory에서
+MongoDB (Self-Managed MCP)	826	데이터베이스 및 코드	databases	Anthropic Directory에서
+vellum	824	디자인, 코드, 디자인 및 미디어 및 파일 및 문서	design	Anthropic Directory에서
+circle-skills	822	엔지니어링, API, 코드, 서버 및 클라우드 및 재무	servers-cloud,finance	Anthropic Directory에서
+Claude Pulse	821	엔지니어링, Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+Imagelato Image Optimization	821	운영, 디자인 및 미디어, 파이프라인 및 작업 및 API	operations	Anthropic Directory에서
+PayPal	820	엔지니어링, 재무 및 API	finance	Anthropic Directory에서
+SearchAtlas Toolkit	820	마케팅, 웹사이트 및 참고 문서	marketing	Anthropic Directory에서
+Auto-log your Claude Code sessions as Odoo timesheets	820	운영, 파이프라인 및 작업 및 티켓 및 작업	operations	Anthropic Directory에서
+aomi-build	819	엔지니어링, 코드, API 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+A Fool's Errand	819	게임 및 퍼즐	games,puzzles	Anthropic Directory에서
+Templafy	818	마케팅, 디자인 및 미디어 및 파일 및 문서	marketing	Anthropic Directory에서
+fet	815	운영, 교육, 파일 및 문서 및 파이프라인 및 작업	operations,education	Anthropic Directory에서
+Acumatica Plugin	814	재무, 연락처 및 리드, 종속성 및 패키지 및 티켓 및 작업	contacts-leads,finance,dependencies-packages	Anthropic Directory에서
+Astro Jyotish	814	신앙 및 노트 및 메모리	faith	Anthropic Directory에서
+Property Management Operator	813	운영, 티켓 및 작업 및 연락처 및 리드	contacts-leads,operations	Anthropic Directory에서
+CryptoETF Flows	813	금융 서비스, 개인 재정, 재무 및 API	finance,financial-services,personal-finance	Anthropic Directory에서
+Website Check-up by SEO Records	813	마케팅 및 웹사이트	marketing	Anthropic Directory에서
+control-room	811	엔지니어링, 풀 리퀘스트, 코드 및 AI 모델 및 에이전트	pull-requests	Anthropic Directory에서
+Claude Stats	810	엔지니어링 및 Claude 기록	claude-history	Anthropic Directory에서
+meta-dev	810	엔지니어링, 코드, AI 모델 및 에이전트, Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+Langfuse Observability	807	엔지니어링, 코드, 로그 및 오류, AI 모델 및 에이전트 및 Claude 기록	claude-history,logs-errors	Anthropic Directory에서
+py-pit	807	엔지니어링, 코드 및 데이터베이스	databases	Anthropic Directory에서
+strategy-pack	806	제품, 직업 및 경력, 풀 리퀘스트, 파일 및 문서 및 티켓 및 작업	pull-requests,product,jobs-career	Anthropic Directory에서
+claude-context-auto-handoff	802	Claude 기록 및 파일 및 문서	claude-history	Anthropic Directory에서
+cicada.guide	802	연구, 참고 문서 및 연락처 및 리드	contacts-leads,research	Anthropic Directory에서
+Codigo Civil Formulacion Juridica	802	법무 및 참고 문서	legal	Anthropic Directory에서
+hormozi-offer-audit	801	영업, 웹사이트 및 티켓 및 작업	sales	Anthropic Directory에서
+PRP Manager	800	제품 및 코드	product	Anthropic Directory에서
+Responsive Check: Mobile Layout Tester	800	디자인, 웹사이트 및 디자인 및 미디어	design	Anthropic Directory에서
+translate epub	799	파일 및 문서 및 도서	books	Anthropic Directory에서
+doom-design-system	797	디자인, 코드 및 디자인 및 미디어	design	Anthropic Directory에서
+Airport Lounge List	797	여행	travel	Anthropic Directory에서
+Remote.com	796	HR, 연락처 및 리드, 티켓 및 작업, 재무 및 이메일 및 메시지	contacts-leads,finance,email-messages,hr	Anthropic Directory에서
+Zeno	796	재무	finance	Anthropic Directory에서
+DocsBot	795	고객 지원, AI 모델 및 에이전트, 파일 및 문서, 웹사이트 및 티켓 및 작업	customer-support	Anthropic Directory에서
+Document Vault	794	가족 및 관계, 파일 및 문서 및 연락처 및 리드	contacts-leads,family-relationships	Anthropic Directory에서
+Oracle AI Data Platform Workbench Engineer Agent	793	데이터, 데이터베이스, 코드, 파이프라인 및 작업, 파일 및 문서, 로그 및 오류 및 AI 모델 및 에이전트	databases,logs-errors,data	Anthropic Directory에서
+redis-development	793	엔지니어링, 데이터베이스 및 AI 모델 및 에이전트	databases	Anthropic Directory에서
+hyperflow	792	엔지니어링, 코드, 풀 리퀘스트, 파이프라인 및 작업 및 Claude 기록	claude-history,pull-requests	Anthropic Directory에서
+dominodatalab	792	데이터, 코드, 데이터베이스, 서버 및 클라우드, 로그 및 오류, 파일 및 문서, AI 모델 및 에이전트, 파이프라인 및 작업 및 API	servers-cloud,logs-errors,data	Anthropic Directory에서
+OpenPlanr	792	코드, 디자인 및 미디어, 풀 리퀘스트, 파이프라인 및 작업 및 파일 및 문서	pull-requests	Anthropic Directory에서
+claude-music	792	음악	music	Anthropic Directory에서
+prompt-enhancer-pack	788	Claude 기록	claude-history	Anthropic Directory에서
+cloud-sql-postgresql	787	엔지니어링, 데이터베이스 및 서버 및 클라우드	servers-cloud	Anthropic Directory에서
+colophon	786	글쓰기, 노트 및 메모리 및 파일 및 문서	writing	Anthropic Directory에서
+tailwind-design-system	784	엔지니어링, 코드, 파일 및 문서 및 Claude 기록	claude-history	Anthropic Directory에서
+HarnessKit	784	엔지니어링, 코드, 로그 및 오류, 파이프라인 및 작업 및 AI 모델 및 에이전트	logs-errors	Anthropic Directory에서
+Anomity	783	IT 및 보안, AI 모델 및 에이전트, 서버 및 클라우드, 로그 및 오류 및 종속성 및 패키지	servers-cloud,logs-errors,dependencies-packages,it-security	Anthropic Directory에서
+Zetesis	783	데이터, 의료 및 생명 과학, 연구 및 참고 문서	research,data,healthcare-life-sciences	Anthropic Directory에서
+alloydb-omni	781	엔지니어링, 데이터베이스, 서버 및 클라우드 및 로그 및 오류	servers-cloud,logs-errors	Anthropic Directory에서
+BigID	779	IT 및 보안, 데이터베이스, 로그 및 오류, 티켓 및 작업, 참고 문서 및 AI 모델 및 에이전트	logs-errors,it-security	Anthropic Directory에서
+ALCBar AI Practice Risk Check	779	법무 및 노트 및 메모리	legal	Anthropic Directory에서
+oryxflow - Trustworthy AI Data Analysis	778	데이터, 코드, 데이터베이스, 파이프라인 및 작업 및 파일 및 문서	data	Anthropic Directory에서
+Context Handoff	777	엔지니어링, Claude 기록 및 노트 및 메모리	claude-history	Anthropic Directory에서
+WSL + Windows Workspace Connector	777	코드, 파일 및 문서 및 서버 및 클라우드	servers-cloud	Anthropic Directory에서
+quick-gate-python	776	엔지니어링, 코드 및 로그 및 오류	logs-errors	Anthropic Directory에서
+burn	769	엔지니어링 및 Claude 기록	claude-history	Anthropic Directory에서
+CRO Audit and Test Kit	769	제품 및 웹사이트	product	Anthropic Directory에서
+streaming-skills-plugin	768	엔지니어링, 코드, 데이터베이스, 파이프라인 및 작업, API 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+bee	767	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+Travel Video & Documentary Maker	764	여행 및 디자인 및 미디어	travel	Anthropic Directory에서
+Clawd Pet	762	Claude 기록	claude-history	Anthropic Directory에서
+laravel-best-practices	762	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+the-life-edit	762	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+trip-json	762	여행, 참고 문서, 디자인 및 미디어 및 API	travel	Anthropic Directory에서
+plugin-pilot	756	엔지니어링, 종속성 및 패키지 및 Claude 설정	claude-settings,dependencies-packages	Anthropic Directory에서
+Ubersuggest	754	마케팅, 웹사이트 및 참고 문서	marketing	Anthropic Directory에서
+DAX for agents	753	데이터, 코드 및 참고 문서	data	Anthropic Directory에서
+Found	752	재무 및 티켓 및 작업	finance	Anthropic Directory에서
+Church & Faith Event Video Maker: Event Invitations	751	신앙, 디자인 및 미디어 및 이벤트	events,faith	Anthropic Directory에서
+Delegate: Agents Sized to the Job	750	엔지니어링, AI 모델 및 에이전트 및 Claude 기록	claude-history	Anthropic Directory에서
+vstack	749	엔지니어링, 코드, 풀 리퀘스트 및 파이프라인 및 작업	pull-requests	Anthropic Directory에서
+build-companion	749	제품, 파이프라인 및 작업 및 노트 및 메모리	product	Anthropic Directory에서
+JD Resume Tailor	747	HR, 직업 및 경력, 파일 및 문서 및 연락처 및 리드	contacts-leads,jobs-career,hr	Anthropic Directory에서
+product-discovery-flow	747	제품, 참고 문서 및 노트 및 메모리	product	Anthropic Directory에서
+Translate Book: arXiv	743	연구 및 파일 및 문서	research	Anthropic Directory에서
+bake-claude-md-files	742	엔지니어링, 파일 및 문서 및 Claude 설정	claude-settings	Anthropic Directory에서
+claude-code-notify	740	엔지니어링 및 Claude 기록	claude-history	Anthropic Directory에서
+pyvar-portfolio-analytics	739	재무	finance	Anthropic Directory에서
+Consultant Assignments	736	영업, 직업 및 경력, 티켓 및 작업 및 연락처 및 리드	contacts-leads,sales,jobs-career	Anthropic Directory에서
+learned-behavior	735	엔지니어링 및 Claude 기록	claude-history	Anthropic Directory에서
+knowledge-catalog	734	데이터, 데이터베이스, AI 모델 및 에이전트 및 종속성 및 패키지	dependencies-packages,data	Anthropic Directory에서
+GapToGrowth	734	HR, 직업 및 경력, 파일 및 문서 및 노트 및 메모리	jobs-career,hr	Anthropic Directory에서
+Forge	732	코드, AI 모델 및 에이전트 및 Claude 기록	claude-history	Anthropic Directory에서
+Checkly	731	엔지니어링, 서버 및 클라우드, 웹사이트, API 및 파이프라인 및 작업	servers-cloud	Anthropic Directory에서
+spiceai/skills	729	데이터, 데이터베이스, 서버 및 클라우드, AI 모델 및 에이전트, 파이프라인 및 작업 및 API	servers-cloud,data	Anthropic Directory에서
+magicweave	729	엔지니어링, 게임, AI 모델 및 에이전트 및 파이프라인 및 작업	games	Anthropic Directory에서
+Kubernetes Mastery	726	엔지니어링, 코드, 서버 및 클라우드 및 로그 및 오류	logs-errors	Anthropic Directory에서
+SAP HANA CLI	724	데이터 및 데이터베이스	data	Anthropic Directory에서
+Supaflow	724	데이터, 데이터베이스, 서버 및 클라우드, 파이프라인 및 작업 및 API	data	Anthropic Directory에서
+Catch Me Up	723	Claude 기록	claude-history	Anthropic Directory에서
+Global Database	723	영업, 연락처 및 리드 및 데이터베이스	contacts-leads,sales	Anthropic Directory에서
+Screen Browser	723	제품, 코드 및 디자인 및 미디어	product	Anthropic Directory에서
+Prompt Sharpener	722	Claude 기록	claude-history	Anthropic Directory에서
+owkin	722	데이터, 의료 및 생명 과학, AI 모델 및 에이전트, 디자인 및 미디어 및 연구	research,data,healthcare-life-sciences	Anthropic Directory에서
+Litigación Contencioso-Administrativa España	722	법무, 티켓 및 작업, 파일 및 문서 및 참고 문서	legal	Anthropic Directory에서
+Sent	720	마케팅, 이메일 및 메시지, 연락처 및 리드 및 API	contacts-leads,email-messages	Anthropic Directory에서
+ai-hp	719	Claude 설정	claude-settings	Anthropic Directory에서
+Memories	718	연구 및 노트 및 메모리	research	Anthropic Directory에서
+ml-pipeline	717	데이터, 코드, 데이터베이스 및 AI 모델 및 에이전트	data	Anthropic Directory에서
+Statutory Reporting Plugin	713	재무, 금융 서비스 및 파일 및 문서	finance,financial-services	Anthropic Directory에서
+Baton	713	운영, 노트 및 메모리, 티켓 및 작업 및 파일 및 문서	operations	Anthropic Directory에서
+cc	712	엔지니어링 및 Claude 기록	claude-history	Anthropic Directory에서
+claude-time	711	Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+heavy-usage	711	엔지니어링, 코드 및 Claude 설정	claude-settings	Anthropic Directory에서
+Cairn Verify — did the AI really fix it?	710	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+IQland Real Estate	710	운영, 파일 및 문서 및 참고 문서	operations	Anthropic Directory에서
+Holdtime	710	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+maisecrets	708	IT 및 보안 및 Claude 기록	claude-history,it-security	Anthropic Directory에서
+scout	708	연구, 웹사이트 및 파일 및 문서	research	Anthropic Directory에서
+cortex	707	엔지니어링, Claude 기록, Claude 설정 및 노트 및 메모리	claude-history,claude-settings	Anthropic Directory에서
+Codelux	706	엔지니어링, 코드, 노트 및 메모리 및 Claude 기록	claude-history	Anthropic Directory에서
+private-credit	706	재무, 금융 서비스 및 티켓 및 작업	finance,financial-services	Anthropic Directory에서
+HYBRD	706	건강 및 피트니스	health-fitness	Anthropic Directory에서
+xpost	705	이메일 및 메시지 및 디자인 및 미디어	email-messages	Anthropic Directory에서
+claude-meta-skills	703	엔지니어링, Claude 기록 및 Claude 설정	claude-history,claude-settings	Anthropic Directory에서
+GetYourJob	703	HR, 직업 및 경력, 티켓 및 작업 및 연락처 및 리드	contacts-leads,jobs-career,hr	Anthropic Directory에서
+Md Prompt	703	Claude 설정	claude-settings	Anthropic Directory에서
+Octopus	701	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+Ignite UI MCP Tools	701	디자인, 코드, 디자인 및 미디어 및 참고 문서	design	Anthropic Directory에서
+Litigación Laboral España	701	법무, 티켓 및 작업, 파일 및 문서 및 참고 문서	legal	Anthropic Directory에서
+ViewsMax	698	웹사이트, 이메일 및 메시지 및 재무	finance,email-messages	Anthropic Directory에서
+workflow-toolkit	697	엔지니어링, 코드, 데이터베이스, 티켓 및 작업, 풀 리퀘스트 및 노트 및 메모리	pull-requests	Anthropic Directory에서
+Preset MCP Skills	696	데이터 및 데이터베이스	data	Anthropic Directory에서
+claude-release	695	엔지니어링, 코드, 풀 리퀘스트 및 파이프라인 및 작업	pull-requests	Anthropic Directory에서
+Obriym CRM	694	영업, 연락처 및 리드, 티켓 및 작업 및 재무	contacts-leads,finance,sales	Anthropic Directory에서
+HIG Compliance Auditor	693	디자인, 코드 및 디자인 및 미디어	design	Anthropic Directory에서
+sentry-cli	692	엔지니어링 및 로그 및 오류	logs-errors	Anthropic Directory에서
+askrubberduck	692	엔지니어링, 코드, 풀 리퀘스트, 파이프라인 및 작업 및 티켓 및 작업	pull-requests	Anthropic Directory에서
+Shorty	692	연구, 음악, 디자인 및 미디어 및 노트 및 메모리	research,music	Anthropic Directory에서
+smarts.bio	691	데이터, 의료 및 생명 과학, 파일 및 문서, 데이터베이스, AI 모델 및 에이전트, 연구 및 API	research,data,healthcare-life-sciences	Anthropic Directory에서
+TheBoardroom	686	제품 및 AI 모델 및 에이전트	product	Anthropic Directory에서
+duckdb-skills	676	데이터베이스, 파일 및 문서, 서버 및 클라우드, 참고 문서 및 Claude 기록	claude-history	Anthropic Directory에서
+App Review Companion	676	제품 및 코드	product	Anthropic Directory에서
+context-vault	675	엔지니어링, 노트 및 메모리, 티켓 및 작업 및 Claude 기록	claude-history	Anthropic Directory에서
+holistics-development	675	데이터, 코드, 데이터베이스, 파일 및 문서 및 AI 모델 및 에이전트	data	Anthropic Directory에서
+AI for Database	674	데이터 및 데이터베이스	data	Anthropic Directory에서
+superdevflow	673	엔지니어링, 코드, 파이프라인 및 작업 및 Claude 기록	claude-history	Anthropic Directory에서
+ScreenSpec	673	디자인 및 디자인 및 미디어	design	Anthropic Directory에서
+GTD Brain	672	직업 및 경력, 티켓 및 작업 및 노트 및 메모리	jobs-career	Anthropic Directory에서
+Context Compactor: Faster Long Sessions	666	Claude 기록	claude-history	Anthropic Directory에서
+Economico	666	재무, 코드, 이메일 및 메시지 및 연락처 및 리드	contacts-leads,finance,email-messages	Anthropic Directory에서
+kopi-email-marketing	665	마케팅, 이메일 및 메시지 및 데이터베이스	email-messages	Anthropic Directory에서
+scrimba-explain	663	엔지니어링, 학습, 코드, 파일 및 문서 및 풀 리퀘스트	pull-requests,learning	Anthropic Directory에서
+Litigación Penal España	663	법무, 티켓 및 작업 및 참고 문서	legal	Anthropic Directory에서
+Compliance ES	661	법무, 코드, 파일 및 문서 및 참고 문서	legal	Anthropic Directory에서
+Nickture Skills for interface polish, Russian copy and AI deslop	659	디자인, 디자인 및 미디어 및 파일 및 문서	design	Anthropic Directory에서
+RV and OpenRV Media Review	658	디자인, 미디어 및 엔터테인먼트, 디자인 및 미디어 및 파일 및 문서	design,media-entertainment	Anthropic Directory에서
+ApplyArc	658	HR, 직업 및 경력, 연락처 및 리드, 파일 및 문서 및 티켓 및 작업	jobs-career,hr	Anthropic Directory에서
+Reaper Daemon	658	음악 및 코드	music	Anthropic Directory에서
+PhaseFolio	655	재무, 금융 서비스, AI 모델 및 에이전트, 참고 문서 및 연구	finance,research,financial-services	Anthropic Directory에서
+SocialRobot	655	마케팅, 웹사이트 및 이메일 및 메시지	email-messages	Anthropic Directory에서
+open-targets	654	데이터, 의료 및 생명 과학, AI 모델 및 에이전트, 참고 문서 및 API	data,healthcare-life-sciences	Anthropic Directory에서
+OpenCase	654	법무, 참고 문서 및 파일 및 문서	legal	Anthropic Directory에서
+Cloud FinOps by OptimNow	653	재무, 서버 및 클라우드 및 AI 모델 및 에이전트	finance	Anthropic Directory에서
+PandaDoc	653	영업, 파일 및 문서, 티켓 및 작업 및 재무	finance,sales	Anthropic Directory에서
+Clarify	651	Claude 기록	claude-history	Anthropic Directory에서
+hive	646	제품, 코드, 디자인 및 미디어 및 API	product	Anthropic Directory에서
+Vocuno	645	음악 및 디자인 및 미디어	music	Anthropic Directory에서
+DalyKit	643	데이터, 코드, 파일 및 문서 및 데이터베이스	data	Anthropic Directory에서
+FluidityIQ Patent Intelligence	642	법무, 참고 문서 및 API	legal	Anthropic Directory에서
+Landbot	641	고객 지원, AI 모델 및 에이전트, 웹사이트, 티켓 및 작업 및 이메일 및 메시지	email-messages,customer-support	Anthropic Directory에서
+Chuck	637	엔지니어링, 코드 및 Claude 설정	claude-settings	Anthropic Directory에서
+bash-guardrails	633	엔지니어링, 코드, 서버 및 클라우드 및 로그 및 오류	logs-errors	Anthropic Directory에서
+Daymark	633	학습, 노트 및 메모리, 티켓 및 작업, 이벤트 및 API	learning,events	Anthropic Directory에서
+Prefect	632	엔지니어링, 파이프라인 및 작업 및 로그 및 오류	logs-errors	Anthropic Directory에서
+Anysite GTM	632	영업, 연락처 및 리드, 데이터베이스 및 API	sales	Anthropic Directory에서
+Flow	632	운영 및 티켓 및 작업	operations	Anthropic Directory에서
+Waldo fyi	632	마케팅, 웹사이트, 디자인 및 미디어, 연구 및 참고 문서	research	Anthropic Directory에서
+stock-portfolio-valuation	631	개인 재정, 파일 및 문서 및 재무	finance,personal-finance	Anthropic Directory에서
+Sales Follow-Up	631	영업, 연락처 및 리드 및 이메일 및 메시지	email-messages,sales	Anthropic Directory에서
+preset-toolkit	631	데이터, 데이터베이스, 파일 및 문서 및 디자인 및 미디어	data	Anthropic Directory에서
+Ste Mode	623	글쓰기 및 Claude 설정	claude-settings,writing	Anthropic Directory에서
+Your Rules File	622	운영 및 Claude 설정	operations,claude-settings	Anthropic Directory에서
+Alteryx	621	데이터, 데이터베이스, 파이프라인 및 작업 및 파일 및 문서	data	Anthropic Directory에서
+Site Architecture & Faceted Navigation	619	제품, 웹사이트 및 파일 및 문서	product	Anthropic Directory에서
+Postify	618	마케팅, 이메일 및 메시지 및 디자인 및 미디어	email-messages	Anthropic Directory에서
+Rust CLI Skills	615	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+ClientGen Reach	614	마케팅, 금융 서비스, 디자인 및 미디어, 파일 및 문서 및 연락처 및 리드	financial-services	Anthropic Directory에서
+healthit-copilot	614	엔지니어링, 의료 및 생명 과학, 코드, 데이터베이스 및 API	healthcare-life-sciences	Anthropic Directory에서
+Agile Forge Praxis	610	운영 및 파이프라인 및 작업	operations	Anthropic Directory에서
+Referent	609	법무, 연락처 및 리드, 티켓 및 작업, 파일 및 문서, 재무, 이메일 및 메시지 및 Claude 기록	finance,email-messages,legal	Anthropic Directory에서
+closedloop-skills	609	제품, 연락처 및 리드, 티켓 및 작업 및 Claude 기록	product	Anthropic Directory에서
+boomi-data-integration	609	데이터, 데이터베이스 및 파이프라인 및 작업	data	Anthropic Directory에서
+Dependency Sentinel: Vulnerability and License Scanner	607	엔지니어링, 종속성 및 패키지 및 코드	dependencies-packages	Anthropic Directory에서
+Client Briefs	606	영업, 이메일 및 메시지, 파일 및 문서, 노트 및 메모리 및 티켓 및 작업	email-messages,sales	Anthropic Directory에서
+Newsletter Creator Tools	604	마케팅, 이메일 및 메시지, 노트 및 메모리 및 참고 문서	email-messages	Anthropic Directory에서
+award-travel-finder	604	여행, 연락처 및 리드 및 재무	travel	Anthropic Directory에서
+VibeLeads: B2B Lead Finder	603	영업, 연락처 및 리드 및 파일 및 문서	sales	Anthropic Directory에서
+Claudinator	601	Claude 설정	claude-settings	Anthropic Directory에서
+d0ma1n	601	IT 및 보안 및 웹사이트	it-security	Anthropic Directory에서
+Invoice Generator	600	영업, 파일 및 문서 및 재무	sales	Anthropic Directory에서
+Confident AI Client	599	엔지니어링, API 및 Claude 설정	claude-settings	Anthropic Directory에서
+Cheapest Domains	598	쇼핑 및 API	shopping	Anthropic Directory에서
+Reader Radius	597	마케팅, 이메일 및 메시지, 디자인 및 미디어 및 노트 및 메모리	email-messages	Anthropic Directory에서
+Writers' Room	597	제품, 글쓰기 및 코드	product,writing	Anthropic Directory에서
+Brendly	596	영업, 소매 및 이커머스, 디자인 및 미디어, 파일 및 문서 및 웹사이트	sales,retail-ecommerce	Anthropic Directory에서
+Copilot Instructions	594	엔지니어링, 코드 및 Claude 설정	claude-settings	Anthropic Directory에서
+whats-new	594	학습 및 Claude 설정	claude-settings,learning	Anthropic Directory에서
+Context Bar	593	Claude 기록 및 Claude 설정	claude-settings,claude-settings	Anthropic Directory에서
+Contracko	593	법무, 파일 및 문서 및 티켓 및 작업	legal	Anthropic Directory에서
+Blogizi	593	글쓰기, 파일 및 문서 및 웹사이트	writing	Anthropic Directory에서
+boomi-marketplace	591	엔지니어링, 파이프라인 및 작업 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+The Hard Half	588	영업, 연락처 및 리드, 티켓 및 작업 및 노트 및 메모리	sales	Anthropic Directory에서
+demand-insight	588	데이터, 데이터베이스 및 파이프라인 및 작업	data	Anthropic Directory에서
+Actuent	588	웹사이트 및 이벤트	events	Anthropic Directory에서
+GoodSet	588	건강 및 피트니스 및 노트 및 메모리	health-fitness	Anthropic Directory에서
+ARMO Ctrl	587	IT 및 보안, 서버 및 클라우드, 로그 및 오류, 종속성 및 패키지 및 API	logs-errors,dependencies-packages,it-security	Anthropic Directory에서
+babysit-pr	587	엔지니어링, 풀 리퀘스트 및 코드	pull-requests	Anthropic Directory에서
+Repo Pruefer	587	엔지니어링, 코드, 종속성 및 패키지 및 AI 모델 및 에이전트	dependencies-packages	Anthropic Directory에서
+Endgame	586	영업, 연락처 및 리드, 티켓 및 작업 및 API	sales	Anthropic Directory에서
+Templify by Irvito	586	영업, 파일 및 문서 및 디자인 및 미디어	sales	Anthropic Directory에서
+Avontus Viewer	586	운영, 디자인 및 미디어 및 파일 및 문서	operations	Anthropic Directory에서
+In Case Of Crisis	586	IT 및 보안 및 참고 문서	it-security	Anthropic Directory에서
+Quality Supervisor	583	엔지니어링, 로그 및 오류, 파이프라인 및 작업 및 풀 리퀘스트	logs-errors,pull-requests	Anthropic Directory에서
+PostSyncer	583	마케팅, 디자인 및 미디어, 이메일 및 메시지 및 API	email-messages	Anthropic Directory에서
+Civic	581	엔지니어링, API, 코드, 이메일 및 메시지, 파이프라인 및 작업, 데이터베이스 및 서버 및 클라우드	email-messages	Anthropic Directory에서
+dbt-toolkit	581	데이터, 코드, 데이터베이스, 파이프라인 및 작업 및 종속성 및 패키지	dependencies-packages,data	Anthropic Directory에서
+Aria	581	마케팅, 미디어 및 엔터테인먼트, 음악, 파일 및 문서 및 연락처 및 리드	music,media-entertainment	Anthropic Directory에서
+SEOcrawl AI Reports	578	마케팅, 웹사이트, 로그 및 오류 및 참고 문서	logs-errors	Anthropic Directory에서
+dyscalculia-support-skill	577	교육, 파일 및 문서 및 참고 문서	education	Anthropic Directory에서
+amg-toolkit	576	IT 및 보안, 서버 및 클라우드, 로그 및 오류 및 재무	logs-errors,it-security	Anthropic Directory에서
+PostEverywhere	573	마케팅, 이메일 및 메시지, 디자인 및 미디어 및 파일 및 문서	email-messages	Anthropic Directory에서
+AFKSwitch	573	Claude 설정	claude-settings	Anthropic Directory에서
+Data Protection	572	법무, 참고 문서 및 파일 및 문서	legal	Anthropic Directory에서
+Copycat	571	제품, 웹사이트 및 API	product	Anthropic Directory에서
+voice-of-customer	571	마케팅, 연구 및 웹사이트	research	Anthropic Directory에서
+Crossbeam Skills	570	영업, 연락처 및 리드, 티켓 및 작업 및 API	sales	Anthropic Directory에서
+Duda	570	운영, 웹사이트, 파일 및 문서 및 노트 및 메모리	operations	Anthropic Directory에서
+Search1API	570	연구, 웹사이트, 참고 문서 및 코드	research	Anthropic Directory에서
+Competitive Intel	569	영업 및 파일 및 문서	sales	Anthropic Directory에서
+Simple Muscle	567	건강 및 피트니스	health-fitness	Anthropic Directory에서
+Zscaler MCP Server	566	IT 및 보안, 서버 및 클라우드 및 로그 및 오류	logs-errors,it-security	Anthropic Directory에서
+Pi Security	566	엔지니어링, 코드, 종속성 및 패키지, 풀 리퀘스트 및 참고 문서	pull-requests,dependencies-packages	Anthropic Directory에서
+Gambit	565	제품, 티켓 및 작업, 참고 문서 및 파일 및 문서	product	Anthropic Directory에서
+Atly Places	564	여행 및 웹사이트	travel	Anthropic Directory에서
+MeetNotes	561	운영, 노트 및 메모리, 티켓 및 작업 및 파일 및 문서	operations	Anthropic Directory에서
+greptile	560	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+LurkAPI	559	연구, 웹사이트 및 디자인 및 미디어	research	Anthropic Directory에서
+SalesQL	557	영업 및 연락처 및 리드	sales	Anthropic Directory에서
+Dash Social	556	마케팅, 이메일 및 메시지 및 연락처 및 리드	email-messages	Anthropic Directory에서
+let-people-workshop	556	제품, 학습 및 노트 및 메모리	product,learning	Anthropic Directory에서
+diffbot	556	웹사이트, 연락처 및 리드, 연구 및 API	research	Anthropic Directory에서
+minh-toolkit	556	학습, 코드, 노트 및 메모리, 연구 및 퍼즐	research,learning,puzzles	Anthropic Directory에서
+Catalyst	555	연구 및 참고 문서	research	Anthropic Directory에서
+fcxo-toolkit	551	영업, 연락처 및 리드, 파일 및 문서, 노트 및 메모리, 티켓 및 작업 및 재무	sales	Anthropic Directory에서
+PartnerImpact	551	영업, 연락처 및 리드, 파이프라인 및 작업 및 재무	sales	Anthropic Directory에서
+Authority Astrology	549	신앙 및 노트 및 메모리	faith	Anthropic Directory에서
+cairo	548	제품, 코드 및 API	product	Anthropic Directory에서
+dev-squad	544	엔지니어링, 코드, 풀 리퀘스트 및 파이프라인 및 작업	pull-requests	Anthropic Directory에서
+claude-telegram-voice	543	이메일 및 메시지	email-messages	Anthropic Directory에서
+Claude CO2 Status Line	543	Claude 설정	claude-settings	Anthropic Directory에서
+lark	541	엔지니어링 및 이메일 및 메시지	email-messages	Anthropic Directory에서
+hone	539	디자인, 디자인 및 미디어, 코드 및 파일 및 문서	design	Anthropic Directory에서
+Playbook	539	디자인, 디자인 및 미디어 및 파일 및 문서	design	Anthropic Directory에서
+Etincel	539	글쓰기 및 파일 및 문서	writing	Anthropic Directory에서
+MagicInterview	538	영업, 직업 및 경력, 노트 및 메모리, 파일 및 문서 및 연락처 및 리드	sales,jobs-career	Anthropic Directory에서
+arrfleet-toolkit	537	집, 서버 및 클라우드, 파일 및 문서, 로그 및 오류 및 API	logs-errors,home	Anthropic Directory에서
+medidata	534	제품, 의료 및 생명 과학, 참고 문서 및 티켓 및 작업	product,healthcare-life-sciences	Anthropic Directory에서
+AWS Cost Guard: Cloud Cost and Kubernetes Debugging	533	엔지니어링, 서버 및 클라우드 및 로그 및 오류	logs-errors	Anthropic Directory에서
+MCP Conduct Register	533	IT 및 보안, AI 모델 및 에이전트 및 참고 문서	it-security	Anthropic Directory에서
+ASO Atlas	532	제품 및 API	product	Anthropic Directory에서
+skillquiver	528	엔지니어링, 코드, AI 모델 및 에이전트, Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+crowdstrike-falcon-fusion	527	IT 및 보안, 파이프라인 및 작업, 로그 및 오류 및 파일 및 문서	it-security	Anthropic Directory에서
+signal-hunter	526	제품, 연구, 노트 및 메모리 및 이메일 및 메시지	email-messages,product,research	Anthropic Directory에서
+Timesheet	526	운영, 파이프라인 및 작업, 티켓 및 작업, 건강 및 피트니스 및 재무	operations,health-fitness	Anthropic Directory에서
+Incubator	525	제품, AI 모델 및 에이전트 및 노트 및 메모리	product	Anthropic Directory에서
+Pigment	524	데이터 및 데이터베이스	data	Anthropic Directory에서
+Redpine	523	연구 및 참고 문서	research	Anthropic Directory에서
+IDD: Issue-Driven Development	522	엔지니어링, 풀 리퀘스트, 코드 및 티켓 및 작업	pull-requests	Anthropic Directory에서
+GetEmployed	521	HR, 직업 및 경력, 연락처 및 리드, 파일 및 문서, 이메일 및 메시지 및 티켓 및 작업	email-messages,jobs-career,hr	Anthropic Directory에서
+Answering Agent	520	고객 지원, 소매 및 이커머스, 티켓 및 작업 및 이메일 및 메시지	email-messages,retail-ecommerce,customer-support	Anthropic Directory에서
+FlightSeatMap	520	여행	travel	Anthropic Directory에서
+claude-damn	519	엔지니어링, 코드, 풀 리퀘스트 및 Claude 기록	pull-requests	Anthropic Directory에서
+CloudBees Unify AI plugin	519	엔지니어링, 코드, 파이프라인 및 작업, 로그 및 오류 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Laravel AI Starter	519	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+governance skill	518	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+CogmemAi	518	엔지니어링, Claude 기록, Claude 설정, 코드 및 서버 및 클라우드	claude-settings	Anthropic Directory에서
+Hiring Interviews	517	HR, 티켓 및 작업 및 노트 및 메모리	hr	Anthropic Directory에서
+Telepath	515	이메일 및 메시지, 파일 및 문서 및 디자인 및 미디어	email-messages	Anthropic Directory에서
+Think Before You Build	515	운영, 티켓 및 작업 및 파이프라인 및 작업	operations	Anthropic Directory에서
+WealthStoryLine	515	개인 재정 및 재무	personal-finance	Anthropic Directory에서
+gen-sage	515	IT 및 보안, AI 모델 및 에이전트, 코드 및 API	it-security	Anthropic Directory에서
+PostZen	514	마케팅, 이메일 및 메시지 및 디자인 및 미디어	email-messages	Anthropic Directory에서
+Learn Wiki	513	학습, 노트 및 메모리 및 파일 및 문서	learning	Anthropic Directory에서
+sdlc-kit-extended	512	엔지니어링, 코드, 파일 및 문서, 디자인 및 미디어, 풀 리퀘스트 및 파이프라인 및 작업	pull-requests	Anthropic Directory에서
+fiber-ai-plugin	511	영업, 연락처 및 리드 및 API	sales	Anthropic Directory에서
+Fluenticons	511	디자인, 코드 및 디자인 및 미디어	design	Anthropic Directory에서
+finsharpe	510	영업, 금융 서비스, 재무 및 참고 문서	sales,financial-services	Anthropic Directory에서
+cortellis	510	법무, 금융 서비스, 참고 문서 및 데이터베이스	financial-services,legal	Anthropic Directory에서
+lseg	509	재무, 금융 서비스 및 API	financial-services	Anthropic Directory에서
+Grammaropolis for Teachers	509	학습 및 참고 문서	learning	Anthropic Directory에서
+Docket Tracker	509	법무, 코드, 파일 및 문서 및 웹사이트	legal	Anthropic Directory에서
+JointJS Code Playground	508	엔지니어링, 코드, 데이터베이스, API 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+YnotOne	507	영업, 교육, 연락처 및 리드 및 티켓 및 작업	sales,education	Anthropic Directory에서
+Cyberine ReleaseGuard	507	엔지니어링, 코드, 종속성 및 패키지 및 파이프라인 및 작업	dependencies-packages	Anthropic Directory에서
+colosseum	506	웹사이트 및 연구	research	Anthropic Directory에서
+Basedash	506	데이터, 데이터베이스 및 파이프라인 및 작업	data	Anthropic Directory에서
+antiagree	503	제품, 코드 및 데이터베이스	product	Anthropic Directory에서
+BidSkim - UK Tenders & Contract Renewals	501	영업, 정부, 티켓 및 작업, 연락처 및 리드 및 참고 문서	sales,government	Anthropic Directory에서
+VariFlight	501	여행 및 웹사이트	travel	Anthropic Directory에서
+StatsClaw	500	엔지니어링, 코드, AI 모델 및 에이전트, 파이프라인 및 작업 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+PlayDrop	500	게임, 디자인 및 미디어 및 API	games	Anthropic Directory에서
+Cala	499	데이터, 참고 문서, API 및 연락처 및 리드	data	Anthropic Directory에서
+kordoc	498	운영, 정부 및 파일 및 문서	operations,government	Anthropic Directory에서
+CrowdSec Skill	498	IT 및 보안, 서버 및 클라우드, 로그 및 오류 및 API	it-security	Anthropic Directory에서
+Codacy	497	엔지니어링, 코드, 풀 리퀘스트 및 로그 및 오류	pull-requests	Anthropic Directory에서
+CoCart API	497	엔지니어링, 소매 및 이커머스, 코드 및 API	retail-ecommerce	Anthropic Directory에서
+PriceWin	497	여행	travel	Anthropic Directory에서
+devil-advocate	496	제품, 티켓 및 작업 및 퍼즐	product,puzzles	Anthropic Directory에서
+revelata	496	재무, 금융 서비스, 개인 재정, 데이터베이스, 파일 및 문서 및 참고 문서	financial-services,personal-finance	Anthropic Directory에서
+regai — Vietnamese Legal Consultant	494	법무, 참고 문서 및 파일 및 문서	legal	Anthropic Directory에서
+Insider Trades	492	재무 및 금융 서비스	financial-services	Anthropic Directory에서
+markgrab	491	엔지니어링, 연구, 파일 및 문서, 웹사이트 및 참고 문서	research	Anthropic Directory에서
+Booking FAQ	491	고객 지원, 여행 및 숙박, 파일 및 문서 및 티켓 및 작업	travel-hospitality,customer-support	Anthropic Directory에서
+Polskie Prawo	489	법무 및 참고 문서	legal	Anthropic Directory에서
+Bugsee	488	엔지니어링, 코드, 로그 및 오류 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Decile	487	영업, 소매 및 이커머스, 연락처 및 리드 및 재무	sales,retail-ecommerce	Anthropic Directory에서
+Publica Now	487	직업 및 경력, 파일 및 문서, 디자인 및 미디어, 학습, 음악 및 연구	research,learning,jobs-career,music	Anthropic Directory에서
+Arroway	486	운영, Claude 기록, Claude 설정 및 AI 모델 및 에이전트	operations,claude-settings	Anthropic Directory에서
+Catchup	485	엔지니어링, 풀 리퀘스트, 코드, 티켓 및 작업 및 이벤트	pull-requests,events	Anthropic Directory에서
+lookout	485	엔지니어링, Claude 설정 및 참고 문서	claude-settings	Anthropic Directory에서
+Dev Environment Doctor	485	엔지니어링, 서버 및 클라우드, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Slop Patterns	484	디자인, 코드 및 디자인 및 미디어	design	Anthropic Directory에서
+Shipshape	484	집 및 파일 및 문서	home	Anthropic Directory에서
+Harness Scope	483	엔지니어링, 코드 및 Claude 설정	claude-settings	Anthropic Directory에서
+sensei	483	학습, 코드 및 노트 및 메모리	learning	Anthropic Directory에서
+Fountain	483	마케팅, 디자인 및 미디어 및 음악	music	Anthropic Directory에서
+LeakStop	481	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Belay	481	엔지니어링, 학습, 코드 및 노트 및 메모리	learning	Anthropic Directory에서
+toughtongue	480	영업, AI 모델 및 에이전트, 티켓 및 작업 및 노트 및 메모리	sales	Anthropic Directory에서
+Songstats	480	마케팅, 미디어 및 엔터테인먼트 및 음악	music,media-entertainment	Anthropic Directory에서
+delivery-skills	478	엔지니어링, 코드, 풀 리퀘스트, 티켓 및 작업 및 파이프라인 및 작업	pull-requests	Anthropic Directory에서
+uNotes	478	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+sill-core	477	Claude 설정	claude-settings	Anthropic Directory에서
+Three Pillars	476	엔지니어링, 코드, 파일 및 문서, 풀 리퀘스트 및 파이프라인 및 작업	pull-requests	Anthropic Directory에서
+Job Interview Story Coach	475	HR, 직업 및 경력 및 노트 및 메모리	jobs-career,hr	Anthropic Directory에서
+shipwright	474	엔지니어링, 코드, 풀 리퀘스트 및 파일 및 문서	pull-requests	Anthropic Directory에서
+Zhixing Dojo	474	학습, 노트 및 메모리 및 퍼즐	learning,puzzles	Anthropic Directory에서
+Quickchat AI	473	고객 지원, AI 모델 및 에이전트, 티켓 및 작업 및 노트 및 메모리	customer-support	Anthropic Directory에서
+Ultralayer	470	재무, 금융 서비스, 이메일 및 메시지 및 API	email-messages,financial-services	Anthropic Directory에서
+Windmill HR	470	HR, 티켓 및 작업, 노트 및 메모리 및 연락처 및 리드	hr	Anthropic Directory에서
+Tarotap	469	신앙 및 퍼즐	faith,puzzles	Anthropic Directory에서
+Daily Journal	467	연구 및 참고 문서	research	Anthropic Directory에서
+lens	466	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+CSitRep Generator	466	운영, 파일 및 문서, 파이프라인 및 작업 및 티켓 및 작업	operations	Anthropic Directory에서
+bibtidy	466	엔지니어링, 학습, 파일 및 문서 및 참고 문서	learning	Anthropic Directory에서
+LeadLens for Laravel	465	엔지니어링, 풀 리퀘스트 및 코드	pull-requests	Anthropic Directory에서
+LVAI Pro	465	법무, 파일 및 문서, 참고 문서 및 풀 리퀘스트	pull-requests,legal	Anthropic Directory에서
+idmp-plugin	464	운영, 데이터베이스, 로그 및 오류, 서버 및 클라우드 및 디자인 및 미디어	operations	Anthropic Directory에서
+Postproxy	463	마케팅, 이메일 및 메시지, 웹사이트, 연락처 및 리드 및 API	email-messages	Anthropic Directory에서
+sp-global	463	재무, 금융 서비스 및 참고 문서	financial-services	Anthropic Directory에서
+kept	463	학습, 노트 및 메모리, 티켓 및 작업, 이벤트 및 Claude 기록	learning,events	Anthropic Directory에서
+lux	463	디자인, 코드, 디자인 및 미디어 및 웹사이트	design	Anthropic Directory에서
+Running Workout	463	건강 및 피트니스 및 파이프라인 및 작업	health-fitness	Anthropic Directory에서
+shazam	462	엔지니어링, 코드, 풀 리퀘스트, 티켓 및 작업, 참고 문서 및 노트 및 메모리	pull-requests	Anthropic Directory에서
+Cairn Signals — are your AI product's numbers real?	461	제품, AI 모델 및 에이전트 및 로그 및 오류	product	Anthropic Directory에서
+zime-skills	460	영업, 연락처 및 리드, 티켓 및 작업, 파일 및 문서 및 Claude 기록	sales	Anthropic Directory에서
+Simplio3D	460	제품, 소매 및 이커머스, 디자인 및 미디어 및 API	product,retail-ecommerce	Anthropic Directory에서
+interview-sim	459	엔지니어링, 직업 및 경력, 코드 및 퍼즐	jobs-career,puzzles	Anthropic Directory에서
+Retirement Estimator	458	개인 재정 및 재무	personal-finance	Anthropic Directory에서
+Revenue Analytics for HubSpot	457	영업, 데이터베이스, 연락처 및 리드, 이메일 및 메시지 및 파이프라인 및 작업	email-messages,sales	Anthropic Directory에서
+VibeMeASite	455	운영, 웹사이트 및 파일 및 문서	operations	Anthropic Directory에서
+Retirement Cash Flow Planner	455	개인 재정, 파일 및 문서 및 재무	personal-finance	Anthropic Directory에서
+fhir-format	455	엔지니어링, 의료 및 생명 과학, 코드 및 참고 문서	healthcare-life-sciences	Anthropic Directory에서
+PostFast	454	이메일 및 메시지 및 디자인 및 미디어	email-messages	Anthropic Directory에서
+Tirion	454	영업, 비영리, 연락처 및 리드, 참고 문서 및 재무	sales,nonprofit	Anthropic Directory에서
+GetSign	454	운영, 파일 및 문서 및 티켓 및 작업	operations	Anthropic Directory에서
+BridgeApp	453	엔지니어링, 티켓 및 작업, 이메일 및 메시지, 노트 및 메모리 및 파이프라인 및 작업	email-messages	Anthropic Directory에서
+Bundle Size Sentinel: JavaScript Bundle Analyzer	453	엔지니어링, 종속성 및 패키지 및 코드	dependencies-packages	Anthropic Directory에서
+Hive	452	운영, 파이프라인 및 작업, 티켓 및 작업, 풀 리퀘스트 및 API	email-messages,operations,operations	Anthropic Directory에서
+Awesome Maintainer Defense	451	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+The Stoic Library	451	학습, 참고 문서 및 연구	research,learning	Anthropic Directory에서
+Dev Loop: Fix, Commit and Ship	450	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+wai-suite	450	엔지니어링, 코드, 풀 리퀘스트, 파이프라인 및 작업 및 로그 및 오류	pull-requests	Anthropic Directory에서
+User Intuition	450	제품, 연락처 및 리드 및 연구	product,research	Anthropic Directory에서
+Proofable	449	AI 모델 및 에이전트, Claude 설정 및 API	claude-settings	Anthropic Directory에서
+Cie11 Formulacion Clinica	449	고객 지원, 의료 및 생명 과학 및 노트 및 메모리	customer-support,healthcare-life-sciences	Anthropic Directory에서
+prism	448	엔지니어링, 코드, 풀 리퀘스트 및 종속성 및 패키지	pull-requests,dependencies-packages	Anthropic Directory에서
+MAI Second Brain	448	연구, 노트 및 메모리, 웹사이트 및 티켓 및 작업	research	Anthropic Directory에서
+Voice Messages	447	파일 및 문서, 이메일 및 메시지 및 노트 및 메모리	email-messages	Anthropic Directory에서
+Kowalah	447	운영, 파이프라인 및 작업 및 AI 모델 및 에이전트	operations	Anthropic Directory에서
+ThemeReviewKit	447	제품, 코드 및 디자인 및 미디어	product	Anthropic Directory에서
+anVendor	445	영업, 연락처 및 리드 및 API	sales	Anthropic Directory에서
+maddog	445	제품, AI 모델 및 에이전트, 코드, 파일 및 문서 및 노트 및 메모리	product	Anthropic Directory에서
+mypowers	445	엔지니어링, 코드, Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+Propper	445	법무 및 파일 및 문서	legal	Anthropic Directory에서
+Foresight Engine	444	퍼즐	puzzles	Anthropic Directory에서
+Usero	442	제품, 티켓 및 작업 및 풀 리퀘스트	pull-requests,product	Anthropic Directory에서
+EasyEsuite	442	운영, 소매 및 이커머스, 데이터베이스, 재무, 티켓 및 작업 및 파이프라인 및 작업	operations,retail-ecommerce	Anthropic Directory에서
+FluidDocs Deck Builder	442	제품, 파일 및 문서 및 디자인 및 미디어	product	Anthropic Directory에서
+MCP Debugging	442	엔지니어링, 로그 및 오류, 코드 및 Claude 설정	claude-settings	Anthropic Directory에서
+Ripe Leads Cold Email Writer	441	영업, 이메일 및 메시지 및 연락처 및 리드	email-messages,sales	Anthropic Directory에서
+Hydrant	441	운영 및 티켓 및 작업	operations	Anthropic Directory에서
+Cladeon	441	제품, AI 모델 및 에이전트 및 파일 및 문서	product	Anthropic Directory에서
+LegalizaObra	439	운영, 연락처 및 리드, 재무 및 티켓 및 작업	operations	Anthropic Directory에서
+Sola Security	439	IT 및 보안, 로그 및 오류, 서버 및 클라우드 및 API	it-security	Anthropic Directory에서
+ArcKit French Public Sector Overlay	437	IT 및 보안, 정부 및 참고 문서	it-security,government	Anthropic Directory에서
+Loops	436	마케팅, 이메일 및 메시지 및 연락처 및 리드	email-messages	Anthropic Directory에서
+NeonPanel	436	운영, 소매 및 이커머스, 데이터베이스, 재무 및 파이프라인 및 작업	operations,retail-ecommerce	Anthropic Directory에서
+CoinLobster	436	개인 재정, 재무 및 API	personal-finance	Anthropic Directory에서
+skill-validator	435	엔지니어링, 코드 및 Claude 설정	claude-settings	Anthropic Directory에서
+LilysAI	434	연구, 파일 및 문서 및 노트 및 메모리	research	Anthropic Directory에서
+SiteSpeak Chatbot Manager	433	고객 지원, AI 모델 및 에이전트 및 웹사이트	customer-support	Anthropic Directory에서
+plugin-manager	432	Claude 설정	claude-settings	Anthropic Directory에서
+Infinite Resume	432	HR, 직업 및 경력 및 파일 및 문서	jobs-career,hr	Anthropic Directory에서
+ChatDaddy	431	영업, 이메일 및 메시지, 연락처 및 리드 및 티켓 및 작업	email-messages,sales	Anthropic Directory에서
+Folio	431	연구 및 파일 및 문서	research	Anthropic Directory에서
+shopee-review	431	마케팅, 소매 및 이커머스, 파일 및 문서 및 웹사이트	retail-ecommerce	Anthropic Directory에서
+ycofficehour	430	제품, 퍼즐 및 노트 및 메모리	product,puzzles	Anthropic Directory에서
+Headlessmc	430	엔지니어링, 코드, 서버 및 클라우드, 파이프라인 및 작업 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Extranjería España	430	법무, 파일 및 문서 및 참고 문서	legal	Anthropic Directory에서
+BetterOff	430	개인 재정 및 재무	personal-finance	Anthropic Directory에서
+PropertyMe	429	운영, 연락처 및 리드, 티켓 및 작업 및 파일 및 문서	operations	Anthropic Directory에서
+Чуковский	429	글쓰기 및 파일 및 문서	writing	Anthropic Directory에서
+Job Interview and Meeting Preparation	428	영업 및 파일 및 문서	sales	Anthropic Directory에서
+Greenflash	428	제품, Claude 기록, 코드, AI 모델 및 에이전트 및 티켓 및 작업	product	Anthropic Directory에서
+Lexbeam EU AI Governance	428	법무, 참고 문서, 파일 및 문서 및 AI 모델 및 에이전트	legal	Anthropic Directory에서
+Carbide	426	운영, 티켓 및 작업, 연락처 및 리드, 파이프라인 및 작업 및 서버 및 클라우드	operations	Anthropic Directory에서
+Stintwell for Law Firms	425	운영 및 노트 및 메모리	operations	Anthropic Directory에서
+Liquid LSP	424	엔지니어링, 소매 및 이커머스, 코드 및 웹사이트	retail-ecommerce	Anthropic Directory에서
+ArcKit USA Federal Civilian Overlay	424	IT 및 보안, 정부 및 참고 문서	it-security,government	Anthropic Directory에서
+mana	423	엔지니어링, 코드, 풀 리퀘스트, 티켓 및 작업 및 파일 및 문서	pull-requests	Anthropic Directory에서
+vectorgov	421	법무, 정부 및 참고 문서	legal,government	Anthropic Directory에서
+Firmament	420	운영 및 노트 및 메모리	operations	Anthropic Directory에서
+Magento 2 / Mage-OS Skills	420	엔지니어링, 소매 및 이커머스, 코드, 웹사이트 및 디자인 및 미디어	retail-ecommerce	Anthropic Directory에서
+Bumper Sticker	419	Claude 설정	claude-settings	Anthropic Directory에서
+boomi-datahub	419	데이터 및 데이터베이스	data	Anthropic Directory에서
+giskard-skills	419	데이터, AI 모델 및 에이전트 및 코드	data	Anthropic Directory에서
+IFG	418	법무, 금융 서비스 및 참고 문서	financial-services,legal	Anthropic Directory에서
+Estimate Builder	417	운영 및 파일 및 문서	operations	Anthropic Directory에서
+brief-interview	417	제품 및 파일 및 문서	product	Anthropic Directory에서
+Bible by Midvash	417	연구 및 참고 문서	research	Anthropic Directory에서
+SmartReply	416	고객 지원, 소매 및 이커머스, 이메일 및 메시지, 티켓 및 작업 및 AI 모델 및 에이전트	email-messages,retail-ecommerce,customer-support	Anthropic Directory에서
+GraphQL Guardian: Breaking Changes and N+1 Check	416	엔지니어링, 코드, API 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+idea-launch	412	제품 및 API	product	Anthropic Directory에서
+My Video Gift	412	가족 및 관계 및 디자인 및 미디어	family-relationships	Anthropic Directory에서
+Instruction Eval	411	엔지니어링, 코드 및 Claude 설정	claude-settings	Anthropic Directory에서
+Cache TTL Timer	410	Claude 설정	claude-settings	Anthropic Directory에서
+Make It Work	408	엔지니어링, 코드, 티켓 및 작업 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+circleback	406	Claude 기록, 이메일 및 메시지 및 이벤트	email-messages,events	Anthropic Directory에서
+Invaders	406	게임 및 퍼즐	games,puzzles	Anthropic Directory에서
+Splashify Pro	404	마케팅, 이메일 및 메시지, 연락처 및 리드, AI 모델 및 에이전트 및 파이프라인 및 작업	email-messages	Anthropic Directory에서
+Orbi	404	엔지니어링, 코드, 풀 리퀘스트 및 파이프라인 및 작업	pull-requests	Anthropic Directory에서
+ArcKit Canadian Federal Overlay	404	운영, 정부 및 참고 문서	operations,government	Anthropic Directory에서
+Olostep	404	엔지니어링, 연구, 웹사이트, 코드, 참고 문서 및 API	research	Anthropic Directory에서
+NeverApply	403	영업, 직업 및 경력, 연락처 및 리드 및 티켓 및 작업	sales,jobs-career	Anthropic Directory에서
+CoverCount Staff	403	운영, 여행 및 숙박, 티켓 및 작업, 연락처 및 리드 및 재무	operations,travel-hospitality	Anthropic Directory에서
+Jotbook	402	학습, 노트 및 메모리 및 파일 및 문서	learning	Anthropic Directory에서
+Sixth Sense	401	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+Bigmind	400	영업, 티켓 및 작업, 이메일 및 메시지, 연락처 및 리드 및 API	email-messages,sales	Anthropic Directory에서
+NiceTryGPT	400	엔지니어링 및 퍼즐	puzzles	Anthropic Directory에서
+Install Checkpoint	399	IT 및 보안, 종속성 및 패키지 및 Claude 설정	claude-settings,dependencies-packages,it-security	Anthropic Directory에서
+Слопотрон	399	글쓰기 및 파일 및 문서	writing	Anthropic Directory에서
+district-court-drafting	398	법무 및 파일 및 문서	legal	Anthropic Directory에서
+BioFlow	398	직업 및 경력 및 웹사이트	jobs-career	Anthropic Directory에서
+Conveo	397	제품, 연구 및 노트 및 메모리	product,research	Anthropic Directory에서
+Commslayer	397	고객 지원, 소매 및 이커머스, 티켓 및 작업, 참고 문서 및 AI 모델 및 에이전트	retail-ecommerce,customer-support	Anthropic Directory에서
+Ownhand	396	이메일 및 메시지, 풀 리퀘스트 및 노트 및 메모리	email-messages,pull-requests	Anthropic Directory에서
+Baz	396	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+arvancloud-api	395	엔지니어링, 서버 및 클라우드, 웹사이트, 종속성 및 패키지 및 API	dependencies-packages	Anthropic Directory에서
+sync-my-skills	395	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Brouky	394	영업, 금융 서비스, 연락처 및 리드, 재무 및 참고 문서	sales,financial-services	Anthropic Directory에서
+Headset	393	영업, 소매 및 이커머스, 데이터베이스 및 재무	sales,retail-ecommerce	Anthropic Directory에서
+Antevo Wealth	393	재무, 금융 서비스, 개인 재정 및 API	financial-services,personal-finance	Anthropic Directory에서
+Multi-repo Diff	391	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+Dealertide	391	운영, 소매 및 이커머스, 연락처 및 리드, 티켓 및 작업, 재무 및 데이터베이스	operations,retail-ecommerce	Anthropic Directory에서
+Magekwik Magento Toolkit	391	엔지니어링, 소매 및 이커머스, 코드, 데이터베이스 및 API	retail-ecommerce	Anthropic Directory에서
+Buyer Engagement Sales Engine -- Free	390	영업, 노트 및 메모리 및 참고 문서	sales	Anthropic Directory에서
+cwc-makers	389	엔지니어링, 코드, 서버 및 클라우드 및 종속성 및 패키지	dependencies-packages	Anthropic 작성
+Awayfolk	389	여행 및 파일 및 문서	travel	Anthropic Directory에서
+VerseDB: Comic Book Tracker	388	쇼핑, 데이터베이스, 디자인 및 미디어 및 노트 및 메모리	shopping	Anthropic Directory에서
+devils-advocate	387	제품, 코드 및 파이프라인 및 작업	product	Anthropic Directory에서
+ArcKit UAE Federal Overlay	387	IT 및 보안, 정부 및 참고 문서	it-security,government	Anthropic Directory에서
+join-the-team	386	엔지니어링, 코드, 서버 및 클라우드, 로그 및 오류, AI 모델 및 에이전트, 파이프라인 및 작업 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+ecoctx	386	엔지니어링, 코드, Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+Briefcase	386	재무, 금융 서비스, 파일 및 문서 및 티켓 및 작업	financial-services	Anthropic Directory에서
+Data Pipeline Builder: dbt and Airflow Checks	386	데이터, 코드 및 파이프라인 및 작업	data	Anthropic Directory에서
+norma-claude-skill	386	IT 및 보안 및 참고 문서	it-security	Anthropic Directory에서
+Hypotize	385	제품, 파이프라인 및 작업 및 노트 및 메모리	product	Anthropic Directory에서
+LeadMagic	384	영업, 연락처 및 리드 및 API	sales	Anthropic Directory에서
+protect-mcp	384	IT 및 보안 및 API	it-security	Anthropic Directory에서
+Juniper Square	382	영업, 금융 서비스, 연락처 및 리드, 재무, 티켓 및 작업 및 파일 및 문서	sales,financial-services	Anthropic Directory에서
+Fullstory	382	제품, 로그 및 오류 및 웹사이트	product	Anthropic Directory에서
+Dualkit	381	디자인, 디자인 및 미디어 및 코드	design	Anthropic Directory에서
+Tuteliq	380	IT 및 보안, 이메일 및 메시지, 파일 및 문서, 디자인 및 미디어 및 로그 및 오류	it-security	Anthropic Directory에서
+impact-analysis	379	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+holistics-reporting	379	데이터, 데이터베이스 및 참고 문서	data	Anthropic Directory에서
+Pacelab Workout Creator	379	건강 및 피트니스 및 이벤트	events,health-fitness	Anthropic Directory에서
+StoreConnect Agent Skills	377	엔지니어링, 소매 및 이커머스, 코드, 데이터베이스, 웹사이트 및 파일 및 문서	retail-ecommerce	Anthropic Directory에서
+CREparser Lease Abstraction	376	법무 및 파일 및 문서	legal	Anthropic Directory에서
+kap	374	재무, 금융 서비스, 개인 재정, 참고 문서 및 API	financial-services,personal-finance	Anthropic Directory에서
+QuizWrangler	374	파일 및 문서 및 학습	learning	Anthropic Directory에서
+Textpass De	374	글쓰기 및 파일 및 문서	writing	Anthropic Directory에서
+NPMScan	373	엔지니어링, 종속성 및 패키지, 코드 및 파일 및 문서	dependencies-packages	Anthropic Directory에서
+Demand from the File	373	법무, 파일 및 문서 및 티켓 및 작업	legal	Anthropic Directory에서
+Forge PII Scan	373	IT 및 보안 및 파일 및 문서	it-security	Anthropic Directory에서
+Dabble Me	373	글쓰기 및 노트 및 메모리	writing	Anthropic Directory에서
+Nexaya OS	372	파일 및 문서, Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+Scio Knowledge	372	연구 및 참고 문서	research	Anthropic Directory에서
+Follow-Up Writer	371	영업 및 이메일 및 메시지	sales	Anthropic Directory에서
+Nonresident Tax	371	재무, 금융 서비스, 참고 문서 및 티켓 및 작업	financial-services	Anthropic Directory에서
+Seudonimizador Clinico Juridico	370	법무, 의료 및 생명 과학 및 파일 및 문서	legal,healthcare-life-sciences	Anthropic Directory에서
+Sprout: AI Finance & Cash Flow	369	개인 재정 및 재무	personal-finance	Anthropic Directory에서
+The Safety Net	368	엔지니어링, 코드, Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+StarGlass Research	368	연구 및 참고 문서	research	Anthropic Directory에서
+socratic-mentor	368	학습 및 참고 문서	learning	Anthropic Directory에서
+coderocket	367	엔지니어링, 코드, 파이프라인 및 작업 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+MCPBinder	367	운영, 티켓 및 작업 및 노트 및 메모리	operations	Anthropic Directory에서
+Synapse MCP	366	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+HSK Tutor	366	학습	learning	Anthropic Directory에서
+VibeCS support chat	366	고객 지원, 코드, 웹사이트 및 연락처 및 리드	customer-support	Anthropic Directory에서
+jar-explorer	365	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Pet	365	게임	games	Anthropic Directory에서
+Discovery To Mvp	364	제품, 파일 및 문서, 노트 및 메모리 및 퍼즐	product,puzzles	Anthropic Directory에서
+Naysayer	364	제품 및 티켓 및 작업	product	Anthropic Directory에서
+session-recharge	364	Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+Gestão Ágil 2.0	363	운영, 파이프라인 및 작업, 티켓 및 작업 및 노트 및 메모리	operations	Anthropic Directory에서
+FXMacroData	363	재무, 금융 서비스, 참고 문서 및 API	financial-services	Anthropic Directory에서
+csv-quality-gate	362	데이터, 파일 및 문서 및 파이프라인 및 작업	data	Anthropic Directory에서
+drata-grc-skills	362	IT 및 보안, 티켓 및 작업 및 로그 및 오류	it-security	Anthropic Directory에서
+VPNDetection	361	IT 및 보안, API 및 로그 및 오류	it-security	Anthropic Directory에서
+Realize Plugin	360	마케팅, 소매 및 이커머스, 파이프라인 및 작업 및 API	retail-ecommerce	Anthropic Directory에서
+Apollo Invoicing	359	영업, 연락처 및 리드 및 재무	sales	Anthropic Directory에서
+powmcp	359	엔지니어링, 종속성 및 패키지, 파일 및 문서, API, 웹사이트 및 음악	dependencies-packages,music	Anthropic Directory에서
+oracle-ai-data-platform-workbench-aws-migrator	359	데이터, 데이터베이스, 서버 및 클라우드, 파이프라인 및 작업 및 AI 모델 및 에이전트	data	Anthropic Directory에서
+Breeze	357	운영, 파이프라인 및 작업 및 티켓 및 작업	operations	Anthropic Directory에서
+Stateful	357	제품, 코드 및 디자인 및 미디어	product	Anthropic Directory에서
+Weekly Client Report	356	영업, 코드, 이메일 및 메시지 및 노트 및 메모리	sales	Anthropic Directory에서
+JFrog	355	엔지니어링, 종속성 및 패키지, 코드, 파이프라인 및 작업 및 AI 모델 및 에이전트	dependencies-packages	Anthropic Directory에서
+CC Limit Pacer	353	엔지니어링, Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+SpliceCraft	352	엔지니어링, 의료 및 생명 과학, 파일 및 문서 및 코드	healthcare-life-sciences	Anthropic Directory에서
+GIA Prospecting Engine	351	영업, 연락처 및 리드 및 이메일 및 메시지	sales	Anthropic Directory에서
+craft-statusline	350	엔지니어링, 코드, 로그 및 오류, Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+ArcKit UK Financial Services Payments Overlay	350	재무, 금융 서비스 및 참고 문서	financial-services	Anthropic Directory에서
+Oro	350	음악	music	Anthropic Directory에서
+ScanMalware	350	IT 및 보안, 웹사이트 및 API	it-security	Anthropic Directory에서
+dailybot	349	운영, 이메일 및 메시지, 티켓 및 작업 및 Claude 기록	operations	Anthropic Directory에서
+Vulca	349	디자인, 디자인 및 미디어 및 파일 및 문서	design	Anthropic Directory에서
+Wellness Project	349	건강 및 피트니스	health-fitness	Anthropic Directory에서
+Brilliant Directories	348	운영, 연락처 및 리드, 티켓 및 작업, 파일 및 문서, 이메일 및 메시지 및 웹사이트	operations	Anthropic Directory에서
+PlausibleBA — Business Architecture Skills	348	제품 및 파일 및 문서	product	Anthropic Directory에서
+Trendyol Marketplace Integration	348	엔지니어링, 소매 및 이커머스 및 API	retail-ecommerce	Anthropic Directory에서
+statusbar	347	Claude 설정	claude-settings	Anthropic Directory에서
+Featurebase	347	고객 지원, 티켓 및 작업, 연락처 및 리드 및 이메일 및 메시지	customer-support	Anthropic Directory에서
+Burn Baby Burn	346	Claude 설정	claude-settings	Anthropic Directory에서
+CompanyTrack	344	영업, 연락처 및 리드, 재무 및 참고 문서	sales	Anthropic Directory에서
+ccgrapher	344	운영 및 파이프라인 및 작업	operations	Anthropic Directory에서
+Session Vitals	344	엔지니어링, Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+Lenadweb Usage Meter	343	Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+mindpowers	342	제품, 파일 및 문서 및 노트 및 메모리	product	Anthropic Directory에서
+pm-augmente	342	제품, 티켓 및 작업, 노트 및 메모리 및 Claude 기록	product	Anthropic Directory에서
+Pour Picks	342	음식 및 참고 문서	food	Anthropic Directory에서
+Governer	339	엔지니어링, Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+Sugra API Skills	339	재무, 참고 문서, 연구 및 API	research	Anthropic Directory에서
+myocr.app	338	재무, 금융 서비스 및 파일 및 문서	financial-services	Anthropic Directory에서
+Rill	338	데이터, 데이터베이스, 코드 및 디자인 및 미디어	data	Anthropic Directory에서
+Wealthbox	337	영업, 금융 서비스, 연락처 및 리드, 파일 및 문서 및 티켓 및 작업	sales,financial-services	Anthropic Directory에서
+lotlytics	337	개인 재정 및 참고 문서	personal-finance	Anthropic Directory에서
+Claudebase	336	Claude 설정 및 Claude 기록	claude-settings	Anthropic Directory에서
+Worklittle Jobs	335	영업, 직업 및 경력, 티켓 및 작업 및 연락처 및 리드	sales,jobs-career,jobs-career	Anthropic Directory에서
+Pics.io	335	디자인, 디자인 및 미디어 및 파일 및 문서	design	Anthropic Directory에서
+supreme-court-drafting	335	법무 및 파일 및 문서	legal	Anthropic Directory에서
+Pixipet	335	게임 및 Claude 기록	games	Anthropic Directory에서
+MO§ES™ Governance for Cowork	334	IT 및 보안, Claude 기록 및 Claude 설정	claude-settings,it-security	Anthropic Directory에서
+Review Ready	333	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Pollen	333	마케팅, 소매 및 이커머스, 파일 및 문서, API 및 웹사이트	retail-ecommerce	Anthropic Directory에서
+MySSAgent for Financial Advisors	332	영업, 금융 서비스, 연락처 및 리드 및 재무	sales,financial-services	Anthropic Directory에서
+Tenet	332	직업 및 경력, 노트 및 메모리 및 Claude 설정	claude-settings,jobs-career	Anthropic Directory에서
+sdlc-kit	331	엔지니어링, 코드, 파일 및 문서, 풀 리퀘스트 및 노트 및 메모리	pull-requests	Anthropic Directory에서
+Meeting Memory by Grain	330	운영, Claude 기록, 티켓 및 작업, 이메일 및 메시지 및 노트 및 메모리	operations	Anthropic Directory에서
+terse	330	엔지니어링, Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+Intelligo	329	영업, 금융 서비스, 연락처 및 리드 및 파일 및 문서	sales,financial-services	Anthropic Directory에서
+dyslexia-support-skill	329	학습, 파일 및 문서 및 참고 문서	learning	Anthropic Directory에서
+N|Solid Skills	327	엔지니어링, 코드, 로그 및 오류, 종속성 및 패키지 및 서버 및 클라우드	dependencies-packages	Anthropic Directory에서
+TLS Radar	327	IT 및 보안, 서버 및 클라우드 및 API	it-security	Anthropic Directory에서
+frontier-simplify	326	엔지니어링, 코드 및 풀 리퀘스트	pull-requests	Anthropic Directory에서
+SalesEQ	326	영업, 이메일 및 메시지, 티켓 및 작업 및 참고 문서	sales	Anthropic Directory에서
+LCA and DEALA agent skills	326	엔지니어링, 데이터베이스, 연구 및 파일 및 문서	research	Anthropic Directory에서
+flightqueue	326	여행	travel	Anthropic Directory에서
+SignalPilot	325	데이터, 코드, 데이터베이스 및 파이프라인 및 작업	data	Anthropic Directory에서
+keyboards-mcp	325	음악 및 디자인 및 미디어	music	Anthropic Directory에서
+Robin	325	여행, 파일 및 문서 및 연락처 및 리드	travel	Anthropic Directory에서
+oleander	324	데이터, 데이터베이스, 파이프라인 및 작업 및 코드	data	Anthropic Directory에서
+devrunway	323	엔지니어링, 코드, 서버 및 클라우드, 로그 및 오류, 파이프라인 및 작업, 풀 리퀘스트 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+RiskModels	322	재무, 금융 서비스 및 데이터베이스	financial-services	Anthropic Directory에서
+mastercard-developers	321	엔지니어링, 금융 서비스 및 API	financial-services	Anthropic Directory에서
+inSitu Sales	321	영업, 소매 및 이커머스, 연락처 및 리드, 데이터베이스, 파일 및 문서, 티켓 및 작업 및 재무	retail-ecommerce	Anthropic Directory에서
+Glance	320	엔지니어링, Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+Churn Prevention Kit	320	고객 지원, 데이터베이스, 티켓 및 작업 및 재무	customer-support	Anthropic Directory에서
+dependency-evaluator	318	엔지니어링, 종속성 및 패키지 및 코드	dependencies-packages	Anthropic Directory에서
+Recruiter Panel	318	HR, 파일 및 문서 및 티켓 및 작업	hr	Anthropic Directory에서
+HeroMi Help Me Now: Parenting in Hard Moments	318	가족 및 관계 및 노트 및 메모리	family-relationships	Anthropic Directory에서
+dino	316	게임	games	Anthropic Directory에서
+sosa-governor	315	IT 및 보안, AI 모델 및 에이전트 및 로그 및 오류	it-security	Anthropic Directory에서
+GetItDone	313	운영 및 티켓 및 작업	operations	Anthropic Directory에서
+Schedule Health Check	313	운영, 파일 및 문서 및 파이프라인 및 작업	operations	Anthropic Directory에서
+realLaw AI	313	법무 및 참고 문서	legal	Anthropic Directory에서
+Installed Api	311	엔지니어링, 코드, API 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+LaunchNotes	310	제품, 풀 리퀘스트, 파이프라인 및 작업, 티켓 및 작업 및 파일 및 문서	product	Anthropic Directory에서
+Conical Forum	310	연구, 노트 및 메모리 및 Claude 기록	research	Anthropic Directory에서
+envrelay	310	엔지니어링, 파일 및 문서, 코드, 서버 및 클라우드, 종속성 및 패키지 및 AI 모델 및 에이전트	dependencies-packages	Anthropic Directory에서
+Pipeline Reconcile	310	데이터, 파이프라인 및 작업 및 데이터베이스	data	Anthropic Directory에서
+Plugin Packaging	309	엔지니어링, 코드, 파일 및 문서 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+indian-contracts-drafting	309	법무 및 파일 및 문서	legal	Anthropic Directory에서
+yaps-memory	308	연구 및 노트 및 메모리	research	Anthropic Directory에서
+ArcKit Australian Energy Sector Overlay	308	IT 및 보안 및 참고 문서	it-security	Anthropic Directory에서
+Monta	306	운영, 서버 및 클라우드, 파이프라인 및 작업 및 로그 및 오류	operations	Anthropic Directory에서
+PokeBot.ai Career Coach	306	HR, 직업 및 경력, 노트 및 메모리 및 연락처 및 리드	jobs-career,hr	Anthropic Directory에서
+Contezza AI for Merchants	306	엔지니어링, 소매 및 이커머스, API 및 파일 및 문서	retail-ecommerce	Anthropic Directory에서
+Slashy	305	운영, 이메일 및 메시지, 이벤트 및 파이프라인 및 작업	operations,events	Anthropic Directory에서
+theprotocol.it	305	HR 및 티켓 및 작업	hr	Anthropic Directory에서
+TrueGradient Planning Analysis	304	운영 및 데이터베이스	operations	Anthropic Directory에서
+Language Keeper	304	학습 및 Claude 기록	learning	Anthropic Directory에서
+EASE OS	303	운영, 노트 및 메모리, 파일 및 문서, Claude 기록 및 Claude 설정	operations,claude-settings	Anthropic Directory에서
+claude-vitals	303	엔지니어링, Claude 기록, Claude 설정 및 로그 및 오류	claude-settings	Anthropic Directory에서
+Ragjur	303	법무, 참고 문서 및 연구	research,legal	Anthropic Directory에서
+Silicon Floor	302	재무, 금융 서비스 및 참고 문서	financial-services	Anthropic Directory에서
+ccOverhead	301	Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+Liner	301	연구, 참고 문서 및 웹사이트	research	Anthropic Directory에서
+drewcrawford-skills	300	엔지니어링, 코드, 파이프라인 및 작업, 로그 및 오류, 웹사이트, 종속성 및 패키지 및 풀 리퀘스트	dependencies-packages	Anthropic Directory에서
+The Astro Diary	300	신앙 및 노트 및 메모리	faith	Anthropic Directory에서
+Octen	299	연구, 웹사이트 및 디자인 및 미디어	research	Anthropic Directory에서
+indian-hc-drafting	299	법무 및 파일 및 문서	legal	Anthropic Directory에서
+Stunt Double	298	제품, 웹사이트, AI 모델 및 에이전트 및 풀 리퀘스트	product	Anthropic Directory에서
+synapse	298	데이터, 데이터베이스, 파일 및 문서 및 참고 문서	data	Anthropic Directory에서
+Toego	297	제품, 파일 및 문서 및 연구	product,research	Anthropic Directory에서
+Forgot	297	Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+Vivid	297	재무, 금융 서비스 및 연락처 및 리드	financial-services	Anthropic Directory에서
+Vet Before Install	297	IT 및 보안, 종속성 및 패키지 및 코드	dependencies-packages,it-security	Anthropic Directory에서
+Lumr Studio	297	직업 및 경력, 디자인 및 미디어 및 파일 및 문서	jobs-career	Anthropic Directory에서
+Paymob Integration	296	엔지니어링, 금융 서비스, API 및 재무	financial-services	Anthropic Directory에서
+Famlore	296	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+LogiCommerce Backoffice	295	운영, 소매 및 이커머스, 파일 및 문서, 웹사이트, 디자인 및 미디어, 티켓 및 작업 및 재무	operations,retail-ecommerce	Anthropic Directory에서
+qualitati	295	제품 및 연구	product,research	Anthropic Directory에서
+popper-probe	295	데이터, 연구 및 노트 및 메모리	research,data	Anthropic Directory에서
+ArcKit Netherlands Public Sector Overlay	295	IT 및 보안, 정부 및 서버 및 클라우드	it-security,government	Anthropic Directory에서
+Planpack	293	운영, 파일 및 문서 및 데이터베이스	operations	Anthropic Directory에서
+DokladBot	293	재무 및 금융 서비스	financial-services	Anthropic Directory에서
+Todo4	293	직업 및 경력 및 티켓 및 작업	jobs-career	Anthropic Directory에서
+Pitwall F1	293	스포츠 및 참고 문서	sports	Anthropic Directory에서
+Tcxc Rate Deck	292	운영 및 파일 및 문서	operations	Anthropic Directory에서
+ROSS — Reliable Operating Super Skill	292	Claude 기록 및 Claude 설정	claude-settings	Anthropic Directory에서
+VA Medicaid Work Rule Guide (unofficial)	292	고객 지원, 의료 및 생명 과학, 개인 재정, 티켓 및 작업, 참고 문서 및 노트 및 메모리	personal-finance,customer-support,healthcare-life-sciences	Anthropic Directory에서
+Пост-завод	291	글쓰기, 노트 및 메모리 및 이메일 및 메시지	writing	Anthropic Directory에서
+MasterKi	290	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+Tana	288	엔지니어링, Claude 기록, 티켓 및 작업, 이벤트, 노트 및 메모리 및 코드	events	Anthropic Directory에서
+Syndic8	287	제품, 소매 및 이커머스, 데이터베이스, 파일 및 문서, 디자인 및 미디어 및 API	product,retail-ecommerce	Anthropic Directory에서
+rutter	287	연구, 노트 및 메모리 및 Claude 기록	research	Anthropic Directory에서
+Credible	286	데이터 및 데이터베이스	data	Anthropic Directory에서
+nuberea	284	학습 및 참고 문서	learning	Anthropic Directory에서
+LienDeadline	284	법무 및 참고 문서	legal	Anthropic Directory에서
+Make My Product Clear	283	제품 및 파일 및 문서	product	Anthropic Directory에서
+Masthead Data	283	데이터, 데이터베이스, 파이프라인 및 작업 및 재무	data	Anthropic Directory에서
+TellTale	282	디자인, 글쓰기 및 파일 및 문서	design,writing	Anthropic Directory에서
+Printago	280	운영, 파이프라인 및 작업, 파일 및 문서, 티켓 및 작업 및 API	operations	Anthropic Directory에서
+saas-corpus	280	제품 및 참고 문서	product	Anthropic Directory에서
+Dropthehassle	278	직업 및 경력, 웹사이트 및 파일 및 문서	jobs-career	Anthropic Directory에서
+Homelab Docker Ops	278	집, 서버 및 클라우드, 로그 및 오류 및 파이프라인 및 작업	home	Anthropic Directory에서
+fixRAgent	277	운영, 파일 및 문서 및 티켓 및 작업	operations	Anthropic Directory에서
+Freelaw Studio	277	법무, 연락처 및 리드, 티켓 및 작업 및 파일 및 문서	legal	Anthropic Directory에서
+Snap Closet	277	쇼핑, 디자인 및 미디어 및 노트 및 메모리	shopping	Anthropic Directory에서
+Electra One	276	음악, 코드 및 디자인 및 미디어	music	Anthropic Directory에서
+Honeydew Semantic Modeling Tools	275	데이터, 데이터베이스 및 코드	data	Anthropic Directory에서
+Verus by Markst	274	재무 및 금융 서비스	financial-services	Anthropic Directory에서
+Product Support Investigator	273	고객 지원, 로그 및 오류, 티켓 및 작업 및 코드	customer-support	Anthropic Directory에서
+pyvar-credit-risk	272	재무 및 금융 서비스	financial-services	Anthropic Directory에서
+Мильчин	272	디자인 및 파일 및 문서	design	Anthropic Directory에서
+Retro Game Gather	272	게임, 노트 및 메모리 및 퍼즐	games,puzzles	Anthropic Directory에서
+searching-apple-notes	270	연구 및 노트 및 메모리	research	Anthropic Directory에서
+PrivCo Data	270	영업, 금융 서비스, 연락처 및 리드 및 재무	financial-services	Anthropic Directory에서
+Hammer Worlds	270	재무, 의료 및 생명 과학 및 참고 문서	healthcare-life-sciences	Anthropic Directory에서
+Виноградов	270	글쓰기, 파일 및 문서 및 노트 및 메모리	writing	Anthropic Directory에서
+Medusa	269	운영, 소매 및 이커머스, 데이터베이스 및 참고 문서	operations,retail-ecommerce	Anthropic Directory에서
+Menas	268	법무 및 참고 문서	legal	Anthropic Directory에서
+重調クン (Jucho-kun)	268	법무, 파일 및 문서 및 참고 문서	legal	Anthropic Directory에서
+EUDR compliance	267	운영, 파일 및 문서 및 참고 문서	operations	Anthropic Directory에서
+Tafheem	267	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+SIEM Lab Coach	266	IT 및 보안, 로그 및 오류 및 학습	learning,it-security	Anthropic Directory에서
+Rytiva	266	건강 및 피트니스	health-fitness	Anthropic Directory에서
+Checkout Page	265	이벤트, 재무 및 연락처 및 리드	events	Anthropic Directory에서
+koko-credit-cards	265	개인 재정 및 재무	personal-finance	Anthropic Directory에서
+lorkindoc	264	운영 및 파일 및 문서	operations	Anthropic Directory에서
+OnArrival Travel	264	여행 및 재무	travel	Anthropic Directory에서
+rampstack-starter	263	제품, 코드, 웹사이트 및 파일 및 문서	product	Anthropic Directory에서
+stride-ideation	263	제품, 티켓 및 작업 및 참고 문서	product	Anthropic Directory에서
+indian-consumer-drafting	262	법무 및 파일 및 문서	legal	Anthropic Directory에서
+Joboostr	262	HR, 직업 및 경력, 티켓 및 작업 및 파일 및 문서	jobs-career,hr	Anthropic Directory에서
+Greca Travel	262	여행 및 티켓 및 작업	travel	Anthropic Directory에서
+own-words	261	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+Радар вакансий	261	HR, 직업 및 경력, 파일 및 문서, 연락처 및 리드 및 티켓 및 작업	jobs-career,hr	Anthropic Directory에서
+MarineVerse	260	스포츠, 학습, 참고 문서, 이벤트 및 노트 및 메모리	learning,events,sports	Anthropic Directory에서
+indian-company-drafting	260	법무 및 파일 및 문서	legal	Anthropic Directory에서
+Raily	260	가족 및 관계, 연락처 및 리드 및 노트 및 메모리	family-relationships	Anthropic Directory에서
+Deckaura Tarot	260	신앙 및 노트 및 메모리	faith	Anthropic Directory에서
+Peristyle Grocery Cart	259	음식 및 파일 및 문서	food	Anthropic Directory에서
+astravue	258	운영, 티켓 및 작업 및 파이프라인 및 작업	operations	Anthropic Directory에서
+Nemi	258	운영, 파일 및 문서, 데이터베이스, 디자인 및 미디어, 노트 및 메모리 및 이벤트	operations,events	Anthropic Directory에서
+WeInc	258	디자인, 웹사이트 및 파일 및 문서	design	Anthropic Directory에서
+apMZoomAI · Dongdaemun wholesale	258	영업, 소매 및 이커머스 및 연락처 및 리드	retail-ecommerce	Anthropic Directory에서
+Riskified Beacon Integration	258	엔지니어링, 소매 및 이커머스, 코드, 웹사이트 및 API	retail-ecommerce	Anthropic Directory에서
+TOOLSTORM	257	게임 및 코드	games	Anthropic Directory에서
+Mora	256	마케팅, 디자인 및 미디어, 파일 및 문서, 노트 및 메모리, 웹사이트 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Resurface	255	HR, 파일 및 문서, 연락처 및 리드 및 티켓 및 작업	hr	Anthropic Directory에서
+Basit Kargo	254	운영, 티켓 및 작업 및 파일 및 문서	operations	Anthropic Directory에서
+Stackin	254	재무, 금융 서비스 및 파일 및 문서	financial-services	Anthropic Directory에서
+Latio Secure Supply Chain Skills	254	엔지니어링, 종속성 및 패키지, 코드, 서버 및 클라우드 및 AI 모델 및 에이전트	dependencies-packages	Anthropic Directory에서
+Re8ch Tenant	254	엔지니어링, 서버 및 클라우드, 데이터베이스, 로그 및 오류 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Noteflix Study Loop	253	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+PIASO	253	데이터, 의료 및 생명 과학, 코드, 데이터베이스 및 파일 및 문서	data,healthcare-life-sciences	Anthropic Directory에서
+Cherami	252	운영 및 이메일 및 메시지	operations	Anthropic Directory에서
+tbh	252	엔지니어링, 학습, 코드 및 참고 문서	learning	Anthropic Directory에서
+IAseguro	252	개인 재정 및 재무	personal-finance	Anthropic Directory에서
+Cryptowisser News	251	연구	research	Anthropic Directory에서
+Бахтин	251	글쓰기 및 파일 및 문서	writing	Anthropic Directory에서
+Raindrop.io	250	연구 및 노트 및 메모리	research	Anthropic Directory에서
+pyvar-market-risk	250	재무 및 금융 서비스	financial-services	Anthropic Directory에서
+Indigo claude plugin	250	집, 코드, 서버 및 클라우드 및 API	home	Anthropic Directory에서
+Open Ephemeris	249	연구 및 참고 문서	research	Anthropic Directory에서
+SuperMailOS	248	운영 및 이메일 및 메시지	operations	Anthropic Directory에서
+Merit Aktiva for AI Agents	247	재무, 금융 서비스, 데이터베이스 및 파일 및 문서	financial-services	Anthropic Directory에서
+InternetData	247	IT 및 보안 및 데이터베이스	it-security	Anthropic Directory에서
+Ekamanam Study Companion	246	학습 및 파일 및 문서	learning	Anthropic Directory에서
+Varlock Skill	246	IT 및 보안 및 서버 및 클라우드	it-security	Anthropic Directory에서
+StarryKit	246	쇼핑, 디자인 및 미디어 및 파일 및 문서	shopping	Anthropic Directory에서
+Keenable	244	연구 및 웹사이트	research	Anthropic Directory에서
+FactoryFox	243	운영 및 연락처 및 리드	operations	Anthropic Directory에서
+RescueTime	242	운영, 직업 및 경력 및 건강 및 피트니스	operations,jobs-career,health-fitness	Anthropic Directory에서
+ScaleSKUs	241	영업, 소매 및 이커머스 및 API	retail-ecommerce	Anthropic Directory에서
+Storeadops	238	마케팅, 소매 및 이커머스, API 및 재무	retail-ecommerce	Anthropic Directory에서
+RolePark	238	HR, 연락처 및 리드 및 티켓 및 작업	hr	Anthropic Directory에서
+Review Replier	238	고객 지원 및 웹사이트	customer-support	Anthropic Directory에서
+TemplateCentral	237	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Nibomo	237	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+Shippo	236	운영, 파일 및 문서 및 API	operations	Anthropic Directory에서
+dx-guard	236	엔지니어링, 종속성 및 패키지 및 코드	dependencies-packages	Anthropic Directory에서
+Phished	236	IT 및 보안, 티켓 및 작업 및 로그 및 오류	it-security	Anthropic Directory에서
+Soundcheck Instant Quotes	235	운영 및 이벤트	operations,events	Anthropic Directory에서
+Dev Wrapped	235	엔지니어링, 직업 및 경력, 코드 및 파일 및 문서	jobs-career	Anthropic Directory에서
+Pepys	233	음악 및 디자인 및 미디어	music	Anthropic Directory에서
+PodPitch	233	마케팅, 음악, 연락처 및 리드 및 티켓 및 작업	music	Anthropic Directory에서
+DialogBrain	232	고객 지원, 이메일 및 메시지, 티켓 및 작업, 연락처 및 리드 및 웹사이트	customer-support	Anthropic Directory에서
+Inventok	231	운영, 소매 및 이커머스, 티켓 및 작업, 재무 및 파이프라인 및 작업	operations,retail-ecommerce	Anthropic Directory에서
+FactIQ	231	데이터, 재무 및 참고 문서	data	Anthropic Directory에서
+MentorCruise	231	영업, 직업 및 경력 및 연락처 및 리드	jobs-career	Anthropic Directory에서
+Tenisle	231	스포츠 및 티켓 및 작업	sports	Anthropic Directory에서
+dataproc	230	데이터, 파이프라인 및 작업 및 서버 및 클라우드	data	Anthropic Directory에서
+Eon	230	IT 및 보안, 서버 및 클라우드 및 로그 및 오류	it-security	Anthropic Directory에서
+Eqolux	228	운영, 여행 및 숙박, 데이터베이스 및 재무	operations,travel-hospitality	Anthropic Directory에서
+MarcoPolo	228	데이터, 데이터베이스 및 API	data	Anthropic Directory에서
+Fin3000	227	재무, 금융 서비스, 파일 및 문서 및 연락처 및 리드	financial-services	Anthropic Directory에서
+Numeric MCP Toolkit	227	재무, 금융 서비스, 데이터베이스 및 파일 및 문서	financial-services	Anthropic Directory에서
+ubl-star — facturas electrónicas a Power BI	227	재무, 금융 서비스, 파일 및 문서 및 데이터베이스	financial-services	Anthropic Directory에서
+Resu Studio	227	HR, 직업 및 경력, 파일 및 문서 및 티켓 및 작업	jobs-career,hr	Anthropic Directory에서
+Cozibud	227	가족 및 관계 및 노트 및 메모리	family-relationships	Anthropic Directory에서
+Supovia helpdesk chat	227	고객 지원, 티켓 및 작업, 참고 문서 및 이메일 및 메시지	customer-support	Anthropic Directory에서
+Open Voice Shield	227	IT 및 보안, 로그 및 오류 및 API	it-security	Anthropic Directory에서
+Kumiho Memory Cloud	226	연구, 노트 및 메모리, Claude 기록 및 Claude 설정	research	Anthropic Directory에서
+koin-migration	226	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Gateway Tariff Calculator	225	운영, 재무 및 종속성 및 패키지	operations,dependencies-packages	Anthropic Directory에서
+unipaas	224	엔지니어링, 금융 서비스, API 및 재무	financial-services	Anthropic Directory에서
+Resignation Letter Generator - ResumeNext	224	HR, 직업 및 경력 및 파일 및 문서	jobs-career,hr	Anthropic Directory에서
+truinorva-triz	224	제품, 퍼즐 및 파일 및 문서	puzzles	Anthropic Directory에서
+Glop Plugin	223	운영, 소매 및 이커머스, 데이터베이스 및 파일 및 문서	operations,retail-ecommerce	Anthropic Directory에서
+PurchasePlus	223	운영, 데이터베이스, 파일 및 문서 및 종속성 및 패키지	operations,dependencies-packages	Anthropic Directory에서
+indian-rent-control-drafting	223	법무 및 파일 및 문서	legal	Anthropic Directory에서
+FreightUtils	221	운영, 종속성 및 패키지 및 참고 문서	operations,dependencies-packages	Anthropic Directory에서
+Shipmail	221	운영, 이메일 및 메시지, 티켓 및 작업, 이벤트 및 API	operations,events	Anthropic Directory에서
+luma-mcp	221	이벤트 및 이메일 및 메시지	events	Anthropic Directory에서
+Karrito	221	영업, 소매 및 이커머스, 파일 및 문서, 데이터베이스, 디자인 및 미디어, 티켓 및 작업, 연락처 및 리드 및 API	retail-ecommerce	Anthropic Directory에서
+My PEYL Design Partner	220	교육 및 학습	learning,education	Anthropic Directory에서
+Rovzu	219	연구 및 노트 및 메모리	research	Anthropic Directory에서
+Reclamos de consumo Perú	219	법무, 개인 재정, 티켓 및 작업 및 파일 및 문서	legal,personal-finance	Anthropic Directory에서
+Gathmo	219	디자인 및 미디어 및 이벤트	events	Anthropic Directory에서
+Liftory	219	영업, 건강 및 피트니스, 음식 및 이메일 및 메시지	food,health-fitness	Anthropic Directory에서
+Kenwea Notary	218	엔지니어링, 종속성 및 패키지 및 로그 및 오류	dependencies-packages	Anthropic Directory에서
+Travelyalla	218	여행	travel	Anthropic Directory에서
+MarketsEasy	217	운영, 소매 및 이커머스, 티켓 및 작업 및 파일 및 문서	operations,retail-ecommerce	Anthropic Directory에서
+XiaoHongShu RedNote Local Guide to China	217	여행 및 참고 문서	travel	Anthropic Directory에서
+Genaya	216	운영, 티켓 및 작업, 연락처 및 리드, 재무 및 파이프라인 및 작업	operations	Anthropic Directory에서
+Kodwai	215	엔지니어링, 코드 및 퍼즐	puzzles	Anthropic Directory에서
+DataFrey	214	데이터 및 데이터베이스	data	Anthropic Directory에서
+Unreasonable Eco	214	운영, 비영리, 연락처 및 리드 및 티켓 및 작업	nonprofit	Anthropic Directory에서
+GoCycling AI	214	여행 및 파일 및 문서	travel	Anthropic Directory에서
+Rainbow Cat	213	게임	games	Anthropic Directory에서
+indian-ip-drafting	212	법무 및 파일 및 문서	legal	Anthropic Directory에서
+paging-mcp	212	IT 및 보안, 이메일 및 메시지 및 티켓 및 작업	it-security	Anthropic Directory에서
+patristic	211	연구 및 참고 문서	research	Anthropic Directory에서
+gortex	211	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Staylo — Hotel Booking at Net Rates	211	여행	travel	Anthropic Directory에서
+pyvar-mcp	210	재무 및 금융 서비스	financial-services	Anthropic Directory에서
+Podwise	210	음악	music	Anthropic Directory에서
+Аграновский	209	마케팅, 연구 및 웹사이트	research	Anthropic Directory에서
+indian-family-drafting	209	법무 및 파일 및 문서	legal	Anthropic Directory에서
+Seqout	208	데이터, 데이터베이스, 파일 및 문서 및 연구	data	Anthropic Directory에서
+OSTDB - Game Soundtracks	208	음악	music	Anthropic Directory에서
+Rezandovoy	208	신앙 및 참고 문서	faith	Anthropic Directory에서
+indian-property-drafting	207	법무 및 파일 및 문서	legal	Anthropic Directory에서
+Gratefully	207	비영리, 연락처 및 리드 및 티켓 및 작업	nonprofit	Anthropic Directory에서
+Idasen Desk Control	205	집 및 서버 및 클라우드	home	Anthropic Directory에서
+pyvar-operational-risk	204	재무, 금융 서비스 및 로그 및 오류	financial-services	Anthropic Directory에서
+YoFacturo	204	재무, 금융 서비스, 연락처 및 리드 및 티켓 및 작업	financial-services	Anthropic Directory에서
+Simsima	204	여행	travel	Anthropic Directory에서
+Healthcheckemail	204	IT 및 보안, 로그 및 오류 및 이메일 및 메시지	it-security	Anthropic Directory에서
+Xestando	203	재무, 금융 서비스, 파일 및 문서, 연락처 및 리드 및 티켓 및 작업	financial-services	Anthropic Directory에서
+gh-guard	203	엔지니어링, 코드, 파이프라인 및 작업, 종속성 및 패키지 및 로그 및 오류	dependencies-packages	Anthropic Directory에서
+Rancher	203	데이터 및 데이터베이스	data	Anthropic Directory에서
+indian-labour-drafting	203	법무 및 파일 및 문서	legal	Anthropic Directory에서
+pyvar-derivatives	201	재무 및 금융 서비스	financial-services	Anthropic Directory에서
+Skyelight	200	디자인, 디자인 및 미디어 및 파일 및 문서	design	Anthropic Directory에서
+Thai Memes CC	200	음악 및 디자인 및 미디어	music	Anthropic Directory에서
+Golf Intelligence	199	스포츠 및 API	sports	Anthropic Directory에서
+NachhilfeBot	198	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+zusha	198	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+rdsh	198	데이터, 데이터베이스 및 API	data	Anthropic Directory에서
+pyvar-liquidity-risk	197	재무 및 금융 서비스	financial-services	Anthropic Directory에서
+Unclass	197	학습	learning	Anthropic Directory에서
+LiteTMS	197	운영, 연락처 및 리드 및 건강 및 피트니스	health-fitness	Anthropic Directory에서
+FrontDesk Chat	197	고객 지원, 웹사이트, 티켓 및 작업 및 연락처 및 리드	customer-support	Anthropic Directory에서
+Wireless Choices	197	쇼핑 및 참고 문서	shopping	Anthropic Directory에서
+Normlotse	196	법무, 금융 서비스, 참고 문서 및 로그 및 오류	financial-services,legal	Anthropic Directory에서
+The Expected Value	195	쇼핑 및 데이터베이스	shopping	Anthropic Directory에서
+public-repo-readiness	194	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Sarathi	194	엔지니어링, 직업 및 경력, 코드 및 노트 및 메모리	jobs-career	Anthropic Directory에서
+Steep	193	데이터, 데이터베이스 및 API	data	Anthropic Directory에서
+trove	193	데이터, 의료 및 생명 과학 및 참고 문서	data,healthcare-life-sciences	Anthropic Directory에서
+itinovo CRM	193	영업, 여행 및 숙박, 연락처 및 리드, 파일 및 문서 및 티켓 및 작업	travel-hospitality	Anthropic Directory에서
+Cataam Compliance	193	IT 및 보안, 서버 및 클라우드 및 로그 및 오류	it-security	Anthropic Directory에서
+IdkRx	193	운영, 의료 및 생명 과학 및 데이터베이스	healthcare-life-sciences	Anthropic Directory에서
+RegAffairs AI	192	운영, 금융 서비스, 참고 문서 및 종속성 및 패키지	financial-services,dependencies-packages	Anthropic Directory에서
+Mibba	191	법무, 파일 및 문서 및 티켓 및 작업	legal	Anthropic Directory에서
+Minz.ai	190	영업, 연락처 및 리드, 티켓 및 작업, 재무 및 이벤트	events	Anthropic Directory에서
+Internet Radio Stations (72FM)	189	음악	music	Anthropic Directory에서
+Greca House: Greek Property	189	여행	travel	Anthropic Directory에서
+supalens	188	데이터, 데이터베이스 및 코드	data	Anthropic Directory에서
+GrapeRoot	187	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+ShareSign	186	법무, 파일 및 문서 및 티켓 및 작업	legal	Anthropic Directory에서
+Songtekst schrijven	183	음악	music	Anthropic Directory에서
+JoomPulse	183	영업, 소매 및 이커머스, 웹사이트 및 연락처 및 리드	retail-ecommerce	Anthropic Directory에서
+Incubae	182	운영, 직업 및 경력, 노트 및 메모리, 연락처 및 리드 및 파일 및 문서	jobs-career	Anthropic Directory에서
+Shrimad Bhagwatam Guide – Srila BV Narayan Goswami Maharaj	181	학습 및 참고 문서	learning	Anthropic Directory에서
+Product Sense Interview	181	제품, 직업 및 경력 및 노트 및 메모리	jobs-career	Anthropic Directory에서
+Sana from Workday	181	HR, 티켓 및 작업, 재무 및 노트 및 메모리	hr	Anthropic Directory에서
+KOTC Full-Length Review	180	제품, 교육, 학습 및 노트 및 메모리	learning,education	Anthropic Directory에서
+Second Arrow	180	학습, Claude 기록 및 노트 및 메모리	learning	Anthropic Directory에서
+Kabuken	179	재무, 금융 서비스 및 참고 문서	financial-services	Anthropic Directory에서
+Compabase	178	영업, 금융 서비스, 연락처 및 리드, 참고 문서 및 재무	financial-services	Anthropic Directory에서
+Tineo	178	여행 및 이벤트	events,travel	Anthropic Directory에서
+MerchantFlow	177	영업, 소매 및 이커머스, 데이터베이스, 재무 및 API	retail-ecommerce	Anthropic Directory에서
+Sammati DPDP Readiness	176	법무, 금융 서비스 및 파일 및 문서	financial-services,legal	Anthropic Directory에서
+Paušal	175	재무, 금융 서비스 및 파일 및 문서	financial-services	Anthropic Directory에서
+Kata	174	학습, 코드 및 퍼즐	learning,puzzles	Anthropic Directory에서
+Nowistay	174	운영, 여행 및 숙박, 티켓 및 작업, 파일 및 문서, 연락처 및 리드 및 재무	travel-hospitality	Anthropic Directory에서
+Mountaineering	174	여행, 웹사이트 및 참고 문서	travel	Anthropic Directory에서
+turbocharge	173	엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Mackforge Red Team	173	퍼즐	puzzles	Anthropic Directory에서
+LingoBab	171	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+Privy BFCM Planner	171	마케팅, 소매 및 이커머스, 데이터베이스, 파일 및 문서 및 이메일 및 메시지	retail-ecommerce	Anthropic Directory에서
+Seguno	171	마케팅, 소매 및 이커머스 및 이메일 및 메시지	retail-ecommerce	Anthropic Directory에서
+pyvar-regulatory	170	재무, 금융 서비스 및 데이터베이스	financial-services	Anthropic Directory에서
+indian-mact-drafting	170	법무 및 파일 및 문서	legal	Anthropic Directory에서
+Sadakio Developer Docs	170	엔지니어링, 소매 및 이커머스, 참고 문서 및 API	retail-ecommerce	Anthropic Directory에서
+Whatcha	170	가족 및 관계 및 노트 및 메모리	family-relationships	Anthropic Directory에서
+Tinylawn	170	고객 지원, 이메일 및 메시지 및 티켓 및 작업	customer-support	Anthropic Directory에서
+ShiftControl	170	IT 및 보안, 서버 및 클라우드, 티켓 및 작업, 연락처 및 리드 및 재무	it-security	Anthropic Directory에서
+mise-plugin	169	엔지니어링, 코드, 파일 및 문서, 서버 및 클라우드, 파이프라인 및 작업 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+optikit	169	엔지니어링, 코드, 파이프라인 및 작업 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Fisica	168	학습 및 퍼즐	learning,puzzles	Anthropic Directory에서
+Shogidojo	168	게임 및 퍼즐	games,puzzles	Anthropic Directory에서
+Retime	167	이벤트	events	Anthropic Directory에서
+EscapeBot	167	재무, 개인 재정 및 참고 문서	personal-finance	Anthropic Directory에서
+Muffed — verified NFL stats	167	스포츠 및 참고 문서	sports	Anthropic Directory에서
+waybill.ge	163	재무, 금융 서비스 및 티켓 및 작업	financial-services	Anthropic Directory에서
+Product Returns	163	제품, 소매 및 이커머스, 파일 및 문서 및 티켓 및 작업	retail-ecommerce	Anthropic Directory에서
+Tribunal	163	퍼즐	puzzles	Anthropic Directory에서
+ITIN Finance	162	개인 재정, 재무 및 참고 문서	personal-finance	Anthropic Directory에서
+Mollie	160	엔지니어링, 재무, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Dexi	159	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+SuperBot	159	고객 지원, 티켓 및 작업 및 로그 및 오류	customer-support	Anthropic Directory에서
+Ultrasolve	159	퍼즐	puzzles	Anthropic Directory에서
+Dossierfy	159	제품, 의료 및 생명 과학 및 참고 문서	healthcare-life-sciences	Anthropic Directory에서
+sonatype-guide	157	엔지니어링, 종속성 및 패키지 및 코드	dependencies-packages	Anthropic Directory에서
+Vivara	156	음식 및 건강 및 피트니스	food,health-fitness	Anthropic Directory에서
+pyvar-alm	155	재무 및 금융 서비스	financial-services	Anthropic Directory에서
+Release Notes Index	155	엔지니어링, 참고 문서 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+Tell Index	155	쇼핑, 디자인 및 미디어 및 노트 및 메모리	shopping	Anthropic Directory에서
+skillkeel-starter	150	엔지니어링, 코드, 풀 리퀘스트, 종속성 및 패키지 및 로그 및 오류	dependencies-packages	Anthropic Directory에서
+CoverCount Explore	149	이벤트 및 티켓 및 작업	events	Anthropic Directory에서
+SmartDraftBoard	149	스포츠 및 노트 및 메모리	sports	Anthropic Directory에서
+UAE Healthcare Compliance by ATeam	148	엔지니어링, 의료 및 생명 과학, 코드 및 파일 및 문서	healthcare-life-sciences	Anthropic Directory에서
+togello	145	직업 및 경력, 티켓 및 작업, 노트 및 메모리 및 이벤트	jobs-career,events	Anthropic Directory에서
+Busymate AI	144	고객 지원, 티켓 및 작업 및 참고 문서	customer-support	Anthropic Directory에서
+Percolate	142	음식 및 참고 문서	food	Anthropic Directory에서
+Thrice	141	음식 및 노트 및 메모리	food	Anthropic Directory에서
+Potato annotation tasks	140	데이터, 연구 및 참고 문서	data	Anthropic Directory에서
+Tweener	139	스포츠, 이벤트, 연락처 및 리드 및 건강 및 피트니스	events,sports,health-fitness	Anthropic Directory에서
+Section11	139	운영, 소매 및 이커머스 및 티켓 및 작업	retail-ecommerce	Anthropic Directory에서
+RoyaleTools	139	게임, 퍼즐 및 참고 문서	games,puzzles	Anthropic Directory에서
+oJobinho	137	HR, 직업 및 경력, 파일 및 문서, 연락처 및 리드 및 티켓 및 작업	jobs-career,hr	Anthropic Directory에서
+Byair	137	여행 및 이벤트	events,travel	Anthropic Directory에서
+SamDesk Support	135	고객 지원, 이메일 및 메시지 및 티켓 및 작업	customer-support	Anthropic Directory에서
+Saudi Healthcare Compliance by ATeam	135	엔지니어링, 의료 및 생명 과학, 코드 및 파일 및 문서	healthcare-life-sciences	Anthropic Directory에서
+LICHIDARE.MD	134	쇼핑 및 티켓 및 작업	shopping	Anthropic Directory에서
+TenderKart	134	정부, 티켓 및 작업, 파일 및 문서 및 참고 문서	government	Anthropic Directory에서
+SDP Platform	133	웹사이트, 파일 및 문서, 학습 및 티켓 및 작업	learning	Anthropic Directory에서
+PitchHighway	133	음악 및 노트 및 메모리	music	Anthropic Directory에서
+MORVS	132	IT 및 보안, 참고 문서, 데이터베이스 및 연락처 및 리드	it-security	Anthropic Directory에서
+extractos-ar	129	재무, 금융 서비스 및 파일 및 문서	financial-services	Anthropic Directory에서
+Botscope	129	IT 및 보안, 웹사이트 및 로그 및 오류	it-security	Anthropic Directory에서
+Galleon DeFi Strategy	127	개인 재정 및 재무	personal-finance	Anthropic Directory에서
+TickerTrac	126	재무, 금융 서비스, 개인 재정, 노트 및 메모리 및 연구	financial-services,personal-finance	Anthropic Directory에서
+Renou	126	가족 및 관계, 연락처 및 리드 및 노트 및 메모리	family-relationships	Anthropic Directory에서
+Squawkflow	125	개인 재정 및 재무	personal-finance	Anthropic Directory에서
+Veteran Companion	124	직업 및 경력, 파일 및 문서 및 티켓 및 작업	jobs-career	Anthropic Directory에서
+spanner	122	데이터 및 데이터베이스	data	Anthropic Directory에서
+Speedread tool	117	학습 및 Claude 기록	learning	Anthropic Directory에서
+Pupilbot	116	학습 및 노트 및 메모리	learning	Anthropic Directory에서
+DataCEVA US Layoff Notices	116	데이터 및 참고 문서	data	Anthropic Directory에서
+Ship Post	116	마케팅, 직업 및 경력, 코드 및 풀 리퀘스트	jobs-career	Anthropic Directory에서
+PT-Weiterbildung	115	HR, 의료 및 생명 과학, 참고 문서 및 학습	learning,hr,healthcare-life-sciences	Anthropic Directory에서
+KontoCSV	112	재무, 금융 서비스 및 파일 및 문서	financial-services	Anthropic Directory에서
+WhenNOT	111	이벤트	events	Anthropic Directory에서
+GrappleMaps	109	참고 문서 및 이벤트	events	Anthropic Directory에서
+tw-lvr-cli	109	개인 재정 및 파일 및 문서	personal-finance	Anthropic Directory에서
+Lion Lift	108	건강 및 피트니스	health-fitness	Anthropic Directory에서
+NerdyGeek	105	엔지니어링, 참고 문서 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+ComplyOnSite	105	IT 및 보안 및 참고 문서	it-security	Anthropic Directory에서
+Joulo	98	집 및 건강 및 피트니스	health-fitness,home	Anthropic Directory에서
+SerialHunt	98	쇼핑 및 참고 문서	shopping	Anthropic Directory에서
+DobroDesk Support	96	고객 지원, 이메일 및 메시지 및 티켓 및 작업	customer-support	Anthropic Directory에서
+SDSentry HazCom	96	IT 및 보안 및 참고 문서	it-security	Anthropic Directory에서
+Ingest Labs	95	데이터 및 데이터베이스	data	Anthropic Directory에서
+StringSpec	95	스포츠 및 데이터베이스	sports	Anthropic Directory에서
+Sovrnti	86	IT 및 보안 및 참고 문서	it-security	Anthropic Directory에서
+Verity	82	IT 및 보안 및 파일 및 문서	it-security	Anthropic Directory에서
+RailJournal India	79	여행 및 참고 문서	travel	Anthropic Directory에서
+SysIgreja	60	이벤트 및 연락처 및 리드	events	Anthropic Directory에서
+Spec Security Review		엔지니어링, 코드 및 종속성 및 패키지	dependencies-packages	Anthropic Directory에서
+UNPKG		엔지니어링, 종속성 및 패키지 및 코드	dependencies-packages	Anthropic Directory에서
+GUIDE Instructional Design		제품, 학습 및 파일 및 문서	learning	Anthropic Directory에서
+Nihontekini		학습 및 노트 및 메모리	learning	Anthropic Directory에서
+ReadingTrack		학습, 노트 및 메모리, 연구 및 코드	learning	Anthropic Directory에서
+Dataiku Headless		데이터, 데이터베이스, 파이프라인 및 작업, AI 모델 및 에이전트 및 코드	data	Anthropic Directory에서
+Tableau		데이터, 데이터베이스 및 디자인 및 미디어	data	Anthropic Directory에서
+Dashboard Design		디자인 및 디자인 및 미디어	design	Anthropic Directory에서
+UI Design Review		디자인, 디자인 및 미디어, 코드 및 웹사이트	design	Anthropic Directory에서
+UI/UX Behaves		디자인 및 디자인 및 미디어	design	Anthropic Directory에서
+PickedJobs		HR, 직업 및 경력, 티켓 및 작업 및 연락처 및 리드	jobs-career,hr	Anthropic Directory에서
+Cardzen		개인 재정 및 재무	personal-finance	Anthropic Directory에서
+stockinsights.ai - India		재무, 금융 서비스, 개인 재정, 데이터베이스, 파일 및 문서 및 참고 문서	personal-finance	Anthropic Directory에서
+Zenmoney: personal finance		개인 재정 및 재무	personal-finance	Anthropic Directory에서
+Boxme Insights		운영, 소매 및 이커머스, 재무 및 파이프라인 및 작업	retail-ecommerce	Anthropic Directory에서
+Archivist AI		게임, 노트 및 메모리 및 퍼즐	games,puzzles	Anthropic Directory에서
+The Emperor of the United States		게임 및 퍼즐	games,puzzles	Anthropic Directory에서
+Amadeus Travel Builder		여행 및 API	travel	Anthropic Directory에서
+ELA Map: Astrocartography		여행	travel	Anthropic Directory에서
+Platform Whisperer		여행	travel	Anthropic Directory에서
+Thoropass Compliance		IT 및 보안, 티켓 및 작업 및 참고 문서	it-security	Anthropic Directory에서
+BestPrice		쇼핑 및 웹사이트	shopping	Anthropic Directory에서
+CarScout		쇼핑	shopping	Anthropic Directory에서
+Ni Biashara Directory		쇼핑 및 연락처 및 리드	shopping	Anthropic Directory에서
+VoiceScroll		글쓰기 및 파일 및 문서	writing	Anthropic Directory에서

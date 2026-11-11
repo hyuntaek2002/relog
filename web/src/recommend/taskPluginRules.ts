@@ -1,6 +1,7 @@
 import catalog from '../../../catalog/catalog.json' with { type: 'json' }
 import type { SnapshotTask, UsageSnapshot } from './snapshot'
 import type { CodingSub } from '../classify/codingSub'
+import type { Conversation } from '../parser/types'
 
 // 대화 종류별 플러그인: 그 종류의 내 메시지가 기준(minMessages) 이상이면 카탈로그에 적힌 플러그인을 권하고,
 // 모자라면 "데이터 부족", 맞는 플러그인이 없는 종류(상담·대화)는 "맞는 플러그인 없음"으로 표시한다.
@@ -18,6 +19,13 @@ export interface TaskPluginRow {
 
 const TP = catalog.taskPlugins as { minMessages: number; howTo: string; items: TaskPluginEntry[]; codingSubPlugins: Partial<Record<CodingSub, PluginPick>> }
 // 코딩 세부(게임·웹 화면 등)별 플러그인. 그 세부 메시지가 기준 이상일 때만 쓴다.
+// 기록에서 확인된 설치 플러그인(Claude Code 세션의 스킬 목록·Skill 호출 접두어). 앱 내보내기만 있으면 빈 배열
+export const installedPlugins = (convs: Pick<Conversation, 'pluginNames'>[]): string[] => [...new Set(convs.flatMap((c) => c.pluginNames ?? []))].sort()
+const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '')
+// 디렉터리 표시 이름("UI Design Review", "Caveman Mode: Short Answers")과 플러그인 id("engineering", "caveman")를 느슨하게 맞춘다
+// ponytail: 접두어 일치. 이름이 전혀 다른 플러그인(예: 표시 이름 Superpowers / id superpowers-dev)은 못 맞추면 '이미 씀' 버튼으로
+export const isInstalled = (name: string, installed: string[]) => installed.some((p) => { const a = norm(name), b = norm(p); return !!a && !!b && (a === b || a.startsWith(b) || b.startsWith(a)) })
+
 export const codingSubPlugin = (sub: CodingSub, count: number): { pick: PluginPick; how: string } | null => {
   const p = TP.codingSubPlugins[sub]
   return p && count >= TP.minMessages ? { pick: p, how: TP.howTo.split('{plugin}').join(p.name) } : null

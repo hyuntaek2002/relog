@@ -18,6 +18,7 @@ export interface UsageSnapshot {
   avgTurnsPerConversation: number
   codeShare: number
   codingSub: Partial<Record<CodingSub, number>> // 코딩으로 분류된 내 메시지의 세부(대화 단위 판정) 수
+  answer: { avgTokens: number; ratio: number } // AI 답변 평균 분량(토큰 추정)과 내 메시지 분량 대비 배수
   hourHistogram: number[]
   restatement: {
     high: number
@@ -82,6 +83,7 @@ export function buildSnapshot(args: {
     avgTurnsPerConversation: convsWithTurns ? stats.userTurns / convsWithTurns : 0,
     codeShare: ok ? withCode / ok : 0,
     codingSub,
+    answer: { avgTokens: stats.assistantTurns ? stats.assistantTokenEstimate / stats.assistantTurns : 0, ratio: stats.userTokenEstimate ? stats.assistantTokenEstimate / stats.userTokenEstimate : 0 },
     hourHistogram,
     restatement: {
       high: detect.byGrade.high,

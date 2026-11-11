@@ -24,12 +24,14 @@ public class RecommendController {
             @Min(0) int userTurnCount, @Min(0) int conversationCount,
             @DecimalMin("0") @DecimalMax("1") double longConversationShare, @DecimalMin("0") double avgTurnsPerConversation, @DecimalMin("0") @DecimalMax("1") double codeShare,
             @NotNull @Valid Restatement restatement,
+            @Valid Answer answer,
             @NotBlank @Size(max = 16) String plan,
             @NotNull List<@Size(max = 64) String> featuresInUse,
             @Pattern(regexp = "generic|personalized|both") String mode) {
         public record Restatement(@Min(0) int high, @Min(0) int mid, @Min(0) int low, @Min(0) int misunderstanding, @Min(0) int repeatedQuestion,
                                   @NotNull Map<@Pattern(regexp = "coding|writing|learning|workdoc|search|ideation|translation|counseling") String, @Min(0) Integer> perTask,
                                   @Min(0) int tokenEstimate, @DecimalMin("0") @DecimalMax("100") double ratio) {}
+        public record Answer(@DecimalMin("0") double avgTokens, @DecimalMin("0") double ratio) {}
     }
 
     private final CatalogService catalog;
@@ -44,7 +46,8 @@ public class RecommendController {
         UserAccount me = BearerTokenFilter.current();
         var snap = new RecommendEngine.Snapshot(r.platform(), r.taskShare(), r.userTurnCount(), r.conversationCount(), r.longConversationShare(),
                 r.avgTurnsPerConversation(), r.codeShare(), new RecommendEngine.Restatement(r.restatement().high(), r.restatement().mid(), r.restatement().low(),
-                r.restatement().misunderstanding(), r.restatement().repeatedQuestion(), r.restatement().perTask(), r.restatement().tokenEstimate(), r.restatement().ratio()));
+                r.restatement().misunderstanding(), r.restatement().repeatedQuestion(), r.restatement().perTask(), r.restatement().tokenEstimate(), r.restatement().ratio()),
+                r.answer() == null ? new RecommendEngine.Answer(0, 0) : new RecommendEngine.Answer(r.answer().avgTokens(), r.answer().ratio()));
         // 사용자의 최근 피드백(항목당 마지막 값)
         Map<String, String> fb = new HashMap<>();
         for (FeedbackEntity f : feedback.findByUserOrderByCreatedAtAsc(me)) fb.put(f.catalogId, f.value);

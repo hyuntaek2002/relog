@@ -51,6 +51,7 @@ export interface Prescription {
   caveat: string
   signalsUsed: string[]
   score: number
+  pluginName?: string // 플러그인 카드가 가리키는 구체 플러그인 이름(howTo의 {plugin}에 넣은 값). '이미 설치됨' 표시용
 }
 
 export interface ScoredItem {
@@ -71,6 +72,8 @@ const SIGNAL_LABEL: Record<string, string> = {
   longConversationShare: '긴 대화 비율',
   avgTurnsPerConversation: '대화당 평균 발화',
   codeShare: '코드 포함 비율',
+  'answer.avgTokens': '평균 답변 분량',
+  'answer.ratio': '답변이 내 메시지보다 긴 배수',
 }
 
 // "restatement.high" 같은 점 경로를 snapshot에서 읽는다
@@ -86,6 +89,8 @@ const fmtSignal = (path: string, v: number) => {
   const label = SIGNAL_LABEL[path] ?? path
   if (path === 'longConversationShare' || path === 'codeShare') return `${label} ${Math.round(v * 100)}%`
   if (path === 'avgTurnsPerConversation') return `${label} ${v.toFixed(1)}개`
+  if (path === 'answer.avgTokens') return `${label} ${Math.round(v)}토큰`
+  if (path === 'answer.ratio') return `${label} ${v.toFixed(1)}배`
   return `${label} ${Math.round(v)}건`
 }
 
@@ -129,6 +134,7 @@ function summaryOf(snapshot: UsageSnapshot, s: ScoredItem): string {
   if (hit('말이 안 통한')) return `AI가 요지를 놓친 듯한 메시지가 ${r.misunderstanding}건입니다.`
   if (hit('긴 대화 비율')) return `대화 ${Math.round(snapshot.longConversationShare * 100)}%가 메시지 10개를 넘는 긴 대화입니다.`
   if (hit('비슷한 질문')) return `비슷한 질문을 ${r.repeatedQuestion}번 다시 했습니다.`
+  if (hit('평균 답변 분량') || hit('답변이 내 메시지보다')) return `AI 답변이 평균 ${Math.round(snapshot.answer.avgTokens)}토큰으로 내 메시지의 ${snapshot.answer.ratio.toFixed(0)}배입니다.`
   const top = (Object.entries(snapshot.taskShare) as [SnapshotTask, number][]).sort((a, b) => b[1] - a[1])[0]
   return top && top[1] > 0 ? `${TASK_LABEL[top[0]]} 대화가 ${Math.round(top[1] * 100)}%로 가장 많습니다.` : '최근 대화 패턴 기준 추천입니다.'
 }
@@ -146,11 +152,11 @@ function why(snapshot: UsageSnapshot, s: ScoredItem): string {
 }
 
 // howTo의 {plugin} 자리에 다시 말한 지시가 가장 몰린 대화 종류의 항목 이름을 넣는다
-function fillHow(item: CatalogItem, snapshot: UsageSnapshot): string {
-  if (!item.howTo30s.includes('{plugin}')) return item.howTo30s
+function fillHow(item: CatalogItem, snapshot: UsageSnapshot): { how: string; pluginName?: string } {
+  if (!item.howTo30s.includes('{plugin}')) return { how: item.howTo30s }
   const top = (Object.entries(snapshot.restatement.perTask) as [SnapshotTask, number][]).sort((a, b) => b[1] - a[1])[0]
-  const name = (top && item.byTask?.[top[0]]) || '내 작업에 맞는 플러그인'
-  return item.howTo30s.replaceAll('{plugin}', name)
+  const name = (top && item.byTask?.[top[0]]) || undefined
+  return { how: item.howTo30s.replaceAll('{plugin}', name ?? '내 작업에 맞는 플러그인'), pluginName: name }
 }
 
 // 3)·4) 점수 > 0, 상위 3개, category당 최대 2개
@@ -173,7 +179,7 @@ export function recommend(snapshot: UsageSnapshot, ctx: UserContext, feedback: F
       summary: summaryOf(snapshot, s),
       why: why(snapshot, s),
       what: s.item.oneLiner,
-      how: fillHow(s.item, snapshot),
+      ...fillHow(s.item, snapshot),
       caveat: s.item.caveat,
       signalsUsed: [...s.problemHits, ...s.taskHits],
       score: Math.round(s.score * 100) / 100,

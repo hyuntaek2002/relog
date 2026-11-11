@@ -1,0 +1,18 @@
+{
+  "Apollo.io": "Prospect, enrich leads, and load outreach sequences with Apollo.io — one-click MCP server integration for Claude Code and Cowork.",
+  "BestPrice": "Read-only shopping decisions, product search, offers, and price history for Greece.",
+  "Carbone": "Official Carbone skill — complete templating language reference covering tags, loops, conditions, formatters, aggregators, and all output formats (DOCX, XLSX, PPTX, ODT, HTML, Markdown, PDF)",
+  "Grafana Assistant": "Skills and rules for developing and using the Grafana Assistant app and CLI.",
+  "Informatica": "Governed catalog discovery for Informatica Intelligent Data Management Cloud (CDGC): find tables, columns, files, glossary terms and policies across the enterprise catalog.",
+  "Maven Bio": "Evidence-backed BioPharma research workflows over Maven Bio's drug, trial, company, and deal knowledge graph.",
+  "Modern Web Guidance": "Keep your coding agent up to date with the latest web best practices",
+  "Pendo Analytics": "Bring Pendo product analytics into Claude: account health, feature adoption, session replay lookup and triage, feedback analysis, and data-informed planning.",
+  "Pendo Guides": "Create production-ready Pendo in-app guides (walkthroughs, announcements, alerts, polls, promotions) as HTML/CSS/JS from a short intake conversation.",
+  "Pendo Orchestrate": "Create, configure and edit draft Pendo Orchestrate email journeys, including multi-email and conditional split flows, via the Pendo connector.",
+  "PickedJobs": "Find and compare curated tech jobs by role, seniority, location, remote policy, stack and published salary, with full postings and application links.",
+  "UI/UX Behaves": "A design-system-agnostic UI/UX rule suite: every screen state gets a behave key with rules for accessibility and responsiveness.",
+  "UNPKG": "Live npm and UNPKG data for AI agents: package resolution, project audits, import maps, and malware/CVE checks.",
+  "Zenmoney: personal finance": "Your finances in Claude: automatic bank sync across the EU, plus daily, weekly and monthly briefs on what's changed and what needs attention.",
+  "Zoom": "Plan, build, and debug Zoom integrations across REST APIs, Meeting SDK, Video SDK, webhooks, bots, and MCP workflows.",
+  "sp-global": "S&P Global - Financial data and analytics skills including company tearsheets, earnings previews, and transaction summaries"
+}

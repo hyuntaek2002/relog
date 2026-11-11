@@ -1,4 +1,5 @@
 import { CATALOG, GOALS, PLANS, type Platform, type UserContext } from './recommend'
+import Help from '../ui/Help'
 import type { DetectedFeature } from './detectFeatures'
 
 // 체크리스트: 요금제, 목표(선택), 그리고 파일에서 자동 감지한 사용 기능(해제 가능). 사용 기능을 묻지 않는다.
@@ -36,7 +37,7 @@ export default function Checklist({ platform, value, detected, onChange }: { pla
         ))}
       </div>
       <div className="row wrap">
-        <span>쓰는 기능</span>
+        <span>쓰는 기능<Help text="파일의 도구 호출 흔적으로 추정한 것이라 메모리·프로젝트 지침처럼 흔적이 없는 기능은 못 잡습니다. 그런 건 추천 카드에서 '이미 씀'을 누르면 됩니다. 설정은 이 브라우저에만 저장됩니다." /></span>
         {detected.length === 0 && <em className="detail">파일에서 감지된 기능 없음</em>}
         {detected.map((d) => (
           <label key={d.catalogId} title={`대화 ${d.conversations}개에서 감지. 아니면 체크 해제`}>
@@ -44,7 +45,6 @@ export default function Checklist({ platform, value, detected, onChange }: { pla
           </label>
         ))}
       </div>
-      <p className="detail">파일의 도구 호출 흔적으로 추정한 것이라 메모리·프로젝트 지침처럼 흔적이 없는 기능은 못 잡습니다. 그런 건 추천 카드에서 "이미 씀"을 누르면 됩니다. 설정은 이 브라우저에만 저장됩니다.</p>
       <div className="row wrap">
         <span>목표 (선택)</span>
         {GOALS.map((g) => (

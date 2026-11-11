@@ -1248,6 +1248,46 @@
       "verified": true,
       "isPopularDefault": false,
       "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+    },
+    {
+      "id": "cl_plugin_concise",
+      "platform": "claude",
+      "name": "Caveman Mode: Short Answers 플러그인",
+      "category": "plugin",
+      "oneLiner": "답이나 코드를 먼저 내고 군더더기와 되묻기를 줄여, 긴 답변을 읽고 다시 지시하는 시간을 아낍니다.",
+      "howTo30s": "1) 왼쪽 아래 설정 → 왼쪽 사이드바 플러그인 → 탐색 탭에서 'Caveman Mode'를 찾아 + 추가를 누릅니다. 2) 짧게 받고 싶은 대화 첫 메시지에 '짧게 답해'라고 한 번 적습니다. 3) 자세한 설명이 필요할 때만 '자세히'라고 다시 요청합니다.",
+      "requiresPlan": [
+        "pro",
+        "max",
+        "team"
+      ],
+      "hardExclude": {
+        "featuresInUse": [
+          "cl_plugin_concise"
+        ]
+      },
+      "problemSignals": [
+        {
+          "signal": "answer.avgTokens",
+          "op": ">=",
+          "value": 800,
+          "weight": 2
+        },
+        {
+          "signal": "answer.ratio",
+          "op": ">=",
+          "value": 5,
+          "weight": 1
+        }
+      ],
+      "taskSignals": [],
+      "priority": 55,
+      "evidenceUrl": "https://github.com/petrovicistefan/claude-code-plugins",
+      "evidenceNote": "Claude 앱 탐색 탭 Claude 설정 카테고리 실측 2026-11-10 (설치 7.5K). 기준 800토큰·5배는 사용자 본인 데이터(앱 답변 평균 994토큰·13.3배, Code 845토큰·3.9배)에서 정함",
+      "verifiedAt": "2026-11-10",
+      "verified": true,
+      "isPopularDefault": false,
+      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 답변 평균 분량이 줄었는지로 확인합니다."
     }
   ],
   "taskPlugins": {

@@ -53,6 +53,7 @@ export default function RecommendDev({ snapshot, ctx, feedback }: { snapshot: Us
           <tr><td>대화 종류별 다시 말한 지시</td><td>{Object.entries(r.perTask).sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0)).map(([t, n]) => `${TASK[t as SnapshotTask] ?? t} ${n}`).join(' · ') || '없음'}</td></tr>
           <tr><td>말이 안 통한 듯한 표현 / 비슷한 질문 다시 함</td><td>{r.misunderstanding} / {r.repeatedQuestion}</td></tr>
           <tr><td>다시 입력한 분량 (토큰 추정) / 내 메시지 대비</td><td>{r.tokenEstimate.toLocaleString()} / {r.ratio.toFixed(1)}%</td></tr>
+          <tr><td>AI 답변 하나 평균 분량 (토큰 추정) / 내 메시지 대비</td><td>{Math.round(snapshot.answer.avgTokens)} / {snapshot.answer.ratio.toFixed(1)}배</td></tr>
         </tbody>
       </table>
       <details><summary className="detail">원본 JSON</summary><pre>{JSON.stringify({ ...snapshot, hourHistogram: undefined }, null, 1)}</pre></details>

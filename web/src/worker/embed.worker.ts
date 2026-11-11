@@ -132,7 +132,14 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
     const crossSims = nullDistribution(dIn, (i) => row(data, dim, i))
     const withinSims = withinConversationNull(dIn, (i) => row(data, dim, i))
     const nullThreshold = withinSims.length >= 20 ? quantile(withinSims, 0.9) : quantile(crossSims, 0.99)
-    const pairs = detect(dIn, (i) => row(data, dim, i), { ...DEFAULT_OPTIONS, nullThreshold, markerFloor: quantile(crossSims, 0.9) })
+    // 묶음(앱/Claude Code)별 기준: 그 묶음의 같은 대화 비인접 쌍이 20개 이상이면 그 p90, 아니면 전체 기준
+    const groupThreshold: Record<string, number> = {}
+    for (const g of new Set(dIn.map((u) => u.group).filter((g): g is string => g != null))) {
+      const ids = dIn.map((_, i) => i).filter((i) => dIn[i].group === g)
+      const ws = withinConversationNull(ids.map((i) => dIn[i]), (k) => row(data, dim, ids[k]))
+      if (ws.length >= 20) groupThreshold[g] = quantile(ws, 0.9)
+    }
+    const pairs = detect(dIn, (i) => row(data, dim, i), { ...DEFAULT_OPTIONS, nullThreshold, groupThreshold, markerFloor: quantile(crossSims, 0.9) })
     const nullSims = withinSims.length >= 20 ? withinSims : crossSims
     post(
       {
@@ -146,7 +153,7 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
         pairs,
         sims: pairs.map((c) => c.similarity),
         nullSims,
-        detectSummary: summarize(pairs, dIn, nullThreshold),
+        detectSummary: summarize(pairs, dIn, nullThreshold, groupThreshold),
         modelVersion: `${model}@q8/${device}`,
         classifierVersion: `${CLASSIFIER_VERSION}+${SEED_VERSION}`,
         detectorVersion: DETECTOR_VERSION,

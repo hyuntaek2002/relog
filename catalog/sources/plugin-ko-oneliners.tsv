@@ -1,0 +1,247 @@
+Plugin Management	조직의 도구와 작업 방식에 맞게 플러그인을 만들고 고치고 관리합니다.
+Productivity	할 일·하루 계획·업무 맥락 기억을 캘린더·메일·채팅과 묶어 관리합니다.
+Data	SQL 작성, 데이터 탐색, 시각화·대시보드 제작을 빠르게 합니다.
+Marketing	콘텐츠 제작, 캠페인 계획, 채널별 성과 분석과 브랜드 톤 유지를 돕습니다.
+Finance	분개·대사·재무제표·차이 분석 등 회계 업무를 빠르게 처리합니다.
+Postiz	X·링크드인·유튜브 등 28개 이상 플랫폼에 글을 예약·게시하고 통계를 봅니다.
+PDF Viewer	PDF를 보고 주석을 달고 양식을 채우고 서명한 뒤 내려받습니다.
+Sales	통화 준비, 요약·후속 조치, 계정 조사, 파이프라인 검토, 예측 작성을 CRM·메일과 연결합니다.
+Legal	계약 검토, NDA 분류, 컴플라이언스, 법률 문서 초안 작성을 돕습니다.
+Small Business	소규모 사업 운영에 필요한 작업 흐름을 미리 묶어 두었습니다. 돈이 걸린 단계는 매번 승인합니다.
+Enterprise Search	메일·채팅·문서·위키 등 회사 도구 전체를 한곳에서 검색합니다.
+Figma	Figma 파일·컴포넌트·디자인 토큰을 읽고 디자인을 코드로 옮깁니다.
+Human Resources	채용·온보딩·평가·보상 분석·정책 안내 등 인사 업무를 돕습니다.
+Customer Support	티켓 분류, 답변 초안, 에스컬레이션, 지식 베이스 구축을 돕습니다.
+Brand Voice	기존 문서에서 브랜드 어조를 찾아 지침으로 만들고 생성 글을 검사합니다.
+Bio Research	문헌 검색·유전체 분석·타깃 우선순위 등 전임상 연구 도구에 연결합니다.
+Adobe	Adobe Creative Cloud 도구로 이미지·벡터·디자인·영상을 한 번에 편집합니다.
+Canva	Canva 디자인을 만들고 고치고 크기를 바꾸고 브랜드 기준을 점검합니다.
+Desktop Commander	터미널 명령, 프로세스 관리, 코드·PDF·DOCX·엑셀·이미지 파일 작업을 하는 MCP 서버입니다.
+SearchFit SEO	웹사이트 감사, 콘텐츠 전략, 페이지 최적화, 스키마 생성, 키워드 묶기를 하는 SEO 도구입니다.
+Bright Data	Bright Data로 웹 스크래핑, 구글 검색, 구조화 데이터 추출을 합니다.
+Apollo.io	Apollo.io로 잠재 고객을 찾고 정보를 보강하고 아웃리치 시퀀스를 올립니다.
+Zoom	Zoom REST API·SDK·웹훅·봇 연동을 계획·구현·디버그하고 회의 기록을 찾습니다.
+S&P Global	S&P Global 금융 데이터로 기업 요약, 실적 미리보기, 거래 요약을 만듭니다.
+Product Tracking	코드베이스를 훑어 제품 분석용 추적 계획과 계측 코드를 만듭니다.
+Common Room	Common Room 데이터로 계정·연락처 조사, 통화 준비, 맞춤 아웃리치 초안을 만듭니다.
+Miro	Miro 보드 내용을 읽고 다이어그램을 만들고 코드를 생성합니다.
+Bigdata.com	Bigdata.com의 금융 리서치·분석 도구를 씁니다.
+Nimble	웹 검색·추출·크롤링과 구조화 데이터 에이전트를 제공합니다.
+Daloopa	Daloopa의 기관급 데이터로 금융 분석을 합니다.
+Zapier	8,000개 이상 앱의 Zapier 액션을 찾아 바로 실행합니다.
+Browser Use	Claude에 실제 브라우저를 붙여 웹사이트 탐색·스크래핑·양식 작성을 시킵니다.
+Adspirer	Google·Meta·TikTok·LinkedIn 광고를 키워드 조사부터 예산 최적화까지 한곳에서 관리합니다.
+Carta Investors	Carta 투자자 데이터 조회·수정, 성과 벤치마크, 규제 보고, AGM 자료 생성을 합니다.
+Vibe Prospecting	실시간 B2B 기업·연락처 데이터를 검색·매칭·보강·내보내기 합니다.
+wix	Wix 사이트와 앱을 만들고 관리하고 배포합니다. CLI 스킬과 MCP 서버 포함.
+Box	Box 파일을 검색·정리하고 Box AI로 문서를 요약합니다.
+airtable	Airtable을 에이전트의 데이터베이스·운영 계층으로 씁니다.
+ZoomInfo	기업·연락처 검색, 리드 보강, 유사 기업 찾기, AI 추천 연락처를 제공합니다.
+Fastly	Fastly 개발 도구와 플랫폼 스킬입니다.
+frontend-design	UI/UX 구현을 위한 프런트엔드 디자인 스킬입니다.
+Superpowers	TDD·디버깅·협업 패턴 등 Claude Code 핵심 스킬 모음입니다.
+twilio-developer-kit	SMS·음성·WhatsApp·Verify·SendGrid 등 Twilio API 사용 순서와 주의점을 알려 줍니다.
+github	GitHub 공식 MCP 서버로 이슈·PR·코드 리뷰·저장소 검색을 합니다.
+Prisma	Prisma로 Postgres 스키마 마이그레이션, SQL 쿼리, 연결 문자열을 관리합니다.
+DataRobot Agent Skills	DataRobot으로 모델 학습·배포·예측·모니터링·설명 가능성 작업을 합니다.
+Sanity	Sanity 콘텐츠 플랫폼에서 콘텐츠 조회·작성, GROQ 쿼리, 스키마 설계를 합니다.
+Modern Web Guidance	코딩 에이전트가 최신 웹 모범 사례를 따르게 합니다.
+Base44	Base44 풀스택 앱을 CLI와 JS/TS SDK로 만들고 배포합니다.
+Security Guidance	Claude가 만든 코드를 보안 검토합니다. 편집 시 경고, 종료 시 diff 검토, 커밋 검토를 합니다.
+Exa Deep Research	Exa 웹 검색, 본문 가져오기, 여러 단계 리서치를 합니다.
+cockroachdb	CockroachDB 클러스터에 붙어 스키마 탐색, SQL 최적화, 쿼리 디버그를 합니다.
+Cloudinary	Cloudinary 자산 관리, 변환, 미디어 최적화를 대화로 합니다.
+Claude for Financial Advisors	재무 상담사용 워크플로를 회사가 쓰는 도구의 실시간 데이터로 돌립니다.
+Intercom	Intercom 대화 검색, 고객 지원 패턴 분석, 연락처 조회를 합니다.
+Learn with Coursera	주제·숙련도·형식을 물은 뒤 Coursera 카탈로그에서 맞춤 학습 경로를 만듭니다.
+Atlan	Atlan 데이터 카탈로그에서 데이터 자산을 검색·탐색·거버넌스합니다.
+Carta Cap Table	Carta 캡 테이블, 부여, SAFE, 409A 평가, 투자 라운드를 조회합니다.
+Datadog	Datadog MCP 서버로 로그·메트릭·트레이스·대시보드를 조회합니다.
+Carta CRM	Carta CRM의 투자자·회사·연락처·딜·노트를 대화로 관리합니다.
+monday.com	monday.com 보드·항목·문서·양식을 읽고 씁니다.
+AI-Firstify	AI 우선 설계 원칙 9가지·패턴 7가지로 프로젝트를 감사하고 재설계합니다.
+Vanta	Vanta 보안·컴플라이언스 플랫폼에서 실패한 검사와 해결 방법을 봅니다.
+PlanetScale	PlanetScale 조직·데이터베이스·브랜치·스키마·Insights 데이터에 접근합니다.
+Dropbox	Dropbox 파일을 검색·정리하고 생성 결과를 저장하고 공유 링크를 만듭니다.
+servicenow-sdk	Fluent SDK로 ServiceNow 앱을 만들고 수정하고 배포합니다.
+GitKraken	커밋·브랜치·PR·이슈 등 실제 Git·프로젝트 맥락을 Claude에 줍니다.
+Auth0	Auth0 퀵스타트, 다른 제공자에서 이전, MFA 설정 스킬입니다.
+Tavily	Tavily 검색·추출·크롤·리서치 API로 실시간 웹 데이터를 씁니다.
+ActiveCampaign	ActiveCampaign 연락처·캠페인·자동화·딜을 관리합니다.
+Qt Development Skills	Qt C++/QML 코드 리뷰, QML 코딩, 문서화 스킬입니다.
+monday CRM	monday CRM 파이프라인 구축, 딜 브리핑, 예측 대시보드, 보드 정리를 대화로 합니다.
+Remotion	React로 프로그램 영상을 만드는 Remotion 모범 사례·애니메이션·자막 스킬입니다.
+Langfuse	LLM 트레이싱·프롬프트 관리·평가 플랫폼 Langfuse 작업 스킬입니다.
+Buildkite	Buildkite 파이프라인·마이그레이션·CLI·API 공식 스킬입니다.
+B12	짧은 설명으로 B12 웹사이트를 만들고 브라우저로 편집합니다.
+Qdrant	Qdrant 벡터 검색의 확장·성능·검색 품질·배포·SDK 스킬입니다.
+Grafana Cloud MCP	설치 없이 쓰는 Grafana Cloud 관측 MCP 서버입니다.
+Pixeltable	Pixeltable로 테이블·계산 열·임베딩 검색·에이전트 등 멀티모달 AI 앱을 만듭니다.
+Airwallex AgentOS	Airwallex 계정에서 인보이스 생성, 공급업체 온보딩 등을 말로 처리합니다.
+Lusha	Lusha B2B 데이터로 잠재 고객 발굴, 보강, 통화 가능한 리드 목록을 만듭니다.
+TinyFish	웹 검색, URL 본문 가져오기, 브라우저 에이전트 등 웹 도구 모음입니다.
+Val Town	Val Town에서 HTTP·크론·SQLite·이메일 등을 쓰는 앱을 만들고 배포합니다.
+Qodo	Qodo의 코드베이스 이해·코딩 표준·코드 리뷰를 코딩 에이전트에 붙입니다.
+ClickHouse	ClickHouse 모범 사례 스킬, 규칙, MCP입니다.
+claude-code-setup	코드베이스를 분석해 맞는 훅·스킬·MCP·서브에이전트를 추천합니다.
+Honeycomb	Honeycomb 쿼리 패턴, 장애 조사, SLO, OpenTelemetry 계측 스킬입니다.
+playwright	Microsoft의 브라우저 자동화·E2E 테스트 MCP 서버입니다.
+GrowthBook Skills	GrowthBook 기능 플래그·실험·제품 분석 전 과정 스킬입니다.
+Grafana Assistant	Grafana Assistant 앱과 CLI 개발·사용 스킬과 규칙입니다.
+Grasp	Grasp 기업 조회·테이블 생성·바이어·거래 도구로 딜 업무를 합니다.
+BlackRock Advisor Center	BlackRock Advisor Center 360° 포트폴리오 구성·관찰·기회 스킬입니다.
+Carbone	Carbone 템플릿 언어 전체 참조와 DOCX·XLSX·PPTX·PDF 출력 스킬입니다.
+SigNoz	SigNoz MCP 설정, 문서, 쿼리, 대시보드, 알림 공식 플러그인입니다.
+Apify	Apify의 기성 Actor를 실행하거나 직접 만들어 게시합니다.
+Synthflow	Synthflow AI 음성 에이전트 플랫폼에 연결해 통화 검토·프롬프트 감사를 합니다.
+stackhawk-hawkscan	HawkScan DAST 설정·실행·결과 해석을 Claude Code 안에서 합니다.
+Noibu	이커머스 세션·오류·전환 데이터를 Claude에 연결해 매출 영향을 봅니다.
+StackHawk API	StackHawk 보안 태세 보고, 취약점 분석, 앱 관리 API를 조회합니다.
+GC AI	GC AI 법률 지식 베이스에 문서를 올리고 검토 플레이북을 돌립니다.
+NetSuite Finance Analyst	NetSuite 실시간 데이터로 디렉터급 재무 분석을 냅니다.
+HubSpot Sales	HubSpot 연락처 가져오기, 통화 준비, 일일 브리핑, 후속 초안, 파이프라인 요약을 합니다.
+Intuit QuickBooks	QuickBooks 재무 건전성 브리핑, 업계 벤치마크, 인보이스, 급여, 대출을 다룹니다.
+Informatica	Informatica 데이터 카탈로그에서 테이블·컬럼·용어·정책을 찾습니다.
+Social Media Skills	전략·글쓰기·영상·디자인·성장·게시·분석 등 소셜 미디어 스킬 106개입니다.
+Qodo Standards	Qodo 규칙 탐색과 표준 관리 워크플로입니다.
+NetSuite AI Companion	NetSuite AI Connector로 AI 어시스턴트를 안내합니다.
+Maven Bio	Maven Bio 지식 그래프로 약물·임상·기업·딜 리서치를 합니다.
+Render	Render에 앱을 배포·디버그·모니터링합니다. 스킬·에이전트·검증 훅·MCP 포함.
+Amazon Selling Partner	Amazon 셀러 센트럴에 연결해 매출·재고·리스팅 성과를 내 데이터로 봅니다.
+Hostinger Connector	Hostinger 웹사이트·도메인·이메일·워드프레스·VPS를 배포·관리합니다.
+Unstructured Foundation	Unstructured로 소스를 연결하고 처리된 문서를 검색합니다.
+incident.io	incident.io 장애 대응·조사, 온콜 일정, 운영 문서 작성을 합니다.
+design-skills	리서치·비평·접근성·여정 지도·디자인 시스템 등 UX 스킬 10개입니다.
+code-review	여러 전문 에이전트가 신뢰도 점수를 매기며 PR을 자동 리뷰합니다.
+Chronograph LP	사모 LP 팀용 현금흐름 예측, 약정 페이싱, 노출 분석, GP 미팅 준비입니다.
+Leadfeeder	웹사이트 방문 기업 신호를 파이프라인으로 바꾸는 Leadfeeder 스킬 6개입니다.
+Zocks Advisor Intelligence	Zocks 회의 인텔리전스로 재무 상담사용 고객 성향·이탈 위험 분석을 합니다.
+Chronograph GP	사모 GP 팀용 포트폴리오 모니터링, 평가, 분기 리뷰 자료를 만듭니다.
+caveman	원시인처럼 말합니다. 짧은 단어, 짧은 문장, 군더더기 없음.
+AI Skills	계획·테스트 우선 구현·코드와 보안 리뷰·git 정리·세션 인계 스킬 모음입니다.
+Adaptive Agent	쓸수록 에이전트가 강해지게 스킬 자기 개선·메모리 피드백·사용자 프로필을 둡니다.
+Setup Audit	Claude Code 설정·사용·흔한 설정 위험을 최신 문서 기준으로 감사합니다.
+Founder OS	아이디어·검증·MVP·출시·투자 유치까지 초기 창업자용 스킬과 조언 에이전트입니다.
+management-consulting	RFP 분석, 제안서 작성, 전략 프레임워크 적용, 실행 계획 수립을 돕습니다.
+Pendo Analytics	Pendo 제품 분석(계정 건강, 기능 채택, 세션 리플레이, 피드백)을 Claude로 가져옵니다.
+Task Observer: Learn Your Preferences	내 수정 사항을 CLAUDE.md 규칙으로 남겨 Claude Code가 매 세션 기억하게 합니다.
+Caveman Mode: Short Answers	답이나 코드를 먼저, 군더더기와 반복 질문 없이 짧게 답하게 합니다. 읽는 시간과 출력 토큰을 아낍니다.
+Active Memory	규칙·수정·숫자를 하나도 잃지 않고 새 대화로 넘어갑니다. /amhandoff가 인계 파일을 씁니다.
+firecrawl	명령 하나로 웹을 스크래핑·검색·크롤·맵핑합니다.
+Obsidian Notes	마크다운을 Obsidian 볼트로 쓰면서 GitHub·VS Code에서도 보이게 관리하고 깨진 링크를 찾습니다.
+Napkin Math	가정과 범위를 밝힌 어림 계산을 하고 남이 말한 숫자를 검산합니다.
+huggingface-skills	hf CLI로 Hugging Face Hub 저장소·잡·데이터셋·모델·Spaces를 다룹니다.
+expo	Expo 앱 빌드·배포·업그레이드·디버그 공식 스킬입니다.
+figma-suite	Figma와 코드 사이 토큰·컴포넌트 양방향 동기화와 컴포넌트 라이브러리 생성을 합니다.
+ADHD Study Coach	ADHD 학습자용 공부 동반자: 간격 반복 워밍업, 작은 단위 학습, 파인만식 되새김.
+YouTube Transcriber	유튜브 영상·재생목록의 자막을 뽑아 글로 만듭니다. API 키 불필요.
+Finance Tutor	금융 Q&A 학습용입니다. 투자 조언은 아닙니다.
+Claude Education Skills Library	교육자용 근거 기반 교수법 스킬 165개입니다.
+Superdesign	Superdesign 무한 캔버스에서 프런트엔드 UI·프레젠테이션·마케팅 그래픽을 디자인합니다.
+verification-foundation	법률 AI 결과물이 인용한 근거가 실제로 있는지 내보내기 전에 검사하는 스킬 10개입니다.
+commercial-legal	벤더 계약·NDA·SaaS 구독을 내 플레이북 기준으로 검토하고 갱신 기한을 추적합니다.
+LinkedIn Profile Review & Resume Converter - ResumeNext	링크드인 프로필을 항목별로 검토해 ResumeNext 이력서로 바꿉니다.
+LinkedIn Career Intelligence - rankedin	경력 위치를 진단하고 다음 이직·커리어 전환 방향을 잡아 줍니다.
+CV Builder	이력서를 초안·맞춤·검토·재작성하고 브라우저 CV Builder에서 엽니다.
+Reverse Engineering	Claude Code용 리버스 엔지니어링 스킬입니다.
+claude-for-msft-365-install	Claude Office 추가 기능용 클라우드 접근(Vertex·Bedrock·Azure)을 설정합니다.
+ADA PDF Compliance	PDF 접근성 메타데이터를 ADA·508·PDF/UA 기준으로 분석하고 고칩니다.
+Abracadabrax AI Product Photo Generator	제품을 설명하면 흰 배경 컷, 연출 컷, 플랫레이, 배너 이미지를 만듭니다.
+seal-copilot	Sealmetrics 분석 데이터로 성과 진단, 매출 기회, 장바구니 모니터링을 합니다.
+ATS Resume Checker & Resume Builder - ResumeNext	이력서 ATS 점수를 확인하고 고칠 점을 보여 주며 빌더에서 엽니다.
+animation-studio	프레임과 음악을 코드로 그려 동기화된 손그림 애니메이션 단편을 만듭니다.
+Abracadabrax AI Background Music Generator	분위기와 용도를 말하면 영상·팟캐스트·광고용 배경 음악을 만듭니다.
+Abracadabrax AI Song & Music Maker	Claude와 가사를 쓰고 Abracadabrax가 노래를 만들어 줍니다.
+Achriom	책·영화·앨범·게임 등 내 미디어 컬렉션을 분석하고 추천하는 개인 사서입니다.
+AI YouTube OS	AI 에이전트로 유튜브 영상을 매일 만드는 운영 구조입니다. 채널 폴더 생성, 일일 제작, 업로드 전 검수.
+Crypto Spot Futures Analyzer	암호화폐 현물·선물 거래, 차트 캡처, 진입·손절·레버리지·청산 위험을 분석합니다.
+Crypto & Bitcoin Analyst — Charts & Research	비트코인·이더리움·알트코인 차트, 토크노믹스, 뉴스를 조건별 시나리오로 설명합니다.
+cashflow	Plaid로 은행 계좌를 연결해 지출 조회, 반복 청구 추적, 거래 분류, 재무 요약을 합니다.
+Distilla Investment Research	상장사 재무제표, 애널리스트 추정치, 실적 일정·콜 기록을 조회합니다.
+TickerLayer	암호화폐·외환·주식·ETF·원자재·채권의 최신 가격과 이력, 시장 시간을 봅니다.
+Voicenter API Skills	Voicenter API 14종(VoiceBot, Click2Call, 통화 기록 등)을 다루는 스킬 16개입니다.
+Asyntai – AI Support Agent for Websites	웹사이트 Asyntai 지원 에이전트의 지식 베이스·지침·대화·리드를 관리합니다.
+Customer Success: Churn and QBRs	B2B 고객 성공 담당자용 이탈 위험 판단, QBR 구성, 온보딩, 업셀 시점을 돕습니다.
+google-multi-account	여러 구글 계정의 Gmail·캘린더·드라이브를 Claude에서 검색·작성·관리합니다.
+beckett	스스로 정리되는 노트와 할 일·일정·장보기·레시피·습관을 Claude가 찾고 갱신합니다.
+RingCentral	RingCentral 통화·음성 메시지·SMS·팩스 확인과 팀 채팅 읽기·쓰기를 합니다.
+StudyPath	Coursera·Udemy·O'Reilly 강의를 찾아 기간을 정한 학습 경로를 만듭니다.
+FlyBest Hotels — AI Travel Booking	호텔 요금·객실·취소 조건을 비교하고 결제 페이지까지 이어 줍니다.
+pubmed	PubMed 의학 문헌을 검색하는 MCP 서버입니다.
+adisinsight	Springer Nature AdisInsight로 신약 파이프라인·임상·딜 정보를 봅니다.
+Jinkō	Jinkō 플랫폼으로 정량 시스템 약리학 모델링 전 과정을 지원합니다.
+Study Desk	내 노트·슬라이드·교재에서만 플래시카드·연습 문제·모의시험을 만듭니다.
+math-olympiad	IMO·Putnam 수준 경시 수학을 풀고 별도 검증자가 증명을 공격해 오류를 잡습니다.
+Game Trend Skills	모바일 게임 트렌드 스캔, 아이디어 평가, KPI 추적, 무예산 출시 계획을 돕습니다.
+thinking-partner	150개 이상 사고 모델로 가정을 흔들고 결정을 다듬는 사고 파트너입니다.
+Cruise Itinerary	크루즈 선사·선박·항구·일정·요금 이력을 조회합니다.
+Travel Vibes: Trip Itineraries	취향을 입력하면 항공·숙소·활동·예산·지도가 든 일자별 여행 계획을 만듭니다.
+Airport Lounge List	공항 라운지 8,500곳 중 내 카드·멤버십·등급으로 들어갈 수 있는 곳을 찾습니다.
+Travel Video & Documentary Maker	여행지나 여정을 내레이션이 든 여행 가이드·다큐 영상으로 만듭니다.
+Writing Skills	쉬운 글, AP 저널리즘, GOV.UK, 오웰의 규칙 등 글쓰기 스타일 스킬 16개입니다.
+Humanize Kit	내 실제 글에서 목소리 지문을 만들어 AI 글을 그 어조로 다시 씁니다.
+Claude ghost writer	저자 인터뷰·기획·목소리 분석 뒤 구조화된 사이클로 책을 함께 씁니다.
+Apodictic	소설·논증형 비문학의 구조를 진단하는 개발 편집자입니다. 요청 없이는 고쳐 쓰지 않습니다.
+A Good Sign	A Good Sign에 동기화한 Apple Health 데이터를 비공개로 탐색합니다.
+NetSuite SuiteSkills	NetSuite 인사이트와 업무 흐름 스킬입니다.
+coach	내 기록으로 운동 프로그램을 짜고 세션을 계획하고 기록하는 근력 코치입니다.
+Running Race Coach	Strava 기록으로 맞춤 러닝 훈련 계획을 만들고 조정합니다.
+SpriteCook	스프라이트·UI 키트·텍스처·짧은 애니메이션 등 게임 아트를 만듭니다.
+Minecraft Modding	Fabric·Forge·NeoForge 마인크래프트 모드를 포팅·작성·디버그합니다.
+batocera	Batocera 레트로 게임기를 SSH로 운영합니다. ROM 정리, 셰이더, 성능 조정.
+Paper Plugin Dev	Java 21로 Paper 1.21.x 마인크래프트 플러그인을 개발하는 참조 스킬입니다.
+skill-campfire	설치한 Cowork 스킬을 캠프파이어에 모인 캐릭터로 바꿔 대화하게 합니다.
+WEM Price Compare	바코드로 상품을 맞춰 여러 판매처의 가격을 비교합니다.
+MakeBox for Etsy	Etsy SEO 전략과 리스팅 작성 워크플로입니다.
+Instant	instant.ai로 쓸 수 있는 도메인과 브랜드 이름을 찾고 상표를 검색합니다.
+Cheapest Domains	도메인 갱신 가격을 등록 대행사별로 비교해 오래 유지할 수 있는 도메인을 찾습니다.
+VerseDB: Comic Book Tracker	VerseDB로 만화책을 검색·정리하고 읽는 순서와 수집 현황을 봅니다.
+GovTribe	GovTribe로 정부 조달 조사, 수주 준비, 가격 산정, 제안서 작업을 합니다.
+ArcKit Austrian Overlay	ArcKit용 오스트리아 규제(DSG·NISG·공공 조달·접근성) 명령 4개입니다.
+BidSkim - UK Tenders & Contract Renewals	영국 정부 입찰 공고를 검색하고 계약 갱신을 추적합니다.
+kordoc	HWP·HWPX·PDF·DOCX 등 한국 공문서를 파싱·생성·채우기·비교·검증합니다.
+ArcKit French Public Sector Overlay	ArcKit용 프랑스 공공 부문 규제(DINUM·ANSSI·RGPD 등) 명령 12개입니다.
+howtotalk	비폭력 대화, 협상, 솔직한 피드백 등 소통 프레임워크 14개를 상황에 맞게 고릅니다.
+AncestralFire	FamilySearch나 GEDCOM 파일로 가족사를 불러와 조상 이야기를 탐색합니다.
+Birthday Video Maker: AI Birthday Tribute & Wishes Video	추억을 적으면 음성 내레이션이 든 생일·기념일 축하 영상을 만듭니다.
+Document Vault	스캔한 가족 문서를 개인정보를 가린 채 읽어 사람·종류별로 정리합니다.
+My Video Gift	사진과 창작곡으로 개인 맞춤 영상 선물을 만듭니다.
+novel-studio	AI 웹소설 창작 하네스입니다. 기획→설계→집필→윤문→재작성 전 과정을 자동화합니다.
+Mysocial Intelligence	Mysocial MCP로 내 콘텐츠와 소셜 세계를 분석하고 다음 게시물을 만듭니다.
+CineFlo	촬영 목록, 대본 분해, 촬영 일정, 콜시트 등 영화 제작 운영을 돕습니다.
+StreamPay	StreamPay 후원 확인, 위젯·템플릿 생성, 구독 설정을 관리합니다(폴란드어).
+ALICE by Soundscape	Soundscape 회원의 음원 발매 준비·제출·유통·마케팅 안내를 돕습니다.
+paper-to-course	학술 논문을 인터랙티브 HTML 강의, 노트, 슬라이드로 바꿉니다.
+Financial Aid Office Workflow	학자금 지원 사무실의 사례 검토, 누락 정보 후속, 학생 소통을 돕습니다.
+Oak National Academy	영국 국가 교육과정에 맞춘 무료 Oak 수업 자료입니다.
+fet	FET로 학교 시간표를 생성·해결·검증합니다.
+metri: Calorie & Macro Tracker	사진·음성·글로 식사를 기록하는 칼로리 다이어리입니다.
+InsightPins for Pinterest	글·상품·레시피 URL로 Pinterest 핀을 만들고 최적화하고 대량 업로드 CSV를 만듭니다.
+Pour Picks	버번·라이·스카치 등 4,700종 이상의 시음 프로필과 대안을 찾습니다.
+Peristyle Grocery Cart	레시피를 Kroger·Walmart 장바구니로 바꿔 재료를 실제 상품에 맞춥니다.
+Pitwall F1	F1 텔레메트리·타이어 전략·피트스톱·라이브 타이밍 등 읽기 전용 도구 77개입니다.
+MarineVerse	세일링 입문 강습·크루 참여·학습 경로를 찾고 VR로 연습합니다.
+Tenisle	Tenisle 선수 통계·경기 기록·상대 전적을 보고 리그 점수를 입력합니다.
+Golf Intelligence	골프 앱 개발용 고품질 골프장 매핑 데이터입니다.
+Muffed — verified NFL stats	출처와 기준일이 붙은 검증된 NFL 통계와 Sleeper 리그 정보입니다.
+Astro Jyotish	베다 점성술 출생 차트, 리딩, PDF 보고서, 운세 예측을 제공합니다.
+Church & Faith Event Video Maker: Event Invitations	예배·행사·수련회 정보를 따뜻한 초대 영상으로 만듭니다.
+Authority Astrology	Swiss Ephemeris 계산으로 출생 차트·트랜싯·관계 차트를 탐색합니다.
+Tarotap	78장 실제 타로 덱을 섞어 직접 카드를 뽑고 질문에 맞춰 풀이합니다.
+The Astro Diary	저장한 점성술 차트로 한 주를 돌아보고 관계 패턴을 이해합니다.
+arrfleet-toolkit	Radarr·Sonarr 등 Arr 스택과 docker compose 서비스를 관리하는 스킬 8개입니다.
+Shipshape	컴퓨터의 어지러운 폴더를 훑어 내 정리 방식을 배운 뒤 물어보고 정리안을 냅니다.
+Homelab Docker Ops	홈랩·소규모 Docker 호스트의 컨테이너를 실행·수리·갱신합니다.
+Indigo claude plugin	Indigo 홈 자동화 플러그인 개발, API 연동, 제어 페이지 제작 도구입니다.
+Idasen Desk Control	IKEA Idasen 스탠딩 데스크를 Claude에서 연결·이동·높이 프리셋 관리합니다.
+Booking FAQ	승인된 용어로 예약 FAQ·안내·답변을 쓰고 기존 문구를 점검합니다.
+CoverCount Staff	레스토랑·행사장 직원용 예약·행사 운영 도구입니다.
+Eqolux	Eqolux 레스토랑·호텔 구매 데이터로 공급업체별 지출과 절감 기회를 분석합니다.
+itinovo CRM	여행사·투어사용 CRM itinovo에서 고객 요청을 견적으로 바꾸고 가격표를 불러옵니다.
+Calibre Library	calibre 전자책 서재의 메타데이터·본문·하이라이트를 검색·인용합니다. 읽기 전용.
+TomeScout Toolkit	KDP 키워드 칸 채우기, 가이드라인 점검, 로열티 비교 등 자가 출판 도구입니다.
+translate epub	EPUB 책을 분석·번역·일관성 검사·검수까지 베트남어로 옮깁니다.
+Nonprofit Grant Operations	비영리 보조금의 발굴·신청·수령·보고·갱신 전 과정을 관리합니다.
+Tirion	Tirion 데이터(인물·SEC·IRS 990·부동산·기부)로 모금 대상자를 조사합니다.
+Unreasonable Eco	Unreasonable Eco 커뮤니티 검색, 약속 검토, 프로그램 탐색을 합니다.
+Gratefully	Gratefully 기부자 인텔리전스로 오늘 중요한 기부자와 이유를 알려 줍니다.

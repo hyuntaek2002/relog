@@ -17,6 +17,7 @@ export interface Conversation {
   createdAt: number | null
   turns: Turn[]
   toolNames: string[] // 대화 안에서 호출된 도구·연동 이름(본문 없는 메시지 포함). 기능 사용 자동 감지용
+  pluginNames?: string[] // Claude Code 세션에서 확인된 설치 플러그인 id(스킬 목록·Skill 호출 접두어). 앱 내보내기에는 없음
 }
 
 export interface ParseError {

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Help from '../ui/Help'
 import { TASK_LABELS } from '../classify/classifier'
 import type { UsageSnapshot } from '../recommend/snapshot'
 import { compareSides, compareTasks, versionKey, type AnalysisVersion, type PeriodSnapshot, type TaskCompare } from './ledger'
@@ -18,14 +19,11 @@ export function StorageChoice({ mode, storedCount, onMode, onClear }: { mode: St
   return (
     <div className="checklist">
       <div className="row">
-        <span>보관</span>
-        <label><input type="radio" name="storage" checked={mode === 'none'} onChange={() => onMode('none')} /> 이번만 보기 (창을 닫으면 사라짐)</label>
+        <span>보관<Help text="남기면 메시지별 집계(시각·대화 종류·다시 말한 지시 여부·분량)만 이 브라우저 안에 저장됩니다. 대화 내용은 저장하지 않습니다. 같은 기간을 다시 올리면 덮어쓰고 새 기간만 추가됩니다." /></span>
+        <label><input type="radio" name="storage" checked={mode === 'none'} onChange={() => onMode('none')} /> 이번만 보기</label>
         <label><input type="radio" name="storage" checked={mode === 'local'} onChange={() => onMode('local')} /> 이 브라우저에 남기기</label>
       </div>
-      <p className="detail">
-        남기면 메시지별 집계(시각·대화 종류·다시 말한 지시 여부·분량)만 이 브라우저 안에 저장됩니다. 대화 내용은 저장하지 않습니다. 같은 기간을 다시 올리면 덮어쓰고 새 기간만 추가됩니다.
-        {mode === 'local' && storedCount > 0 && <> 저장된 메시지 {storedCount}개. <button onClick={onClear}>이 브라우저의 데이터 삭제</button></>}
-      </p>
+      {mode === 'local' && storedCount > 0 && <p className="detail">저장된 메시지 {storedCount}개. <button onClick={onClear}>이 브라우저의 데이터 삭제</button></p>}
     </div>
   )
 }
@@ -60,7 +58,7 @@ export default function Trend({ weeks }: { weeks: PeriodSnapshot[] }) {
           <p className="detail">
             이전 {fmtRange(cmp.beforeRange)} → 최근 {fmtRange(cmp.afterRange)}
             <span> · 최근 <select value={recent} onChange={(e) => setRecent(Number(e.target.value))}>{[1, 2, 4].map((n) => <option key={n} value={n}>{n}주</option>)}</select></span>
-            <br />숫자는 "그 종류의 내 메시지 중 다시 말한 지시의 비율"입니다. 메시지 5개 미만이면 비우고, 변한 이유는 판정하지 않습니다.
+            <Help text="숫자는 '그 종류의 내 메시지 중 다시 말한 지시의 비율'입니다. 메시지 5개 미만이면 비우고, 변한 이유는 판정하지 않습니다." />
           </p>
           <CompareTable cmp={cmp} before="이전" after="최근" />
         </>
@@ -113,8 +111,8 @@ export function ReportFile({ snapshot, weeks, version }: { snapshot: UsageSnapsh
       <p className="actions">
         <button onClick={download}>결과 파일로 저장</button>
         <label className="btn">예전 결과 파일과 비교<input type="file" accept=".json,application/json" onChange={(e) => load(e.target.files?.[0])} /></label>
+        <Help text="파일에는 이 화면의 숫자(대화 종류별 수, 다시 말한 지시 수, 주별 집계)만 들어가고 대화 내용은 없습니다. 다음에 새 내보내기를 분석한 뒤 이 파일을 올리면 종류별로 줄었는지 늘었는지 보여 줍니다." />
       </p>
-      <p className="detail">파일에는 이 화면의 숫자(대화 종류별 수, 다시 말한 지시 수, 주별 집계)만 들어가고 대화 내용은 없습니다. 다음에 새 내보내기를 분석한 뒤 이 파일을 올리면 종류별로 줄었는지 늘었는지 보여 줍니다.</p>
       {err && <p className="err">{err}</p>}
       {old && cmp && (
         <>

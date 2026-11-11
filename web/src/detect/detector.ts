@@ -1,14 +1,17 @@
 import { dot } from '../classify/classifier.ts'
 
-export const DETECTOR_VERSION = 'det-0.2.0'
+export const DETECTOR_VERSION = 'det-0.3.0'
 
 // 같은 대화의 앞선 사용자 발화와 비교해 "이미 말한 지시·정보를 다시 말한 것으로 의심되는" 발화를 찾는다.
 // 모델이 이행했는지는 판정하지 않는다(P1 별도 실험).
 //
 // 규칙 요약
 //  - 유사도 기준은 절대값이 아니라 그 사용자의 "서로 다른 대화 무작위 쌍" 분포(귀무분포)의 상위 1%.
+//  - 0.3: 기준선은 묶음(group: 앱/Claude Code)별로 따로 잰다. 한 주제로 오래 가는 코딩 세션은 기본 유사도가 높아 한 기준으로는 Code 쪽이 과다 검출됐다.
 //  - 지시형 발화만 반복 지시 후보. 질문형은 "반복 질문"으로 따로 센다. 과업 유형 상담·대화는 제외.
 //  - 재전송/수정(접두어 포함·편집 거리 작음, 몇 분 이내), 범용 발화(3개 이상 대화에 같은 문장), 첨부 동반은 제외.
+//  - 0.3: 앞선 발화와 글자까지 같은 지시를 재전송 시간 밖에서 다시 내린 것, 그리고 커밋·푸시·배포류 짧은 지시는 정기 명령으로 보고 제외(routine).
+//    끝날 때마다 내리는 명령이라 반복이지 다시 말한 것이 아니다. 실측: Code 표시 286건 중 글자까지 같은 것 15건, 한 세션에서 같은 문장 11번.
 //  - 등급: 낮음 = 유사도 상위 1% + 지시형 + 제외 통과 / 중간 = 낮음 + 24시간 이내 + 사이에 모델 응답 / 높음 = 중간 + 반복 표지.
 //  - 24시간 넘은 쌍은 표지가 없으면 주제 재방문으로 보고 후보에서 뺀다.
 
@@ -22,11 +25,12 @@ export interface DetectInput {
   hasAttachment: boolean
   prevAssistantIdx: number // 직전 모델 응답 turn idx, 없으면 -1
   taskType?: string // 과업 분류 결과(chat 제외용)
+  group?: string // 기준선 묶음(앱/Claude Code). 없으면 전체 기준 사용
 }
 
 export type Grade = 'low' | 'medium' | 'high'
 export type UtteranceKind = 'instruction' | 'question' | 'other'
-export type Exclusion = 'below_null' | 'not_instruction' | 'chat_task' | 'resend' | 'generic' | 'attachment' | 'stale'
+export type Exclusion = 'below_null' | 'not_instruction' | 'chat_task' | 'resend' | 'routine' | 'generic' | 'attachment' | 'stale'
 
 export interface Candidate {
   conversationId: string
@@ -53,6 +57,9 @@ export const COMPLAINT_RE = /라니까|다니까|자꾸|그게\s*아니|아니\s
 const INSTRUCTION_RE = /(줘|주세요|달라|해\s*봐|해봐|해라|하세요|하자|해\s*주|부탁|빼고|말고|으로\s*(해|써|바꿔|다시|정리|작성)|로\s*다시|작성|수정|추가|넣어|바꿔|고쳐|만들어|정리|설명해|번역해|구현|적용|반영|삭제|생성|출력|요약|검토|분석해|확인해|비교해|추천해|줄여|늘려|다듬어|\bonly\b|\bplease\b|^(write|make|add|fix|implement|translate|create|update|remove|change|show|give|list|explain|summarize|keep|use)\b)/i
 const QUESTION_RE = /\?|할까|맞아|맞지|맞나|어떻게\s*생각|뭐야|뭔가요|인가요|일까|나요\s*$|되나|될까|어때|왜\s|어디|언제|누구|뭘\s|무엇|있어\s*$|있나|없나|\b(what|why|how|when|where|which|is it|does|do you|can you|should)\b/i
 
+// 정기 작업 명령 표지: 끝날 때마다 내리는 커밋·푸시·배포류와 "다음 단계 하자"·"이어서"·"확인해봐" 같은 진행 명령. 짧은 지시(routineMaxChars 이하)에만 적용
+export const ROUTINE_RE = /커밋|푸시|푸쉬|배포|머지|빌드|올려\s*줘|다음\s*(단계|거|것)|이어서|계속\s*(하|진행|가)|진행\s*하자|확인해\s*봐|끝나면\s*(말|알려)|\b(commit|push|deploy|merge|build|continue|next step|go on)\b/i
+
 export function kindOf(text: string): UtteranceKind {
   if (INSTRUCTION_RE.test(text)) return 'instruction'
   if (QUESTION_RE.test(text)) return 'question'
@@ -77,7 +84,8 @@ export function editRatio(a: string, b: string): number {
 }
 
 export interface DetectOptions {
-  nullThreshold: number // 귀무분포 상위 1% 경계(코사인)
+  nullThreshold: number // 귀무분포 상위 1% 경계(코사인). 묶음 기준이 없는 발화에 적용
+  groupThreshold?: Record<string, number> // 묶음별 기준(코사인). 있으면 그 묶음 발화에 우선 적용
   resendMinutes: number
   resendEditRatio: number
   genericConversations: number // 이 수 이상 대화에 같은 문장이 나오면 범용
@@ -85,8 +93,9 @@ export interface DetectOptions {
   staleHours: number
   markerFloor: number // 반복 표지가 있는 지시는 유사도가 이 값만 넘어도 후보(경계 미만 구제). Infinity면 비활성
   window: number // 앞선 사용자 발화 중 최근 몇 개와 비교할지. 긴 대화에서 먼 과거와의 우연한 최대값을 막는다
+  routineMaxChars: number // 정규화 후 이 길이 이하이고 정기 작업 표지(ROUTINE_RE)가 있으면 정기 명령으로 제외
 }
-export const DEFAULT_OPTIONS: DetectOptions = { nullThreshold: 1, resendMinutes: 10, resendEditRatio: 0.15, genericConversations: 3, genericMaxChars: 5, staleHours: 24, markerFloor: Infinity, window: 10 }
+export const DEFAULT_OPTIONS: DetectOptions = { nullThreshold: 1, resendMinutes: 10, resendEditRatio: 0.15, genericConversations: 3, genericMaxChars: 5, staleHours: 24, markerFloor: Infinity, window: 10, routineMaxChars: 30 }
 
 // 귀무분포: 서로 다른 대화에서 뽑은 무작위 쌍의 코사인. 결정적 난수(LCG)로 재현 가능.
 export function nullDistribution(inputs: DetectInput[], vec: (i: number) => Float32Array, pairs = 3000, seed = 42): number[] {
@@ -115,6 +124,9 @@ export function withinConversationNull(inputs: DetectInput[], vec: (i: number) =
   }
   return sims.sort((x, y) => x - y)
 }
+
+// 발화에 적용할 기준: 묶음 기준이 있으면 그것, 없으면 전체 기준
+export const thresholdFor = (u: Pick<DetectInput, 'group'>, nullThreshold: number, groupThreshold?: Record<string, number>) => (u.group != null ? groupThreshold?.[u.group] : undefined) ?? nullThreshold
 
 export const quantile = (sorted: number[], q: number) => (sorted.length ? sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))] : 1)
 
@@ -157,10 +169,11 @@ export function detect(inputs: DetectInput[], vec: (i: number) => Float32Array, 
       const ca = canon(prior.text), cb = canon(cur.text)
       const nearSame = cb.startsWith(ca) || ca.startsWith(cb) || editRatio(ca, cb) <= opt.resendEditRatio
       const rescued = repeatMarker && kind === 'instruction' && bestSim >= opt.markerFloor
-      if (bestSim < opt.nullThreshold && !rescued) exclusion = 'below_null'
+      if (bestSim < thresholdFor(cur, opt.nullThreshold, opt.groupThreshold) && !rescued) exclusion = 'below_null'
       else if (isGeneric(cur.text) || cb.length <= opt.genericMaxChars) exclusion = 'generic'
       else if (nearSame && gapMinutes != null && gapMinutes <= opt.resendMinutes) exclusion = 'resend'
       else if (kind !== 'instruction') exclusion = 'not_instruction'
+      else if (ca === cb || (cb.length <= opt.routineMaxChars && ROUTINE_RE.test(cur.text))) exclusion = 'routine' // 글자까지 같은 지시, 또는 커밋·배포 같은 짧은 정기 작업 명령. 다시 말한 지시는 보통 말을 보태거나 바꾼다
       else if (cur.taskType === 'chat') exclusion = 'chat_task'
       else if (cur.hasAttachment) exclusion = 'attachment'
       else if (gapMinutes != null && gapMinutes > opt.staleHours * 60 && !repeatMarker) exclusion = 'stale'
@@ -186,20 +199,22 @@ export interface DetectSummary {
   misunderstanding: number // 이해 실패 항의 표지가 있는 발화
   excluded: Record<Exclusion, number>
   nullThreshold: number
+  groupThreshold: Record<string, number> // 묶음별 기준(앱/Claude Code). 묶음이 없으면 빈 객체
 }
 
-export function summarize(pairs: Candidate[], inputs: DetectInput[], nullThreshold: number): DetectSummary {
+export function summarize(pairs: Candidate[], inputs: DetectInput[], nullThreshold: number, groupThreshold: Record<string, number> = {}): DetectSummary {
+  const groupOf = new Map(inputs.map((u) => [u.messageId, u.group]))
   const perConv = new Map<string, number>()
   for (const u of inputs) perConv.set(u.conversationId, (perConv.get(u.conversationId) ?? 0) + 1)
   const judgeable = [...perConv.values()].filter((n) => n >= 2).reduce((a, b) => a + b, 0)
   const byGrade: Record<Grade, number> = { low: 0, medium: 0, high: 0 }
-  const excluded: Record<Exclusion, number> = { below_null: 0, not_instruction: 0, chat_task: 0, resend: 0, generic: 0, attachment: 0, stale: 0 }
+  const excluded: Record<Exclusion, number> = { below_null: 0, not_instruction: 0, chat_task: 0, resend: 0, routine: 0, generic: 0, attachment: 0, stale: 0 }
   let tokenEstimate = 0, flagged = 0, repeatedQuestions = 0, misunderstanding = 0
   for (const c of pairs) {
     if (c.grade) { byGrade[c.grade]++; tokenEstimate += c.tokenEstimate; flagged++ }
     if (c.exclusion) excluded[c.exclusion]++
-    if (c.kind === 'question' && c.similarity >= nullThreshold && c.exclusion !== 'resend' && c.exclusion !== 'generic') repeatedQuestions++
+    if (c.kind === 'question' && c.similarity >= thresholdFor({ group: groupOf.get(c.messageId) }, nullThreshold, groupThreshold) && c.exclusion !== 'resend' && c.exclusion !== 'generic') repeatedQuestions++
     if (c.complaintMarker) misunderstanding++
   }
-  return { byGrade, tokenEstimate, judgeable, ratio: judgeable ? (100 * flagged) / judgeable : 0, repeatedQuestions, misunderstanding, excluded, nullThreshold }
+  return { byGrade, tokenEstimate, judgeable, ratio: judgeable ? (100 * flagged) / judgeable : 0, repeatedQuestions, misunderstanding, excluded, nullThreshold, groupThreshold }
 }

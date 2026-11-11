@@ -17,8 +17,13 @@ interface RawLine {
   promptSource?: string
   origin?: { kind?: string }
   customTitle?: string
-  message?: { role?: string; content?: string | { type?: string; text?: string; name?: string }[] }
+  message?: { role?: string; content?: string | { type?: string; text?: string; name?: string; input?: { skill?: string } }[] }
 }
+
+// 설치 플러그인 흔적 1: 세션 앞부분 attachment/api-request-blob 줄에 "사용 가능 스킬 목록"(- 플러그인:스킬: 설명)이 들어 있다.
+// JSON 안이라 줄바꿈이 \n 두 글자로 들어 있어 원문 줄에 바로 정규식을 건다. anthropic-skills는 기본 내장이라 뺀다.
+const SKILL_LIST_RE = /\\n- ([a-z0-9][a-z0-9-]*):[a-z0-9-]+:/g
+const BUILTIN_PLUGIN = new Set(['anthropic-skills'])
 
 // 사람이 친 글이 아닌 래퍼 태그. 통째로 이것뿐이면 버리고, 섞여 있으면 태그 부분만 뗀다.
 const WRAPPER = /<(local-command-[a-z]+|command-name|command-message|command-args|task-notification|system-reminder|ide_[a-z_]+)>[\s\S]*?<\/\1>/g
@@ -42,6 +47,7 @@ function userText(c: RawLine['message']): { text: string; image: boolean } {
 export class ClaudeCodeSessionBuilder {
   private turns: Turn[] = []
   private tools = new Set<string>()
+  private plugins = new Set<string>()
   private sessionId = ''
   private cwd = ''
   private title = ''
@@ -61,6 +67,7 @@ export class ClaudeCodeSessionBuilder {
 
   pushLine(line: string) {
     if (!line.trim()) return
+    if (line.includes('skills are available')) for (const m of line.matchAll(SKILL_LIST_RE)) if (!BUILTIN_PLUGIN.has(m[1])) this.plugins.add(m[1])
     let o: RawLine
     try { o = JSON.parse(line) } catch { return }
     if (o.type === 'custom-title' && o.customTitle) { this.title = o.customTitle; return }
@@ -72,7 +79,11 @@ export class ClaudeCodeSessionBuilder {
     const content = o.message?.content
     if (o.type === 'assistant') {
       if (!Array.isArray(content)) return
-      for (const b of content) if (b.type === 'tool_use' && b.name) this.tools.add(b.name)
+      for (const b of content) if (b.type === 'tool_use' && b.name) {
+        this.tools.add(b.name)
+        // 설치 플러그인 흔적 2: Skill 호출의 "플러그인:스킬" 접두어. 접두어 없는 호출(artifact-design, claude-api 등)은 내장 스킬이라 세지 않는다
+        if (b.name === 'Skill' && typeof b.input?.skill === 'string' && b.input.skill.includes(':')) { const p = b.input.skill.split(':')[0].toLowerCase(); if (!BUILTIN_PLUGIN.has(p)) this.plugins.add(p) }
+      }
       const texts = content.filter((b) => b.type === 'text' && typeof b.text === 'string').map((b) => b.text!.trim()).filter(Boolean)
       if (texts.length === 0) return
       if (!this.pendingAssistant) this.pendingAssistant = { texts: [], at, id: o.uuid ?? `${this.fallbackId}:a${this.turns.length}` }
@@ -100,6 +111,7 @@ export class ClaudeCodeSessionBuilder {
       createdAt: this.firstAt,
       turns: this.turns,
       toolNames: [...this.tools],
+      pluginNames: [...this.plugins].sort(),
     }
   }
 }

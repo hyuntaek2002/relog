@@ -1,5 +1,6 @@
 // 파서 자가 점검. 사용: node eval/test_parser.mjs
 import assert from 'node:assert/strict'
+import fs from 'node:fs'
 import { parseConversationsJson } from '../web/src/parser/chatgpt.ts'
 import { basicStats } from '../web/src/parser/stats.ts'
 import { convs } from './fixtures/make_fixture.mjs'
@@ -17,7 +18,7 @@ assert.ok(long.turns[5].text.startsWith('```python'), 'code content_type 변환'
 assert.equal(long.turns[0].createdAt, (1760000000 + 60) * 1000)
 
 const s = basicStats(r.conversations)
-assert.deepEqual({ ...s, userTokenEstimate: 0 }, { conversations: 3, userTurns: 15, assistantTurns: 15, longConversations: 1, judgeableUserTurns: 14, userTokenEstimate: 0, firstAt: (1760000000 + 60) * 1000, lastAt: (1760000000 + 90 * 12) * 1000 })
+assert.deepEqual({ ...s, userTokenEstimate: 0, assistantTokenEstimate: 0 }, { conversations: 3, assistantTokenEstimate: 0, userTurns: 15, assistantTurns: 15, longConversations: 1, judgeableUserTurns: 14, userTokenEstimate: 0, firstAt: (1760000000 + 60) * 1000, lastAt: (1760000000 + 90 * 12) * 1000 })
 console.log('parser ok', s)
 
 // Claude 형식: 같은 배열에 섞여 있어도 항목별로 판별
@@ -94,15 +95,18 @@ const inputs = [
   mk('x', '2', 2, 5, '아까 말했듯이 로그인 기능 구현해줘'),           // 높음
   mk('x', '3', 4, 7, '로그인 기능 구현해줘 그리고 테스트도'),       // 재전송(접두어, 2분)
   mk('x', '4', 6, 9, '휴학을 하는게 맞지?'),                           // 질문형 → 반복 질문
-  mk('x', '5', 8, 20, '로그인 기능 구현해줘', { hasAttachment: true }), // 첨부 → 제외
-  mk('x', '6', 10, 3000, '로그인 기능 구현해줘'),                      // 48시간 뒤 표지 없음 → stale
+  mk('x', '5', 8, 20, '로그인 기능 구현해 주세요', { hasAttachment: true }), // 첨부 → 제외
+  mk('x', '6', 10, 3000, '로그인 기능 만들어줘'),                      // 48시간 뒤 표지 없음 → stale
+  mk('x', '14', 12, 3030, '로그인 기능 만들어줘'),                     // 글자까지 같은 지시, 30분 뒤 → 정기 명령(routine)
+  mk('x', '15', 14, 3060, '푸시한 다음 배포해 주세요'),                        // 짧은 정기 작업 명령 → routine
+  mk('x', '16', 16, 3090, '다음 단계 진행해 주세요'),         // 진행 명령 → routine
   mk('y', '7', 0, 0, '수정해줘'), mk('y', '8', 2, 1, '수정해줘'),
   mk('z', '9', 0, 0, '수정해줘'), mk('z', '10', 2, 1, '수정해줘'),
   mk('w', '11', 0, 0, '수정해줘'), mk('w', '12', 2, 1, '수정해줘'),     // 3개 대화 이상 → 범용
   mk('v', '13', 0, 0, '혼자'),
 ]
 // 벡터: 로그인 계열은 0도 근처, 휴학은 0도(앞선 발화와 유사하게 강제), 수정해줘는 90도, 혼자는 180도
-const deg = { '1': 0, '2': 2, '3': 0, '4': 3, '5': 0, '6': 0, '7': 90, '8': 90, '9': 90, '10': 90, '11': 90, '12': 90, '13': 180 }
+const deg = { '1': 0, '2': 2, '3': 0, '4': 3, '5': 0, '6': 6, '14': 6, '15': 0, '16': 0, '7': 90, '8': 90, '9': 90, '10': 90, '11': 90, '12': 90, '13': 180 }
 const vec = (i) => unit(deg[inputs[i].messageId])
 const nullSims = nullDistribution(inputs, vec, 500)
 assert.ok(nullSims.length > 0 && nullSims.every((s, k) => k === 0 || s >= nullSims[k - 1]), '정렬된 귀무분포')
@@ -113,10 +117,33 @@ assert.equal(by['3'].exclusion, 'resend')
 assert.equal(by['4'].exclusion, 'not_instruction'); assert.equal(by['4'].kind, 'question')
 assert.equal(by['5'].exclusion, 'attachment')
 assert.equal(by['6'].exclusion, 'stale')
+assert.equal(by['14'].exclusion, 'routine'); assert.equal(by['15'].exclusion, 'routine'); assert.equal(by['16'].exclusion, 'routine')
 assert.equal(by['8'].exclusion, 'generic'); assert.equal(by['10'].exclusion, 'generic')
 const sum = summarize(pairs, inputs, 0.99)
-assert.equal(sum.byGrade.high, 1); assert.equal(sum.repeatedQuestions, 1); assert.equal(sum.judgeable, 12)
+assert.equal(sum.byGrade.high, 1); assert.equal(sum.repeatedQuestions, 1); assert.equal(sum.judgeable, 15); assert.equal(sum.excluded.routine, 3)
 console.log('detector ok', sum.excluded)
+
+// 설치 플러그인 매칭: 표시 이름과 id를 느슨하게
+{
+  const { installedPlugins, isInstalled } = await import('../web/src/recommend/taskPluginRules.ts')
+  const inst = installedPlugins([{ pluginNames: ['unity', 'engineering'] }, { pluginNames: ['caveman'] }, {}])
+  assert.deepEqual(inst, ['caveman', 'engineering', 'unity'])
+  assert.ok(isInstalled('Engineering', inst) && isInstalled('Unity', inst) && isInstalled('Caveman Mode: Short Answers', inst))
+  assert.ok(!isInstalled('UI Design Review', inst) && !isInstalled('', inst))
+  console.log('installed plugins ok')
+}
+
+// 묶음별 기준: 같은 발화라도 묶음 기준이 높으면 후보에서 빠지고, 묶음 기준이 없는 발화는 전체 기준을 쓴다
+{
+  const gIn = [mk('g1', 'a1', 0, 0, '로그인 기능 구현해줘', { group: 'code' }), mk('g1', 'a2', 2, 5, '로그인 화면 다시 손봐줘', { group: 'code' }), mk('g2', 'b1', 0, 0, '로그인 기능 구현해줘'), mk('g2', 'b2', 2, 5, '로그인 화면 다시 손봐줘')]
+  const gVec = (i) => unit({ a1: 0, a2: 5, b1: 0, b2: 5 }[gIn[i].messageId])
+  const gp = detect(gIn, gVec, { ...DEFAULT_OPTIONS, nullThreshold: 0.9, groupThreshold: { code: 0.999 } })
+  const g = Object.fromEntries(gp.map((p) => [p.messageId, p]))
+  assert.equal(g.a2.exclusion, 'below_null'); assert.equal(g.b2.grade, 'medium')
+  const gs = summarize(gp, gIn, 0.9, { code: 0.999 })
+  assert.deepEqual(gs.groupThreshold, { code: 0.999 }); assert.equal(gs.byGrade.medium, 1)
+  console.log('group threshold ok')
+}
 
 // 처방 엔진: 필터·점수·상한·"이미 씀" 제외
 const { recommend, scoreAll, genericDefaults, CATALOG } = await import('../web/src/recommend/recommend.ts')
@@ -262,7 +289,8 @@ console.log('ledger ok')
     L({ ...base, type: 'assistant', uuid: 'a1', timestamp: '2026-11-01T01:00:05Z', message: { role: 'assistant', content: [{ type: 'thinking', thinking: 'x' }, { type: 'text', text: '답변 1부' }] } }),
     L({ ...base, type: 'assistant', uuid: 'a2', timestamp: '2026-11-01T01:00:06Z', message: { role: 'assistant', content: [{ type: 'tool_use', name: 'Bash', input: {} }] } }),
     L({ ...base, type: 'user', uuid: 'u2', timestamp: '2026-11-01T01:00:07Z', message: { role: 'user', content: [{ type: 'tool_result', tool_use_id: 't', content: 'ls 결과' }] } }),
-    L({ ...base, type: 'assistant', uuid: 'a3', timestamp: '2026-11-01T01:00:08Z', message: { role: 'assistant', content: [{ type: 'text', text: '답변 2부' }, { type: 'tool_use', name: 'Edit', input: {} }] } }),
+    L({ ...base, type: 'assistant', uuid: 'a3', timestamp: '2026-11-01T01:00:08Z', message: { role: 'assistant', content: [{ type: 'text', text: '답변 2부' }, { type: 'tool_use', name: 'Edit', input: {} }, { type: 'tool_use', name: 'Skill', input: { skill: 'artifact-design' } }, { type: 'tool_use', name: 'Skill', input: { skill: 'anthropic-skills:pdf' } }, { type: 'tool_use', name: 'Skill', input: { skill: 'ponytail:ponytail' } }] } }),
+    L({ type: 'attachment', uuid: 'at1', sessionId: 'sess-1', attachment: { type: 'x', content: 'The following skills are available for use with the Skill tool:\n\n- anthropic-skills:docs: 설명\n- unity:ui-uitk: 설명\n- engineering:code-review: 설명\n- unity:localization: 설명' } }),
     L({ ...base, type: 'user', uuid: 'u3', isMeta: true, timestamp: '2026-11-01T01:00:09Z', message: { role: 'user', content: '<local-command-caveat>메타</local-command-caveat>' } }),
     L({ ...base, type: 'user', uuid: 'u4', promptSource: 'system', origin: { kind: 'task-notification' }, timestamp: '2026-11-01T01:00:10Z', message: { role: 'user', content: '<task-notification>끝남</task-notification>' } }),
     L({ ...base, type: 'user', uuid: 'u5', isSidechain: true, timestamp: '2026-11-01T01:00:11Z', message: { role: 'user', content: '하위 에이전트 지시' } }),
@@ -275,7 +303,8 @@ console.log('ledger ok')
   assert.deepEqual(c.turns.map((t) => t.role), ['user', 'assistant', 'user'], '도구 결과·메타·시스템·하위 에이전트 제외, 답변 병합')
   assert.equal(c.turns[1].text, '답변 1부\n답변 2부')
   assert.equal(c.turns[2].text, '붙여 넣은 글 이거 고쳐'); assert.equal(c.turns[2].hasAttachment, true)
-  assert.deepEqual(c.toolNames.sort(), ['Bash', 'Edit'])
+  assert.deepEqual(c.toolNames.sort(), ['Bash', 'Edit', 'Skill'])
+  assert.deepEqual(c.pluginNames, ['engineering', 'ponytail', 'unity'], '스킬 목록 + Skill 호출 접두어, 내장(anthropic-skills)·접두어 없는 호출 제외')
   assert.equal(c.createdAt, Date.parse('2026-11-01T01:00:00Z'))
   assert.equal(parseClaudeCodeSession([lines[4]].join('\n'), 'x.jsonl'), null, '사람 입력 없으면 null')
   const noTitle = parseClaudeCodeSession([lines[1]].join('\n'), 'y.jsonl'); assert.equal(noTitle.title, 'demo (Claude Code)')
@@ -316,3 +345,35 @@ console.log('ledger ok')
   assert.deepEqual(out2.find((c) => c.id === "m").turns.map((t) => t.messageId + ":" + t.idx), ["r1:0", "m3:1"], "겹친 메시지만 빠지고 idx 재부여")
   console.log('fork dedupe ok')
 }
+
+// 답변 분량 신호: 평균 800토큰 또는 5배 이상이면 간결 답변 플러그인에 문제 신호가 붙는다
+{
+  const { scoreAll } = await import('../web/src/recommend/recommend.ts')
+  const { basicStats } = await import('../web/src/parser/stats.ts')
+  const T = (role, n) => ({ idx: 0, role, text: 'x', createdAt: null, messageId: role + n, tokenEstimate: n, hasAttachment: false })
+  const st = basicStats([{ id: 'c', platform: 'claude', title: '', createdAt: null, toolNames: [], turns: [T('user', 50), T('assistant', 900), T('user', 50), T('assistant', 1100)] }])
+  assert.equal(st.assistantTokenEstimate, 2000); assert.equal(st.userTokenEstimate, 100)
+  const base = { platform: 'claude', taskShare: {}, taskCounts: {}, userTurnCount: 2, conversationCount: 1, longConversationShare: 0, avgTurnsPerConversation: 2, codeShare: 0, codingSub: {}, hourHistogram: [], restatement: { high: 0, mid: 0, low: 0, misunderstanding: 0, repeatedQuestion: 0, perTask: {}, tokenEstimate: 0, ratio: 0 } }
+  const ctx = { plan: 'pro', featuresInUse: [], goals: [], ignored: [] }
+  const hot = scoreAll({ ...base, answer: { avgTokens: 1000, ratio: 20 } }, ctx).find((x) => x.item.id === 'cl_plugin_concise')
+  assert.ok(hot.problemHits.some((h) => h.includes('1000토큰')) && hot.problemHits.some((h) => h.includes('20.0배')), hot.problemHits.join())
+  const calm = scoreAll({ ...base, answer: { avgTokens: 300, ratio: 3 } }, ctx).find((x) => x.item.id === 'cl_plugin_concise')
+  assert.equal(calm.problemHits.length, 0)
+  console.log('answer signal ok')
+}
+
+// 플러그인 찾기: 검색어 조각 모두 포함 + 카테고리 slug 필터, 설치 수 표기
+{
+  const { filterPlugins, fmtInstalls } = await import('../web/src/recommend/pluginSearchRules.ts')
+  const list = [{ n: 'Humanizer', s: 'Rewrite AI-sounding text', r: '', c: ['writing'], i: 38800, a: false, k: 'AI 티가 나는 문장을 고칩니다.' }, { n: 'github', s: 'Official GitHub MCP server', r: '', c: ['engineering', 'code'], i: 1200000, a: false }, { n: 'Nocat', s: 'no category', r: '', c: [], i: null, a: true }]
+  assert.deepEqual(filterPlugins(list, '', '').map((p) => p.n), ['Humanizer', 'github', 'Nocat'])
+  assert.deepEqual(filterPlugins(list, 'ai 문장', '').map((p) => p.n), ['Humanizer'], '한국어 설명도 검색')
+  assert.deepEqual(filterPlugins(list, 'GITHUB mcp', 'code').map((p) => p.n), ['github'])
+  assert.deepEqual(filterPlugins(list, '', 'writing').map((p) => p.n), ['Humanizer'])
+  assert.equal(fmtInstalls(38800), '38.8K'); assert.equal(fmtInstalls(1200000), '1.2M'); assert.equal(fmtInstalls(999), '999'); assert.equal(fmtInstalls(null), '')
+  const file = JSON.parse(fs.readFileSync(new URL('../web/public/plugins-2026-11-10.json', import.meta.url), 'utf8'))
+  assert.equal(file.format, 'relog-plugins-1'); assert.ok(file.plugins.length > 3000 && Object.keys(file.categories).length === 57)
+  assert.ok(file.plugins.every((p) => p.n && Array.isArray(p.c)), '모든 항목에 이름·카테고리 배열')
+  console.log('plugin search ok', file.plugins.length, '개, 카테고리 있는 항목', file.plugins.filter((p) => p.c.length).length, '한국어 설명', file.plugins.filter((p) => p.k).length)
+}
+

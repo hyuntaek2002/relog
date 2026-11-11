@@ -17,7 +17,9 @@ public final class RecommendEngine {
 
     /** 엔진 입력(웹 UsageSnapshot). 숫자만. */
     public record Snapshot(String platform, Map<String, Double> taskShare, int userTurnCount, int conversationCount,
-                           double longConversationShare, double avgTurnsPerConversation, double codeShare, Restatement restatement) {}
+                           double longConversationShare, double avgTurnsPerConversation, double codeShare, Restatement restatement, Answer answer) {}
+    /** AI 답변 평균 분량(토큰 추정)과 내 메시지 분량 대비 배수 */
+    public record Answer(double avgTokens, double ratio) {}
     public record Restatement(int high, int mid, int low, int misunderstanding, int repeatedQuestion, Map<String, Integer> perTask, int tokenEstimate, double ratio) {}
     public record Context(String plan, Set<String> featuresInUse) {}
     public record Scored(CatalogItem item, double score, List<String> problemHits, List<String> taskHits, String excluded) {}
@@ -27,7 +29,8 @@ public final class RecommendEngine {
             "search", "정보 탐색", "ideation", "아이디어·기획", "translation", "번역", "counseling", "상담·대화");
     private static final Map<String, String> SIGNAL_LABEL = Map.of("restatement.high", "다시 말한 지시(확실함)", "restatement.mid", "다시 말한 지시(가능성 있음)",
             "restatement.low", "다시 말한 지시(약함)", "restatement.misunderstanding", "말이 안 통한 듯한 표현", "restatement.repeatedQuestion", "비슷한 질문 다시 함",
-            "longConversationShare", "긴 대화 비율", "avgTurnsPerConversation", "대화당 평균 발화", "codeShare", "코드 포함 비율");
+            "longConversationShare", "긴 대화 비율", "avgTurnsPerConversation", "대화당 평균 발화", "codeShare", "코드 포함 비율",
+            "answer.avgTokens", "평균 답변 분량", "answer.ratio", "답변이 내 메시지보다 긴 배수");
 
     private RecommendEngine() {}
 
@@ -44,6 +47,8 @@ public final class RecommendEngine {
             case "longConversationShare" -> s.longConversationShare();
             case "avgTurnsPerConversation" -> s.avgTurnsPerConversation();
             case "codeShare" -> s.codeShare();
+            case "answer.avgTokens" -> s.answer() == null ? 0 : s.answer().avgTokens();
+            case "answer.ratio" -> s.answer() == null ? 0 : s.answer().ratio();
             case "userTurnCount" -> s.userTurnCount();
             case "conversationCount" -> s.conversationCount();
             default -> 0;
@@ -59,6 +64,8 @@ public final class RecommendEngine {
         String label = SIGNAL_LABEL.getOrDefault(path, path);
         if (path.equals("longConversationShare") || path.equals("codeShare")) return label + " " + Math.round(v * 100) + "%";
         if (path.equals("avgTurnsPerConversation")) return label + " " + String.format(Locale.ROOT, "%.1f", v) + "개";
+        if (path.equals("answer.avgTokens")) return label + " " + Math.round(v) + "토큰";
+        if (path.equals("answer.ratio")) return label + " " + String.format(Locale.ROOT, "%.1f", v) + "배";
         return label + " " + Math.round(v) + "건";
     }
 
@@ -102,6 +109,7 @@ public final class RecommendEngine {
         if (hit.test("말이 안 통한")) return "AI가 요지를 놓친 듯한 메시지가 " + r.misunderstanding() + "건입니다.";
         if (hit.test("긴 대화 비율")) return "대화 " + Math.round(s.longConversationShare() * 100) + "%가 메시지 10개를 넘는 긴 대화입니다.";
         if (hit.test("비슷한 질문")) return "비슷한 질문을 " + r.repeatedQuestion() + "번 다시 했습니다.";
+        if (hit.test("평균 답변 분량") || hit.test("답변이 내 메시지보다")) return "AI 답변이 평균 " + Math.round(s.answer().avgTokens()) + "토큰으로 내 메시지의 " + Math.round(s.answer().ratio()) + "배입니다.";
         var top = s.taskShare().entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
         return top != null && top.getValue() > 0 ? TASK_LABEL.getOrDefault(top.getKey(), top.getKey()) + " 대화가 " + Math.round(top.getValue() * 100) + "%로 가장 많습니다." : "최근 대화 패턴 기준 추천입니다.";
     }

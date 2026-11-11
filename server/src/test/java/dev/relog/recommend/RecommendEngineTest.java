@@ -25,7 +25,7 @@ class RecommendEngineTest {
     static RecommendEngine.Snapshot snap() {
         Map<String, Double> share = new HashMap<>(Map.of("coding", 0.1, "writing", 0.3, "learning", 0.05, "workdoc", 0.2, "search", 0.05, "ideation", 0.1, "translation", 0.05, "counseling", 0.15));
         return new RecommendEngine.Snapshot("claude", share, 500, 15, 0.5, 33, 0,
-                new RecommendEngine.Restatement(1, 20, 2, 10, 60, Map.of("workdoc", 8), 8000, 16));
+                new RecommendEngine.Restatement(1, 20, 2, 10, 60, Map.of("workdoc", 8), 8000, 16), new RecommendEngine.Answer(300, 3));
     }
 
     @Test
@@ -67,9 +67,20 @@ class RecommendEngineTest {
     }
 
     @Test
+    void longAnswersRecommendConcisePlugin() {
+        var s = snap();
+        var longAnswers = new RecommendEngine.Snapshot(s.platform(), s.taskShare(), s.userTurnCount(), s.conversationCount(), s.longConversationShare(), s.avgTurnsPerConversation(), s.codeShare(), s.restatement(), new RecommendEngine.Answer(994, 13.3));
+        var sc = RecommendEngine.scoreAll(longAnswers, new RecommendEngine.Context("pro", Set.of()), Map.of(), items);
+        var concise = sc.stream().filter(x -> x.item().id().equals("cl_plugin_concise")).findFirst().orElseThrow();
+        assertTrue(concise.problemHits().stream().anyMatch(h -> h.contains("994토큰")), concise.problemHits().toString());
+        var calm = RecommendEngine.scoreAll(snap(), new RecommendEngine.Context("pro", Set.of()), Map.of(), items).stream().filter(x -> x.item().id().equals("cl_plugin_concise")).findFirst().orElseThrow();
+        assertTrue(calm.problemHits().isEmpty(), "평균 300토큰이면 신호 없음");
+    }
+
+    @Test
     void noProblemSignalsMeansReferenceGradeOnly() {
         var calm = new RecommendEngine.Snapshot("claude", snap().taskShare(), 500, 15, 0, 3, 0,
-                new RecommendEngine.Restatement(0, 0, 0, 0, 0, Map.of(), 0, 0));
+                new RecommendEngine.Restatement(0, 0, 0, 0, 0, Map.of(), 0, 0), new RecommendEngine.Answer(0, 0));
         var r = RecommendEngine.recommend(calm, new RecommendEngine.Context("pro", Set.of()), Map.of(), items);
         assertTrue(r.stream().allMatch(p -> p.grade().equals("참고")));
         assertEquals(3, RecommendEngine.genericDefaults("claude", items).size());
