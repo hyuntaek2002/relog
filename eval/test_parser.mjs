@@ -441,8 +441,10 @@ console.log('ledger ok')
 // 라벨 데이터 합(labeled-centroids.json): 형식 검사 + 중심점에 더해지면 판정이 그쪽으로 움직이는지
 {
   const { TaskClassifier, LABELED, labeledFor, TASK_TYPES, CLASSIFIER_VERSION } = await import('../web/src/classify/classifier.ts')
-  assert.equal(CLASSIFIER_VERSION, 'cls-0.2.0')
-  assert.equal(LABELED.dim, 384); assert.deepEqual(Object.keys(LABELED.sums).sort(), [...TASK_TYPES].sort())
+  assert.equal(CLASSIFIER_VERSION, 'cls-0.3.0')
+  assert.equal(LABELED.dim, 384); assert.deepEqual(Object.keys(LABELED.sums).sort(), [...TASK_TYPES, 'other'].sort())
+  assert.deepEqual([...LABELED.linear.classes].sort(), [...TASK_TYPES, 'other'].sort(), '선형 분류기는 8유형 + 기타')
+  assert.ok(LABELED.linear.W.length === 9 && LABELED.linear.b.length === 9 && LABELED.linear.W.every((r) => r.length === 384 && r.every((x) => Number.isFinite(x))))
   assert.ok(Object.values(LABELED.sums).every((v) => v.length === 384 && v.every((x) => Number.isFinite(x))))
   assert.ok(Object.values(LABELED.counts).reduce((a, b) => a + b, 0) > 300, '라벨 300건 이상')
   assert.equal(labeledFor('Xenova/multilingual-e5-small'), LABELED); assert.equal(labeledFor('static-e5'), undefined, '다른 모델이면 쓰지 않는다')
@@ -455,6 +457,19 @@ console.log('ledger ok')
   assert.equal(moved.centroid(v).type, 'writing', '라벨 합이 더해진 유형의 중심점이 이동')
   assert.equal(moved.knn(v).type, 'coding', 'k-NN은 예시 발화만 쓴다')
   assert.equal(new TaskClassifier(seedVecs, seedTypes, undefined, { sums: { writing: [1, 2, 3] } }).centroid(v).type, 'coding', '차원이 다르면 무시')
+  // 기타: 예시 발화가 없어도 라벨 합이 있으면 중심점이 생긴다
+  const withOther = new TaskClassifier(seedVecs, seedTypes, undefined, { sums: { other: [-1, 0] } })
+  assert.equal(withOther.centroid(u(170)).type, 'other'); assert.equal(withOther.centroid(u(10)).type, 'coding')
+  // D(선형): 학습(linear.mjs) → 예측(classifier.ts)이 이어지는지. 세 방향의 점 묶음을 배우면 그 방향의 새 점을 맞힌다
+  const { trainLinear, predictLinear } = await import('./classify/linear.mjs')
+  const X = [0, 10, 20, 90, 100, 110, 180, 190, 200].map(u), y = ['coding', 'coding', 'coding', 'writing', 'writing', 'writing', 'other', 'other', 'other']
+  const lin = trainLinear(X, y, { l2: 1e-3 })
+  assert.deepEqual([5, 95, 185].map((d) => predictLinear(lin, u(d))), ['coding', 'writing', 'other'])
+  const d = new TaskClassifier(seedVecs, seedTypes, undefined, { sums: {}, linear: lin })
+  assert.deepEqual([5, 95, 185].map((deg) => d.linear(u(deg)).type), ['coding', 'writing', 'other'], '제품 예측이 학습 쪽 예측과 같다')
+  assert.ok(d.linear(u(5)).score > 0.5 && d.linear(u(5)).score <= 1, '점수는 확률')
+  assert.equal(new TaskClassifier(seedVecs, seedTypes).linear(v).type, 'coding', '가중치가 없으면 중심점으로 대신')
+  assert.equal(new TaskClassifier(seedVecs, seedTypes, undefined, { sums: {}, linear: { classes: ['writing'], W: [[1, 2, 3]], b: [9] } }).linear(v).type, 'coding', '차원이 다르면 무시')
   console.log('labeled centroids ok')
 }
 

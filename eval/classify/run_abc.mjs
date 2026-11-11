@@ -1,10 +1,13 @@
 // 과업 분류 A/B/C 비교. 라벨은 대화 단위로 학습/조정/평가(기본 240/80/80 비율)로 나눈다.
 //   A: 문자 n-gram TF-IDF + 소프트맥스 선형 분류기(베이스라인)
 //   B: 임베딩 + 유형별 중심점      C: 임베딩 + k-NN
+//   D: 임베딩 + 소프트맥스 선형(계획서의 A·B·C에 더한 넷째 방식, linear.mjs). 예시 + 학습 분할로 학습하고 기타도 한 유형으로 배운다.
+//   "B+기타"는 학습 분할의 기타 라벨로 기타의 중심점도 만든 것(기존 B·C는 기타를 임계값으로만 낸다).
 // B·C는 (예시 발화만) / (예시 + 학습 분할) 두 가지로 평가한다. k·기타 임계값은 조정 분할에서 고른다.
 // 사용:
 //   node eval/classify/run_abc.mjs exports/conversations-000.zip eval/labels/labels.csv [model]
 //   node eval/classify/run_abc.mjs --smoke [model]      # seed.json 예시로 모의 라벨 생성(동작 확인용)
+//   … --extra-zip=<zip> --extra-csv=<라벨 CSV> 를 --cv와 같이 주면, 그 라벨(표본이 적은 유형 보강분, pick_rare.mjs)을 각 겹의 학습에만 더한 결과를 덧붙인다. 평가는 원래 표본으로만 한다
 //   … --cv 를 붙이면 240/80/80 분할 결과 뒤에 대화 단위 5겹 교차 검증 결과를 덧붙인다(설정은 고정: k-NN k=3, other 임계값 없음)
 // 라벨 CSV: conversationId,messageId,type  (type: coding|writing|learning|work_doc|search|ideation|translation|chat|other|context_required)
 import { readFileSync } from 'node:fs'
@@ -13,11 +16,13 @@ import { pipeline } from '../../web/node_modules/@huggingface/transformers/dist/
 import { parseConversationsJson } from '../../web/src/parser/chatgpt.ts'
 import { normalizeConversations } from '../../web/src/parser/normalize.ts'
 import { SEED_TEXTS, SEED_TYPES, TASK_TYPES, TaskClassifier } from '../../web/src/classify/classifier.ts'
+import { trainLinear, predictLinear } from './linear.mjs'
 
 const CV = process.argv.includes('--cv') // 대화 단위 5겹 교차 검증(평가 분할에 빠지는 유형이 없도록 전체를 한 번씩 평가)
-const args = process.argv.slice(2).filter((a) => a !== '--cv')
-const smoke = args[0] === '--smoke'
-const model = (smoke ? args[1] : args[2]) ?? 'Xenova/multilingual-e5-small'
+const flag = (k) => process.argv.find((a) => a.startsWith(`--${k}=`))?.slice(k.length + 3)
+const args = process.argv.slice(2).filter((a) => !a.startsWith('--'))
+const smoke = process.argv.includes('--smoke')
+const model = (smoke ? args[0] : args[2]) ?? 'Xenova/multilingual-e5-small'
 const SPLIT = [240, 80, 80] // 비율로만 쓴다
 
 // ---------- 데이터 ----------
@@ -26,7 +31,10 @@ if (smoke) {
   // 예시 발화를 유형당 3개 대화에 나눠 담는다. 실제 라벨셋 전에 파이프라인만 확인.
   SEED_TEXTS.forEach((text, i) => items.push({ conversationId: `${SEED_TYPES[i]}-${i % 3}`, messageId: `s${i}`, text, type: SEED_TYPES[i] }))
 } else {
-  const [zipPath, csvPath] = args
+  items = loadItems(args[0], args[1])
+}
+function loadItems(zipPath, csvPath) {
+  const out = []
   const files = unzipSync(new Uint8Array(readFileSync(zipPath)))
   const convs = Object.entries(files).filter(([n]) => /conversations[^/]*\.json$/i.test(n)).flatMap(([, b]) => parseConversationsJson(JSON.parse(new TextDecoder().decode(b))).conversations)
   const textById = new Map(normalizeConversations(convs).map((u) => [u.messageId, u.text]))
@@ -34,8 +42,9 @@ if (smoke) {
     const [conversationId, messageId, type] = line.trim().split(',')
     if (!messageId || !type || type === 'context_required') continue // 문맥 필요는 분류 평가 대상 아님
     const text = textById.get(messageId)
-    if (text) items.push({ conversationId, messageId, text, type })
+    if (text) out.push({ conversationId, messageId, text, type })
   }
+  return out
 }
 const CLASSES = [...TASK_TYPES, 'other']
 console.log(`items=${items.length} classes=${CLASSES.length} model=${model}${smoke ? ' (smoke)' : ''}`)
@@ -170,6 +179,20 @@ for (const [variant, vecs, types] of [
   console.log(`  (dev에서 고른 설정: centroid other<${best.centroid.th} macroF1=${best.centroid.macro.toFixed(3)} / knn k=${best.knn.k} other<${best.knn.th} macroF1=${best.knn.macro.toFixed(3)})`)
 }
 
+// ---------- D: 임베딩 + 선형. 규제 세기(l2)는 조정 분할에서 고른다 ----------
+const L2S = [1e-2, 1e-3, 1e-4]
+{
+  const X = [...seedVecs, ...trainVecs], y = [...SEED_TYPES, ...train.map((x) => x.type)]
+  let best = { l2: L2S[0], macro: -1, m: null }
+  for (const l2 of L2S) {
+    const m = trainLinear(X, y, { l2 })
+    const macro = dev.length ? metrics(dev.map((x) => x.type), devVecs.map((v) => predictLinear(m, v))).macro : 0
+    if (macro > best.macro) best = { l2, macro, m }
+  }
+  const name = `D 임베딩+선형 / 예시+학습 (l2=${best.l2})`
+  results.push([name, report(name + ' [test]', test.map((x) => x.type), testVecs.map((v) => predictLinear(best.m, v)))])
+}
+
 console.log('\n=== summary (test macro F1) ===')
 for (const [n, m] of results.sort((a, b) => b[1] - a[1])) console.log(`${m.toFixed(3)}  ${n}`)
 
@@ -179,7 +202,12 @@ if (CV) {
   const foldOf = new Map(convIds.map((c, i) => [c, i % K])) // convIds는 위에서 결정적으로 섞여 있다
   const allVecs = []
   for (let i = 0; i < items.length; i += 64) allVecs.push(...(await embed(items.slice(i, i + 64).map((x) => x.text))))
-  const pred = { A: [], Bseed: [], Cseed: [], Btrain: [], Ctrain: [] }
+  const pred = { A: [], Bseed: [], Cseed: [], Btrain: [], Ctrain: [], Bother: [], D: [], BotherX: [], DX: [] }
+  // 보강분: 학습에만 더한다(평가 겹에는 넣지 않는다)
+  const extra = flag('extra-zip') && flag('extra-csv') ? loadItems(flag('extra-zip'), flag('extra-csv')) : []
+  const extraVecs = extra.length ? await embed(extra.map((x) => x.text)) : []
+  const extraTypes = extra.map((x) => x.type)
+  const pickedL2 = []
   const seedClf = new TaskClassifier(seedVecs, SEED_TYPES) // 제품과 같은 기본 설정(예시 발화만)
   for (let f = 0; f < K; f++) {
     const tr = items.map((_, i) => i).filter((i) => foldOf.get(items[i].conversationId) !== f)
@@ -188,7 +216,25 @@ if (CV) {
     const predictFold = trainSoftmax(tr.map((i) => tf.vec(items[i].text)), tr.map((i) => items[i].type), tf.size)
     const trNo = tr.filter((i) => items[i].type !== 'other')
     const trainClf = new TaskClassifier([...seedVecs, ...trNo.map((i) => allVecs[i])], [...SEED_TYPES, ...trNo.map((i) => items[i].type)], { k: 3, otherBelow: 0 })
+    // B+기타: 기타 라벨도 한 유형으로 중심점을 만든다
+    const otherClf = new TaskClassifier([...seedVecs, ...tr.map((i) => allVecs[i])], [...SEED_TYPES, ...tr.map((i) => items[i].type)], { k: 3, otherBelow: 0 })
+    // D: l2는 학습 4겹 중 한 겹을 떼어 고른 뒤(평가 겹은 보지 않는다) 4겹 전체로 다시 학습
+    const inner = (f + 1) % K
+    const fit = tr.filter((i) => foldOf.get(items[i].conversationId) !== inner), val = tr.filter((i) => foldOf.get(items[i].conversationId) === inner)
+    let l2 = L2S[0], bestM = -1
+    for (const c of L2S) {
+      const m = trainLinear([...seedVecs, ...fit.map((i) => allVecs[i])], [...SEED_TYPES, ...fit.map((i) => items[i].type)], { l2: c })
+      const macro = metrics(val.map((i) => items[i].type), val.map((i) => predictLinear(m, allVecs[i]))).macro
+      if (macro > bestM) { bestM = macro; l2 = c }
+    }
+    pickedL2.push(l2)
+    const lin = trainLinear([...seedVecs, ...tr.map((i) => allVecs[i])], [...SEED_TYPES, ...tr.map((i) => items[i].type)], { l2 })
+    const linX = extra.length ? trainLinear([...seedVecs, ...tr.map((i) => allVecs[i]), ...extraVecs], [...SEED_TYPES, ...tr.map((i) => items[i].type), ...extraTypes], { l2 }) : null
+    const otherX = extra.length ? new TaskClassifier([...seedVecs, ...tr.map((i) => allVecs[i]), ...extraVecs], [...SEED_TYPES, ...tr.map((i) => items[i].type), ...extraTypes], { k: 3, otherBelow: 0 }) : null
     for (const i of te) {
+      if (linX) { pred.DX[i] = predictLinear(linX, allVecs[i]); pred.BotherX[i] = otherX.predict(allVecs[i], 'centroid').type }
+      pred.Bother[i] = otherClf.predict(allVecs[i], 'centroid').type
+      pred.D[i] = predictLinear(lin, allVecs[i])
       pred.A[i] = predictFold(tf.vec(items[i].text))
       pred.Bseed[i] = seedClf.predict(allVecs[i], 'centroid').type
       pred.Cseed[i] = seedClf.predict(allVecs[i], 'knn').type
@@ -199,12 +245,18 @@ if (CV) {
   const gold = items.map((x) => x.type)
   console.log(`\n##### ${K}겹 교차 검증 (대화 단위, 전체 ${items.length}건) #####`)
   const cv = [
+    [`D 임베딩+선형 / 예시+학습 4겹 (겹별 l2 ${pickedL2.join(', ')})`, report('CV D: 임베딩 + 선형 / 예시+학습', gold, pred.D)],
+    ['B 중심점+기타 / 예시+학습 4겹', report('CV B+기타: 중심점(기타 포함) / 예시+학습', gold, pred.Bother)],
     ['A TF-IDF+softmax (학습 4겹)', report('CV A: TF-IDF + softmax', gold, pred.A)],
     ['C k-NN / 예시+학습 4겹 (k=3)', report('CV C: k-NN / 예시+학습', gold, pred.Ctrain)],
     ['B 중심점 / 예시+학습 4겹', report('CV B: 중심점 / 예시+학습', gold, pred.Btrain)],
     ['C k-NN / 예시만 (제품 기본 설정)', report('CV C: k-NN / 예시만 (제품 기본 설정)', gold, pred.Cseed)],
     ['B 중심점 / 예시만', report('CV B: 중심점 / 예시만', gold, pred.Bseed)],
   ]
+  if (extra.length) {
+    cv.push([`D 임베딩+선형 / 예시+학습 4겹+보강 ${extra.length}건`, report('CV D + 보강(학습에만)', gold, pred.DX)])
+    cv.push([`B 중심점+기타 / 예시+학습 4겹+보강 ${extra.length}건`, report('CV B+기타 + 보강(학습에만)', gold, pred.BotherX)])
+  }
   console.log('\n=== summary (5겹 교차 검증 macro F1) ===')
   for (const [n, m] of cv.sort((a, b) => b[1] - a[1])) console.log(`${m.toFixed(3)}  ${n}`)
 }

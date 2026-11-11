@@ -83,7 +83,7 @@ export default function App() {
   const [detail, setDetail] = useState('')
   const [result, setResult] = useState<Result | null>(null)
   const [cls, setCls] = useState<Classified | null>(null)
-  const [method, setMethod] = useState<Method>('centroid') // 제품 기본은 B(중심점). 개발 패널에서 C와 바꿔 볼 수 있다
+  const [method, setMethod] = useState<Method>('linear') // 제품 기본은 D(선형). 개발 패널에서 B·C와 바꿔 볼 수 있다
   const [error, setError] = useState('')
   const [over, setOver] = useState(false)
   const [embedLog, setEmbedLog] = useState<string[]>([])
@@ -146,7 +146,7 @@ export default function App() {
       const m = e.data
       if (m.type === 'download') { setStep('model'); setDetail(`${m.file.split('/').pop()} ${m.percent}%`) }
       else if (m.type === 'progress') { setStep('classify'); setDetail(`${m.done} / ${m.total}`) }
-      else if (m.type === 'classified') { m.knn = pinCodeToCoding(m.knn, ok, r.conversations); m.centroid = pinCodeToCoding(m.centroid, ok, r.conversations); setCls(m); setStep('done'); setDetail(''); record(r, m, dismissed); w.terminate(); setNet((n) => [...n, ...m.net]); if (DEV) { measureMemory('분석 완료 직후'); Object.assign(window, { __relog: { result: r, cls: m } }) } } // 개발 모드: 콘솔에서 숫자 집계용(원문은 화면 밖으로 안 나감) // 임베딩·모델 메모리 회수
+      else if (m.type === 'classified') { m.knn = pinCodeToCoding(m.knn, ok, r.conversations); m.centroid = pinCodeToCoding(m.centroid, ok, r.conversations); m.linear = pinCodeToCoding(m.linear, ok, r.conversations); setCls(m); setStep('done'); setDetail(''); record(r, m, dismissed); w.terminate(); setNet((n) => [...n, ...m.net]); if (DEV) { measureMemory('분석 완료 직후'); Object.assign(window, { __relog: { result: r, cls: m } }) } } // 개발 모드: 콘솔에서 숫자 집계용(원문은 화면 밖으로 안 나감) // 임베딩·모델 메모리 회수
       else if (m.type === 'error') { setError(m.message); setStep('done'); w.terminate() }
     }
     w.postMessage({ type: 'classify', model: DEFAULT_MODEL, device: DEVICE, texts, inputs })
@@ -156,7 +156,7 @@ export default function App() {
   // dismissedIds: 내가 "반복 아님"으로 고친 메시지. 주별 집계에도 반영되도록 대장을 만들 때 등급을 뗀다.
   async function record(r: Result, m: Classified, dismissedIds: string[]) {
     const version = { parserVersion: r.parserVersion, normalizerVersion: r.normalizerVersion, modelVersion: m.modelVersion, classifierVersion: m.classifierVersion, detectorVersion: m.detectorVersion, catalogVersion: CATALOG_VERSION, recommendationRuleVersion: RECOMMENDATION_RULE_VERSION }
-    const entries = buildLedger({ platform: r.conversations[0]?.platform ?? 'chatgpt', utterances: r.utterances, okIds: r.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: m.centroid, pairs: applyDismissed(m.pairs, m.detectSummary, dismissedIds).pairs, version })
+    const entries = buildLedger({ platform: r.conversations[0]?.platform ?? 'chatgpt', utterances: r.utterances, okIds: r.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: m.linear, pairs: applyDismissed(m.pairs, m.detectSummary, dismissedIds).pairs, version })
     let all = entries
     if (storageMode === 'local') {
       try { await putLedger(entries); all = await getLedger() } catch (e) { setError('로컬 보관 실패: ' + (e as Error).message) }
@@ -210,7 +210,7 @@ export default function App() {
   const titleOf = (id: string) => titleById.get(id) || '(제목 없음)'
   const preds = cls ? cls[method] : null
   const byType = preds ? countByType(preds) : null
-  const agree = cls ? cls.knn.filter((p, i) => p.type === cls.centroid[i].type).length / cls.knn.length : 0
+  const agree = cls ? cls.linear.filter((p, i) => p.type === cls.centroid[i].type).length / cls.linear.length : 0
 
   // 추천: 집계 숫자(snapshot) + 체크리스트(ctx) + 로컬 피드백만 입력. 원문 없음.
   const platform: Platform = result?.conversations[0]?.platform ?? 'chatgpt'
@@ -221,7 +221,7 @@ export default function App() {
     if (result && cls) record(result, cls, next)
   }
   const snapshot = result && cls && s && eff
-    ? buildSnapshot({ platform, stats: s, utterances: result.utterances, okIds: result.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: cls.centroid, candidates: eff.candidates, detect: eff.summary, subByConversation: subByConversation(result.conversations) })
+    ? buildSnapshot({ platform, stats: s, utterances: result.utterances, okIds: result.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: cls.linear, candidates: eff.candidates, detect: eff.summary, subByConversation: subByConversation(result.conversations) })
     : null
   const detected = result ? detectFeatures(result.conversations) : []
   const installed = result ? installedPlugins(result.conversations) : [] // Claude Code 기록의 설치 플러그인 id
@@ -446,9 +446,10 @@ export default function App() {
               )}
               {cls && (
                 <p>
-                  대화 종류 분류 방식: <button onClick={() => setMethod('knn')} disabled={method === 'knn'}>C 가까운 예시 투표</button>
+                  대화 종류 분류 방식: <button onClick={() => setMethod('linear')} disabled={method === 'linear'}>D 학습한 분류기</button>
+                  <button onClick={() => setMethod('knn')} disabled={method === 'knn'}>C 가까운 예시 투표</button>
                   <button onClick={() => setMethod('centroid')} disabled={method === 'centroid'}>B 종류별 평균과 비교</button>
-                  두 방식이 같은 답을 낸 비율 {Math.round(agree * 100)}%, 문장을 숫자로 바꾸는 데 {cls.embedMs}ms ({(cls.embedMs / cls.knn.length).toFixed(0)}ms/개), 계산 장치 {DEVICE}
+                  B와 D가 같은 답을 낸 비율 {Math.round(agree * 100)}%, 문장을 숫자로 바꾸는 데 {cls.embedMs}ms ({(cls.embedMs / cls.knn.length).toFixed(0)}ms/개), 계산 장치 {DEVICE}
                 </p>
               )}
               <h2>개발: 네트워크 감사</h2>

@@ -39,6 +39,7 @@ export type EmbedOut =
       type: 'classified'
       centroid: Prediction[]
       knn: Prediction[]
+      linear: Prediction[] // 제품 기본(D). 가중치가 없는 모델이면 centroid와 같다
       embeddings: Float32Array
       dim: number
       embedMs: number
@@ -113,22 +114,24 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
       return
     }
 
-    // classify: 예시 발화 + 사용자 발화를 모두 임베딩한 뒤 B·C 두 방식으로 예측
+    // classify: 예시 발화 + 사용자 발화를 모두 임베딩한 뒤 B·C·D 세 방식으로 예측
     const t1 = performance.now()
     const seeds = await embedAll(pipe, prep(model, SEED_TEXTS))
     const seedVecs = SEED_TYPES.map((_, i) => row(seeds.data, seeds.dim, i))
-    const extra = labeledFor(model) // 이 모델로 만든 라벨 데이터 합이 있을 때만 중심점에 더한다
+    const extra = labeledFor(model) // 이 모델로 만든 라벨 데이터(합·선형 가중치)가 있을 때만 쓴다
     const clf = new TaskClassifier(seedVecs, SEED_TYPES, undefined, extra)
     const { data, dim } = await embedAll(pipe, inputs, (done) => post({ type: 'progress', done, total: inputs.length }))
     const centroid: Prediction[] = []
     const knn: Prediction[] = []
+    const linear: Prediction[] = []
     for (let i = 0; i < texts.length; i++) {
       const v = row(data, dim, i)
       centroid.push(clf.centroid(v))
       knn.push(clf.knn(v))
+      linear.push(clf.linear(v))
     }
     // 반복 지시 의심 탐지: 귀무분포(서로 다른 대화 무작위 쌍) 상위 1%를 경계로, 같은 대화의 앞선 발화와 비교
-    const dIn: DetectInput[] = e.data.inputs.map((u, i) => ({ ...u, taskType: centroid[i].type })) // 제품 기본 분류는 B(중심점)
+    const dIn: DetectInput[] = e.data.inputs.map((u, i) => ({ ...u, taskType: linear[i].type })) // 제품 기본 분류는 D(선형)
     // 경계: 같은 대화 비인접 쌍 분포의 p90(주제 연속 발화의 기본 유사도). 반복 표지가 있는 지시는 다른 대화 쌍 p90만 넘으면 구제.
     const crossSims = nullDistribution(dIn, (i) => row(data, dim, i))
     const withinSims = withinConversationNull(dIn, (i) => row(data, dim, i))
@@ -147,6 +150,7 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
         type: 'classified',
         centroid,
         knn,
+        linear,
         embeddings: data,
         dim,
         embedMs: Math.round(performance.now() - t1),

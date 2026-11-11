@@ -34,7 +34,7 @@
    ```
    node eval/classify/run_abc.mjs exports/conversations-000.zip eval/labels/labels.csv
    ```
-   대화 단위로 240/80/80 비율 분할(결정적 시드) → A(TF-IDF 문자 1~3gram + softmax), B(중심점), C(k-NN) 비교. k·기타 임계값은 조정 분할에서 고르고 평가 분할의 Macro F1·유형별 P/R·혼동행렬을 찍는다.
+   대화 단위로 240/80/80 비율 분할(결정적 시드) → A(TF-IDF 문자 1~3gram + softmax), B(중심점), C(k-NN), D(임베딩 + 선형, 넷째 방식) 비교. k·기타 임계값은 조정 분할에서 고르고 평가 분할의 Macro F1·유형별 P/R·혼동행렬을 찍는다.
 3. 라벨 전 파이프라인 확인: `node eval/classify/run_abc.mjs --smoke` (예시 발화를 모의 라벨로 씀. '예시+학습' 변형은 평가 항목이 예시에 포함돼 수치가 의미 없음).
 - `context_required` 라벨은 분류 평가에서 제외. `other`는 예시가 없어 B·C에선 임계값으로만 나온다.
 
@@ -52,4 +52,19 @@
 
 - 표본 406건을 AI(Claude)가 읽고 이 기준서대로 먼저 찍은 것이다. 라벨링 화면이 이 파일을 읽어 제안으로 보여 준다.
 - 최종 라벨(`wildchat-ko-400.labels.csv`)은 사람이 제안을 보고 확정한 것이다. 제안을 본 상태의 확인이라 제안 쪽으로 쏠릴 수 있으므로, 보고할 때 "AI 제안 후 사람 확인" 방식임과 제안·최종 라벨의 일치율을 함께 밝힌다.
+- 반복 쌍도 같은 방식이다. `pair-suggested.csv`는 Claude 앱 내보내기의 유사도 상위 100쌍을 AI(Claude)가 읽고 먼저 찍은 것(반복 지시 13 · 재전송/수정 3 · 정상 후속 84)이고, "반복 쌍 정답 찍기" 화면이 제안으로 보여 준다. 파일에는 id와 답만 있지만 본인 대화·메시지의 ID라서 두 파일 모두 저장소에 올리지 않는다(.gitignore). 저장소를 새로 받으면 이 파일이 없고, 그때는 제안 없이 라벨링 화면이 뜬다. 사람이 확정해 내보낸 파일은 `pair-labels.csv`로 두고 `node eval/detect/eval_pairs.mjs`로 평가한다.
 - 제안 분포: 학습 106 · 정보 탐색 67 · 번역 64 · 글쓰기 59 · 코딩 31 · 상담 30 · 기타 28 · 문맥 필요 9 · 업무 문서 7 · 기획 5. 업무 문서와 기획은 표본이 적어 유형별 점수가 불안정할 수 있다.
+
+## 표본이 적은 유형 보강(wildchat-ko-rare)
+
+업무 문서(7건)와 기획(5건)은 무작위 표본에 너무 적어 따로 보강한다. 보강분은 학습에만 쓰고 평가에는 넣지 않는다.
+
+1. 큰 표본 받기: `node eval/classify/sample_wildchat.mjs 4000 20261112 --name=pool --exclude=eval/labels/wildchat-ko-400.ids.json` → `exports/public/wildchat-ko-pool.zip`. 이미 뽑은 400 표본의 대화는 뺀다. 2026-11-11 실행에서는 서버가 실패시킨 쪽을 빼고 발화 2,857개를 받았다.
+2. 후보 추리기: `node eval/classify/pick_rare.mjs exports/public/wildchat-ko-pool.zip` → 현재 분류기(D)가 업무 문서·기획에 확률 0.2 이상을 준 발화와 그 유형의 낱말이 든 발화(273건).
+3. AI(Claude)가 후보를 읽고 업무 문서·기획이 분명한 것만 고른 뒤(36건), 그 발화가 든 대화 33개의 나머지 발화도 함께 찍었다. 합계 71건: 업무 문서 26 · 기획 24 · 문맥 필요 6 · 학습 5 · 상담 4 · 정보 탐색 4 · 글쓰기 1 · 기타 1.
+4. 묶기: `node eval/classify/pick_rare.mjs exports/public/wildchat-ko-pool.zip <고른 목록 CSV>` → `exports/public/wildchat-ko-rare.zip`, `wildchat-ko-rare.suggested.csv`(id와 유형만).
+5. 사람 확인: `?dev=1`에 `wildchat-ko-rare.zip`을 넣고 "대화 종류 정답 찍기"에서 Enter 또는 숫자키로 확정 → "CSV 내보내기" → `eval/labels/wildchat-ko-rare.labels.csv`.
+6. 효과 재기: `node eval/classify/run_abc.mjs exports/public/wildchat-ko-400.zip eval/labels/wildchat-ko-400.labels.csv --cv --extra-zip=exports/public/wildchat-ko-rare.zip --extra-csv=eval/labels/wildchat-ko-rare.labels.csv`
+7. 제품 반영: `node eval/classify/build_centroids.mjs exports/public/wildchat-ko-400.zip eval/labels/wildchat-ko-400.labels.csv exports/public/wildchat-ko-rare.zip eval/labels/wildchat-ko-rare.labels.csv`
+
+보고할 때 밝힐 점: 보강분은 무작위 표본이 아니다. 분류기 점수와 낱말로 후보를 추리고 AI가 고른 것을 사람이 확인했다. 그래서 평가(5겹 교차 검증)는 원래의 무작위 표본 395건으로만 하고, 보강분은 각 겹의 학습 쪽에만 더한다.
