@@ -29,7 +29,7 @@ export function StorageChoice({ mode, storedCount, onMode, onClear }: { mode: St
 }
 
 /** 대화 종류별 이전→이후 비율 표(3열). 변화 방향만 색으로, 원인은 판정하지 않는다. */
-function CompareTable({ cmp, before, after }: { cmp: TaskCompare; before: string; after: string }) {
+export function CompareTable({ cmp, before, after }: { cmp: TaskCompare; before: string; after: string }) {
   return (
     <table>
       <thead><tr><th>대화 종류</th><th>{before} → {after}</th><th>변화</th></tr></thead>

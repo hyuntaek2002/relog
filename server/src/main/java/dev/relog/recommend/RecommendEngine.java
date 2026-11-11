@@ -23,7 +23,7 @@ public final class RecommendEngine {
     public record Restatement(int high, int mid, int low, int misunderstanding, int repeatedQuestion, Map<String, Integer> perTask, int tokenEstimate, double ratio) {}
     public record Context(String plan, Set<String> featuresInUse) {}
     public record Scored(CatalogItem item, double score, List<String> problemHits, List<String> taskHits, String excluded) {}
-    public record Prescription(String catalogId, String name, String category, String grade, String summary, String why, String what, String how, String caveat, List<String> signalsUsed, double score) {}
+    public record Prescription(String catalogId, String name, String category, String grade, String summary, String why, String what, String how, String caveat, List<String> signalsUsed, double score, String pluginName) {}
 
     private static final Map<String, String> TASK_LABEL = Map.of("coding", "코딩", "writing", "글쓰기·교정", "learning", "학습·설명", "workdoc", "업무 문서",
             "search", "정보 탐색", "ideation", "아이디어·기획", "translation", "번역", "counseling", "상담·대화");
@@ -117,9 +117,15 @@ public final class RecommendEngine {
     /** howTo의 {plugin} 자리에 다시 말한 지시가 가장 몰린 대화 종류의 항목 이름을 넣는다(웹 fillHow와 동일). */
     private static String fillHow(CatalogItem item, Snapshot s) {
         if (!item.howTo30s().contains("{plugin}")) return item.howTo30s();
-        var top = s.restatement().perTask().entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
-        String name = top != null && item.byTask() != null ? item.byTask().get(top.getKey()) : null;
+        String name = pluginFor(item, s);
         return item.howTo30s().replace("{plugin}", name != null ? name : "내 작업에 맞는 플러그인");
+    }
+
+    /** 플러그인 카드가 가리키는 구체 플러그인 이름. 해당 없으면 null(웹의 pluginName과 동일) */
+    private static String pluginFor(CatalogItem item, Snapshot s) {
+        if (!item.howTo30s().contains("{plugin}")) return null;
+        var top = s.restatement().perTask().entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
+        return top != null && item.byTask() != null ? item.byTask().get(top.getKey()) : null;
     }
 
     private static String why(Snapshot s, Scored sc) {
@@ -148,7 +154,7 @@ public final class RecommendEngine {
             perCategory.put(sc.item().category(), n + 1);
             List<String> signals = new ArrayList<>(sc.problemHits()); signals.addAll(sc.taskHits());
             out.add(new Prescription(sc.item().id(), sc.item().name(), sc.item().category(), sc.problemHits().isEmpty() ? "참고" : "핵심",
-                    summaryOf(s, sc), why(s, sc), sc.item().oneLiner(), fillHow(sc.item(), s), sc.item().caveat(), signals, Math.round(sc.score() * 100) / 100.0));
+                    summaryOf(s, sc), why(s, sc), sc.item().oneLiner(), fillHow(sc.item(), s), sc.item().caveat(), signals, Math.round(sc.score() * 100) / 100.0, pluginFor(sc.item(), s)));
         }
         return out;
     }

@@ -12,7 +12,7 @@ const FB: [Feedback, string, string][] = [['helpful', '도움됨', '다음 추�
 const CATEGORY: Record<string, string> = { feature: '기능', plugin: '플러그인', connector: '연결', skill: '스킬', practice: '습관' }
 
 // "1) … 2) … 3) …" 형식의 30초 사용법을 단계 배열로
-const steps = (how: string) => how.split(/\s*\d\)\s*/).map((s) => s.trim()).filter(Boolean)
+export const steps = (how: string) => how.split(/\s*\d\)\s*/).map((s) => s.trim()).filter(Boolean)
 
 export default function Prescriptions({ items, feedback, onFeedback, installed = [] }: { items: Prescription[]; feedback: FeedbackMap; onFeedback: (id: string, f: Feedback) => void; installed?: string[] }) {
   const [open, setOpen] = useState<Record<string, boolean>>({})

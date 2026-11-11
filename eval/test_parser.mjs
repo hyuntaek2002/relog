@@ -377,3 +377,36 @@ console.log('ledger ok')
   console.log('plugin search ok', file.plugins.length, '개, 카테고리 있는 항목', file.plugins.filter((p) => p.c.length).length, '한국어 설명', file.plugins.filter((p) => p.k).length)
 }
 
+// 사용자 보정("반복 아님"): 고친 메시지는 등급이 빠지고 건수·분량·비율이 다시 계산된다
+{
+  const { applyDismissed } = await import('../web/src/detect/corrections.ts')
+  const P = (messageId, grade, tokenEstimate = 10) => ({ conversationId: 'c', messageId, priorMessageId: 'p', similarity: 0.95, kind: 'instruction', repeatMarker: false, complaintMarker: false, gapMinutes: 5, responseBetween: true, grade, exclusion: grade ? null : 'below_null', tokenEstimate })
+  const pairs = [P('a', 'high', 30), P('b', 'medium', 20), P('c', 'medium', 10), P('d', null)]
+  const summary = { byGrade: { low: 0, medium: 2, high: 1 }, tokenEstimate: 60, judgeable: 20, ratio: 15, repeatedQuestions: 0, misunderstanding: 0, excluded: { below_null: 1 }, nullThreshold: 0.9, groupThreshold: {} }
+  const none = applyDismissed(pairs, summary, [])
+  assert.equal(none.summary, summary); assert.equal(none.candidates.length, 3); assert.equal(none.dismissedCount, 0)
+  const r = applyDismissed(pairs, summary, ['b', 'd', 'zzz'])
+  assert.equal(r.dismissedCount, 1, '등급 없는 메시지·없는 id는 무시')
+  assert.deepEqual(r.summary.byGrade, { low: 0, medium: 1, high: 1 }); assert.equal(r.summary.tokenEstimate, 40); assert.equal(r.summary.ratio, 10)
+  assert.equal(r.summary.excluded.user_dismissed, 1); assert.equal(r.pairs[1].grade, null); assert.equal(r.pairs[1].exclusion, 'user_dismissed')
+  assert.deepEqual(r.candidates.map((c) => c.messageId), ['a', 'c']); assert.equal(pairs[1].grade, 'medium', '원본은 그대로')
+  console.log('corrections ok')
+}
+
+// 서버 전송 본문: 숫자·열거형·버전 문자열만 들어가고 글이 들어갈 자리가 없다
+{
+  const { toDto, toRecommendRequest } = await import('../web/src/store/sync.ts')
+  const week = { periodStart: 1, periodEnd: 2, versionKey: 'v', platform: 'claude', userTurnCount: 5, okCount: 4, judgeable: 4, conversationCount: 1, longConversationCount: 0, codeCount: 1, taskCounts: { coding: 4 }, restatement: { high: 0, medium: 1, low: 0, tokenEstimate: 12, ratio: 250, perTask: { coding: 1 }, repeatedQuestion: 0, misunderstanding: 0 }, hourHistogram: new Array(24).fill(0) }
+  const ver = { parserVersion: 'p', normalizerVersion: 'n', modelVersion: 'm', classifierVersion: 'c', detectorVersion: 'd', catalogVersion: 'k', recommendationRuleVersion: 'r' }
+  const dto = toDto(week, ver)
+  assert.equal(dto.restatement.ratio, 100, '비율은 0~100으로 자른다')
+  const strings = []
+  const walk = (o, path) => { if (typeof o === 'string') strings.push(path); else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) walk(v, path + '.' + k) }
+  walk(dto, 'dto')
+  assert.deepEqual(strings.sort(), ['dto.analysisVersion.catalogVersion', 'dto.analysisVersion.classifierVersion', 'dto.analysisVersion.detectorVersion', 'dto.analysisVersion.modelVersion', 'dto.analysisVersion.normalizerVersion', 'dto.analysisVersion.parserVersion', 'dto.analysisVersion.recommendationRuleVersion', 'dto.platform'], '문자열 필드는 플랫폼과 버전뿐')
+  const snap = { platform: 'claude', taskShare: { coding: 1 }, taskCounts: { coding: 4 }, userTurnCount: 5, conversationCount: 1, longConversationShare: 1.2, avgTurnsPerConversation: 5, codeShare: 0.25, codingSub: {}, answer: { avgTokens: 900, ratio: 6 }, hourHistogram: [], restatement: { high: 0, mid: 1, low: 0, misunderstanding: 0, repeatedQuestion: 0, perTask: { coding: 1 }, tokenEstimate: 12, ratio: 25 } }
+  const req = toRecommendRequest(snap, { plan: 'pro', featuresInUse: ['cl_web_search'] })
+  assert.equal(req.longConversationShare, 1); assert.equal(req.plan, 'pro'); assert.equal(req.mode, 'personalized'); assert.ok(!('hourHistogram' in req) && !('codingSub' in req))
+  console.log('sync dto ok')
+}
+

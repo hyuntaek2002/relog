@@ -1,0 +1,2003 @@
+{
+ "version": "testset-0.1.0",
+ "note": "반복 지시 의심 탐지 최종 평가용 합성 대화(개발셋 devset-0.1.0과 주제가 겹치지 않음). 형식·라벨 원칙은 개발셋과 같다. 규칙 조정에 쓰지 않는다: 결과를 본 뒤 임계값·정규식을 고치면 이 셋은 더 이상 테스트셋이 아니다. 한계: 규칙을 만든 쪽이 작성한 합성 문장이라 독립 평가가 아니며, 실제 대화 라벨로 보완해야 한다.",
+ "conversations": [
+  {
+   "id": "t01",
+   "scenario": "반복: 구현 방식 지시 재진술(표지 변형)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "React로 할 일 목록 컴포넌트 만들어줘. 타입스크립트로, 클래스 말고 함수형으로."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "삭제 버튼도 달아줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "방금도 말했지만 클래스형 말고 함수형으로 써줘",
+     "minutes": 4,
+     "gold": "repeat",
+     "tag": "repeat_marker"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "완료한 항목은 회색으로 보이게 해줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    }
+   ]
+  },
+  {
+   "id": "t02",
+   "scenario": "반복: 쿼리 작성 방식 재진술(표지 있음)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "월별 매출 합계 구하는 SQL 짜줘. MySQL 8 기준이고 서브쿼리 말고 윈도 함수로."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "전월 대비 증감률 열도 추가해줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "서브쿼리 쓰지 말고 윈도 함수로 해달라고 했잖아",
+     "minutes": 2,
+     "gold": "repeat",
+     "tag": "repeat_marker"
+    }
+   ]
+  },
+  {
+   "id": "t03",
+   "scenario": "반복: 슬라이드 형식 지시 재진술(표지 없음)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "신입생 오리엔테이션 발표 개요 짜줘. 슬라이드 10장 이내, 장마다 핵심 문장 하나만."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "동아리 소개 부분을 앞쪽으로 옮겨줘",
+     "minutes": 4,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "슬라이드마다 핵심 문장은 하나씩만 넣어줘",
+     "minutes": 3,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "마지막 장에 문의처 넣어줘",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "follow_up"
+    }
+   ]
+  },
+  {
+   "id": "t04",
+   "scenario": "반복: 길이 제한 재진술(불만 섞임)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "교수님께 보낼 면담 요청 메일 써줘. 정중하게, 다섯 문장 안으로."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "제목도 지어줘",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "너무 길어. 다섯 문장 넘기지 말아줘",
+     "minutes": 3,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat"
+    }
+   ]
+  },
+  {
+   "id": "t05",
+   "scenario": "반복: 이동 수단 제약 재진술",
+   "turns": [
+    {
+     "role": "user",
+     "text": "부산 2박 3일 일정 짜줘. 렌터카 없이 대중교통으로만 다닐 거야."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "둘째 날 저녁 먹을 곳 추천해줘",
+     "minutes": 5,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "택시나 렌터카는 빼고 버스랑 지하철로만 짜줘",
+     "minutes": 4,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "숙소는 서면 근처로 잡을게. 거기 기준으로 다시 봐줘",
+     "minutes": 6,
+     "gold": "normal",
+     "tag": "follow_up"
+    }
+   ]
+  },
+  {
+   "id": "t06",
+   "scenario": "반복: 용어 수준 지시 재진술(짧음)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "이 논문 초록 요약해줘. 세 줄로, 전문 용어는 풀어서.\n본 연구는 그래프 신경망을 이용해 단백질 상호작용을 예측하는 방법을 제안한다."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "한계점도 한 줄 추가해줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "용어를 쉬운 말로 풀어서 써줘",
+     "minutes": 2,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat_short"
+    }
+   ]
+  },
+  {
+   "id": "t07",
+   "scenario": "반복: 도구 제약 재진술",
+   "turns": [
+    {
+     "role": "user",
+     "text": "엑셀에서 부서별 평균 급여 구하는 수식 알려줘. 피벗 테이블 말고 함수로만."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "소수 둘째 자리까지 반올림해줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "피벗은 쓰지 말고 함수로만 해줘",
+     "minutes": 2,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat"
+    }
+   ]
+  },
+  {
+   "id": "t08",
+   "scenario": "반복: 번역 톤 재진술",
+   "turns": [
+    {
+     "role": "user",
+     "text": "이 문장 영어로 번역해줘: 회의는 다음 주 화요일로 연기되었습니다. 비즈니스 메일 톤으로."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "이것도 번역해줘: 자료는 첨부했습니다.",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "same_format_new_content"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "구어체 말고 비즈니스 톤으로 다시 번역해줘",
+     "minutes": 2,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat"
+    }
+   ]
+  },
+  {
+   "id": "t09",
+   "scenario": "반복: 금지 지시 두 번 재진술",
+   "turns": [
+    {
+     "role": "user",
+     "text": "제주 카페 방문 후기 블로그 글 써줘. 이모지 쓰지 말고 담백하게."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "소제목 세 개로 나눠줘",
+     "minutes": 4,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "이모지는 넣지 말아줘",
+     "minutes": 3,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat_short"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "또 이모지가 들어갔어. 전부 빼줘",
+     "minutes": 2,
+     "gold": "repeat",
+     "tag": "repeat_marker"
+    }
+   ]
+  },
+  {
+   "id": "t10",
+   "scenario": "반복: 출력 범위 지시 재진술",
+   "turns": [
+    {
+     "role": "user",
+     "text": "백엔드 신입 면접 예상 질문 10개 뽑아줘. 답변은 쓰지 말고 질문만."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "데이터베이스 관련 질문 3개 더 뽑아줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "답은 필요 없어. 질문만 줘",
+     "minutes": 2,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat_short"
+    }
+   ]
+  },
+  {
+   "id": "t11",
+   "scenario": "반복: 길이 지시(영문, 표지)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "Write a cover letter for a data analyst internship. Keep it under 200 words."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "Mention my SQL project in the second paragraph",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "new_request_en"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "Again, keep it under 200 words please",
+     "minutes": 2,
+     "gold": "repeat",
+     "tag": "repeat_marker_en"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "Add a closing line",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "new_request_en"
+    }
+   ]
+  },
+  {
+   "id": "t12",
+   "scenario": "반복: 개수 제한(영문, 표지)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "Summarize this article in bullet points. No more than five bullets.\nRemote work has changed how teams communicate and plan their week."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "Make the tone neutral",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "new_request_en"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "Only five bullets, as I said",
+     "minutes": 2,
+     "gold": "repeat",
+     "tag": "repeat_marker_en"
+    }
+   ]
+  },
+  {
+   "id": "t13",
+   "scenario": "반복: 제외 조건 재진술(표지 변형)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "이 회의 메모를 회의록으로 정리해줘. 결정 사항이랑 할 일만, 잡담은 빼고.\n- 다음 주 배포\n- 점심 메뉴 얘기\n- 디자인 시안 금요일까지"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "담당자 이름은 굵게 표시해줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "잡담 내용은 빼달라고 처음에 부탁했는데 아직 있어. 빼줘",
+     "minutes": 3,
+     "gold": "repeat",
+     "tag": "repeat_marker"
+    }
+   ]
+  },
+  {
+   "id": "t14",
+   "scenario": "반복: 주석 언어 지시 재진술",
+   "turns": [
+    {
+     "role": "user",
+     "text": "pandas로 결측치 처리하는 코드 짜줘. 주석은 한국어로 달아줘."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "```python\ndf = df.fillna(method=\"ffil\")\n```\n이 오류는 왜 나는 거야?",
+     "minutes": 5,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "주석을 한국어로 달아줘",
+     "minutes": 3,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat_short"
+    }
+   ]
+  },
+  {
+   "id": "t15",
+   "scenario": "반복: 빌드 방식 지시 재진술",
+   "turns": [
+    {
+     "role": "user",
+     "text": "Node 앱 Dockerfile 만들어줘. 알파인 이미지 기반으로, 멀티 스테이지 빌드로."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "헬스체크 설정도 추가해줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "멀티 스테이지로 나눠서 작성해줘",
+     "minutes": 3,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "포트는 8080으로 바꿔줘",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "follow_up"
+    }
+   ]
+  },
+  {
+   "id": "t16",
+   "scenario": "반복: 분류 기준 재진술(정보 반복)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "이번 달 지출 내역 표로 정리해줘. 카테고리는 식비, 교통, 구독, 기타 네 개만.\n- 편의점 4,500\n- 버스 1,500\n- 음악 앱 7,900"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "합계 행도 추가해줘",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "카테고리는 네 개로만 묶어줘. 식비, 교통, 구독, 기타",
+     "minutes": 3,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat"
+    }
+   ]
+  },
+  {
+   "id": "t17",
+   "scenario": "반복: 조건 재진술(항의 어조)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "주 3회 홈트 루틴 짜줘. 기구 없이 맨몸으로만."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "하체 위주로 바꿔줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "덤벨 같은 기구는 없다니까. 맨몸 운동으로만 짜줘",
+     "minutes": 2,
+     "gold": "repeat",
+     "tag": "complaint_repeat"
+    }
+   ]
+  },
+  {
+   "id": "t18",
+   "scenario": "반복: 내용 제외 지시 재진술",
+   "turns": [
+    {
+     "role": "user",
+     "text": "데미안 독후감 써줘. 줄거리 요약은 빼고 내 생각 위주로."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "첫 문장을 더 강하게 바꿔줘",
+     "minutes": 4,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "줄거리는 넣지 말아줘",
+     "minutes": 3,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat_short"
+    }
+   ]
+  },
+  {
+   "id": "t19",
+   "scenario": "반복: 표현 금지 재진술(다른 표현)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "수제 비누 인스타 홍보 문구 세 개 써줘. 과장 표현 없이."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "해시태그 다섯 개 붙여줘",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "최고, 완벽 같은 과장된 말은 빼줘",
+     "minutes": 3,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat"
+    }
+   ]
+  },
+  {
+   "id": "t20",
+   "scenario": "반복: 긴 대화에서 초반 지시 두 가지 재진술",
+   "turns": [
+    {
+     "role": "user",
+     "text": "캡스톤 보고서 서론 써줘. 문체는 평서문 반말체로 통일하고 표는 쓰지 마."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "관련 연구 절을 추가해줘",
+     "minutes": 6,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "시스템 구성 설명도 넣어줘",
+     "minutes": 8,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "실험 계획 절을 써줘",
+     "minutes": 7,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "문체를 반말체로 통일해줘. 존댓말이 섞여 있어",
+     "minutes": 5,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "참고문헌 형식 정리해줘",
+     "minutes": 4,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "표는 쓰지 말라고 했는데 표가 들어갔어. 글로 풀어줘",
+     "minutes": 5,
+     "gold": "repeat",
+     "tag": "repeat_marker"
+    }
+   ]
+  },
+  {
+   "id": "t21",
+   "scenario": "반복: 며칠 뒤 + 표지(변형)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "스터디 모집 공지 써줘. 모집 인원은 6명."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "저번에 말한 대로 모집 인원 6명으로 다시 써줘",
+     "minutes": 4320,
+     "gold": "repeat",
+     "tag": "repeat_marker_days"
+    }
+   ]
+  },
+  {
+   "id": "t22",
+   "scenario": "반복: 배경 정보 재진술",
+   "turns": [
+    {
+     "role": "user",
+     "text": "내 전공은 산업공학이고 3학년이야. 인턴 지원 전략 알려줘."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "포트폴리오에는 뭘 넣어야 해?",
+     "minutes": 4,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "나는 산업공학과 3학년이야. 그 기준으로 다시 알려줘",
+     "minutes": 3,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat"
+    }
+   ]
+  },
+  {
+   "id": "t23",
+   "scenario": "반복: 출력 형식 재진술(항의 어조)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "주간 보고서 양식 만들어줘. 마크다운 표로."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "지난주 대비 항목을 추가해줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "마크다운 표 형식으로 달라니까",
+     "minutes": 2,
+     "gold": "repeat",
+     "tag": "complaint_repeat"
+    }
+   ]
+  },
+  {
+   "id": "t24",
+   "scenario": "반복: 코드 스타일 지시 재진술",
+   "turns": [
+    {
+     "role": "user",
+     "text": "자바 유틸 클래스 작성해줘. 변수명은 카멜 케이스, 한 줄 80자 이내."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "널 체크를 추가해줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "예외 메시지는 영어로 써줘",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "한 줄에 80자 넘지 않게 해줘",
+     "minutes": 3,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat"
+    }
+   ]
+  },
+  {
+   "id": "t25",
+   "scenario": "반복: 보충 뒤 재진술",
+   "turns": [
+    {
+     "role": "user",
+     "text": "퀴즈 10문제 만들어줘. 객관식으로."
+    },
+    {
+     "role": "user",
+     "text": "보기는 네 개씩이야",
+     "minutes": 1,
+     "gold": "normal",
+     "tag": "supplement_no_response"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "주관식 말고 객관식으로만 내줘",
+     "minutes": 4,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat"
+    }
+   ]
+  },
+  {
+   "id": "t26",
+   "scenario": "반복: 말투 지시 재진술(짧음)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "이 기사 요약해줘. 존댓말로.\n시는 내년부터 심야 버스 노선을 두 배로 늘린다고 밝혔다."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "제목도 뽑아줘",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "존댓말로 써줘",
+     "minutes": 2,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat_short"
+    }
+   ]
+  },
+  {
+   "id": "t27",
+   "scenario": "반복: 다른 표현으로 같은 요구(짧은 간격)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "이력서 경력 항목 다듬어줘. 숫자 성과를 꼭 넣어줘.\n- 동아리 홈페이지 개편 담당"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "성과를 수치로 표현해서 다시 써줘",
+     "minutes": 4,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat"
+    }
+   ]
+  },
+  {
+   "id": "t28",
+   "scenario": "반복: 재료 제외 재진술",
+   "turns": [
+    {
+     "role": "user",
+     "text": "김치찌개 레시피 알려줘. 2인분 기준, 돼지고기 없이."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "매운맛을 줄이려면 어떻게 해?",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "고기는 빼고 알려줘",
+     "minutes": 2,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat_short"
+    }
+   ]
+  },
+  {
+   "id": "t29",
+   "scenario": "반복: 변경 금지 지시(영문, 표지 없음)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "Refactor this function. Do not change the public API.\n```ts\nexport function parse(input: string): Node[] { return [] }\n```"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "Add logging for empty input",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "new_request_en"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "You changed the signature. Keep the public API the same",
+     "minutes": 3,
+     "gold": "repeat",
+     "tag": "paraphrase_repeat"
+    }
+   ]
+  },
+  {
+   "id": "t30",
+   "scenario": "반복: 청중 정보 재진술(표지 있음)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "발표 대본 써줘. 3분 분량이고 청중은 비전공자야."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "도입부에 질문 하나 넣어줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "비전공자가 듣는다고 했잖아. 용어를 쉽게 바꿔줘",
+     "minutes": 3,
+     "gold": "repeat",
+     "tag": "repeat_marker"
+    }
+   ]
+  },
+  {
+   "id": "n01",
+   "scenario": "정상 후속 요청 체인(웹 화면)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "카페 랜딩 페이지 HTML 만들어줘"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "헤더에 로고 자리 추가해줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "푸터에 연락처 넣어줘",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "모바일에서는 한 열로 보이게 해줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    }
+   ]
+  },
+  {
+   "id": "n02",
+   "scenario": "주제 연속 상담(질문형)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "휴학할지 고민이야. 장단점 알려줘"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "휴학하면 장학금은 어떻게 돼?",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "복학 시기는 언제가 좋아?",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "부모님께는 어떻게 말하지?",
+     "minutes": 4,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    }
+   ]
+  },
+  {
+   "id": "n03",
+   "scenario": "같은 형식 새 내용(목록 이어 붙이기)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "1월 독서 목록 표로 정리해줘\n- 사피엔스\n- 코스모스"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "2월 목록도 같은 형식으로\n- 총균쇠\n- 이기적 유전자",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "same_format_new_content"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "3월도 같은 형식으로\n- 팩트풀니스\n- 넛지",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "same_format_new_content"
+    }
+   ]
+  },
+  {
+   "id": "n04",
+   "scenario": "범용 발화 반복",
+   "turns": [
+    {
+     "role": "user",
+     "text": "보고서 초안 써줘. 주제는 교내 식당 만족도."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "수정해줘",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "generic"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "더 짧게",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "generic"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "좋아 반영해줘",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "generic"
+    }
+   ]
+  },
+  {
+   "id": "n05",
+   "scenario": "정기 작업 명령(커밋·푸시·진행)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "로그인 화면에서 비밀번호 틀릴 때 오류 문구가 안 뜨는 버그 고쳐줘"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "커밋해줘",
+     "minutes": 6,
+     "gold": "normal",
+     "tag": "routine_command"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "테스트가 실패하는 원인 봐줘",
+     "minutes": 9,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "커밋하고 푸시해줘",
+     "minutes": 12,
+     "gold": "normal",
+     "tag": "routine_command"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "다음 단계 진행해줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "routine_command"
+    }
+   ]
+  },
+  {
+   "id": "n06",
+   "scenario": "정기 작업 명령(같은 문장 반복)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "프로젝트 README 써줘"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "변경 사항 커밋해 주세요",
+     "minutes": 5,
+     "gold": "normal",
+     "tag": "routine_command"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "설치 방법 절을 추가해줘",
+     "minutes": 8,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "변경 사항 커밋해 주세요",
+     "minutes": 6,
+     "gold": "normal",
+     "tag": "routine_command"
+    }
+   ]
+  },
+  {
+   "id": "n07",
+   "scenario": "재전송(몇 분 안 거의 동일) + 후속",
+   "turns": [
+    {
+     "role": "user",
+     "text": "동아리 회비 정산표 만들어줘. 인원 12명, 1인 2만 원."
+    },
+    {
+     "role": "user",
+     "text": "동아리 회비 정산표 만들어줘. 인원 12명, 1인 2만 원. 엑셀 형식으로",
+     "minutes": 1,
+     "gold": "normal",
+     "tag": "resend"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "미납자 표시 열을 추가해줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    }
+   ]
+  },
+  {
+   "id": "n08",
+   "scenario": "며칠 뒤 주제 재방문(표지 없음)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "토익 공부 계획 짜줘. 하루 2시간."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "토익 공부 계획 짜줘. 이번엔 하루 1시간으로.",
+     "minutes": 7200,
+     "gold": "normal",
+     "tag": "topic_revisit_days"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "단어 암기법도 알려줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    }
+   ]
+  },
+  {
+   "id": "n09",
+   "scenario": "비슷한 문장 다른 의도",
+   "turns": [
+    {
+     "role": "user",
+     "text": "이 코드 설명해줘\n```python\ndef area(r):\n    return 3.14 * r * r\n```"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "이 코드 최적화해줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "similar_surface_new_intent"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "이 코드 테스트 작성해줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "similar_surface_new_intent"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "이 코드에 타입 힌트 추가해줘",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "similar_surface_new_intent"
+    }
+   ]
+  },
+  {
+   "id": "n10",
+   "scenario": "정보 탐색 연속",
+   "turns": [
+    {
+     "role": "user",
+     "text": "노트북 추천해줘. 예산은 120만 원."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "배터리 오래 가는 건 뭐야?",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "AS 좋은 브랜드는 어디야?",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "그중 가장 가벼운 건?",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    }
+   ]
+  },
+  {
+   "id": "n11",
+   "scenario": "감정·잡담",
+   "turns": [
+    {
+     "role": "user",
+     "text": "오늘 발표를 망쳤어"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "다들 괜찮다고 하는데 위로가 안 돼",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "chat"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "그래도 들어줘서 고마워",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "chat"
+    }
+   ]
+  },
+  {
+   "id": "n12",
+   "scenario": "다른 대상에 같은 규칙(정상)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "첫 번째 단락 맞춤법 고쳐줘: 오늘은 날씨가 않좋아서 집에 있었다."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "두 번째 단락도 맞춤법 고쳐줘: 내일은 몇일인지 모르겠다.",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "same_format_new_content"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "세 번째 단락도 고쳐줘: 어의없는 일이 있었다.",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "same_format_new_content"
+    }
+   ]
+  },
+  {
+   "id": "n13",
+   "scenario": "첨부 교체(새 요청)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "이 이미지 속 표를 글로 옮겨줘",
+     "hasAttachment": true
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "이 이미지도 옮겨줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "attachment_new",
+     "hasAttachment": true
+    }
+   ]
+  },
+  {
+   "id": "n14",
+   "scenario": "학습 질문 연속",
+   "turns": [
+    {
+     "role": "user",
+     "text": "미분이 뭐야?"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "적분은 뭐야?",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "둘은 어떤 관계야?",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "예제 하나 풀어줘",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "follow_up"
+    }
+   ]
+  },
+  {
+   "id": "n15",
+   "scenario": "긴 설계 논의 후속(주제 공유)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "도서 대여 앱 DB 설계 도와줘"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "회원 테이블 컬럼을 정해줘",
+     "minutes": 4,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "대여 테이블도 정해줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "연체료 계산은 어디에 두는 게 좋아?",
+     "minutes": 5,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "인덱스는 어디에 걸어야 해?",
+     "minutes": 4,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "지금까지 내용을 ERD 설명으로 정리해줘",
+     "minutes": 6,
+     "gold": "normal",
+     "tag": "follow_up"
+    }
+   ]
+  },
+  {
+   "id": "n16",
+   "scenario": "오해 정정(새 정보, 지시 반복 아님)",
+   "turns": [
+    {
+     "role": "user",
+     "text": "기차 시간 알려줘. 서울에서 대전."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "아니 KTX 말고 무궁화호를 물어본 거야",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "complaint_not_instruction"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "소요 시간은 얼마나 걸려?",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    }
+   ]
+  },
+  {
+   "id": "n17",
+   "scenario": "서로 무관한 새 요청",
+   "turns": [
+    {
+     "role": "user",
+     "text": "영어 메일 문법 봐줘: I am writing to ask about the schedule."
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "파이썬으로 구구단 출력하는 코드 짜줘",
+     "minutes": 5,
+     "gold": "normal",
+     "tag": "new_request"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "점심 메뉴 추천해줘",
+     "minutes": 4,
+     "gold": "normal",
+     "tag": "new_request"
+    }
+   ]
+  },
+  {
+   "id": "n18",
+   "scenario": "영문 정상 후속",
+   "turns": [
+    {
+     "role": "user",
+     "text": "Explain Big O notation"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "Give an example with sorting",
+     "minutes": 2,
+     "gold": "normal",
+     "tag": "new_request_en"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "Now compare quicksort and mergesort",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "new_request_en"
+    }
+   ]
+  },
+  {
+   "id": "n19",
+   "scenario": "사실 조회 연속",
+   "turns": [
+    {
+     "role": "user",
+     "text": "달러 환율이 지금 얼마야?"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "유로는 얼마야?",
+     "minutes": 1,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "엔화는 얼마야?",
+     "minutes": 1,
+     "gold": "normal",
+     "tag": "topic_continue_question"
+    }
+   ]
+  },
+  {
+   "id": "n20",
+   "scenario": "재전송 + 후속",
+   "turns": [
+    {
+     "role": "user",
+     "text": "자소서 지원 동기 써줘. 회사는 물류 스타트업."
+    },
+    {
+     "role": "user",
+     "text": "자소서 지원 동기 써줘. 회사는 물류 스타트업이야.",
+     "minutes": 1,
+     "gold": "normal",
+     "tag": "resend"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "분량은 500자로 맞춰줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    }
+   ]
+  },
+  {
+   "id": "n21",
+   "scenario": "오래 뒤 같은 대화 재방문",
+   "turns": [
+    {
+     "role": "user",
+     "text": "블로그 주제 추천해줘"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "블로그 주제 추천해줘",
+     "minutes": 2880,
+     "gold": "normal",
+     "tag": "topic_revisit_days"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "그중 두 번째로 개요 짜줘",
+     "minutes": 3,
+     "gold": "normal",
+     "tag": "follow_up"
+    }
+   ]
+  },
+  {
+   "id": "n22",
+   "scenario": "응답 없이 이어 보낸 보충",
+   "turns": [
+    {
+     "role": "user",
+     "text": "카페 로고 시안 설명 써줘"
+    },
+    {
+     "role": "user",
+     "text": "색은 파란 계열이야",
+     "minutes": 1,
+     "gold": "normal",
+     "tag": "supplement_no_response"
+    },
+    {
+     "role": "user",
+     "text": "글꼴은 고딕으로 할 거야",
+     "minutes": 1,
+     "gold": "normal",
+     "tag": "supplement_no_response"
+    },
+    {
+     "role": "assistant",
+     "text": "(응답)",
+     "minutes": 1
+    },
+    {
+     "role": "user",
+     "text": "슬로건도 하나 지어줘",
+     "minutes": 4,
+     "gold": "normal",
+     "tag": "follow_up"
+    }
+   ]
+  }
+ ]
+}

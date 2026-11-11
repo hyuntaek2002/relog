@@ -158,3 +158,9 @@ details.conv .cand { margin: 8px 0 0; }
 .ps-head .tag.have { border-color: #3a8; color: #3a8; }
 .ps-line { font-size: 0.95rem; line-height: 1.5; }
 .ps-links a { font-size: 0.85rem; margin-right: 12px; }
+
+/* 최소 뷰어(?view=1): 휴대폰 폭 기준 한 열 */
+main.viewer { max-width: 560px; }
+button.link { background: none; border: none; color: var(--accent); cursor: pointer; padding: 0 4px; }
+.cand .actions { margin: 6px 0 0; }
+.checklist input { padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); min-width: 0; }

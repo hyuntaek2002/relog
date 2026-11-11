@@ -1,0 +1,11 @@
+{
+  "name": "relog 뷰어",
+  "short_name": "relog",
+  "description": "서버에 보관한 집계 통계와 추천을 여는 최소 뷰어(내부 테스트용)",
+  "start_url": "./?view=1",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

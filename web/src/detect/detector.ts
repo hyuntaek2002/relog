@@ -30,7 +30,7 @@ export interface DetectInput {
 
 export type Grade = 'low' | 'medium' | 'high'
 export type UtteranceKind = 'instruction' | 'question' | 'other'
-export type Exclusion = 'below_null' | 'not_instruction' | 'chat_task' | 'resend' | 'routine' | 'generic' | 'attachment' | 'stale'
+export type Exclusion = 'below_null' | 'not_instruction' | 'chat_task' | 'resend' | 'routine' | 'generic' | 'attachment' | 'stale' | 'user_dismissed' // user_dismissed: 사용자가 "반복 아님"으로 고침(corrections.ts)
 
 export interface Candidate {
   conversationId: string
@@ -208,7 +208,7 @@ export function summarize(pairs: Candidate[], inputs: DetectInput[], nullThresho
   for (const u of inputs) perConv.set(u.conversationId, (perConv.get(u.conversationId) ?? 0) + 1)
   const judgeable = [...perConv.values()].filter((n) => n >= 2).reduce((a, b) => a + b, 0)
   const byGrade: Record<Grade, number> = { low: 0, medium: 0, high: 0 }
-  const excluded: Record<Exclusion, number> = { below_null: 0, not_instruction: 0, chat_task: 0, resend: 0, routine: 0, generic: 0, attachment: 0, stale: 0 }
+  const excluded: Record<Exclusion, number> = { below_null: 0, not_instruction: 0, chat_task: 0, resend: 0, routine: 0, generic: 0, attachment: 0, stale: 0, user_dismissed: 0 }
   let tokenEstimate = 0, flagged = 0, repeatedQuestions = 0, misunderstanding = 0
   for (const c of pairs) {
     if (c.grade) { byGrade[c.grade]++; tokenEstimate += c.tokenEstimate; flagged++ }

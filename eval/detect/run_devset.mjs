@@ -1,5 +1,6 @@
 // 합성 개발셋으로 반복 지시 의심 탐지 규칙을 평가한다. 브라우저와 같은 TS 모듈을 Node에서 그대로 쓴다.
-// 사용: node eval/detect/run_devset.mjs [model]   (기본 Xenova/multilingual-e5-small)
+// 사용: node eval/detect/run_devset.mjs [model] [파일] [--final]   (기본 Xenova/multilingual-e5-small, devset.json)
+//   --final: 제품과 같은 설정 하나만 평가한다(같은 대화 안 떨어진 쌍 p90 + 표지 구제). 테스트셋(testset.json)은 이 모드로만 돌린다.
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -8,8 +9,10 @@ import { normalizeText } from '../../web/src/parser/normalize.ts'
 import { DEFAULT_OPTIONS, detect, nullDistribution, quantile, withinConversationNull } from '../../web/src/detect/detector.ts'
 
 const here = dirname(fileURLToPath(import.meta.url))
-const model = process.argv[2] ?? 'Xenova/multilingual-e5-small'
-const dev = JSON.parse(readFileSync(join(here, 'devset.json'), 'utf8'))
+const argv = process.argv.slice(2).filter((a) => a !== '--final')
+const finalOnly = process.argv.includes('--final')
+const model = argv[0] ?? 'Xenova/multilingual-e5-small'
+const dev = JSON.parse(readFileSync(join(here, argv[1] ?? 'devset.json'), 'utf8'))
 
 // 개발셋 → DetectInput (브라우저 파이프라인과 같은 정규화·prevAssistantIdx 규칙)
 const inputs = []
@@ -68,23 +71,35 @@ function evaluate(name, vec, nullThreshold, extra = {}) {
   let tp = 0, fp = 0, fn = 0
   const misses = [], alarms = []
   const byGrade = { low: 0, medium: 0, high: 0 }
+  const hitGrade = { low: 0, medium: 0, high: 0 } // 등급별 정탐 수(등급별 정밀도용)
   for (const p of pairs) {
     const g = gold.get(p.messageId)
     if (!g) continue
     const pred = !!p.grade
     if (pred) byGrade[p.grade]++
-    if (pred && g.gold === 'repeat') tp++
+    if (pred && g.gold === 'repeat') { tp++; hitGrade[p.grade]++ }
     else if (pred && g.gold === 'normal') { fp++; alarms.push(`${g.tag}(${p.grade},${p.similarity.toFixed(2)})`) }
     else if (!pred && g.gold === 'repeat') { fn++; misses.push(`${g.tag}(${p.exclusion},${p.similarity.toFixed(2)})`) }
   }
   const P = tp / Math.max(1, tp + fp), R = tp / Math.max(1, tp + fn), F1 = (2 * P * R) / Math.max(1e-9, P + R)
   console.log(`\n== ${name}  threshold=${nullThreshold.toFixed(3)}  P=${P.toFixed(2)} R=${R.toFixed(2)} F1=${F1.toFixed(2)}  tp=${tp} fp=${fp} fn=${fn}  grades=${JSON.stringify(byGrade)}`)
+  console.log('  등급별 정밀도:', ['high', 'medium', 'low'].map((g) => g + ' ' + (byGrade[g] ? (hitGrade[g] / byGrade[g]).toFixed(2) : '-') + ' (' + hitGrade[g] + '/' + byGrade[g] + ')').join(' · '))
   if (misses.length) console.log('  miss :', misses.join(' '))
   if (alarms.length) console.log('  alarm:', alarms.join(' '))
   return { name, P, R, F1 }
 }
 
 const results = []
+if (finalOnly) {
+  // 제품(embed.worker.ts)과 같은 설정: 경계 = 같은 대화 안 떨어진 쌍 p90(20쌍 미만이면 다른 대화 쌍 p99), 표지 구제 하한 = 다른 대화 쌍 p90
+  const vec = row(data)
+  const cross = nullDistribution(inputs, vec)
+  const within = withinNull(vec)
+  const thr = within.length >= 20 ? quantile(within, 0.9) : quantile(cross, 0.99)
+  console.log('within pairs', within.length, 'cross p90', quantile(cross, 0.9).toFixed(3))
+  evaluate('final (제품 설정)', vec, thr, { markerFloor: quantile(cross, 0.9) })
+  process.exit(0)
+}
 for (const [label, d] of [['raw', data], ['centered', centered(data)]]) {
   const vec = row(d)
   const cross = nullDistribution(inputs, vec)

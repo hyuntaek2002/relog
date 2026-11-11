@@ -53,8 +53,10 @@ public class RecommendController {
         for (FeedbackEntity f : feedback.findByUserOrderByCreatedAtAsc(me)) fb.put(f.catalogId, f.value);
         var ctx = new RecommendEngine.Context(r.plan(), new HashSet<>(r.featuresInUse()));
         List<RecommendEngine.Prescription> personalized = RecommendEngine.recommend(snap, ctx, fb, catalog.items());
+        String requestId = UUID.randomUUID().toString();
         for (var p : personalized) {
             RecommendationEntity e = new RecommendationEntity();
+            e.requestId = requestId; e.summary = p.summary(); e.how = p.how(); e.presentation = "personalized";
             e.user = me; e.catalogId = p.catalogId(); e.grade = p.grade(); e.score = p.score(); e.signalsUsed = Json.write(p.signalsUsed());
             e.ruleVersion = RecommendEngine.RULE_VERSION; e.catalogVersion = catalog.version();
             repo.save(e);
@@ -65,6 +67,32 @@ public class RecommendController {
         out.put("prescriptions", personalized);
         if (personalized.isEmpty()) out.put("message", RecommendEngine.NO_RECOMMENDATION);
         if ("generic".equals(r.mode()) || "both".equals(r.mode())) out.put("generic", RecommendEngine.genericDefaults(r.platform(), catalog.items()));
+        return out;
+    }
+
+    /** 가장 최근 추천 요청에서 나온 처방 묶음(뷰어용). 카탈로그에서 이름·설명을 붙인다. */
+    @GetMapping
+    @Transactional(readOnly = true)
+    public Map<String, Object> latest() {
+        UserAccount me = BearerTokenFilter.current();
+        Map<String, Object> out = new LinkedHashMap<>();
+        var last = repo.findFirstByUserOrderByIdDesc(me).orElse(null);
+        if (last == null) { out.put("prescriptions", List.of()); return out; }
+        List<RecommendationEntity> rows = last.requestId == null ? List.of(last) : repo.findByUserAndRequestIdOrderByIdAsc(me, last.requestId);
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (RecommendationEntity e : rows) {
+            var item = catalog.items().stream().filter(c -> c.id().equals(e.catalogId)).findFirst().orElse(null);
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("catalogId", e.catalogId); m.put("name", item != null ? item.name() : e.catalogId); m.put("category", item != null ? item.category() : "");
+            m.put("grade", e.grade); m.put("summary", e.summary); m.put("what", item != null ? item.oneLiner() : "");
+            m.put("how", e.how != null ? e.how : item != null ? item.howTo30s() : ""); m.put("caveat", item != null ? item.caveat() : "");
+            m.put("score", e.score); m.put("presentation", e.presentation);
+            list.add(m);
+        }
+        out.put("createdAt", last.createdAt.toString());
+        out.put("ruleVersion", last.ruleVersion);
+        out.put("catalogVersion", last.catalogVersion);
+        out.put("prescriptions", list);
         return out;
     }
 }

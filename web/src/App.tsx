@@ -15,9 +15,12 @@ import { installedPlugins, TASK_PLUGIN_MIN_MESSAGES } from './recommend/taskPlug
 import Help from './ui/Help'
 import { buildSnapshot } from './recommend/snapshot'
 import { pinCodeToCoding, subByConversation } from './classify/codingSub'
-import { CATALOG_VERSION, RECOMMENDATION_RULE_VERSION, recommend, type Feedback, type FeedbackMap, type Platform, type UserContext } from './recommend/recommend'
-import Trend, { ReportFile, StorageChoice, loadStorageMode, STORAGE_MODE_KEY, type StorageMode } from './store/Trend'
-import { aggregateWeekly, buildLedger, versionKey, type AnalysisVersion, type LedgerEntry, type PeriodSnapshot } from './store/ledger'
+import { CATALOG_VERSION, RECOMMENDATION_RULE_VERSION, recommend, type Feedback, type FeedbackMap, type Platform, type Prescription, type UserContext } from './recommend/recommend'
+import Trend, { CompareTable, ReportFile, StorageChoice, loadStorageMode, STORAGE_MODE_KEY, type StorageMode } from './store/Trend'
+import SyncPanel from './store/SyncPanel'
+import { getToken, sendFeedback } from './store/sync'
+import { applyDismissed, loadDismissed, saveDismissed } from './detect/corrections'
+import { aggregateWeekly, buildLedger, versionKey, type AnalysisVersion, type LedgerEntry, type PeriodSnapshot, type TaskCompare } from './store/ledger'
 import { clearAll, getLedger, putLedger } from './store/db'
 import { peekAuditRecords, setAuditProbes, type NetRecord } from './worker/netaudit'
 
@@ -35,7 +38,7 @@ const AB = new URLSearchParams(location.search).has('ab')
 // 화면 용어: 등급은 내부 high/medium/low, 사용자에겐 확실함/가능성 있음/약함
 const GRADE_LABEL = { high: '확실함', medium: '가능성 있음', low: '약함' } as const
 // 탐지기가 후보에서 뺀 이유(detector.ts exclusion) → 쉬운 말
-const EXCLUSION_LABEL: Record<string, string> = { below_null: '기준 미만', generic: '범용 문구(응, 계속 등)', resend: '몇 분 안 재전송', routine: '같은 명령 다시 내림(커밋하세요 등)', not_instruction: '지시문 아님', chat_task: '잡담', attachment: '첨부 있음', stale: '하루 넘게 지남' }
+const EXCLUSION_LABEL: Record<string, string> = { below_null: '기준 미만', generic: '범용 문구(응, 계속 등)', resend: '몇 분 안 재전송', routine: '같은 명령 다시 내림(커밋하세요 등)', user_dismissed: '내가 반복 아님으로 고침', not_instruction: '지시문 아님', chat_task: '잡담', attachment: '첨부 있음', stale: '하루 넘게 지남' }
 
 const fmtDate = (ms: number | null) => (ms == null ? '-' : new Date(ms).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' }))
 
@@ -91,6 +94,9 @@ export default function App() {
   const [weeks, setWeeks] = useState<PeriodSnapshot[]>([])
   const [version, setVersion] = useState<AnalysisVersion | null>(null) // 이번 분석의 AnalysisVersion(결과 파일에 함께 넣음)
   const [net, setNet] = useState<NetRecord[]>([]) // 네트워크 감사 기록(페이지 + 워커)
+  const [dismissed, setDismissed] = useState<string[]>(loadDismissed) // 내가 "반복 아님"으로 고친 메시지 id
+  const [serverRx, setServerRx] = useState<Prescription[] | null>(null) // 서버가 계산한 추천(동기화했을 때만)
+  const [serverTrend, setServerTrend] = useState<(TaskCompare & { weeks: number }) | null>(null) // 서버 보관 집계로 계산한 변화
 
   // 보관 모드면 시작할 때 저장된 대장을 불러와 추이를 보여준다
   useEffect(() => {
@@ -116,7 +122,7 @@ export default function App() {
     w.onmessage = (e: MessageEvent<WorkerOut>) => {
       const m = e.data
       if (m.type === 'progress') setStep(m.stage === 'unzip' ? 'read' : 'analyze')
-      else if (m.type === 'result') { setResult(m); setCtx(loadContext(m.conversations[0]?.platform ?? 'chatgpt')); setAuditProbes(m.utterances.map((u) => u.text)); setNet((n) => [...n, ...m.net]); w.terminate(); classify(m) }
+      else if (m.type === 'result') { setResult(m); setServerRx(null); setServerTrend(null); setCtx(loadContext(m.conversations[0]?.platform ?? 'chatgpt')); setAuditProbes(m.utterances.map((u) => u.text)); setNet((n) => [...n, ...m.net]); w.terminate(); classify(m) }
       else { setError(m.message); setStep('idle'); w.terminate() }
     }
     w.postMessage({ type: 'parse', files } satisfies WorkerIn)
@@ -140,16 +146,17 @@ export default function App() {
       const m = e.data
       if (m.type === 'download') { setStep('model'); setDetail(`${m.file.split('/').pop()} ${m.percent}%`) }
       else if (m.type === 'progress') { setStep('classify'); setDetail(`${m.done} / ${m.total}`) }
-      else if (m.type === 'classified') { m.knn = pinCodeToCoding(m.knn, ok, r.conversations); m.centroid = pinCodeToCoding(m.centroid, ok, r.conversations); setCls(m); setStep('done'); setDetail(''); record(r, m); w.terminate(); setNet((n) => [...n, ...m.net]); if (DEV) { measureMemory('분석 완료 직후'); Object.assign(window, { __relog: { result: r, cls: m } }) } } // 개발 모드: 콘솔에서 숫자 집계용(원문은 화면 밖으로 안 나감) // 임베딩·모델 메모리 회수
+      else if (m.type === 'classified') { m.knn = pinCodeToCoding(m.knn, ok, r.conversations); m.centroid = pinCodeToCoding(m.centroid, ok, r.conversations); setCls(m); setStep('done'); setDetail(''); record(r, m, dismissed); w.terminate(); setNet((n) => [...n, ...m.net]); if (DEV) { measureMemory('분석 완료 직후'); Object.assign(window, { __relog: { result: r, cls: m } }) } } // 개발 모드: 콘솔에서 숫자 집계용(원문은 화면 밖으로 안 나감) // 임베딩·모델 메모리 회수
       else if (m.type === 'error') { setError(m.message); setStep('done'); w.terminate() }
     }
     w.postMessage({ type: 'classify', model: DEFAULT_MODEL, device: DEVICE, texts, inputs })
   }
 
   // 발화 대장 갱신 → 주 단위 집계. 보관 모드면 IndexedDB에 병합(같은 키는 덮어쓰기)하고 전체 대장으로 재계산.
-  async function record(r: Result, m: Classified) {
+  // dismissedIds: 내가 "반복 아님"으로 고친 메시지. 주별 집계에도 반영되도록 대장을 만들 때 등급을 뗀다.
+  async function record(r: Result, m: Classified, dismissedIds: string[]) {
     const version = { parserVersion: r.parserVersion, normalizerVersion: r.normalizerVersion, modelVersion: m.modelVersion, classifierVersion: m.classifierVersion, detectorVersion: m.detectorVersion, catalogVersion: CATALOG_VERSION, recommendationRuleVersion: RECOMMENDATION_RULE_VERSION }
-    const entries = buildLedger({ platform: r.conversations[0]?.platform ?? 'chatgpt', utterances: r.utterances, okIds: r.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: m.knn, pairs: m.pairs, version })
+    const entries = buildLedger({ platform: r.conversations[0]?.platform ?? 'chatgpt', utterances: r.utterances, okIds: r.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: m.knn, pairs: applyDismissed(m.pairs, m.detectSummary, dismissedIds).pairs, version })
     let all = entries
     if (storageMode === 'local') {
       try { await putLedger(entries); all = await getLedger() } catch (e) { setError('로컬 보관 실패: ' + (e as Error).message) }
@@ -207,8 +214,14 @@ export default function App() {
 
   // 추천: 집계 숫자(snapshot) + 체크리스트(ctx) + 로컬 피드백만 입력. 원문 없음.
   const platform: Platform = result?.conversations[0]?.platform ?? 'chatgpt'
-  const snapshot = result && cls && s
-    ? buildSnapshot({ platform, stats: s, utterances: result.utterances, okIds: result.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: cls.knn, candidates: cls.candidates, detect: cls.detectSummary, subByConversation: subByConversation(result.conversations) })
+  // 탐지 결과에 내 보정("반복 아님")을 적용한 것. 화면의 건수·비율·추천 입력은 전부 이 값을 쓴다.
+  const eff = cls ? applyDismissed(cls.pairs, cls.detectSummary, dismissed) : null
+  function setDismissedIds(next: string[]) {
+    setDismissed(next); saveDismissed(next); setServerRx(null)
+    if (result && cls) record(result, cls, next)
+  }
+  const snapshot = result && cls && s && eff
+    ? buildSnapshot({ platform, stats: s, utterances: result.utterances, okIds: result.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: cls.knn, candidates: eff.candidates, detect: eff.summary, subByConversation: subByConversation(result.conversations) })
     : null
   const detected = result ? detectFeatures(result.conversations) : []
   const installed = result ? installedPlugins(result.conversations) : [] // Claude Code 기록의 설치 플러그인 id
@@ -216,10 +229,12 @@ export default function App() {
   function onFeedback(id: string, f: Feedback) {
     const next = { ...feedback, [id]: f }
     setFeedback(next); saveFeedback(next)
+    if (getToken()) sendFeedback(id, f).catch(() => {}) // 서버 동기화를 쓰는 중이면 피드백도 서버에 남긴다(추천 우선순위 조정용)
   }
-  function onCtx(c: UserContext) { setCtx(c); saveContext(platform, c) }
+  function onCtx(c: UserContext) { setCtx(c); saveContext(platform, c); setServerRx(null) }
+  const shownRx = serverRx ?? prescriptions
 
-  const flagged = cls ? cls.candidates : []
+  const flagged = eff ? eff.candidates : []
   const codeConvIds = new Set((result?.conversations ?? []).filter((c) => c.client === 'code').map((c) => c.id)) // 개발 패널: 다시 말한 지시 출처 나눔
   // 대화별로 묶는다. '약함'은 같은 주제의 후속 발화가 많이 섞여 기본 화면에선 숫자만. 확실함이 많은 대화, 건수가 많은 대화 순.
   const gradeRank = { high: 0, medium: 1, low: 2 } as const
@@ -272,7 +287,7 @@ export default function App() {
           <p className="strip">대화 <b>{s.conversations}</b> · 내 메시지 <b>{s.userTurns}</b> · 긴 대화 <b>{s.longConversations}</b> · {fmtDate(s.firstAt)} ~ {fmtDate(s.lastAt)}</p>
           <nav className="tabs">
             <button className={tab === 'restate' ? 'on' : ''} onClick={() => setTab('restate')}>다시 말한 지시{cls && <em>{groups.reduce((a, g) => a + g.items.length, 0)}</em>}</button>
-            <button className={tab === 'rx' ? 'on' : ''} onClick={() => setTab('rx')}>{AB ? '추천 평가' : '추천'}{prescriptions.length > 0 && <em>{prescriptions.length}</em>}</button>
+            <button className={tab === 'rx' ? 'on' : ''} onClick={() => setTab('rx')}>{AB ? '추천 평가' : '추천'}{shownRx.length > 0 && <em>{shownRx.length}</em>}</button>
             <button className={tab === 'trend' ? 'on' : ''} onClick={() => setTab('trend')}>변화</button>
           </nav>
 
@@ -280,17 +295,18 @@ export default function App() {
           <div className="layout">
           <div className={'panel' + (tab === 'restate' ? ' on' : '')}>
           <p className="label wide">다시 말한 지시</p>
-          {cls ? (
+          {cls && eff ? (
             <>
               <div className="cards three">
                 <div className="card">
                   <b>{flagged.length}</b>
                   <span>다시 말한 지시<Help text="같은 대화에서 앞서 한 지시를 다시 말한 것으로 보이는 메시지입니다. AI가 지시를 따랐는지는 판정하지 않습니다. 내용은 이 화면에만 보입니다." /></span>
-                  <small>확실함 {cls.detectSummary.byGrade.high} · 가능성 있음 {cls.detectSummary.byGrade.medium} · 약함 {cls.detectSummary.byGrade.low}</small>
+                  <small>확실함 {eff.summary.byGrade.high} · 가능성 있음 {eff.summary.byGrade.medium} · 약함 {eff.summary.byGrade.low}</small>
                 </div>
-                <div className="card"><b>{cls.detectSummary.ratio.toFixed(1)}%</b><span>비교한 내 메시지 {cls.detectSummary.judgeable}개 중</span></div>
-                <div className="card"><b>{cls.detectSummary.tokenEstimate.toLocaleString()}</b><span>다시 친 분량 (토큰, 추정)</span></div>
+                <div className="card"><b>{eff.summary.ratio.toFixed(1)}%</b><span>비교한 내 메시지 {eff.summary.judgeable}개 중</span></div>
+                <div className="card"><b>{eff.summary.tokenEstimate.toLocaleString()}</b><span>다시 친 분량 (토큰, 추정)</span></div>
               </div>
+              {eff.dismissedCount > 0 && <p className="detail">내가 반복 아님으로 고친 것 {eff.dismissedCount}건은 뺐습니다. <button onClick={() => setDismissedIds([])}>모두 되돌리기</button></p>}
               {groups.length === 0 && <p className="detail">확실함·가능성 있음으로 잡힌 메시지가 없습니다.</p>}
               {groups.map((g) => (
                 // 대화별로 묶어 제목·건수만. 펼치면 그 대화의 건들이, 건을 또 펼치면 앞/뒤 메시지가 보인다(원문은 이 화면에만).
@@ -308,6 +324,7 @@ export default function App() {
                       <p className="detail">앞 메시지와 비슷한 정도 {c.similarity.toFixed(2)}{!c.responseBetween && ' · 사이에 AI 답이 없음'}</p>
                       <blockquote>{textOf(c.priorMessageId)}</blockquote>
                       <blockquote className="now">{textOf(c.messageId)}</blockquote>
+                      <p className="actions"><button title="다시 말한 것이 아니면 눌러 주세요. 건수와 비율, 추천에서 빠집니다." onClick={() => setDismissedIds([...dismissed, c.messageId])}>반복 아님</button></p>
                     </details>
                   ))}
                 </details>
@@ -321,7 +338,7 @@ export default function App() {
           <p className="label wide">{AB ? '추천 평가' : '추천'}</p>
           {snapshot && ctx && (
             <>
-              {AB ? <AbMode platform={platform} personalized={prescriptions} /> : <Prescriptions items={prescriptions} feedback={feedback} onFeedback={onFeedback} installed={installed} />}
+              {AB ? <AbMode platform={platform} personalized={prescriptions} /> : <Prescriptions items={shownRx} feedback={feedback} onFeedback={onFeedback} installed={installed} />}
               {!AB && platform === 'claude' && (
                 <>
                   <p className="label">대화 종류별 플러그인<Help text={`많이 쓴 대화 종류 순입니다. 그 종류 메시지가 ${TASK_PLUGIN_MIN_MESSAGES}개 이상일 때만 플러그인을 권합니다. Claude Code 기록의 메시지는 모두 코딩으로 셉니다. 효과는 아직 검증되지 않았습니다.`} /></p>
@@ -337,6 +354,12 @@ export default function App() {
           <div className={'panel' + (tab === 'trend' ? ' on' : '')}>
           <p className="label wide">변화</p>
           <Trend weeks={weeks} />
+          {serverTrend && (
+            <>
+              <p className="label">서버 보관 기준 ({serverTrend.weeks}주)</p>
+              <CompareTable cmp={serverTrend} before="이전" after="최근" />
+            </>
+          )}
           {snapshot && version && <ReportFile snapshot={snapshot} weeks={weeks} version={version} />}
           </div>
           </div>
@@ -349,6 +372,10 @@ export default function App() {
                 <Checklist platform={platform} value={ctx} detected={detected} onChange={onCtx} />
               </details>
             )}
+            <details>
+              <summary>서버 동기화 (선택)</summary>
+              <SyncPanel weeks={weeks} version={version} snapshot={snapshot} ctx={ctx ? withDetected(ctx, detected) : null} onServer={(r) => { setServerRx(r.prescriptions); setServerTrend(r.trend) }} />
+            </details>
             <details>
               <summary>보관 · 자세한 숫자</summary>
               <StorageChoice mode={storageMode} storedCount={storageMode === 'local' ? ledger.length : 0} onMode={onStorageMode} onClear={onClear} />
