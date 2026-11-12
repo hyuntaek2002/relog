@@ -13,9 +13,10 @@ const TOP_N = 100
 const NAME = Object.fromEntries(LABELS.map(([l, name]) => [l, name])) as Record<Label, string>
 
 const load = (): Record<string, Label> => { try { return JSON.parse(localStorage.getItem(KEY) ?? '{}') } catch { return {} } }
-// AI 제안(eval/labels/pair-suggested.csv, id와 답만). 맞으면 Enter, 아니면 숫자키로 고친다.
+// AI 제안(eval/labels/pair-*suggested.csv, id와 답만, 저장소 제외). 맞으면 Enter, 아니면 숫자키로 고친다.
+// 넣은 파일의 쌍 중 제안이 있는 것이 있으면 그 쌍들만 보여 준다(예: ChatGPT 파일의 확실함 등급 쌍). 없으면 유사도 상위 N쌍.
 // 내보내는 CSV는 사람이 확정한 라벨이다. 제안을 보고 확인한 라벨이라는 점은 보고할 때 밝혀야 한다.
-const SUGGEST_FILES = import.meta.glob('../../../eval/labels/pair-suggested.csv', { query: '?raw', import: 'default' }) as Record<string, () => Promise<string>>
+const SUGGEST_FILES = import.meta.glob('../../../eval/labels/pair-*suggested.csv', { query: '?raw', import: 'default' }) as Record<string, () => Promise<string>>
 const parseCsv = (text: string): Record<string, Label> => {
   const out: Record<string, Label> = {}
   for (const line of text.split('\n').slice(1)) { const [, messageId, , , label] = line.trim().split(','); if (messageId && label in NAME) out[messageId] = label as Label }
@@ -24,17 +25,22 @@ const parseCsv = (text: string): Record<string, Label> => {
 
 export default function PairLabeler({ pairs, utterances, conversations }: { pairs: Candidate[]; utterances: Utterance[]; conversations: Conversation[] }) {
   // 지시형·질문형 가리지 않고 유사도 순. 탐지기 예측(grade)은 숨긴다.
-  const items = useMemo(() => [...pairs].sort((a, b) => b.similarity - a.similarity).slice(0, TOP_N), [pairs])
-  const textById = useMemo(() => new Map(utterances.map((u) => [u.messageId, u.text])), [utterances])
-  const titleById = useMemo(() => new Map(conversations.map((c) => [c.id, c.title])), [conversations])
-  const [labels, setLabels] = useState<Record<string, Label>>(load)
-  const [i, setI] = useState(() => Math.max(0, items.findIndex((p) => !load()[p.messageId])))
   const [suggest, setSuggest] = useState<Record<string, Label>>({})
   useEffect(() => {
     let alive = true
     Promise.all(Object.values(SUGGEST_FILES).map((f) => f())).then((texts) => { if (alive) setSuggest(Object.assign({}, ...texts.map(parseCsv))) }).catch(() => {})
     return () => { alive = false }
   }, [])
+  const items = useMemo(() => {
+    const withHint = pairs.filter((p) => suggest[p.messageId])
+    return [...(withHint.length ? withHint : pairs)].sort((a, b) => b.similarity - a.similarity).slice(0, TOP_N)
+  }, [pairs, suggest])
+  const textById = useMemo(() => new Map(utterances.map((u) => [u.messageId, u.text])), [utterances])
+  const titleById = useMemo(() => new Map(conversations.map((c) => [c.id, c.title])), [conversations])
+  const [labels, setLabels] = useState<Record<string, Label>>(load)
+  const [i, setI] = useState(0)
+  // 제안을 불러와 목록이 바뀌면 아직 안 찍은 첫 쌍으로 간다
+  useEffect(() => { setI(Math.max(0, items.findIndex((p) => !load()[p.messageId]))) }, [items])
   const cur = items[i]
   const hint = cur ? suggest[cur.messageId] : undefined
 

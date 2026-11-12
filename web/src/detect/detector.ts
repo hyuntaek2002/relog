@@ -1,6 +1,6 @@
 import { dot } from '../classify/classifier.ts'
 
-export const DETECTOR_VERSION = 'det-0.3.0'
+export const DETECTOR_VERSION = 'det-0.4.0'
 
 // 같은 대화의 앞선 사용자 발화와 비교해 "이미 말한 지시·정보를 다시 말한 것으로 의심되는" 발화를 찾는다.
 // 모델이 이행했는지는 판정하지 않는다(P1 별도 실험).
@@ -14,6 +14,9 @@ export const DETECTOR_VERSION = 'det-0.3.0'
 //    끝날 때마다 내리는 명령이라 반복이지 다시 말한 것이 아니다. 실측: Code 표시 286건 중 글자까지 같은 것 15건, 한 세션에서 같은 문장 11번.
 //  - 등급: 낮음 = 유사도 상위 1% + 지시형 + 제외 통과 / 중간 = 낮음 + 24시간 이내 + 사이에 모델 응답 / 높음 = 중간 + 반복 표지.
 //  - 24시간 넘은 쌍은 표지가 없으면 주제 재방문으로 보고 후보에서 뺀다.
+//  - 0.4: 실제 ChatGPT 대화의 높음 등급 27건 중 틀린 10건을 보고 고침(docs/measurements.md 2026-11-12).
+//    (1) 반복 표지를 좁힘: "같은 문제"(문제 풀이), "다시 말해"(요청), "아까 말했던 거"(미뤄 둔 일)는 반복이 아니었다.
+//    (2) 코드가 대부분인 메시지(코드 낱말 3개 이상, 한글이 글자의 20% 미만)는 지시문으로 보지 않는다. 다른 파일의 코드를 연달아 붙여 넣으면 서로 비슷해 높음으로 잡혔다.
 
 export interface DetectInput {
   conversationId: string
@@ -48,7 +51,7 @@ export interface Candidate {
 }
 
 // 반복 표지: 이미 말했음을 드러내는 표현(높음 등급 조건)
-export const REPEAT_RE = /아까\s*말|다시\s*말|전에\s*(요청|말|부탁)|왜\s*(빠졌|빠뜨|빼|안\s*(했|됐|들어))|또\s*(틀|그러|똑같|빠)|여전히|계속\s*(틀|안\s*됨|안\s*돼)|같은\s*(실수|문제)|말했(잖|는데|었)|했잖|분명히|몇\s*번|다시\s*한\s*번|again|as i said|i already|still (wrong|not)|same (mistake|issue)/i
+export const REPEAT_RE = /아까\s*말한\s*대로|말했듯|말씀드렸듯|다시\s*말하(지만|는데)|다시\s*말씀드리(지만|면)|전에\s*(요청|말|부탁)|왜\s*(빠졌|빠뜨|빼|안\s*(했|됐|들어))|또\s*(틀|그러|똑같|빠)|여전히|계속\s*(틀|안\s*됨|안\s*돼)|같은\s*실수|(또|계속)\s*같은\s*(문제|오류|에러)|말했(잖|는데|었)|했잖|분명히|몇\s*번|다시\s*한\s*번|again|as i said|i already|still (wrong|not)|same (mistake|issue)/i
 // 이해 실패 항의 표지: 모델이 요지를 못 알아들은 데 대한 반응
 export const COMPLAINT_RE = /라니까|다니까|자꾸|그게\s*아니|아니\s*(그게|내\s*말은|그런\s*뜻)|이해를?\s*못|못\s*알아|뭔\s*소리|what i meant|that'?s not what/i
 // 새 요구 표지는 유형 판정에만 참고(접두사면 지시여도 새 요청일 가능성) — 0.2에서는 점수 미사용
@@ -60,7 +63,17 @@ const QUESTION_RE = /\?|할까|맞아|맞지|맞나|어떻게\s*생각|뭐야|�
 // 정기 작업 명령 표지: 끝날 때마다 내리는 커밋·푸시·배포류와 "다음 단계 하자"·"이어서"·"확인해봐" 같은 진행 명령. 짧은 지시(routineMaxChars 이하)에만 적용
 export const ROUTINE_RE = /커밋|푸시|푸쉬|배포|머지|빌드|올려\s*줘|다음\s*(단계|거|것)|이어서|계속\s*(하|진행|가)|진행\s*하자|확인해\s*봐|끝나면\s*(말|알려)|\b(commit|push|deploy|merge|build|continue|next step|go on)\b/i
 
+// 코드가 대부분인 메시지: 코드 낱말이 3개 이상이고 한글이 글자(공백 제외)의 20% 미만.
+// 코드 뒤에 짧게 붙인 한국어 지시("이건 어디에 넣어?")는 코드로 보고, 코드와 함께 긴 한국어 항의를 쓴 메시지는 그대로 둔다.
+const CODE_TOKEN_RE = /[{};]|=>|<\/?[a-zA-Z]|\b(import|function|const|let|def|class|package|return|public|private)\b/g
+export function isCodeHeavy(text: string): boolean {
+  const chars = text.replace(/\s/g, '').length || 1
+  const hangul = (text.match(/[가-힣]/g) ?? []).length
+  return (text.match(CODE_TOKEN_RE) ?? []).length >= 3 && hangul / chars < 0.2
+}
+
 export function kindOf(text: string): UtteranceKind {
+  if (isCodeHeavy(text)) return 'other' // 코드 붙여넣기는 지시문 후보가 아니다(0.4)
   if (INSTRUCTION_RE.test(text)) return 'instruction'
   if (QUESTION_RE.test(text)) return 'question'
   return 'other'

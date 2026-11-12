@@ -10,8 +10,10 @@ import { DEFAULT_OPTIONS, detect, nullDistribution, quantile, withinConversation
 import { LABELED, SEED_TEXTS, SEED_TYPES, TaskClassifier, labeledFor } from '../../web/src/classify/classifier.ts'
 
 const [zipPath, csvPath, model = 'Xenova/multilingual-e5-small'] = process.argv.slice(2)
-const files = unzipSync(new Uint8Array(readFileSync(zipPath)))
-const convs = Object.entries(files).filter(([n]) => /conversations[^/]*\.json$/i.test(n)).flatMap(([, b]) => parseConversationsJson(JSON.parse(new TextDecoder().decode(b))).conversations)
+// 앱과 같은 파일 선택 규칙. 대화 JSON만 푼다(ChatGPT 내보내기는 이미지가 1GB를 넘을 수 있다)
+const isConvFile = (name) => /(^|\/)conversations[^/]*\.json$/i.test(name)
+const files = unzipSync(new Uint8Array(readFileSync(zipPath)), { filter: (f) => isConvFile(f.name) })
+const convs = Object.entries(files).filter(([n]) => isConvFile(n)).flatMap(([, b]) => parseConversationsJson(JSON.parse(new TextDecoder().decode(b))).conversations)
 const ok = normalizeConversations(convs).filter((u) => u.status === 'ok')
 const inputs = ok.map((u) => ({ conversationId: u.conversationId, messageId: u.messageId, idx: u.idx, createdAt: u.createdAt, text: u.text, tokenEstimate: u.tokenEstimate, hasAttachment: u.hasAttachment, prevAssistantIdx: u.prevAssistantIdx }))
 
@@ -23,9 +25,16 @@ for (const line of readFileSync(csvPath, 'utf8').split('\n').slice(1)) {
 console.log(`utterances=${inputs.length} labeled=${gold.size} repeat=${[...gold.values()].filter((l) => l === 'repeat').length}`)
 
 const pipe = await pipeline('feature-extraction', model, { dtype: 'q8' })
-const out = await pipe(inputs.map((u) => (model.includes('e5') ? 'query: ' + u.text : u.text)), { pooling: 'mean', normalize: true })
-const dim = out.dims[1]
-const vec = (i) => out.data.subarray(i * dim, (i + 1) * dim)
+// 32개씩 나눠 임베딩한다. 한 번에 넣으면 가장 긴 문장 길이로 전부 채워져 메모리가 모자란다(ChatGPT 파일 3,847개에서 실패)
+const prepText = (t) => (model.includes('e5') ? 'query: ' + t : t)
+let dim = 0, data = null
+for (let s = 0; s < inputs.length; s += 32) {
+  const o = await pipe(inputs.slice(s, s + 32).map((u) => prepText(u.text)), { pooling: 'mean', normalize: true })
+  dim = o.dims[1]
+  data ??= new Float32Array(inputs.length * dim)
+  data.set(o.data, s * dim)
+}
+const vec = (i) => data.subarray(i * dim, (i + 1) * dim)
 // 제품과 같게: 대화 종류를 분류해 넣는다(상담·대화로 분류된 메시지는 탐지에서 빠진다)
 const seedOut = await pipe(SEED_TEXTS.map((t) => (model.includes('e5') ? 'query: ' + t : t)), { pooling: 'mean', normalize: true })
 const clf = new TaskClassifier(SEED_TYPES.map((_, i) => seedOut.data.slice(i * dim, (i + 1) * dim)), SEED_TYPES, undefined, labeledFor(model))

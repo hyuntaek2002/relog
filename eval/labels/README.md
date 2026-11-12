@@ -52,6 +52,7 @@
 
 - 표본 406건을 AI(Claude)가 읽고 이 기준서대로 먼저 찍은 것이다. 라벨링 화면이 이 파일을 읽어 제안으로 보여 준다.
 - 최종 라벨(`wildchat-ko-400.labels.csv`)은 사람이 제안을 보고 확정한 것이다. 제안을 본 상태의 확인이라 제안 쪽으로 쏠릴 수 있으므로, 보고할 때 "AI 제안 후 사람 확인" 방식임과 제안·최종 라벨의 일치율을 함께 밝힌다.
+- ChatGPT 내보내기의 "확실함" 등급 27쌍도 AI가 먼저 찍었다(`pair-chatgpt.suggested.csv`, 반복 지시 17 · 정상 후속 10, 저장소 제외). 그 zip을 넣으면 반복 쌍 화면이 이 27쌍만 보여 준다. 확정한 파일은 `pair-chatgpt.labels.csv`로 두고 `node eval/detect/eval_pairs.mjs exports/<ChatGPT zip> eval/labels/pair-chatgpt.labels.csv`로 평가한다.
 - 반복 쌍도 같은 방식이다. `pair-suggested.csv`는 Claude 앱 내보내기의 유사도 상위 100쌍을 AI(Claude)가 읽고 먼저 찍은 것(반복 지시 13 · 재전송/수정 3 · 정상 후속 84)이고, "반복 쌍 정답 찍기" 화면이 제안으로 보여 준다. 파일에는 id와 답만 있지만 본인 대화·메시지의 ID라서 두 파일 모두 저장소에 올리지 않는다(.gitignore). 저장소를 새로 받으면 이 파일이 없고, 그때는 제안 없이 라벨링 화면이 뜬다. 사람이 확정해 내보낸 파일은 `pair-labels.csv`로 두고 `node eval/detect/eval_pairs.mjs`로 평가한다.
 - 제안 분포: 학습 106 · 정보 탐색 67 · 번역 64 · 글쓰기 59 · 코딩 31 · 상담 30 · 기타 28 · 문맥 필요 9 · 업무 문서 7 · 기획 5. 업무 문서와 기획은 표본이 적어 유형별 점수가 불안정할 수 있다.
 

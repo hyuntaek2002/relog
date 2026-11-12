@@ -89,6 +89,13 @@ assert.equal(kindOf('오늘 하루 진짜 힘들었어'), 'other')
 assert.ok(editRatio('abcdef', 'abcdxf') < 0.2 && editRatio('abc', 'xyz') === 1)
 assert.ok(REPEAT_RE.test('왜 빠졌어') && REPEAT_RE.test('한국어로 하랬잖아'.replace('하랬잖아','했잖아')) && !REPEAT_RE.test('로그인 구현해줘'))
 assert.ok(COMPLAINT_RE.test('궁금해서 물어보는거라니까') && COMPLAINT_RE.test('뭘 자꾸 가래'))
+// det-0.4: 반복이 아닌 뜻으로 쓰인 표지는 잡지 않는다(실제 대화에서 틀린 경우를 합성 문장으로 옮김)
+for (const s of ['다 풀었는데 같은 문제가 나오네, 다른 문제도 내줘', '그 부분 다시 말해줘', '아까 말했던 기능 이제 구현하자']) assert.ok(!REPEAT_RE.test(s), s)
+for (const s of ['아까 말한 대로 표로 정리해', '아까 말했듯이 존댓말로', '다시 말하지만 존댓말로 써', '또 같은 오류가 나잖아', '내가 삭제하라고 했잖아', '몇 번을 말해야 돼', '다시 한번 전체 코드로 줘']) assert.ok(REPEAT_RE.test(s), s)
+// 코드가 대부분인 메시지는 지시문으로 보지 않는다. 코드와 함께 긴 한국어 항의를 쓴 메시지는 지시문
+assert.equal(kindOf('import java.util.List; public class A { void f() { return; } } // 여전히 수정'), 'other')
+assert.equal(kindOf('function go() { location.href = "/a"; } 이건 어디에 넣어?'), 'other')
+assert.equal(kindOf("import A from './A'; import B from './B'; 내가 이 파일은 없다고 했잖아, 있는 파일로만 다시 고쳐서 줘"), 'instruction')
 const mk = (conversationId, messageId, idx, min, text, extra = {}) => ({ conversationId, messageId, idx, createdAt: min * 60000, text, tokenEstimate: 10, hasAttachment: false, prevAssistantIdx: idx - 1, ...extra })
 const inputs = [
   mk('x', '1', 0, 0, '로그인 기능 구현해줘'),

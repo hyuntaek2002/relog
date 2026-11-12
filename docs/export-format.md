@@ -21,7 +21,17 @@
 | 기간 | 2025-05-15 ~ 2026-11-02 |
 
 ## ChatGPT
-- 미수령. 수령 시 `node eval/inspect_export.mjs exports/<zip>`로 같은 항목 기록.
+### 실제 파일 (2026-11-12, 사용자 본인 파일, 2026-11-11 요청 → 약 1일 뒤 수령)
+- zip 1,138MB, 항목 1,700개. 대부분 첨부·생성 이미지로 보이는 `.dat` 1,686개(1,154MB). JSON 11개(35MB), `chat.html` 1개(11MB).
+- JSON: `conversations-000.json`(100개), `conversations-001.json`(68개) — 대화가 여러 파일로 나뉜다. 그 밖에 `sectioned_conversations.json`(빈 배열), `shared_conversations.json`(공유 링크 목록, mapping 없음), `conversation_summaries.json`, `conversation_asset_file_names.json`, `library_files.json`, `user.json`, `user_settings.json`, `ads.json`, `export_manifest.json`, `sites/export_manifest.json`.
+- 앱의 파일 선택 규칙(경로의 마지막 이름이 `conversations`로 시작하는 `.json`)은 `conversations-000/001.json`만 고르고 `shared_`·`sectioned_`는 고르지 않는다. 다른 파일은 열지 않는다.
+- 대화 최상위 키: conversation_id, id, title, create_time, update_time, current_node, mapping, default_model_slug, conversation_template_id, is_archived, is_starred, is_study_mode, is_do_not_remember, is_read_only, memory_scope, pinned_time, plugin_ids, voice.
+- 노드 10,044개(빈 루트 168), 갈라진 노드 0. 메시지 content_type: text 7,757 · reasoning_recap 831 · multimodal_text 798 · thoughts 490. 작성자: assistant 5,644 · user 4,232.
+- 메시지 metadata 키(빈도순): model_slug, parent_id, content_references, serialization_metadata, attachments(888), code_blocks, tool_icons, image_results, search_result_groups, view_state, resolved_model_slug 등.
+
+### 파서 결과
+- 대화 168개, 오류 0건. 사용자 턴 4,095 · 응답 턴 4,280(활성 경로만. 원본 사용자 메시지 4,232개와의 차이는 활성 경로 밖 메시지). 첨부 동반 사용자·응답 턴 755. 모든 턴에 시각 있음. 기간 2024-11-26 ~ 2026-11-11.
+- 정규화: 분석 대상 3,847 · 문맥 필요 196 · 제외 52. 대화당 사용자 턴 중앙값 6, 90백분위 65, 최대 408. 사용자 턴이 1개뿐인 대화 38개.
 
 ## Claude Code 세션 기록 (2026-11-10, 사용자 본인 컴퓨터)
 - 앱 내보내기에는 Claude Code 대화가 없다. 기록은 `%USERPROFILE%\.claude\projects\<프로젝트>\<세션>.jsonl`(줄마다 JSON). 실측 16개 프로젝트, 33개 세션 파일, 455MB(대부분 도구 결과). 세션 폴더 안에는 tool-results, custom-title.json이 따로 있다.
