@@ -66,7 +66,7 @@ node eval/detect/run_devset.mjs Xenova/multilingual-e5-small testset.json --fina
 - [과업 유형 라벨 기준](eval/labels/README.md)
 - [사용자 평가 동의서](docs/consent-form.md)
 - [서버 배포 안내](docs/deploy.md)
-- [결과 보고서 초안](docs/report-draft.md) · [논문 초안](docs/paper-draft.md)
+- [결과 보고서 초안](docs/report-draft.md)
 
 ## 데이터 출처
 

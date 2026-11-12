@@ -5,3 +5,5 @@ node_modules/
 .env
 # 본인 대화의 반복 쌍 라벨·제안(문장은 없지만 대화·메시지 ID가 들어 있다)
 eval/labels/pair-*.csv
+# 논문 초안은 저장소에 올리지 않는다(사용자 지시 2026-11-12)
+docs/paper-draft.md
