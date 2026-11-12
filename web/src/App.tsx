@@ -236,11 +236,36 @@ export default function App() {
 
   const flagged = eff ? eff.candidates : []
   const codeConvIds = new Set((result?.conversations ?? []).filter((c) => c.client === 'code').map((c) => c.id)) // 개발 패널: 다시 말한 지시 출처 나눔
-  // 대화별로 묶는다. '약함'은 같은 주제의 후속 발화가 많이 섞여 기본 화면에선 숫자만. 확실함이 많은 대화, 건수가 많은 대화 순.
+  // 대화별로 묶는다. 확실함만 본 목록에 두고, 가능성 있음(실제 정밀도 0.13)은 접힌 '참고' 목록에만(det-0.4.1).
+  // '약함'은 같은 주제의 후속 발화가 많이 섞여 개발 모드에서만 참고 목록에 넣는다.
   const gradeRank = { high: 0, medium: 1, low: 2 } as const
-  const groups = [...flagged.filter((c) => DEV || c.grade !== 'low').reduce((m, c) => m.set(c.conversationId, [...(m.get(c.conversationId) ?? []), c]), new Map<string, typeof flagged>())]
-    .map(([id, items]) => ({ id, items: items.sort((a, b) => gradeRank[a.grade ?? 'low'] - gradeRank[b.grade ?? 'low'] || b.similarity - a.similarity), high: items.filter((c) => c.grade === 'high').length }))
-    .sort((a, b) => b.high - a.high || b.items.length - a.items.length)
+  const groupBy = (cs: typeof flagged) => [...cs.reduce((m, c) => m.set(c.conversationId, [...(m.get(c.conversationId) ?? []), c]), new Map<string, typeof flagged>())]
+    .map(([id, items]) => ({ id, items: items.sort((a, b) => gradeRank[a.grade ?? 'low'] - gradeRank[b.grade ?? 'low'] || b.similarity - a.similarity) }))
+    .sort((a, b) => b.items.length - a.items.length)
+  const groups = groupBy(flagged.filter((c) => c.grade === 'high'))
+  const refItems = flagged.filter((c) => c.grade === 'medium' || (DEV && c.grade === 'low'))
+  const refGroups = groupBy(refItems)
+  const renderGroup = (g: (typeof groups)[number]) => (
+    // 대화별로 묶어 제목·건수만. 펼치면 그 대화의 건들이, 건을 또 펼치면 앞/뒤 메시지가 보인다(원문은 이 화면에만).
+    <details className="conv" key={g.id}>
+      <summary><b>{titleOf(g.id)}</b><span>{g.items.length}건</span></summary>
+      {g.items.map((c) => (
+        <details className="cand" key={c.messageId}>
+          <summary className="meta">
+            <span className={`grade-${c.grade}`}>{GRADE_LABEL[c.grade ?? 'low']}</span>
+            <span>{textOf(c.messageId).slice(0, 40).replace(/\s+/g, ' ')}{textOf(c.messageId).length > 40 ? '…' : ''}</span>
+            {c.repeatMarker && <span>"아까 말했" 같은 표현</span>}
+            {c.complaintMarker && <span>답답함 표현</span>}
+            {c.gapMinutes != null && <span>{c.gapMinutes < 60 ? `${Math.round(c.gapMinutes)}분 뒤` : `${Math.round(c.gapMinutes / 60)}시간 뒤`}</span>}
+          </summary>
+          <p className="detail">앞 메시지와 비슷한 정도 {c.similarity.toFixed(2)}{!c.responseBetween && ' · 사이에 AI 답이 없음'}</p>
+          <blockquote>{textOf(c.priorMessageId)}</blockquote>
+          <blockquote className="now">{textOf(c.messageId)}</blockquote>
+          <p className="actions"><button title="다시 말한 것이 아니면 눌러 주세요. 목록에서 빠지고, 확실함이면 건수와 비율, 추천에서도 빠집니다." onClick={() => setDismissedIds([...dismissed, c.messageId])}>반복 아님</button></p>
+        </details>
+      ))}
+    </details>
+  )
 
   return (
     <main>
@@ -286,7 +311,7 @@ export default function App() {
         <section>
           <p className="strip">대화 <b>{s.conversations}</b> · 내 메시지 <b>{s.userTurns}</b> · 긴 대화 <b>{s.longConversations}</b> · {fmtDate(s.firstAt)} ~ {fmtDate(s.lastAt)}</p>
           <nav className="tabs">
-            <button className={tab === 'restate' ? 'on' : ''} onClick={() => setTab('restate')}>다시 말한 지시{cls && <em>{groups.reduce((a, g) => a + g.items.length, 0)}</em>}</button>
+            <button className={tab === 'restate' ? 'on' : ''} onClick={() => setTab('restate')}>다시 말한 지시{eff && <em>{eff.summary.byGrade.high}</em>}</button>
             <button className={tab === 'rx' ? 'on' : ''} onClick={() => setTab('rx')}>{AB ? '추천 평가' : '추천'}{shownRx.length > 0 && <em>{shownRx.length}</em>}</button>
             <button className={tab === 'trend' ? 'on' : ''} onClick={() => setTab('trend')}>변화</button>
           </nav>
@@ -299,36 +324,22 @@ export default function App() {
             <>
               <div className="cards three">
                 <div className="card">
-                  <b>{flagged.length}</b>
-                  <span>다시 말한 지시<Help text="같은 대화에서 앞서 한 지시를 다시 말한 것으로 보이는 메시지입니다. AI가 지시를 따랐는지는 판정하지 않습니다. 내용은 이 화면에만 보입니다." /></span>
-                  <small>확실함 {eff.summary.byGrade.high} · 가능성 있음 {eff.summary.byGrade.medium} · 약함 {eff.summary.byGrade.low}</small>
+                  <b>{eff.summary.byGrade.high}</b>
+                  <span>다시 말한 지시<Help text="같은 대화에서 앞서 한 지시를 다시 말한 것이 확실해 보이는 메시지입니다. AI가 지시를 따랐는지는 판정하지 않습니다. 내용은 이 화면에만 보입니다." /></span>
+                  <small>확실함만 셉니다. 참고: 가능성 있음 {eff.summary.byGrade.medium} · 약함 {eff.summary.byGrade.low}</small>
                 </div>
                 <div className="card"><b>{eff.summary.ratio.toFixed(1)}%</b><span>비교한 내 메시지 {eff.summary.judgeable}개 중</span></div>
                 <div className="card"><b>{eff.summary.tokenEstimate.toLocaleString()}</b><span>다시 친 분량 (토큰, 추정)</span></div>
               </div>
               {eff.dismissedCount > 0 && <p className="detail">내가 반복 아님으로 고친 것 {eff.dismissedCount}건은 뺐습니다. <button onClick={() => setDismissedIds([])}>모두 되돌리기</button></p>}
-              {groups.length === 0 && <p className="detail">확실함·가능성 있음으로 잡힌 메시지가 없습니다.</p>}
-              {groups.map((g) => (
-                // 대화별로 묶어 제목·건수만. 펼치면 그 대화의 건들이, 건을 또 펼치면 앞/뒤 메시지가 보인다(원문은 이 화면에만).
-                <details className="conv" key={g.id}>
-                  <summary><b>{titleOf(g.id)}</b><span>{g.items.length}건</span>{g.high > 0 && <span className="grade-high">확실함 {g.high}</span>}</summary>
-                  {g.items.map((c) => (
-                    <details className="cand" key={c.messageId}>
-                      <summary className="meta">
-                        <span className={`grade-${c.grade}`}>{GRADE_LABEL[c.grade ?? 'low']}</span>
-                        <span>{textOf(c.messageId).slice(0, 40).replace(/\s+/g, ' ')}{textOf(c.messageId).length > 40 ? '…' : ''}</span>
-                        {c.repeatMarker && <span>"아까 말했" 같은 표현</span>}
-                        {c.complaintMarker && <span>답답함 표현</span>}
-                        {c.gapMinutes != null && <span>{c.gapMinutes < 60 ? `${Math.round(c.gapMinutes)}분 뒤` : `${Math.round(c.gapMinutes / 60)}시간 뒤`}</span>}
-                      </summary>
-                      <p className="detail">앞 메시지와 비슷한 정도 {c.similarity.toFixed(2)}{!c.responseBetween && ' · 사이에 AI 답이 없음'}</p>
-                      <blockquote>{textOf(c.priorMessageId)}</blockquote>
-                      <blockquote className="now">{textOf(c.messageId)}</blockquote>
-                      <p className="actions"><button title="다시 말한 것이 아니면 눌러 주세요. 건수와 비율, 추천에서 빠집니다." onClick={() => setDismissedIds([...dismissed, c.messageId])}>반복 아님</button></p>
-                    </details>
-                  ))}
+              {groups.length === 0 && <p className="detail">확실함으로 잡힌 메시지가 없습니다.</p>}
+              {groups.map(renderGroup)}
+              {refGroups.length > 0 && (
+                <details className="ref">
+                  <summary>참고: 가능성 있음 {refItems.length}건<Help text="앞 메시지와 비슷하지만 다시 말했다는 표현이 없는 메시지입니다. 실제 기록으로 확인했을 때 30건 중 4건만 다시 말한 지시였습니다. 그래서 건수·비율·추천에는 넣지 않고 여기에만 보여 줍니다." /></summary>
+                  {refGroups.map(renderGroup)}
                 </details>
-              ))}
+              )}
             </>
           ) : <p className="detail">분석 중입니다.</p>}
           </div>

@@ -48,7 +48,7 @@ export default function Viewer() {
   }
 
   const sum = (f: (w: ServerWeek) => number) => data.weeks.reduce((a, w) => a + f(w), 0)
-  const flagged = sum((w) => w.restatement.high + w.restatement.medium + w.restatement.low)
+  const flagged = sum((w) => w.restatement.high) // 확실함만 센다(det-0.4.1)
   const judgeable = sum((w) => w.judgeable)
   const ok = sum((w) => w.okCount)
   const tasks: Record<string, number> = {}
@@ -62,7 +62,7 @@ export default function Viewer() {
         <>
           <p className="strip">{fmtDay(data.weeks[0].periodStart)} ~ {fmtDay(data.weeks[data.weeks.length - 1].periodEnd - 1)} · {data.weeks.length}주 · 내 메시지 <b>{sum((w) => w.userTurnCount).toLocaleString()}</b></p>
           <div className="cards three">
-            <div className="card"><b>{flagged}</b><span>다시 말한 지시</span><small>확실함 {sum((w) => w.restatement.high)} · 가능성 있음 {sum((w) => w.restatement.medium)} · 약함 {sum((w) => w.restatement.low)}</small></div>
+            <div className="card"><b>{flagged}</b><span>다시 말한 지시</span><small>확실함만 셉니다. 참고: 가능성 있음 {sum((w) => w.restatement.medium)} · 약함 {sum((w) => w.restatement.low)}</small></div>
             <div className="card"><b>{judgeable ? ((100 * flagged) / judgeable).toFixed(1) : '0'}%</b><span>비교한 내 메시지 {judgeable}개 중</span></div>
             <div className="card"><b>{sum((w) => w.restatement.tokenEstimate).toLocaleString()}</b><span>다시 친 분량 (토큰, 추정)</span></div>
           </div>

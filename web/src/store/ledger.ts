@@ -1,5 +1,5 @@
 import type { Prediction } from '../classify/classifier.ts'
-import type { Candidate } from '../detect/detector.ts'
+import { isCounted, type Candidate } from '../detect/detector.ts'
 import type { Utterance } from '../parser/normalize.ts'
 import type { Conversation } from '../parser/types.ts'
 
@@ -138,8 +138,8 @@ export function aggregateWeekly(entries: LedgerEntry[], vk: string): PeriodSnaps
     if (e.hasCode) w.codeCount++
     if (e.taskType) w.taskCounts[e.taskType] = (w.taskCounts[e.taskType] ?? 0) + 1
     if ((okPerConv.get(e.conversationId) ?? 0) >= 2) w.judgeable++
-    if (e.grade) {
-      w.restatement[e.grade]++
+    if (e.grade) w.restatement[e.grade]++
+    if (isCounted(e.grade)) { // 분량·대화 종류별 수·비율은 확실함만
       w.restatement.tokenEstimate += e.tokenEstimate
       if (e.taskType) w.restatement.perTask[e.taskType] = (w.restatement.perTask[e.taskType] ?? 0) + 1
     }
@@ -153,8 +153,7 @@ export function aggregateWeekly(entries: LedgerEntry[], vk: string): PeriodSnaps
     const w = weeks.get(ws)!
     w.conversationCount = convs.size
     w.longConversationCount = [...convs].filter((c) => (okPerConv.get(c) ?? 0) >= 10).length
-    const flagged = w.restatement.high + w.restatement.medium + w.restatement.low
-    w.restatement.ratio = w.judgeable ? (100 * flagged) / w.judgeable : 0
+    w.restatement.ratio = w.judgeable ? (100 * w.restatement.high) / w.judgeable : 0
   }
   return [...weeks.values()].sort((a, b) => a.periodStart - b.periodStart)
 }
@@ -197,7 +196,7 @@ export function compareSides(before: PeriodSnapshot[], after: PeriodSnapshot[], 
     for (const w of ws) {
       for (const [t, n] of Object.entries(w.taskCounts)) { ok[t] = (ok[t] ?? 0) + n; okAll += n }
       for (const [t, n] of Object.entries(w.restatement.perTask)) { flagged[t] = (flagged[t] ?? 0) + n }
-      flaggedAll += w.restatement.high + w.restatement.medium + w.restatement.low
+      flaggedAll += w.restatement.high
     }
     return { ok, flagged, okAll, flaggedAll }
   }

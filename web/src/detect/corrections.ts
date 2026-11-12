@@ -1,4 +1,4 @@
-import type { Candidate, DetectSummary, Grade } from './detector.ts'
+import { isCounted, type Candidate, type DetectSummary, type Grade } from './detector.ts'
 
 // 사용자의 "반복 아님" 보정(계획서 위험 대응: 탐지 오탐 → 사용자 보정 반영).
 // 사용자가 반복이 아니라고 고친 메시지는 등급을 떼고 제외 사유 user_dismissed로 바꾼다. 건수·비율·분량·주별 집계가 모두 이 결과를 쓴다.
@@ -20,7 +20,8 @@ export function applyDismissed(pairs: Candidate[], summary: DetectSummary, dismi
   const excluded = { ...summary.excluded, user_dismissed: 0 }
   let tokenEstimate = 0, flagged = 0
   for (const p of next) {
-    if (p.grade) { byGrade[p.grade]++; tokenEstimate += p.tokenEstimate; flagged++ }
+    if (p.grade) byGrade[p.grade]++
+    if (isCounted(p.grade)) { tokenEstimate += p.tokenEstimate; flagged++ }
     if (p.exclusion === 'user_dismissed') excluded.user_dismissed++
   }
   return {

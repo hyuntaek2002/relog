@@ -1,6 +1,7 @@
 import { dot } from '../classify/classifier.ts'
+import { HEAD_CHARS } from '../parser/normalize.ts'
 
-export const DETECTOR_VERSION = 'det-0.4.0'
+export const DETECTOR_VERSION = 'det-0.5.0'
 
 // 같은 대화의 앞선 사용자 발화와 비교해 "이미 말한 지시·정보를 다시 말한 것으로 의심되는" 발화를 찾는다.
 // 모델이 이행했는지는 판정하지 않는다(P1 별도 실험).
@@ -32,6 +33,9 @@ export interface DetectInput {
 }
 
 export type Grade = 'low' | 'medium' | 'high'
+// 0.4.1: 건수·비율·분량·추천·변화 집계에는 확실함만 넣는다. 가능성 있음은 실제 Claude 앱 100쌍에서 정밀도 0.13이라
+// 화면의 '참고' 목록에만 보여 준다(docs/measurements.md 2026-11-12). 등급 판정 자체는 그대로.
+export const isCounted = (g: Grade | null | undefined) => g === 'high'
 export type UtteranceKind = 'instruction' | 'question' | 'other'
 export type Exclusion = 'below_null' | 'not_instruction' | 'chat_task' | 'resend' | 'routine' | 'generic' | 'attachment' | 'stale' | 'user_dismissed' // user_dismissed: 사용자가 "반복 아님"으로 고침(corrections.ts)
 
@@ -51,7 +55,15 @@ export interface Candidate {
 }
 
 // 반복 표지: 이미 말했음을 드러내는 표현(높음 등급 조건)
-export const REPEAT_RE = /아까\s*말한\s*대로|말했듯|말씀드렸듯|다시\s*말하(지만|는데)|다시\s*말씀드리(지만|면)|전에\s*(요청|말|부탁)|왜\s*(빠졌|빠뜨|빼|안\s*(했|됐|들어))|또\s*(틀|그러|똑같|빠)|여전히|계속\s*(틀|안\s*됨|안\s*돼)|같은\s*실수|(또|계속)\s*같은\s*(문제|오류|에러)|말했(잖|는데|었)|했잖|분명히|몇\s*번|다시\s*한\s*번|again|as i said|i already|still (wrong|not)|same (mistake|issue)/i
+// 0.5: "이미 말했다"를 가리키는 형태만 남김. 인용형은 "~라고 했잖아/했지"처럼 따지는 끝맺음일 때만(그냥 "~하자고 했어", "~하라고 했던"은 남의 말 전달이 많았다). 맨 "했잖아"(사실 확인), "다시 한 번"(새 요청에 붙는 말), 맨 "몇 번"(몇 번째 줄 같은 서수), "again"(붙여 넣은 영어 글)은 뺐다.
+export const REPEAT_RE = /아까\s*말한\s*대로|말했듯|말씀드렸듯|다시\s*말하(지만|는데)|다시\s*말씀드리(지만|면)|전에\s*(요청|말|부탁)|왜\s*(빠졌|빠뜨|빼|안\s*(했|됐|들어))|또\s*(틀|그러|똑같|빠)|여전히|계속\s*(틀|안\s*됨|안\s*돼)|같은\s*실수|(또|계속)\s*같은\s*(문제|오류|에러)|말했(잖|는데|었)|(라|다|자|냐|래)고\s*(말)?(했|하)(잖|지(?!만))|(라|다)\s*했잖|내가.{0,60}했잖|(몇|여러)\s*번(을|이나|째)?\s*(쳐\s*|더\s*)?(말|얘기|요청|부탁|씨부|반복)|분명히|as i said|i already|still (wrong|not)|same (mistake|issue)/i
+// 0.5: 표지는 사용자 본인 말에서만 찾는다. 따옴표 안(인용한 글)과 코드 블록은 빼고, 300자가 넘는 메시지(대개 붙여넣기)는 앞뒤 150자만 본다.
+// 정규화에서 잘린 메시지(HEAD_CHARS 이상)는 끝이 원래 끝이 아니므로 앞 150자만 본다.
+export function ownWords(text: string): string {
+  const t = text.replace(/```[\s\S]*?```/g, ' ').replace(/"[^"]*"|“[^”]*”|「[^」]*」|『[^』]*』/g, ' ')
+  if (t.length <= 300) return t
+  return text.length >= HEAD_CHARS ? t.slice(0, 150) : t.slice(0, 150) + ' ' + t.slice(-150)
+}
 // 이해 실패 항의 표지: 모델이 요지를 못 알아들은 데 대한 반응
 export const COMPLAINT_RE = /라니까|다니까|자꾸|그게\s*아니|아니\s*(그게|내\s*말은|그런\s*뜻)|이해를?\s*못|못\s*알아|뭔\s*소리|what i meant|that'?s not what/i
 // 새 요구 표지는 유형 판정에만 참고(접두사면 지시여도 새 요청일 가능성) — 0.2에서는 점수 미사용
@@ -172,7 +184,7 @@ export function detect(inputs: DetectInput[], vec: (i: number) => Float32Array, 
       }
       const prior = inputs[best]
       const kind = kindOf(cur.text)
-      const repeatMarker = REPEAT_RE.test(cur.text)
+      const repeatMarker = REPEAT_RE.test(ownWords(cur.text))
       const complaintMarker = COMPLAINT_RE.test(cur.text)
       const gapMinutes = cur.createdAt != null && prior.createdAt != null ? (cur.createdAt - prior.createdAt) / 60000 : null
       const responseBetween = cur.prevAssistantIdx > prior.idx
@@ -224,7 +236,8 @@ export function summarize(pairs: Candidate[], inputs: DetectInput[], nullThresho
   const excluded: Record<Exclusion, number> = { below_null: 0, not_instruction: 0, chat_task: 0, resend: 0, routine: 0, generic: 0, attachment: 0, stale: 0, user_dismissed: 0 }
   let tokenEstimate = 0, flagged = 0, repeatedQuestions = 0, misunderstanding = 0
   for (const c of pairs) {
-    if (c.grade) { byGrade[c.grade]++; tokenEstimate += c.tokenEstimate; flagged++ }
+    if (c.grade) byGrade[c.grade]++
+    if (isCounted(c.grade)) { tokenEstimate += c.tokenEstimate; flagged++ }
     if (c.exclusion) excluded[c.exclusion]++
     if (c.kind === 'question' && c.similarity >= thresholdFor({ group: groupOf.get(c.messageId) }, nullThreshold, groupThreshold) && c.exclusion !== 'resend' && c.exclusion !== 'generic') repeatedQuestions++
     if (c.complaintMarker) misunderstanding++

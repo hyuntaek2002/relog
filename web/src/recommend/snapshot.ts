@@ -1,6 +1,6 @@
 import type { Prediction } from '../classify/classifier.ts'
 import type { CodingSub } from '../classify/codingSub.ts'
-import type { Candidate, DetectSummary } from '../detect/detector.ts'
+import { isCounted, type Candidate, type DetectSummary } from '../detect/detector.ts'
 import type { Utterance } from '../parser/normalize.ts'
 import type { BasicStats } from '../parser/stats.ts'
 
@@ -67,7 +67,7 @@ export function buildSnapshot(args: {
 
   const perTask: Partial<Record<SnapshotTask, number>> = {}
   for (const c of candidates) {
-    if (!c.grade) continue
+    if (!isCounted(c.grade)) continue
     const t = typeById.get(c.messageId)
     if (t) perTask[t] = (perTask[t] ?? 0) + 1
   }
@@ -87,7 +87,7 @@ export function buildSnapshot(args: {
     hourHistogram,
     restatement: {
       high: detect.byGrade.high,
-      mid: detect.byGrade.medium,
+      mid: 0, // 가능성 있음은 추천 입력에서 뺀다(det-0.4.1, 실제 정밀도 0.13). 화면 '참고' 목록에만 있음
       low: detect.byGrade.low,
       misunderstanding: detect.misunderstanding,
       repeatedQuestion: detect.repeatedQuestions,

@@ -29,7 +29,7 @@ public class TrendController {
         List<TrendService.Week> weeks = all.stream().filter(e -> e.versionKey.equals(vk)).map(e -> {
             var s = stats.findBySnapshot(e).orElse(null);
             return new TrendService.Week(e.periodStart, e.periodEnd, Json.readIntMap(e.taskCounts),
-                    s == null ? Map.<String, Integer>of() : Json.readIntMap(s.perTask), s == null ? 0 : s.high + s.medium + s.low);
+                    s == null ? Map.<String, Integer>of() : Json.readIntMap(s.perTask), s == null ? 0 : s.high); // 확실함만 센다(det-0.4.1, 가능성 있음은 정밀도가 낮아 참고용)
         }).toList();
         Map<String, Object> out = TrendService.compare(weeks, Math.max(1, Math.min(52, recentWeeks)), Math.max(1, Math.min(1000, minSamples)));
         out.put("versionKey", vk);

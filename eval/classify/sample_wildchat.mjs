@@ -17,8 +17,11 @@ const pos = process.argv.slice(2).filter((a) => !a.startsWith('--'))
 const TARGET = Number(pos[0] ?? 400)
 const SEED = Number(pos[1] ?? 20261111)
 const NAME = flag('name') ?? String(TARGET)
-const EXCLUDE = flag('exclude') ? JSON.parse(readFileSync(flag('exclude'), 'utf8')).conversations : []
-const MAX_USER_TURNS = 3 // 대화당 앞에서부터 사용자 발화 3개까지(직전 발화 문맥을 보존하면서 한 대화가 표본을 독점하지 않게)
+// --exclude는 쉼표로 여러 개를 줄 수 있다
+const EXCLUDE = (flag('exclude') ?? '').split(',').filter(Boolean).flatMap((f) => JSON.parse(readFileSync(f, 'utf8')).conversations)
+// 대화당 앞에서부터 사용자 발화 몇 개까지(기본 3: 직전 발화 문맥을 보존하면서 한 대화가 표본을 독점하지 않게).
+// 반복 탐지 검증용 표본은 대화 뒤쪽에서 다시 말하는 경우가 많아 --turns=20처럼 늘린다.
+const MAX_USER_TURNS = Number(flag('turns') ?? 3)
 const PAGE = 20 // 작게: 긴 답변이 든 행이 섞이면 100행 응답이 서버에서 자주 실패한다(실측)
 const API = 'https://datasets-server.huggingface.co/filter'
 const WHERE = `"language"='Korean' AND "toxic"=false`
@@ -63,7 +66,7 @@ function toExport(row) {
   return { title: '', create_time: t0, update_time: t, mapping, current_node: parent, conversation_id: id, id }
 }
 
-const first = await page(0, 1)
+const first = (await page(0, 1)) ?? (await page(1000, 1)) // 첫 쪽이 서버에서 실패할 때가 있어 다른 쪽으로 전체 행 수를 얻는다
 if (!first) throw new Error('datasets-server에 연결하지 못했습니다')
 const total = first.num_rows_total
 const offsets = [...Array(Math.ceil(total / PAGE)).keys()].map((k) => k * PAGE).sort(() => rnd() - 0.5) // 페이지 순서를 seed로 섞는다

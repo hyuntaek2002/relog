@@ -87,11 +87,20 @@ assert.equal(kindOf('로그인 기능 구현해줘'), 'instruction')
 assert.equal(kindOf('휴학을 하는게 맞지?'), 'question')
 assert.equal(kindOf('오늘 하루 진짜 힘들었어'), 'other')
 assert.ok(editRatio('abcdef', 'abcdxf') < 0.2 && editRatio('abc', 'xyz') === 1)
-assert.ok(REPEAT_RE.test('왜 빠졌어') && REPEAT_RE.test('한국어로 하랬잖아'.replace('하랬잖아','했잖아')) && !REPEAT_RE.test('로그인 구현해줘'))
+assert.ok(REPEAT_RE.test('왜 빠졌어') && REPEAT_RE.test('한국어로 하라고 했잖아') && !REPEAT_RE.test('로그인 구현해줘'))
 assert.ok(COMPLAINT_RE.test('궁금해서 물어보는거라니까') && COMPLAINT_RE.test('뭘 자꾸 가래'))
 // det-0.4: 반복이 아닌 뜻으로 쓰인 표지는 잡지 않는다(실제 대화에서 틀린 경우를 합성 문장으로 옮김)
 for (const s of ['다 풀었는데 같은 문제가 나오네, 다른 문제도 내줘', '그 부분 다시 말해줘', '아까 말했던 기능 이제 구현하자']) assert.ok(!REPEAT_RE.test(s), s)
-for (const s of ['아까 말한 대로 표로 정리해', '아까 말했듯이 존댓말로', '다시 말하지만 존댓말로 써', '또 같은 오류가 나잖아', '내가 삭제하라고 했잖아', '몇 번을 말해야 돼', '다시 한번 전체 코드로 줘']) assert.ok(REPEAT_RE.test(s), s)
+// det-0.5: 사실 확인 "했잖아", 새 요청의 "다시 한번", 서수 "몇번째", 남의 말 전달 "~하자고 했어/~하라고 했던"은 표지가 아니다
+for (const s of ['어제 회의 했잖아. 요약해봐', '다시 한번 확인하고 수정해줘', '몇번째 줄인지 알려줘', '친구가 같이 가자고 했어', '선생님이 제출하라고 했던 숙제야', '이것이 상위 개념이라고 했습니다']) assert.ok(!REPEAT_RE.test(s), s)
+for (const s of ['아까 말한 대로 표로 정리해', '아까 말했듯이 존댓말로', '다시 말하지만 존댓말로 써', '또 같은 오류가 나잖아', '내가 삭제하라고 했잖아', '몇 번을 말해야 돼', '이거 몇 번째 말하는 거야', '표로 쓰라고 했지', '내가 그건 필요 없다했잖아', '내가 어제 형식 정리 했잖아']) assert.ok(REPEAT_RE.test(s), s)
+{ // 표지는 본인 말에서만: 따옴표 안 인용과 긴 붙여넣기 가운데는 보지 않는다
+  const { ownWords } = await import('../web/src/detect/detector.ts')
+  assert.ok(!REPEAT_RE.test(ownWords('반복 표지("아까 말했", "했잖아")를 이렇게 바꿔줘')))
+  const paste = '가'.repeat(200) + ' 몇 번을 말해야 돼 ' + '나'.repeat(200)
+  assert.ok(!REPEAT_RE.test(ownWords(paste)), '긴 글 가운데 표지는 무시')
+  assert.ok(REPEAT_RE.test(ownWords('가'.repeat(400) + ' 내가 삭제하라고 했잖아')), '긴 글 끝의 본인 말은 본다')
+}
 // 코드가 대부분인 메시지는 지시문으로 보지 않는다. 코드와 함께 긴 한국어 항의를 쓴 메시지는 지시문
 assert.equal(kindOf('import java.util.List; public class A { void f() { return; } } // 여전히 수정'), 'other')
 assert.equal(kindOf('function go() { location.href = "/a"; } 이건 어디에 넣어?'), 'other')
@@ -234,9 +243,10 @@ console.log('ledger ok')
   const { compareTasks } = await import('../web/src/store/ledger.ts')
   const wk = (start, taskCounts, perTask, high = 0, medium = 0) => ({ periodStart: start, periodEnd: start + 7 * 86400000, versionKey: 'v', platform: 'claude', userTurnCount: 0, okCount: 0, judgeable: 0, conversationCount: 0, longConversationCount: 0, codeCount: 0, taskCounts, restatement: { high, medium, low: 0, tokenEstimate: 0, ratio: 0, perTask, repeatedQuestion: 0, misunderstanding: 0 }, hourHistogram: [] })
   const weeks = [
-    wk(0, { coding: 10, writing: 5 }, { coding: 4 }, 1, 3),
-    wk(7 * 86400000, { coding: 10 }, { coding: 2 }, 0, 2),
-    wk(14 * 86400000, { coding: 10, writing: 2 }, { coding: 1 }, 0, 1),
+    // det-0.4.1: perTask와 전체 건수는 확실함만. 가능성 있음(medium)은 세지 않는다
+    wk(0, { coding: 10, writing: 5 }, { coding: 4 }, 4, 3),
+    wk(7 * 86400000, { coding: 10 }, { coding: 2 }, 2, 2),
+    wk(14 * 86400000, { coding: 10, writing: 2 }, { coding: 1 }, 1, 5),
     wk(21 * 86400000, { coding: 10 }, {}, 0, 0),
   ]
   const c = compareTasks(weeks, 2)
@@ -394,7 +404,7 @@ console.log('ledger ok')
   assert.equal(none.summary, summary); assert.equal(none.candidates.length, 3); assert.equal(none.dismissedCount, 0)
   const r = applyDismissed(pairs, summary, ['b', 'd', 'zzz'])
   assert.equal(r.dismissedCount, 1, '등급 없는 메시지·없는 id는 무시')
-  assert.deepEqual(r.summary.byGrade, { low: 0, medium: 1, high: 1 }); assert.equal(r.summary.tokenEstimate, 40); assert.equal(r.summary.ratio, 10)
+  assert.deepEqual(r.summary.byGrade, { low: 0, medium: 1, high: 1 }); assert.equal(r.summary.tokenEstimate, 30, '분량은 확실함만'); assert.equal(r.summary.ratio, 5, '비율도 확실함만(1/20)')
   assert.equal(r.summary.excluded.user_dismissed, 1); assert.equal(r.pairs[1].grade, null); assert.equal(r.pairs[1].exclusion, 'user_dismissed')
   assert.deepEqual(r.candidates.map((c) => c.messageId), ['a', 'c']); assert.equal(pairs[1].grade, 'medium', '원본은 그대로')
   console.log('corrections ok')

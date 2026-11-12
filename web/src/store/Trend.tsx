@@ -71,7 +71,7 @@ export default function Trend({ weeks }: { weeks: PeriodSnapshot[] }) {
           <thead><tr><th>주 (월요일 시작)</th><th>내 메시지</th><th>다시 말한 지시</th></tr></thead>
           <tbody>
             {weeks.map((w) => {
-              const flagged = w.restatement.high + w.restatement.medium + w.restatement.low
+              const flagged = w.restatement.high // 확실함만 센다(det-0.4.1)
               return (
                 <tr key={w.periodStart} title={`확실함 ${w.restatement.high} · 가능성 있음 ${w.restatement.medium} · 약함 ${w.restatement.low} · 다시 친 분량 약 ${w.restatement.tokenEstimate.toLocaleString()}토큰`}>
                   <td>{fmt(w.periodStart)}</td>
