@@ -7,6 +7,7 @@ import { pipeline } from '../../web/node_modules/@huggingface/transformers/dist/
 import { parseConversationsJson } from '../../web/src/parser/chatgpt.ts'
 import { normalizeConversations } from '../../web/src/parser/normalize.ts'
 import { DEFAULT_OPTIONS, detect, nullDistribution, quantile, withinConversationNull } from '../../web/src/detect/detector.ts'
+import { LABELED, SEED_TEXTS, SEED_TYPES, TaskClassifier, labeledFor } from '../../web/src/classify/classifier.ts'
 
 const [zipPath, csvPath, model = 'Xenova/multilingual-e5-small'] = process.argv.slice(2)
 const files = unzipSync(new Uint8Array(readFileSync(zipPath)))
@@ -25,6 +26,11 @@ const pipe = await pipeline('feature-extraction', model, { dtype: 'q8' })
 const out = await pipe(inputs.map((u) => (model.includes('e5') ? 'query: ' + u.text : u.text)), { pooling: 'mean', normalize: true })
 const dim = out.dims[1]
 const vec = (i) => out.data.subarray(i * dim, (i + 1) * dim)
+// 제품과 같게: 대화 종류를 분류해 넣는다(상담·대화로 분류된 메시지는 탐지에서 빠진다)
+const seedOut = await pipe(SEED_TEXTS.map((t) => (model.includes('e5') ? 'query: ' + t : t)), { pooling: 'mean', normalize: true })
+const clf = new TaskClassifier(SEED_TYPES.map((_, i) => seedOut.data.slice(i * dim, (i + 1) * dim)), SEED_TYPES, undefined, labeledFor(model))
+inputs.forEach((u, i) => { u.taskType = clf.linear(vec(i)).type })
+console.log(`classifier: ${labeledFor(model) ? LABELED.version + ' 선형(D)' : '중심점(B, 라벨 자료 없음)'}`)
 const cross = nullDistribution(inputs, vec)
 const within = withinConversationNull(inputs, vec)
 const floor = quantile(cross, 0.9)
@@ -32,12 +38,13 @@ const floor = quantile(cross, 0.9)
 function evaluate(name, nullThreshold, extra = {}) {
   const pairs = detect(inputs, vec, { ...DEFAULT_OPTIONS, nullThreshold, markerFloor: floor, ...extra })
   let tp = 0, fp = 0, fn = 0, tn = 0
-  const miss = {}, alarm = {}
+  const miss = {}, alarm = {}, byGrade = {}
   for (const p of pairs) {
     const g = gold.get(p.messageId)
     if (!g) continue
     const pred = !!p.grade
     const pos = g === 'repeat'
+    if (pred) { const b = (byGrade[p.grade] ??= { tp: 0, n: 0 }); b.n++; if (pos) b.tp++ }
     if (pred && pos) tp++
     else if (pred && !pos) { fp++; alarm[`${g}/${p.grade}`] = (alarm[`${g}/${p.grade}`] ?? 0) + 1 }
     else if (!pred && pos) { fn++; miss[p.exclusion] = (miss[p.exclusion] ?? 0) + 1 }
@@ -46,6 +53,7 @@ function evaluate(name, nullThreshold, extra = {}) {
   const P = tp / Math.max(1, tp + fp), R = tp / Math.max(1, tp + fn), F1 = (2 * P * R) / Math.max(1e-9, P + R)
   console.log(`\n== ${name} threshold=${nullThreshold.toFixed(3)}  P=${P.toFixed(2)} R=${R.toFixed(2)} F1=${F1.toFixed(2)}  tp=${tp} fp=${fp} fn=${fn} tn=${tn}`)
   console.log('  miss by exclusion:', JSON.stringify(miss), ' alarm by gold/grade:', JSON.stringify(alarm))
+  console.log('  등급별 맞음/표시:', ['high', 'medium', 'low'].map((g) => `${g} ${byGrade[g]?.tp ?? 0}/${byGrade[g]?.n ?? 0}`).join(' · '))
 }
 console.log(`cross p99=${quantile(cross, 0.99).toFixed(3)} within p90=${quantile(within, 0.9).toFixed(3)} p95=${quantile(within, 0.95).toFixed(3)}`)
 evaluate('within p90 + rescue (현재 기본값)', quantile(within, 0.9))
