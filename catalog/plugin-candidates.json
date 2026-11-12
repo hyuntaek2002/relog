@@ -1,0 +1,50 @@
+{
+  "version": "pcand-0.1.0",
+  "note": "대화 종류별 플러그인 후보. 제품(ChatGPT)은 종류별 첫 후보만 쓴다. 나머지 후보는 내 메시지와 가장 가까운 것을 고르는 맞춤 방식 평가용(eval/recommend, 실제 기록에서 자주 빗나가 제품에는 넣지 않음). 이름은 ChatGPT 디렉터리(chatgpt.com/plugins, 2026-11-12 확인)와 Claude 목록(web/public/plugins-2026-11-10.json)에 있는 것만.",
+  "chatgptHowTo": "1) ChatGPT 왼쪽 사이드바에서 플러그인을 엽니다. 2) 검색창에 '{plugin}'을 입력하고 포함된 앱을 확인한 뒤 플러그인 설치를 누릅니다. 3) 대화에서 @{plugin}으로 부르거나 그냥 요청하면 관련될 때 쓰입니다.",
+  "chatgptEvidence": "https://help.openai.com/en/articles/20001256-plugins-in-chatgpt",
+  "chatgptInfo": {
+    "GitHub": { "id": "plugin_connector_1p_1a69035c238881919c4190932b2df699", "oneLiner": "PR·이슈·CI를 정리하고 배포 흐름을 다룹니다." },
+    "Supabase": { "id": "plugin_asdk_app_69d3e5ee6a708191baa733f7b8931995", "oneLiner": "데이터베이스를 관리하고 조회합니다." },
+    "Vercel": { "id": "plugin_connector_690a90ec05c881918afb6a55dc9bbaa1", "oneLiner": "웹 앱을 만들고 배포합니다." },
+    "Lovable": { "id": "plugin_asdk_app_693a0a79ffe48191901173077edcf914", "oneLiner": "대화로 풀스택 앱을 만듭니다." },
+    "Replit": { "id": "plugin_asdk_app_6934801c799081918131791660f02890", "oneLiner": "아이디어를 실제로 돌아가는 앱으로 만듭니다." },
+    "Notion": { "id": "plugin_asdk_app_69c18c28f1188191bf5b8445c4ab0a2e", "oneLiner": "문서·할 일·데이터베이스를 만듭니다." },
+    "Google Drive": { "id": "plugin_connector_1p_ab21a553bfbc81919ea8fd1858e3ffa7", "oneLiner": "드라이브의 문서·시트·슬라이드를 찾고 다룹니다." },
+    "Canva": { "id": "plugin_connector_68df33b1a2d081918778431a9cfca8ba", "oneLiner": "디자인을 만들고 검토하고 고칩니다." },
+    "Wolfram": { "id": "plugin_asdk_app_69fe0bf66c8481919c513d799406436e", "oneLiner": "계산과 수학·과학 지식을 더합니다." },
+    "Quizlet": { "id": "plugin_asdk_app_694336f3c5088191bcdfe35bb532ad83", "oneLiner": "플래시카드를 만듭니다." },
+    "Consensus": { "id": "plugin_asdk_app_6943e6f4a928819195962de16fb9ffe4", "oneLiner": "동료 심사를 거친 논문을 찾습니다." },
+    "Khan Academy": { "id": "plugin_asdk_app_69127e3e55288191a8b5c2b401fb732d", "oneLiner": "초중고 수학 연습 문제를 만듭니다." },
+    "Kahoot!": { "id": "plugin_asdk_app_6992711879b48191b818f44be2767fbe", "oneLiner": "퀴즈를 바로 만듭니다." },
+    "SharePoint": { "id": "plugin_connector_1p_dca009ae2c848191ae14df3a47c5e7fd", "oneLiner": "SharePoint 문서를 요약합니다." },
+    "Outlook Email": { "id": "plugin_connector_1p_6bcb5879c73c819196abc70016166099", "oneLiner": "Outlook 받은편지함을 정리합니다." },
+    "Gamma": { "id": "plugin_asdk_app_698a098735908191989f5788d7ee317e", "oneLiner": "발표 자료와 문서를 만듭니다." },
+    "Scite": { "id": "plugin_asdk_app_6952b3a3f1e881918951582d59483c78", "oneLiner": "과학 문헌을 찾습니다." },
+    "Elicit": { "id": "plugin_asdk_app_69fcf53d4d8481919b65501a96bbed02", "oneLiner": "과학 문헌을 찾고 정리합니다." },
+    "Exa": { "id": "plugin_asdk_app_69ea4ed2cf7c8191b742ef3622479ddd", "oneLiner": "웹을 검색합니다." },
+    "Miro": { "id": "plugin_asdk_app_6a392799cb58819185f82dc01ac13dad", "oneLiner": "아이디어를 보드에 시각화하고 구조를 잡습니다." },
+    "Figma": { "id": "plugin_connector_68df038e0ba48191908c8434991bbac2", "oneLiner": "디자인을 만들고 코드로 옮깁니다." },
+    "DeepL": { "id": "plugin_asdk_app_6a4df46ad864819185a140122a0f835d", "oneLiner": "글과 문서를 번역합니다." }
+  },
+  "chatgpt": {
+    "coding": ["GitHub", "Supabase", "Vercel", "Lovable", "Replit"],
+    "writing": ["Notion", "Google Drive", "Canva"],
+    "learning": ["Wolfram", "Quizlet", "Consensus", "Khan Academy", "Kahoot!"],
+    "workdoc": ["Google Drive", "SharePoint", "Notion", "Outlook Email", "Gamma", "Canva"],
+    "search": ["Consensus", "Scite", "Elicit", "Exa"],
+    "ideation": ["Miro", "Notion", "Figma", "Canva"],
+    "translation": ["DeepL"],
+    "counseling": []
+  },
+  "claude": {
+    "coding": ["Engineering", "Superpowers", "Data", "UI Design Review", "Unity", "Vercel"],
+    "writing": ["Humanizer", "Writing Desk", "Writing Skills", "novel-studio", "Claude ghost writer"],
+    "learning": ["Study Desk", "learn", "math-olympiad", "pubmed"],
+    "workdoc": ["PDF Viewer", "Productivity", "Notion", "Box", "Marketing"],
+    "search": ["Exa Deep Research", "Research Desk", "pubmed"],
+    "ideation": ["Product Management", "strategy-frameworks", "Miro", "Figma", "Canva", "Design"],
+    "translation": ["DeepL"],
+    "counseling": []
+  }
+}

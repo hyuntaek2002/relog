@@ -213,8 +213,7 @@ export default function App() {
   const agree = cls ? cls.linear.filter((p, i) => p.type === cls.centroid[i].type).length / cls.linear.length : 0
 
   // 추천: 집계 숫자(snapshot) + 체크리스트(ctx) + 로컬 피드백만 입력. 원문 없음.
-  const platform: Platform = result?.conversations[0]?.platform ?? 'chatgpt'
-  // 탐지 결과에 내 보정("반복 아님")을 적용한 것. 화면의 건수·비율·추천 입력은 전부 이 값을 쓴다.
+  const platform: Platform = result?.conversations[0]?.platform ?? 'chatgpt'  // 탐지 결과에 내 보정("반복 아님")을 적용한 것. 화면의 건수·비율·추천 입력은 전부 이 값을 쓴다.
   const eff = cls ? applyDismissed(cls.pairs, cls.detectSummary, dismissed) : null
   function setDismissedIds(next: string[]) {
     setDismissed(next); saveDismissed(next); setServerRx(null)
@@ -350,11 +349,11 @@ export default function App() {
           {snapshot && ctx && (
             <>
               {AB ? <AbMode platform={platform} personalized={prescriptions} snapshot={snapshot} weeks={weeks} version={version} ctx={withDetected(ctx, detected)} /> : <Prescriptions items={shownRx} feedback={feedback} onFeedback={onFeedback} installed={installed} />}
-              {!AB && platform === 'claude' && (
+              {!AB && (
                 <>
-                  <p className="label">대화 종류별 플러그인<Help text={`많이 쓴 대화 종류 순입니다. 그 종류 메시지가 ${TASK_PLUGIN_MIN_MESSAGES}개 이상일 때만 플러그인을 권합니다. Claude Code 기록의 메시지는 모두 코딩으로 셉니다. 효과는 아직 검증되지 않았습니다.`} /></p>
-                  <TaskPlugins snapshot={snapshot} installed={installed} />
-                  <PluginSearch installed={installed} />
+                  <p className="label">대화 종류별 플러그인<Help text={`많이 쓴 대화 종류 순입니다. 그 종류 메시지가 ${TASK_PLUGIN_MIN_MESSAGES}개 이상일 때만 플러그인을 권합니다. ${platform === 'claude' ? 'Claude Code 기록의 메시지는 모두 코딩으로 셉니다. ' : ''}효과는 아직 검증되지 않았습니다.`} /></p>
+                  <TaskPlugins snapshot={snapshot} installed={installed} platform={platform} />
+                  {platform === 'claude' && <PluginSearch installed={installed} />}
                 </>
               )}
             </>

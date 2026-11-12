@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { codingSubPlugin, isInstalled, resolveTaskPlugins, TASK_PLUGIN_MIN_MESSAGES, type PluginPick, type TaskPluginRow } from './taskPluginRules'
+import { codingSubPlugin, isInstalled, resolveTaskPlugins, TASK_PLUGIN_MIN_MESSAGES, type PluginPick, type PluginPlatform, type TaskPluginRow } from './taskPluginRules'
 import { CODING_SUB_LABEL, type CodingSub } from '../classify/codingSub'
 import type { SnapshotTask, UsageSnapshot } from './snapshot'
 
@@ -19,6 +19,7 @@ function Pick({ p, how, alt, installed }: { p: PluginPick; how: string; alt?: Pl
         {/Anthropic/.test(p.maker) && <span className="tag">{p.maker}</span>}
       </p>
       <p className="tp-line">{p.oneLiner}</p>
+      {p.evidenceUrl.startsWith('https://chatgpt.com/plugins/') && <p className="detail"><a href={p.evidenceUrl} target="_blank" rel="noreferrer">디렉터리에서 보기</a></p>}
       {have
         ? <p className="detail">대화 첫 메시지에 '{p.name} 플러그인 써서'라고 적으면 됩니다.</p>
         : <button className="link" onClick={() => setOpen((o) => !o)}>{open ? '닫기' : '설치 방법'}</button>}
@@ -53,8 +54,8 @@ function Card({ r, codingSub, installed }: { r: TaskPluginRow; codingSub: Partia
   )
 }
 
-export default function TaskPlugins({ snapshot, installed = [] }: { snapshot: UsageSnapshot; installed?: string[] }) {
-  const rows = resolveTaskPlugins(snapshot)
+export default function TaskPlugins({ snapshot, installed = [], platform = 'claude' }: { snapshot: UsageSnapshot; installed?: string[]; platform?: PluginPlatform }) {
+  const rows = resolveTaskPlugins(snapshot, TASK_PLUGIN_MIN_MESSAGES, platform)
   return (
     <div>
       {installed.length > 0 && <p className="detail">설치됨: {installed.join(' · ')}</p>}

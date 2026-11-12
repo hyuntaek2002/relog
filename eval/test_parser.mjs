@@ -92,7 +92,7 @@ assert.ok(COMPLAINT_RE.test('궁금해서 물어보는거라니까') && COMPLAIN
 // det-0.4: 반복이 아닌 뜻으로 쓰인 표지는 잡지 않는다(실제 대화에서 틀린 경우를 합성 문장으로 옮김)
 for (const s of ['다 풀었는데 같은 문제가 나오네, 다른 문제도 내줘', '그 부분 다시 말해줘', '아까 말했던 기능 이제 구현하자']) assert.ok(!REPEAT_RE.test(s), s)
 // det-0.5: 사실 확인 "했잖아", 새 요청의 "다시 한번", 서수 "몇번째", 남의 말 전달 "~하자고 했어/~하라고 했던"은 표지가 아니다
-for (const s of ['어제 회의 했잖아. 요약해봐', '다시 한번 확인하고 수정해줘', '몇번째 줄인지 알려줘', '친구가 같이 가자고 했어', '선생님이 제출하라고 했던 숙제야', '이것이 상위 개념이라고 했습니다']) assert.ok(!REPEAT_RE.test(s), s)
+for (const s of ['어제 회의 했잖아. 요약해봐', '다시 한번 확인하고 수정해줘', '몇번째 줄인지 알려줘', '친구가 같이 가자고 했어', '선생님이 제출하라고 했던 숙제야', '이것이 상위 개념이라고 했습니다', '늦었다고 말하지 마세요', '빌드했는데 여전히 같은 메시지가 떠']) assert.ok(!REPEAT_RE.test(s), s)
 for (const s of ['아까 말한 대로 표로 정리해', '아까 말했듯이 존댓말로', '다시 말하지만 존댓말로 써', '또 같은 오류가 나잖아', '내가 삭제하라고 했잖아', '몇 번을 말해야 돼', '이거 몇 번째 말하는 거야', '표로 쓰라고 했지', '내가 그건 필요 없다했잖아', '내가 어제 형식 정리 했잖아']) assert.ok(REPEAT_RE.test(s), s)
 { // 표지는 본인 말에서만: 따옴표 안 인용과 긴 붙여넣기 가운데는 보지 않는다
   const { ownWords } = await import('../web/src/detect/detector.ts')
@@ -292,6 +292,18 @@ console.log('ledger ok')
   assert.equal(by.writing.status, 'recommend'); assert.equal(by.writing.pick.name, 'Humanizer'); assert.ok(by.writing.how.includes("'Humanizer'"))
   assert.ok(rows.filter((r) => r.status === 'recommend').every((r) => r.pick.evidenceUrl !== '' || r.pick.maker === 'Anthropic'), '근거 URL 또는 Anthropic 제공')
   assert.ok(!rows.some((r) => /낭비|잊었|확실히 개선/.test((r.pick?.oneLiner ?? '') + (r.alt?.oneLiner ?? ''))))
+  // ChatGPT: 종류별 첫 후보와 디렉터리 링크, ChatGPT용 설치 방법
+  const snap = { taskCounts: { coding: 40, writing: 0, learning: 0, workdoc: 0, search: 0, ideation: 0, translation: 0, counseling: 30 }, taskShare: {} }
+  const cg = Object.fromEntries(resolveTaskPlugins(snap, TASK_PLUGIN_MIN_MESSAGES, 'chatgpt').map((r) => [r.task, r]))
+  assert.equal(cg.coding.pick.name, 'GitHub'); assert.ok(cg.coding.pick.evidenceUrl.startsWith('https://chatgpt.com/plugins/plugin_'))
+  assert.equal(cg.counseling.status, 'none'); assert.ok(cg.coding.how.includes("'GitHub'") && cg.coding.how.includes('사이드바'))
+  assert.ok(Object.values(cg).every((r) => !r.pick || r.pick.oneLiner), '모든 ChatGPT 후보에 한국어 한 줄')
+  // 평가 전용 맞춤(eval/recommend): 평소 유사도(m·d)로 표준화한 점수
+  const { bestAmong, Q_SCALE } = await import('./recommend/pluginMatch.ts')
+  const q = new Float32Array([1, 0]), vecs = new Int8Array([127, 0, 90, 90, 0, 127])
+  const meta = [{ n: 'a', m: 0.24, d: 0.01 }, { n: 'b', m: 0.0, d: 0.05 }, { n: 'c', m: 0, d: 1 }]
+  assert.equal(bestAmong(q, vecs, meta, [0, 1, 2]).plugin, 1, '유사도는 a가 높아도 평소에도 높으면 밀린다'); assert.ok(Q_SCALE > 0)
+  assert.equal(bestAmong(q, vecs, meta, []), null)
   console.log('taskPlugins ok')
 }
 

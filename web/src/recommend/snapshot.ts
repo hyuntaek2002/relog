@@ -33,7 +33,7 @@ export interface UsageSnapshot {
 }
 
 // 내부 분류 키 → 스냅샷 키
-const TASK_MAP: Record<string, SnapshotTask> = { coding: 'coding', writing: 'writing', learning: 'learning', work_doc: 'workdoc', search: 'search', ideation: 'ideation', translation: 'translation', chat: 'counseling' }
+export const TASK_MAP: Record<string, SnapshotTask> = { coding: 'coding', writing: 'writing', learning: 'learning', work_doc: 'workdoc', search: 'search', ideation: 'ideation', translation: 'translation', chat: 'counseling' }
 
 export function buildSnapshot(args: {
   platform: 'chatgpt' | 'claude'
