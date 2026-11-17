@@ -5,7 +5,10 @@ import labeled from './labeled-centroids.json' with { type: 'json' }
 // 근거(docs/measurements.md 2026-11-11): 공개 표본 395건 5겹 교차 검증 Macro F1이 C·예시만 0.357, B·예시+학습 0.451.
 // 0.3.0: 제품 기본을 D(임베딩 + 선형, 예시 + 라벨 데이터로 학습)로 바꾸고, 기타도 한 유형으로 배운다(B에는 기타 중심점 추가).
 // 근거(docs/measurements.md 2026-11-11 "분류 개선"): 같은 5겹 교차 검증에서 B 0.451 → B+기타 0.488 → D 0.518(정확도 0.539 → 0.628).
-export const CLASSIFIER_VERSION = 'cls-0.3.0'
+// 0.4.0: D 확률에 같은 대화의 나머지 메시지 확률 평균을 CONTEXT_WEIGHT배 더해 고른다(문맥). 임베딩 모델은 e5-large로 바꿈(labeled-0.4.0).
+// 근거(docs/measurements.md 2026-11-17 "같은 대화 문맥 섞기"): e5-large + 문맥이 공개 표본 F1 0.655 · 본인 라벨 정확도 0.665로 가장 높음.
+export const CLASSIFIER_VERSION = 'cls-0.4.0'
+export const CONTEXT_WEIGHT = 0.5
 // 라벨된 공개 표본의 유형별 임베딩 합과 선형 분류기 가중치(원문 없음). 이 파일을 만든 모델로 임베딩했을 때만 쓴다.
 export interface LinearModel { classes: string[]; W: number[][]; b: number[] } // 점수 = b[k] + W[k]·v
 export const LABELED: { version: string; model: string; dim: number; counts: Record<string, number>; sums: Record<string, number[]>; linear?: LinearModel } = labeled
@@ -94,7 +97,34 @@ export class TaskClassifier {
     return { type: m.classes[best] as TaskType | 'other', score: 1 / z.reduce((a, x) => a + Math.exp(x - mx), 0) }
   }
 
+  // D의 유형별 소프트맥스 확률(가중치가 없으면 null)
+  linearProbs(v: Float32Array): { classes: string[]; p: number[] } | null {
+    const m = this.lin
+    if (!m) return null
+    const z = m.b.map((b, k) => { let s = b; for (let d = 0; d < v.length; d++) s += m.W[k][d] * v[d]; return s })
+    const mx = Math.max(...z), e = z.map((x) => Math.exp(x - mx)), Z = e.reduce((a, x) => a + x, 0)
+    return { classes: m.classes, p: e.map((x) => x / Z) }
+  }
+
   predict(v: Float32Array, method: Method): Prediction {
     return method === 'centroid' ? this.centroid(v) : method === 'knn' ? this.knn(v) : this.linear(v)
   }
+}
+
+// D + 문맥: 각 메시지 확률에 같은 대화 나머지 메시지의 평균 확률을 lam배 더해 고른다. 대화에 메시지가 하나뿐이면 D와 같다.
+export function linearWithContext(clf: TaskClassifier, vecs: Float32Array[], convIds: string[], lam = CONTEXT_WEIGHT): Prediction[] {
+  const ps = vecs.map((v) => clf.linearProbs(v))
+  if (ps.some((p) => !p)) return vecs.map((v) => clf.linear(v)) // 가중치 없음 → B로 대신
+  const sum = new Map<string, number[]>(), cnt = new Map<string, number>()
+  ps.forEach((p, i) => {
+    const s = sum.get(convIds[i]) ?? p!.p.map(() => 0)
+    p!.p.forEach((x, k) => (s[k] += x))
+    sum.set(convIds[i], s); cnt.set(convIds[i], (cnt.get(convIds[i]) ?? 0) + 1)
+  })
+  return ps.map((p, i) => {
+    const n = cnt.get(convIds[i])!, s = sum.get(convIds[i])!
+    const q = p!.p.map((x, k) => x + (n > 1 ? (lam * (s[k] - x)) / (n - 1) : 0))
+    const best = q.indexOf(Math.max(...q))
+    return { type: p!.classes[best] as TaskType | 'other', score: q[best] / q.reduce((a, x) => a + x, 0) }
+  })
 }

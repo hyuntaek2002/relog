@@ -72,7 +72,7 @@ node eval/detect/run_devset.mjs Xenova/multilingual-e5-small testset.json --fina
 
 - 플러그인 목록: Claude 앱 플러그인 탐색 화면과 플러그인 디렉터리를 2026-11-10에 읽은 것입니다. 설치 수와 카테고리는 그 시점 값입니다.
 - 과업 분류 평가 표본: WildChat-1M(Allen Institute for AI, ODC-BY). 표본 원문은 저장소에 넣지 않습니다.
-- 임베딩 모델: intfloat/multilingual-e5-small(Xenova ONNX 변환).
+- 임베딩 모델: intfloat/multilingual-e5-large(Xenova ONNX 변환, q8 약 560MB). 2026-11-17까지는 e5-small.
 
 개인 대화 내보내기 파일은 `exports/`에 두며 저장소에 올리지 않습니다.
 

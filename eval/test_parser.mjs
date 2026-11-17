@@ -470,13 +470,13 @@ console.log('ledger ok')
 // 라벨 데이터 합(labeled-centroids.json): 형식 검사 + 중심점에 더해지면 판정이 그쪽으로 움직이는지
 {
   const { TaskClassifier, LABELED, labeledFor, TASK_TYPES, CLASSIFIER_VERSION } = await import('../web/src/classify/classifier.ts')
-  assert.equal(CLASSIFIER_VERSION, 'cls-0.3.0')
-  assert.equal(LABELED.dim, 384); assert.deepEqual(Object.keys(LABELED.sums).sort(), [...TASK_TYPES, 'other'].sort())
+  assert.equal(CLASSIFIER_VERSION, 'cls-0.4.0')
+  assert.equal(LABELED.dim, 1024); assert.deepEqual(Object.keys(LABELED.sums).sort(), [...TASK_TYPES, 'other'].sort())
   assert.deepEqual([...LABELED.linear.classes].sort(), [...TASK_TYPES, 'other'].sort(), '선형 분류기는 8유형 + 기타')
-  assert.ok(LABELED.linear.W.length === 9 && LABELED.linear.b.length === 9 && LABELED.linear.W.every((r) => r.length === 384 && r.every((x) => Number.isFinite(x))))
-  assert.ok(Object.values(LABELED.sums).every((v) => v.length === 384 && v.every((x) => Number.isFinite(x))))
+  assert.ok(LABELED.linear.W.length === 9 && LABELED.linear.b.length === 9 && LABELED.linear.W.every((r) => r.length === LABELED.dim && r.every((x) => Number.isFinite(x))))
+  assert.ok(Object.values(LABELED.sums).every((v) => v.length === LABELED.dim && v.every((x) => Number.isFinite(x))))
   assert.ok(Object.values(LABELED.counts).reduce((a, b) => a + b, 0) > 300, '라벨 300건 이상')
-  assert.equal(labeledFor('Xenova/multilingual-e5-small'), LABELED); assert.equal(labeledFor('static-e5'), undefined, '다른 모델이면 쓰지 않는다')
+  assert.equal(labeledFor('Xenova/multilingual-e5-large'), LABELED); assert.equal(labeledFor('Xenova/multilingual-e5-small'), undefined); assert.equal(labeledFor('static-e5'), undefined, '다른 모델이면 쓰지 않는다')
   // 2차원 장난감: 예시만으로는 v가 a에 가깝지만, b 쪽에 큰 합을 더하면 b의 중심점이 v 쪽으로 옮겨 온다
   const u = (deg) => new Float32Array([Math.cos((deg * Math.PI) / 180), Math.sin((deg * Math.PI) / 180)])
   const seedVecs = [u(0), u(90)], seedTypes = ['coding', 'writing']
@@ -547,4 +547,22 @@ console.log('ledger ok')
   assert.ok(filterPlugins(f.plugins, '', 'security').length > 0)
   assert.ok(fs.existsSync(new URL('../web/public/' + PLUGIN_FILES.claude, import.meta.url)))
   console.log('chatgpt plugin list ok')
+}
+
+// D + 같은 대화 문맥(cls-0.4.0): 애매한 메시지는 같은 대화 다른 메시지 쪽으로 기울고, 대화에 혼자면 D와 같다
+{
+  const { TaskClassifier, linearWithContext, CONTEXT_WEIGHT } = await import('../web/src/classify/classifier.ts')
+  const v = (x, y) => new Float32Array([x, y])
+  const lin = { classes: ['coding', 'writing'], W: [[4, 0], [0, 4]], b: [0, 0] }
+  const clf = new TaskClassifier([v(1, 0), v(0, 1)], ['coding', 'writing'], undefined, { sums: {}, linear: lin })
+  const vecs = [v(0.55, 0.45), v(0, 1), v(0, 1), v(0.55, 0.45)] // 앞 셋은 같은 대화, 마지막은 혼자
+  const out = linearWithContext(clf, vecs, ['a', 'a', 'a', 'b'])
+  assert.equal(clf.linear(vecs[0]).type, 'coding', '혼자 보면 코딩')
+  assert.equal(out[0].type, 'writing', '같은 대화가 글쓰기면 글쓰기로')
+  assert.equal(out[3].type, 'coding', '대화에 혼자면 D 그대로')
+  assert.equal(CONTEXT_WEIGHT, 0.5)
+  assert.ok(out.every((p) => p.score > 0 && p.score <= 1))
+  const noW = new TaskClassifier([v(1, 0), v(0, 1)], ['coding', 'writing'])
+  assert.equal(linearWithContext(noW, [v(1, 0)], ['a'])[0].type, 'coding', '가중치 없으면 B로')
+  console.log('context classify ok')
 }

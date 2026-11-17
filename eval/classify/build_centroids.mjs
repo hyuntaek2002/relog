@@ -3,7 +3,7 @@
 //   linear: 선형 분류기(D) 가중치. 예시 발화 + 라벨 표본 전체로 학습한다(비교 실험의 "예시+학습" 설정, linear.mjs).
 // 파일에는 숫자와 건수만 들어간다. 표본 원문은 들어가지 않는다.
 // 사용: node eval/classify/build_centroids.mjs exports/public/wildchat-ko-400.zip eval/labels/wildchat-ko-400.labels.csv [보강 zip 보강 라벨 CSV …]
-//   zip·CSV 쌍을 더 주면 그 라벨도 함께 쓴다(표본이 적은 유형 보강분, pick_rare.mjs)
+//   zip·CSV 쌍을 더 주면 그 라벨도 함께 쓴다(표본이 적은 유형 보강분, pick_rare.mjs). --model=로 임베딩 모델을 바꾼다(기본 e5-large)
 import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -14,8 +14,8 @@ import { normalizeConversations } from '../../web/src/parser/normalize.ts'
 import { SEED_TEXTS, SEED_TYPES, TASK_TYPES } from '../../web/src/classify/classifier.ts'
 import { trainLinear } from './linear.mjs'
 
-const argv = process.argv.slice(2)
-const MODEL = 'Xenova/multilingual-e5-small'
+const argv = process.argv.slice(2).filter((a) => !a.startsWith('--'))
+const MODEL = process.argv.find((a) => a.startsWith('--model='))?.slice(8) ?? 'Xenova/multilingual-e5-large' // 제품 기본 모델과 같아야 쓰인다(labeledFor)
 const L2 = 1e-2 // 교차 검증의 안쪽 분할에서 가장 자주 골라진 값(docs/measurements.md)
 const CLASSES = [...TASK_TYPES, 'other'] // 문맥 필요는 분류 대상이 아니다
 const here = dirname(fileURLToPath(import.meta.url))
@@ -32,7 +32,7 @@ for (let a = 0; a + 1 < argv.length; a += 2) {
   }
 }
 const pipe = await pipeline('feature-extraction', MODEL, { dtype: 'q8' })
-const dim = 384
+const dim = (await pipe(['query: x'], { pooling: 'mean', normalize: true })).dims[1]
 async function embed(texts) {
   const out = []
   for (let i = 0; i < texts.length; i += 32) {
@@ -50,7 +50,7 @@ items.forEach((x, i) => { counts[x.type]++; for (let d = 0; d < dim; d++) sums[x
 const lin = trainLinear([...seedVecs, ...vecs], [...SEED_TYPES, ...items.map((x) => x.type)], { l2: L2 })
 const r4 = (v) => Math.round(v * 1e4) / 1e4
 const file = {
-  version: 'labeled-0.3.0',
+  version: 'labeled-0.4.0',
   model: MODEL,
   dim,
   source: 'WildChat-1M 한국어 표본(eval/labels/wildchat-ko-400.labels.csv)과 업무 문서·기획 보강분(wildchat-ko-rare.labels.csv), 모두 AI 제안 후 사람 확인 라벨의 유형별 임베딩 합과, 예시 발화 + 그 표본으로 학습한 선형 분류기 가중치. 원문 없음.',

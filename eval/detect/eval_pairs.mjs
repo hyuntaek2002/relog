@@ -7,9 +7,9 @@ import { pipeline } from '../../web/node_modules/@huggingface/transformers/dist/
 import { parseConversationsJson } from '../../web/src/parser/chatgpt.ts'
 import { normalizeConversations } from '../../web/src/parser/normalize.ts'
 import { DEFAULT_OPTIONS, detect, nullDistribution, quantile, withinConversationNull } from '../../web/src/detect/detector.ts'
-import { LABELED, SEED_TEXTS, SEED_TYPES, TaskClassifier, labeledFor } from '../../web/src/classify/classifier.ts'
+import { LABELED, SEED_TEXTS, SEED_TYPES, TaskClassifier, labeledFor, linearWithContext } from '../../web/src/classify/classifier.ts'
 
-const [zipPath, csvPath, model = 'Xenova/multilingual-e5-small'] = process.argv.slice(2)
+const [zipPath, csvPath, model = 'Xenova/multilingual-e5-large'] = process.argv.slice(2) // 제품 기본 모델
 // 앱과 같은 파일 선택 규칙. 대화 JSON만 푼다(ChatGPT 내보내기는 이미지가 1GB를 넘을 수 있다)
 const isConvFile = (name) => /(^|\/)conversations[^/]*\.json$/i.test(name)
 const files = unzipSync(new Uint8Array(readFileSync(zipPath)), { filter: (f) => isConvFile(f.name) })
@@ -38,7 +38,8 @@ const vec = (i) => data.subarray(i * dim, (i + 1) * dim)
 // 제품과 같게: 대화 종류를 분류해 넣는다(상담·대화로 분류된 메시지는 탐지에서 빠진다)
 const seedOut = await pipe(SEED_TEXTS.map((t) => (model.includes('e5') ? 'query: ' + t : t)), { pooling: 'mean', normalize: true })
 const clf = new TaskClassifier(SEED_TYPES.map((_, i) => seedOut.data.slice(i * dim, (i + 1) * dim)), SEED_TYPES, undefined, labeledFor(model))
-inputs.forEach((u, i) => { u.taskType = clf.linear(vec(i)).type })
+const typed = linearWithContext(clf, inputs.map((_, i) => vec(i)), inputs.map((u) => u.conversationId)) // cls-0.4.0: 같은 대화 문맥
+inputs.forEach((u, i) => { u.taskType = typed[i].type })
 console.log(`classifier: ${labeledFor(model) ? LABELED.version + ' 선형(D)' : '중심점(B, 라벨 자료 없음)'}`)
 const cross = nullDistribution(inputs, vec)
 const within = withinConversationNull(inputs, vec)
