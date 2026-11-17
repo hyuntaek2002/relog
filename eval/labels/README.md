@@ -64,7 +64,7 @@
 2. 후보 추리기: `node eval/classify/pick_rare.mjs exports/public/wildchat-ko-pool.zip` → 현재 분류기(D)가 업무 문서·기획에 확률 0.2 이상을 준 발화와 그 유형의 낱말이 든 발화(273건).
 3. AI(Claude)가 후보를 읽고 업무 문서·기획이 분명한 것만 고른 뒤(36건), 그 발화가 든 대화 33개의 나머지 발화도 함께 찍었다. 합계 71건: 업무 문서 26 · 기획 24 · 문맥 필요 6 · 학습 5 · 상담 4 · 정보 탐색 4 · 글쓰기 1 · 기타 1.
 4. 묶기: `node eval/classify/pick_rare.mjs exports/public/wildchat-ko-pool.zip <고른 목록 CSV>` → `exports/public/wildchat-ko-rare.zip`, `wildchat-ko-rare.suggested.csv`(id와 유형만).
-5. 사람 확인: `?dev=1`에 `wildchat-ko-rare.zip`을 넣고 "대화 종류 정답 찍기"에서 Enter 또는 숫자키로 확정 → "CSV 내보내기" → `eval/labels/wildchat-ko-rare.labels.csv`.
+5. 사람 확인: `?dev=1`에 `wildchat-ko-rare.zip`을 넣고 "대화 종류 정답 찍기"에서 Enter 또는 숫자키로 확정 → "CSV 내보내기" → `eval/labels/wildchat-ko-rare.labels.csv`. 2026-11-17 확인: 제안과 같은 답 68건, 사용자 수정 3건. 최종 업무 문서 26 · 기획 23 · 학습 6 · 상담 5 · 정보 탐색 4 · 문맥 필요 4 · 글쓰기 2 · 기타 1.
 6. 효과 재기: `node eval/classify/run_abc.mjs exports/public/wildchat-ko-400.zip eval/labels/wildchat-ko-400.labels.csv --cv --extra-zip=exports/public/wildchat-ko-rare.zip --extra-csv=eval/labels/wildchat-ko-rare.labels.csv`
 7. 제품 반영: `node eval/classify/build_centroids.mjs exports/public/wildchat-ko-400.zip eval/labels/wildchat-ko-400.labels.csv exports/public/wildchat-ko-rare.zip eval/labels/wildchat-ko-rare.labels.csv`
 

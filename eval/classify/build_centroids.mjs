@@ -50,10 +50,10 @@ items.forEach((x, i) => { counts[x.type]++; for (let d = 0; d < dim; d++) sums[x
 const lin = trainLinear([...seedVecs, ...vecs], [...SEED_TYPES, ...items.map((x) => x.type)], { l2: L2 })
 const r4 = (v) => Math.round(v * 1e4) / 1e4
 const file = {
-  version: 'labeled-0.2.0',
+  version: 'labeled-0.3.0',
   model: MODEL,
   dim,
-  source: 'WildChat-1M 한국어 표본(eval/labels/wildchat-ko-400.labels.csv, AI 제안 후 사람 확인 라벨)의 유형별 임베딩 합과, 예시 발화 + 그 표본으로 학습한 선형 분류기 가중치. 원문 없음.',
+  source: 'WildChat-1M 한국어 표본(eval/labels/wildchat-ko-400.labels.csv)과 업무 문서·기획 보강분(wildchat-ko-rare.labels.csv), 모두 AI 제안 후 사람 확인 라벨의 유형별 임베딩 합과, 예시 발화 + 그 표본으로 학습한 선형 분류기 가중치. 원문 없음.',
   counts,
   sums: Object.fromEntries(CLASSES.map((t) => [t, Array.from(sums[t], r4)])),
   linear: { classes: lin.classes, W: lin.W.map((r) => r.map(r4)), b: lin.b.map(r4) },
