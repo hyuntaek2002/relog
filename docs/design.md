@@ -31,6 +31,7 @@
 | 과업 분류 | classify/classifier.ts | 제품 기본은 D 선형 분류기(임베딩에 가중치를 곱해 8유형 + 기타 중 점수가 가장 높은 것. 가중치는 예시 발화와 라벨된 공개 표본으로 학습해 labeled-centroids.json에 넣는다. 학습은 eval/classify/linear.mjs, build_centroids.mjs). 다른 임베딩 모델이면 가중치를 쓰지 않고 B로 대신한다. B 유형별 중심점(예시 발화의 임베딩 합 + 라벨 표본의 유형별 임베딩 합)과 C k-NN(예시 발화)은 개발 패널에서 비교용. A(TF-IDF+선형)는 평가 스크립트에만 둔다. 비교 실험에서 Macro F1이 D 0.52, B·예시+학습 0.45(기타 포함 0.49), C·예시만 0.36이었다. Claude Code 세션 메시지는 코딩으로 고정하고 세션 단위 키워드로 코딩 세부를 나눈다(codingSub.ts). |
 | 반복 탐지 | detect/detector.ts | 아래 3절. |
 | 사용자 보정 | detect/corrections.ts | "반복 아님"으로 고친 메시지 id를 localStorage에 두고 등급을 뗀 결과를 화면·추천·집계에 쓴다. |
+| 분석 기록 | store/records.ts, store/History.tsx | 분석할 때마다 요약 숫자(비교한 메시지, 확실함 건수, 분량)와 추천한 항목 id·플러그인 이름을 localStorage에 남긴다(같은 내보내기는 덮어씀, 최대 50개). 로그인했으면 서버에도 올린다. 전후 비교는 지금 분석의 주별 숫자를 지난 기록의 마지막 메시지 시각으로 나눠 같은 방식으로 앞뒤를 잰다. 지난번에도 추천한 항목은 카드에 그 뒤 비율 변화를 한 줄로 붙인다. |
 | 집계 | store/ledger.ts, store/db.ts | 발화 대장 키 = 대화 ID#메시지 ID#내용 해시. 메시지 생성일 기준 주 단위 집계, 대장에서 언제든 재계산. IndexedDB 보관은 동의했을 때만. |
 | 추천 | recommend/recommend.ts, catalog/catalog.json | 필수 조건 필터(플랫폼·요금제·이미 사용) → 점수(문제 신호 가중치×2 + 대화 종류 가중치 + 우선순위/100 + 피드백) → 상위 3건, 종류당 최대 2건. 서버 RecommendEngine.java는 같은 규칙의 포팅이며 같은 테스트를 통과한다. |
 | 리포트 | App.tsx | 요약 한 줄 + [다시 말한 지시][추천][변화]. 넓은 화면은 2열. 설명은 ? 아이콘. 상세 원문은 화면에만 표시. |
@@ -66,11 +67,12 @@
 | 임베딩 | 분석 중에만 | 저장 안 함 | 보내지 않음 |
 | 발화 대장(ID, 해시, 시각, 유형, 등급, 분량) | 있음 | 저장 | 보내지 않음 |
 | 주별 집계 숫자 | 있음 | 대장에서 계산 | 보냄 |
+| 분석 기록(요약 숫자, 추천 항목 id·플러그인 이름) | 있음 | localStorage(자동, 지울 수 있음) | 보냄 |
 | 요금제·쓰는 기능·피드백 | 있음 | localStorage | 보냄 |
 | 서비스 계정(이메일, 비밀번호 해시) | - | 토큰만 localStorage | 저장 |
 | ChatGPT·Claude 계정 정보 | 다루지 않음 | - | - |
 
-- 서버 요청 본문의 문자열 필드는 플랫폼 이름과 분석 버전뿐이다(eval/test_parser.mjs의 "sync dto"에서 검사). 서버 DTO는 모르는 필드와 허용되지 않은 키를 거부한다.
+- 서버 요청 본문의 문자열 필드는 플랫폼 이름과 분석 버전, 분석 기록의 추천 항목 id·플러그인 이름(80자 이하, 꺾쇠·제어 문자 거부)뿐이다(eval/test_parser.mjs의 "sync dto"에서 검사). 서버 DTO는 모르는 필드와 허용되지 않은 키를 거부한다.
 - 개발자 패널(?dev=1)의 네트워크 감사가 페이지와 워커의 모든 요청을 기록하고, 요청 본문에 내 메시지 글귀가 들어 있는지 대조한다.
 
 ## 5. 서버 API
@@ -84,6 +86,7 @@
 | POST /api/recommendations · GET /api/recommendations | 추천 계산(이력 저장) · 최근 처방 묶음 |
 | GET /api/trend?recentWeeks=N | 이전 기간 대 최근 N주 대화 종류별 비율 비교(가장 최근 분석 버전의 주만) |
 | POST /api/feedback · GET /api/feedback | 피드백 저장 · 조회 |
+| PUT /api/records · GET /api/records · DELETE /api/records | 분석 기록 올리기(사용자+플랫폼+마지막 메시지 시각으로 덮어쓰기, 사용자당 100개) · 조회 · 전부 삭제 |
 
 ## 6. 데이터베이스
 
@@ -95,6 +98,7 @@
 | feature_catalog | id, 플랫폼, 이름, 설명, 사용법, 요금제 조건, 적용 조건, 우선순위, 근거 URL, 확인일, 버전 | catalog/catalog.json이 단일 원본 |
 | recommendation | user, catalog_id, 생성일, 등급, 점수, 근거 요약, 사용법, 제시 방식, 요청 묶음 id, 규칙·카탈로그 버전 | 처방 이력 |
 | feedback | user, catalog_id, 평가(도움됨/아님/이미 씀/평가 점수), 일시 | 추천 우선순위 조정 |
+| analysis_record | user, 플랫폼, 분석 시각, 첫·마지막 메시지 시각, 버전 키, 비교한 메시지 수, 확실함 건수, 분량, 추천 id(JSON), 플러그인 이름(JSON) | 전후 비교. 대화 내용 없음 |
 
 ## 7. 버전
 

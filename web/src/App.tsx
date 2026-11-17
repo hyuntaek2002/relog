@@ -11,14 +11,16 @@ import AbMode from './recommend/AbMode'
 import RecommendDev from './recommend/RecommendDev'
 import TaskPlugins from './recommend/TaskPlugins'
 import PluginSearch from './recommend/PluginSearch'
-import { installedPlugins, TASK_PLUGIN_MIN_MESSAGES } from './recommend/taskPluginRules'
+import { installedPlugins, resolveTaskPlugins, TASK_PLUGIN_MIN_MESSAGES } from './recommend/taskPluginRules'
 import Help from './ui/Help'
 import { buildSnapshot } from './recommend/snapshot'
 import { pinCodeToCoding, subByConversation } from './classify/codingSub'
 import { CATALOG_VERSION, RECOMMENDATION_RULE_VERSION, recommend, type Feedback, type FeedbackMap, type Platform, type Prescription, type UserContext } from './recommend/recommend'
 import Trend, { CompareTable, ReportFile, StorageChoice, loadStorageMode, STORAGE_MODE_KEY, type StorageMode } from './store/Trend'
 import SyncPanel from './store/SyncPanel'
-import { getToken, sendFeedback } from './store/sync'
+import { deleteServerRecords, getToken, listServerRecords, putServerRecord, sendFeedback } from './store/sync'
+import History from './store/History'
+import { clearRecords, compareSince, loadRecords, previousRecords, putRecord, putRecords, repeatNotes, type AnalysisRecord } from './store/records'
 import { applyDismissed, loadDismissed, saveDismissed } from './detect/corrections'
 import { aggregateWeekly, buildLedger, versionKey, type AnalysisVersion, type LedgerEntry, type PeriodSnapshot, type TaskCompare } from './store/ledger'
 import { clearAll, getLedger, putLedger } from './store/db'
@@ -97,6 +99,11 @@ export default function App() {
   const [dismissed, setDismissed] = useState<string[]>(loadDismissed) // 내가 "반복 아님"으로 고친 메시지 id
   const [serverRx, setServerRx] = useState<Prescription[] | null>(null) // 서버가 계산한 추천(동기화했을 때만)
   const [serverTrend, setServerTrend] = useState<(TaskCompare & { weeks: number }) | null>(null) // 서버 보관 집계로 계산한 변화
+  const [records, setRecords] = useState<AnalysisRecord[]>(loadRecords) // 분석 기록(전후 비교용)
+  const [prevSel, setPrevSel] = useState(0) // 비교할 지난 기록(0 = 가장 최근)
+
+  // 서버 동기화에 로그인돼 있으면 다른 기기에서 남긴 분석 기록도 합친다
+  useEffect(() => { if (getToken()) listServerRecords().then((rs) => setRecords(putRecords(rs))).catch(() => {}) }, [])
 
   // 보관 모드면 시작할 때 저장된 대장을 불러와 추이를 보여준다
   useEffect(() => {
@@ -111,7 +118,12 @@ export default function App() {
   async function onClear() {
     if (!confirm('이 브라우저에 저장된 분석 데이터, 설정, 피드백, 라벨링 진행 상황을 모두 지웁니다. 계속할까요?')) return
     await clearAll()
-    setLedger([]); setWeeks([]); setFeedback({}); setStorageMode('none')
+    setLedger([]); setWeeks([]); setFeedback({}); setStorageMode('none'); setRecords([])
+  }
+  function onClearRecords() {
+    if (!confirm('저장된 분석 기록(요약 숫자와 추천 이름)을 모두 지웁니다. 서버 동기화 중이면 서버 기록도 지웁니다. 계속할까요?')) return
+    clearRecords(); setRecords([]); setPrevSel(0)
+    if (getToken()) deleteServerRecords().catch(() => {})
   }
 
   async function onFile(list: FileList | File[] | null | undefined) {
@@ -233,6 +245,23 @@ export default function App() {
   function onCtx(c: UserContext) { setCtx(c); saveContext(platform, c); setServerRx(null) }
   const shownRx = serverRx ?? prescriptions
 
+  // 분석 기록: 이번 회차의 요약 숫자 + 추천 항목 이름. 분석이 끝나면 자동 저장(같은 내보내기는 덮어씀)
+  const pluginNames = snapshot ? resolveTaskPlugins(snapshot, TASK_PLUGIN_MIN_MESSAGES, platform).flatMap((r) => (r.status === 'recommend' && r.pick ? [r.pick.name] : [])) : []
+  const curRecord: AnalysisRecord | null = step === 'done' && !AB && snapshot && eff && version && s && s.firstAt != null && s.lastAt != null
+    ? { savedAt: 0, platform, firstAt: s.firstAt, lastAt: s.lastAt, versionKey: versionKey(version), judgeable: eff.summary.judgeable, high: eff.summary.byGrade.high, tokenEstimate: eff.summary.tokenEstimate, rx: shownRx.map((p) => p.catalogId), plugins: pluginNames }
+    : null
+  const recKey = curRecord ? JSON.stringify(curRecord) : ''
+  useEffect(() => {
+    if (!curRecord) return
+    const r = { ...curRecord, savedAt: Date.now() }
+    setRecords(putRecord(r))
+    if (getToken()) putServerRecord(r).catch(() => {})
+  }, [recKey]) // eslint-disable-line react-hooks/exhaustive-deps
+  const prevs = curRecord ? previousRecords(records, curRecord) : []
+  const prevRecord = prevs[prevSel] ?? null
+  const sinceCmp = prevRecord ? compareSince(weeks, prevRecord) : null
+  const notes = repeatNotes(prevRecord, sinceCmp, [...(curRecord?.rx ?? []), ...pluginNames])
+
   const flagged = eff ? eff.candidates : []
   const codeConvIds = new Set((result?.conversations ?? []).filter((c) => c.client === 'code').map((c) => c.id)) // 개발 패널: 다시 말한 지시 출처 나눔
   // 대화별로 묶는다. 확실함만 본 목록에 두고, 가능성 있음(실제 정밀도 0.13)은 접힌 '참고' 목록에만(det-0.4.1).
@@ -348,11 +377,11 @@ export default function App() {
           <p className="label wide">{AB ? '추천 평가' : '추천'}</p>
           {snapshot && ctx && (
             <>
-              {AB ? <AbMode platform={platform} personalized={prescriptions} snapshot={snapshot} weeks={weeks} version={version} ctx={withDetected(ctx, detected)} /> : <Prescriptions items={shownRx} feedback={feedback} onFeedback={onFeedback} installed={installed} />}
+              {AB ? <AbMode platform={platform} personalized={prescriptions} snapshot={snapshot} weeks={weeks} version={version} ctx={withDetected(ctx, detected)} /> : <Prescriptions items={shownRx} feedback={feedback} onFeedback={onFeedback} installed={installed} notes={notes} />}
               {!AB && (
                 <>
                   <p className="label">대화 종류별 플러그인{platform === 'chatgpt' ? ' (ChatGPT·Codex)' : ''}<Help text={`많이 쓴 대화 종류 순입니다. 그 종류 메시지가 ${TASK_PLUGIN_MIN_MESSAGES}개 이상일 때만 플러그인을 권합니다. ${platform === 'claude' ? 'Claude Code 기록의 메시지는 모두 코딩으로 셉니다. ' : 'ChatGPT와 Codex는 같은 플러그인 목록을 써서, 같은 이름으로 Codex에도 설치할 수 있습니다. '}효과는 아직 검증되지 않았습니다.`} /></p>
-                  <TaskPlugins snapshot={snapshot} installed={installed} platform={platform} />
+                  <TaskPlugins snapshot={snapshot} installed={installed} platform={platform} notes={notes} />
                   {platform === 'claude' && <PluginSearch installed={installed} />}
                 </>
               )}
@@ -363,6 +392,13 @@ export default function App() {
 
           <div className={'panel' + (tab === 'trend' ? ' on' : '')}>
           <p className="label wide">변화</p>
+          {curRecord && (
+            <>
+              <p className="label">지난 분석과 비교</p>
+              <History cur={{ ...curRecord, savedAt: Date.now() }} prevs={prevs} sel={prevSel} onSel={setPrevSel} cmp={sinceCmp} installed={installed} onClear={onClearRecords} />
+              <p className="label">이번 기록 안의 변화</p>
+            </>
+          )}
           <Trend weeks={weeks} />
           {serverTrend && (
             <>

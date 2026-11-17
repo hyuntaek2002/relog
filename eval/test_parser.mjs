@@ -502,3 +502,23 @@ console.log('ledger ok')
   console.log('labeled centroids ok')
 }
 
+
+// 분석 기록: 같은 내보내기는 덮어쓰기, 앞선 기록 고르기, 지난 기록 시각으로 전후 나누기, 지난번에도 추천한 항목 표시
+{
+  const { mergeRecords, previousRecords, compareSince, repeatNotes } = await import('../web/src/store/records.ts')
+  const W = 7 * 86400000
+  const rec = (savedAt, lastAt, platform = 'chatgpt', rx = ['a'], plugins = ['GitHub']) => ({ savedAt, platform, firstAt: 1, lastAt, versionKey: 'v', judgeable: 10, high: 1, tokenEstimate: 0, rx, plugins })
+  const merged = mergeRecords([rec(1, 100), rec(2, 200)], [rec(3, 100, 'chatgpt', ['b']), rec(4, 100, 'claude')])
+  assert.equal(merged.length, 3, '같은 플랫폼·마지막 시각은 덮어씀')
+  assert.deepEqual(merged.find((r) => r.platform === 'chatgpt' && r.lastAt === 100).rx, ['b'])
+  assert.equal(mergeRecords([rec(9, 100)], [rec(1, 100, 'chatgpt', ['old'])])[0].rx[0], 'a', '더 오래된 저장은 덮지 않음')
+  assert.deepEqual(previousRecords(merged, { platform: 'chatgpt', lastAt: 200 }).map((r) => r.lastAt), [100], '앞선 같은 플랫폼 기록만')
+  const wk = (start, ok, high) => ({ periodStart: start, periodEnd: start + W, versionKey: 'v', platform: 'chatgpt', userTurnCount: ok, okCount: ok, judgeable: ok, conversationCount: 1, longConversationCount: 0, codeCount: 0, taskCounts: { coding: ok }, restatement: { high, medium: 0, low: 0, tokenEstimate: 0, ratio: 0, perTask: { coding: high }, repeatedQuestion: 0, misunderstanding: 0 }, hourHistogram: [] })
+  const cmp = compareSince([wk(0, 10, 2), wk(W, 10, 0), wk(2 * W, 10, 1)], { lastAt: W + 5 })
+  assert.equal(cmp.total.before.ok, 20); assert.equal(cmp.total.after.ok, 10, '마지막 메시지가 든 주는 이전 쪽')
+  assert.equal(cmp.total.delta, 0, '10% → 10%')
+  const notes = repeatNotes(rec(5, W + 5, 'chatgpt', ['a'], ['GitHub']), cmp, ['a', 'z', 'GitHub'])
+  assert.deepEqual(Object.keys(notes).sort(), ['GitHub', 'a']); assert.equal(notes.a.delta, 0)
+  assert.deepEqual(repeatNotes(null, cmp, ['a']), {})
+  console.log('records ok')
+}

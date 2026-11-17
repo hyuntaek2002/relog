@@ -1,6 +1,7 @@
 package dev.relog.auth;
 
 import dev.relog.feedback.FeedbackRepository;
+import dev.relog.history.AnalysisRecordRepository;
 import dev.relog.recommend.RecommendationRepository;
 import dev.relog.snapshot.SnapshotRepository;
 import dev.relog.snapshot.RestatementStatRepository;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-/** 서버 데이터 삭제: 사용자의 스냅샷·통계·추천·피드백·계정을 모두 지운다. */
+/** 서버 데이터 삭제: 사용자의 스냅샷·통계·추천·피드백·분석 기록·계정을 모두 지운다. */
 @RestController
 public class MeController {
     private final UserAccountRepository users;
@@ -21,10 +22,11 @@ public class MeController {
     private final RestatementStatRepository stats;
     private final RecommendationRepository recommendations;
     private final FeedbackRepository feedback;
+    private final AnalysisRecordRepository records;
 
     public MeController(UserAccountRepository users, SnapshotRepository snapshots, RestatementStatRepository stats,
-                        RecommendationRepository recommendations, FeedbackRepository feedback) {
-        this.users = users; this.snapshots = snapshots; this.stats = stats; this.recommendations = recommendations; this.feedback = feedback;
+                        RecommendationRepository recommendations, FeedbackRepository feedback, AnalysisRecordRepository records) {
+        this.users = users; this.snapshots = snapshots; this.stats = stats; this.recommendations = recommendations; this.feedback = feedback; this.records = records;
     }
 
     @GetMapping("/api/me")
@@ -53,6 +55,7 @@ public class MeController {
         snapshots.deleteByUser(me);
         recommendations.deleteByUser(me);
         feedback.deleteByUser(me);
+        records.deleteByUser(me);
         users.delete(me);
         return Map.of("deleted", true);
     }

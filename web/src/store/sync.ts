@@ -1,6 +1,7 @@
 import type { AnalysisVersion, PeriodSnapshot, TaskCompare } from './ledger'
 import type { Feedback, Prescription, UserContext } from '../recommend/recommend'
 import type { UsageSnapshot } from '../recommend/snapshot'
+import type { AnalysisRecord } from './records'
 
 // 서버 동기화 클라이언트(선택 기능). 보내는 것은 주별 집계 숫자·추천 엔진 입력 숫자·체크리스트·피드백뿐이다.
 // 대화 내용·임베딩·플랫폼 계정 정보를 담을 필드가 없다. 서버 주소는 빌드 시 VITE_API_BASE, 기본은 로컬 개발 서버.
@@ -88,6 +89,11 @@ export const fetchTrend = (recentWeeks = 2) => call<TaskCompare & { weeks: numbe
 
 export type ServerWeek = ReturnType<typeof toDto> & { versionKey: string; updatedAt: string }
 export const listSnapshots = () => call<ServerWeek[]>('/api/snapshots')
+
+// 분석 기록(요약 숫자 + 추천 항목 이름). 같은 내보내기(플랫폼·마지막 메시지 시각)는 서버에서도 덮어쓴다.
+export const putServerRecord = (r: AnalysisRecord) => call<{ saved: boolean }>('/api/records', { method: 'PUT', body: JSON.stringify(r) })
+export const listServerRecords = () => call<AnalysisRecord[]>('/api/records')
+export const deleteServerRecords = () => call<{ deleted: number }>('/api/records', { method: 'DELETE' })
 
 export const sendFeedback = (catalogId: string, value: Feedback | 'ab_score', extra: { source?: string; abScore?: number; abOrder?: number } = {}) =>
   call<{ saved: number }>('/api/feedback', { method: 'POST', body: JSON.stringify([{ catalogId, value, ...extra }]) })

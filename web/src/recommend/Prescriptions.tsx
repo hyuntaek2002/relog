@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { NO_RECOMMENDATION, type Feedback, type FeedbackMap, type Prescription } from './recommend'
 import { isInstalled } from './taskPluginRules'
+import { RepeatLine } from '../store/History'
+import type { RepeatNote } from '../store/records'
 
 // 추천 카드 0~3개: 한 줄 요약 → 무엇을 → 이렇게 하세요(번호) → 작은 주의. 근거 숫자는 펼침. 피드백은 로컬 저장.
 export const FEEDBACK_KEY = 'relog-feedback-v1'
@@ -14,7 +16,7 @@ const CATEGORY: Record<string, string> = { feature: '기능', plugin: '플러그
 // "1) … 2) … 3) …" 형식의 30초 사용법을 단계 배열로
 export const steps = (how: string) => how.split(/\s*\d\)\s*/).map((s) => s.trim()).filter(Boolean)
 
-export default function Prescriptions({ items, feedback, onFeedback, installed = [] }: { items: Prescription[]; feedback: FeedbackMap; onFeedback: (id: string, f: Feedback) => void; installed?: string[] }) {
+export default function Prescriptions({ items, feedback, onFeedback, installed = [], notes = {} }: { items: Prescription[]; feedback: FeedbackMap; onFeedback: (id: string, f: Feedback) => void; installed?: string[]; notes?: Record<string, RepeatNote> }) {
   const [open, setOpen] = useState<Record<string, boolean>>({})
   if (items.length === 0) return <p className="detail">{NO_RECOMMENDATION}</p>
   return (
@@ -28,6 +30,7 @@ export default function Prescriptions({ items, feedback, onFeedback, installed =
             {p.pluginName && isInstalled(p.pluginName, installed) && <span className="tag have">{p.pluginName} 이미 설치됨</span>}
           </header>
           <p className="lead">{p.summary} {p.what}</p>
+          <RepeatLine note={notes[p.catalogId]} />
           <p className="steps-title">이렇게 하세요</p>
           <ol className="rx-steps">
             {steps(p.how).map((s, i) => <li key={i}>{s}</li>)}

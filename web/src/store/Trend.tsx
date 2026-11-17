@@ -25,7 +25,7 @@ export function StorageChoice({ mode, storedCount, onMode, onClear }: { mode: St
   return (
     <div className="checklist">
       <div className="row">
-        <span>보관<Help text="남기면 메시지별 집계(시각·대화 종류·다시 말한 지시 여부·분량)만 이 브라우저 안에 저장됩니다. 대화 내용은 저장하지 않습니다. 같은 기간을 다시 올리면 덮어쓰고 새 기간만 추가됩니다." /></span>
+        <span>보관<Help text="남기면 메시지별 집계(시각·대화 종류·다시 말한 지시 여부·분량)만 이 브라우저 안에 저장됩니다. 대화 내용은 저장하지 않습니다. 같은 기간을 다시 올리면 덮어쓰고 새 기간만 추가됩니다. 분석 기록(요약 숫자와 추천한 항목 이름)은 이 선택과 상관없이 남고, 변화 탭에서 지울 수 있습니다." /></span>
         <label><input type="radio" name="storage" checked={mode === 'none'} onChange={() => onMode('none')} /> 이번만 보기</label>
         <label><input type="radio" name="storage" checked={mode === 'local'} onChange={() => onMode('local')} /> 이 브라우저에 남기기</label>
       </div>
