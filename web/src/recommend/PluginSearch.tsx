@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { isInstalled } from './taskPluginRules'
+import { isInstalled, type PluginPlatform } from './taskPluginRules'
 
 // 플러그인 찾기: 추천과 별개로 사용자가 카테고리·검색어로 직접 고른다. 데이터는 날짜가 박힌 정적 파일(public/)을 펼칠 때만 내려받는다.
-// 설치는 여기서 하지 않고 Claude 앱 탐색 탭(카테고리 바로 가기)에서 사용자가 직접 한다.
-import { filterPlugins, fmtInstalls, PLUGIN_FILE, PLUGIN_FORMAT, type PluginFile } from './pluginSearchRules'
+// 설치는 여기서 하지 않고 Claude 앱 탐색 탭(카테고리 바로 가기)이나 ChatGPT 디렉터리(플러그인 페이지)에서 사용자가 직접 한다.
+import { filterPlugins, fmtInstalls, PLUGIN_FILES, PLUGIN_FORMAT, type PluginFile } from './pluginSearchRules'
 const PAGE = 40
 
-export default function PluginSearch({ installed = [] }: { installed?: string[] }) {
+export default function PluginSearch({ installed = [], platform = 'claude' }: { installed?: string[]; platform?: PluginPlatform }) {
   const [data, setData] = useState<PluginFile | null>(null)
   const [err, setErr] = useState('')
   const [open, setOpen] = useState(false)
@@ -15,8 +15,8 @@ export default function PluginSearch({ installed = [] }: { installed?: string[] 
   const [limit, setLimit] = useState(PAGE)
   useEffect(() => {
     if (!open || data) return
-    fetch(import.meta.env.BASE_URL + PLUGIN_FILE).then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))).then((j: PluginFile) => (j.format === PLUGIN_FORMAT ? setData(j) : setErr('플러그인 목록 파일 형식이 다릅니다.'))).catch((e) => setErr(`플러그인 목록을 불러오지 못했습니다: ${(e as Error).message}`))
-  }, [open, data])
+    fetch(import.meta.env.BASE_URL + PLUGIN_FILES[platform]).then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))).then((j: PluginFile) => (j.format === PLUGIN_FORMAT ? setData(j) : setErr('플러그인 목록 파일 형식이 다릅니다.'))).catch((e) => setErr(`플러그인 목록을 불러오지 못했습니다: ${(e as Error).message}`))
+  }, [open, data, platform])
   const cats = useMemo(() => (data ? Object.entries(data.categories).sort((a, b) => a[1].localeCompare(b[1], 'ko')) : []), [data])
   const rows = useMemo(() => (data ? filterPlugins(data.plugins, q, cat) : []), [data, q, cat])
   return (
@@ -33,10 +33,10 @@ export default function PluginSearch({ installed = [] }: { installed?: string[] 
               {cats.map(([slug, label]) => <option key={slug} value={slug}>{label}</option>)}
             </select>
           </p>
-          <p className="detail">{rows.length.toLocaleString()}개 · 설치 수 많은 순 · {data.fetchedAt} 기준. 카테고리는 탐색 탭 상위 100개까지만 있습니다.</p>
+          <p className="detail">{rows.length.toLocaleString()}개 · {platform === 'claude' ? `설치 수 많은 순 · ${data.fetchedAt} 기준. 카테고리는 탐색 탭 상위 100개까지만 있습니다.` : `디렉터리 표시 순 · ${data.fetchedAt} 기준. ChatGPT와 Codex에서 같은 이름으로 설치합니다. 설명은 디렉터리의 영문 그대로입니다.`}</p>
           <ul className="ps-list">
             {rows.slice(0, limit).map((p) => (
-              <li key={p.n}>
+              <li key={p.id ?? p.n}>
                 <p className="ps-head">
                   <b>{p.n}</b>
                   {isInstalled(p.n, installed) && <span className="tag have">이미 설치됨</span>}
@@ -46,7 +46,8 @@ export default function PluginSearch({ installed = [] }: { installed?: string[] 
                 </p>
                 <p className="ps-line">{p.k ?? p.s}</p>
                 <p className="ps-links">
-                  {p.c[0] && <a href={`https://claude.ai/new#customize/plugins/${p.c[0]}`} target="_blank" rel="noreferrer">탐색 탭에서 열기</a>}
+                  {p.id && <a href={`https://chatgpt.com/plugins/${p.id}`} target="_blank" rel="noreferrer">디렉터리에서 보기</a>}
+                  {!p.id && p.c[0] && <a href={`https://claude.ai/new#customize/plugins/${p.c[0]}`} target="_blank" rel="noreferrer">탐색 탭에서 열기</a>}
                   {p.r && <a href={p.r} target="_blank" rel="noreferrer">저장소</a>}
                 </p>
               </li>

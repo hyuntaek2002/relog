@@ -4,6 +4,7 @@ import { ClaudeCodeSessionBuilder, dedupeForkedSessions } from '../parser/claude
 import { NORMALIZER_VERSION, normalizeConversations, normalizeStats, type NormalizeStats, type Utterance } from '../parser/normalize.ts'
 import { basicStats, type BasicStats } from '../parser/stats.ts'
 import type { Conversation, ParseError } from '../parser/types.ts'
+import { codexPluginFromPath } from '../parser/codexPlugins.ts'
 import { installFetchAudit, setAuditProbes, takeAuditRecords, type NetRecord } from './netaudit.ts'
 
 installFetchAudit('analyze-worker') // 이 워커는 네트워크를 쓰지 않아야 한다. 기록이 있으면 그 자체가 문제.
@@ -20,6 +21,7 @@ export type WorkerOut =
       errors: ParseError[]
       stats: BasicStats
       utterances: Utterance[]
+      codexPlugins: string[] // Codex plugins 폴더 zip에서 찾은 설치 플러그인 이름
       normStats: NormalizeStats
       parserVersion: string
       normalizerVersion: string
@@ -32,10 +34,12 @@ const isSessionFile = (name: string) => /\.jsonl$/i.test(name)
 const CHUNK = 8 * 1024 * 1024
 
 // zip 하나를 조각 단위로 읽어 항목별로 처리. json은 모아서 파싱, jsonl은 줄 단위로 바로 파서에 넣고 버린다.
-async function readZip(file: File, out: { names: string[]; conversations: Conversation[]; errors: ParseError[] }, post: (m: WorkerOut) => void) {
+async function readZip(file: File, out: { names: string[]; conversations: Conversation[]; errors: ParseError[]; codexPlugins: Set<string> }, post: (m: WorkerOut) => void) {
   const unz = new Unzip()
   unz.register(UnzipInflate)
   unz.onfile = (f) => {
+    const codex = codexPluginFromPath(f.name)
+    if (codex) { out.codexPlugins.add(codex); return } // 경로 이름만 쓰고 내용은 풀지 않는다
     if (isConvFile(f.name)) {
       const chunks: Uint8Array[] = []
       f.ondata = (err, data, final) => {
@@ -80,8 +84,9 @@ async function readZip(file: File, out: { names: string[]; conversations: Conver
 self.onmessage = async (e: MessageEvent<WorkerIn>) => {
   const post = (m: WorkerOut) => self.postMessage(m)
   try {
-    const out = { names: [] as string[], conversations: [] as Conversation[], errors: [] as ParseError[] }
+    const out = { names: [] as string[], conversations: [] as Conversation[], errors: [] as ParseError[], codexPlugins: new Set<string>() }
     for (const f of e.data.files) await readZip(f, out, post)
+    if (out.names.length === 0 && out.codexPlugins.size > 0) throw new Error('Codex 플러그인 폴더만으로는 분석할 대화가 없습니다. ChatGPT 내보내기 zip과 함께 넣어 주세요.')
     if (out.names.length === 0) throw new Error('zip 안에 conversations*.json(앱 내보내기)이나 *.jsonl(Claude Code 세션)이 없음')
     out.conversations = dedupeForkedSessions(out.conversations)
     const utterances = normalizeConversations(out.conversations)
@@ -94,6 +99,7 @@ self.onmessage = async (e: MessageEvent<WorkerIn>) => {
       errors: out.errors,
       stats: basicStats(out.conversations),
       utterances,
+      codexPlugins: [...out.codexPlugins].sort(),
       normStats: normalizeStats(utterances),
       parserVersion: PARSER_VERSION,
       normalizerVersion: NORMALIZER_VERSION,

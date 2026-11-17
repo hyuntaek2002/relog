@@ -522,3 +522,29 @@ console.log('ledger ok')
   assert.deepEqual(repeatNotes(null, cmp, ['a']), {})
   console.log('records ok')
 }
+
+// Codex 설치 플러그인: plugins 폴더 zip의 경로 이름에서 원격 설치 플러그인만, 시스템 기본은 뺀다
+{
+  const { codexPluginFromPath } = await import('../web/src/parser/codexPlugins.ts')
+  assert.equal(codexPluginFromPath('plugins/cache/openai-curated-remote/github/0.1.13/.codex-plugin/plugin.json'), 'github')
+  assert.equal(codexPluginFromPath(String.raw`cache\openai-curated-remote\codex-security\0.1.32\README.md`), 'codex-security', '윈도 경로')
+  assert.equal(codexPluginFromPath('plugins/cache/openai-curated-remote/work-pets/0.1.6/x'), null, '시스템 기본')
+  assert.equal(codexPluginFromPath('plugins/cache/openai-curated/slack/11c74d6b/x'), null, '설정 화면에 없는 로컬 목록')
+  assert.equal(codexPluginFromPath('plugins/cache/openai-curated-remote/github'), null, '폴더 안 항목만')
+  const { isInstalled } = await import('../web/src/recommend/taskPluginRules.ts')
+  assert.ok(isInstalled('Codex Security', ['codex-security']) && isInstalled('GitHub', ['github']))
+  console.log('codex plugins ok')
+}
+
+// ChatGPT·Codex 플러그인 목록 파일: 형식, 개수, id 유일, 카테고리 이름, 검색
+{
+  const { filterPlugins, PLUGIN_FILES, PLUGIN_FORMAT } = await import('../web/src/recommend/pluginSearchRules.ts')
+  const f = JSON.parse(fs.readFileSync(new URL('../web/public/' + PLUGIN_FILES.chatgpt, import.meta.url), 'utf8'))
+  assert.equal(f.format, PLUGIN_FORMAT); assert.equal(f.plugins.length, 5390)
+  assert.equal(new Set(f.plugins.map((p) => p.id)).size, f.plugins.length, 'id 유일')
+  assert.ok(f.plugins.every((p) => p.id.startsWith('plugin_') && p.c.length && p.c.every((s) => f.categories[s])), '모든 항목에 id와 이름 있는 카테고리')
+  assert.ok(filterPlugins(f.plugins, 'github', '').some((p) => p.n === 'GitHub'))
+  assert.ok(filterPlugins(f.plugins, '', 'security').length > 0)
+  assert.ok(fs.existsSync(new URL('../web/public/' + PLUGIN_FILES.claude, import.meta.url)))
+  console.log('chatgpt plugin list ok')
+}

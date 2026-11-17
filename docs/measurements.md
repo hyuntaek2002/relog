@@ -348,3 +348,16 @@
 - 본인 ChatGPT 기록으로 확인: 9월 30일까지의 가상 지난 기록을 넣고 분석하자, 그 뒤 내 메시지 127개, 전체 비율 0.3% → 0.0%, 지난번에도 추천한 항목 카드에 "그 뒤 비율 줄어듦" 한 줄이 붙음. 로그인하지 않은 상태에서 서버 요청 0건.
 - 서버: 테스트 계정으로 저장·덮어쓰기·조회·삭제, 꺾쇠가 든 이름 400, 미로그인 401 확인 후 계정 삭제.
 - 비율 변화의 원인은 판정하지 않는다. 추천을 따랐는지도 알 수 없다(설치 여부는 Claude Code 기록에서만 보임).
+
+## 2026-11-17 Codex 플러그인 설치 여부
+- 근거: Codex 앱이 ChatGPT 계정으로 설치한 플러그인은 .codex/plugins/cache/openai-curated-remote/<이름>/ 에 있다. 본인 PC에서 이 폴더 9개 중 시스템 기본 3개(plugin-management, work-pets, visualize)를 빼면 Codex 설정 화면 플러그인 탭의 6개(Canva, Codex Security, Figma, GitHub, Notion, Supabase)와 정확히 같았다.
+- config.toml의 [plugins] 항목(google-calendar, slack 등 enabled)은 설정 화면 목록에 없어 근거로 쓰지 않는다.
+- 사용 방법: .codex 폴더 안의 plugins 폴더를 zip으로 묶어 ChatGPT 내보내기와 함께 넣는다. 경로 이름만 읽고 파일 내용은 풀지 않는다. 로그인 정보(auth.json)·세션 기록은 받지 않는다.
+- 본인 파일 확인: plugins 폴더 zip(약 180MB)과 ChatGPT 내보내기를 함께 넣자 설치 플러그인 6개를 찾았고, 추천 카드 GitHub(코딩)·Notion(글쓰기)에 "이미 설치됨"이 붙음. 서버 요청 0건.
+- 한계: 시스템 기본 목록은 이름으로 뺀다. Codex가 기본 플러그인을 늘리면 목록을 고쳐야 한다. 다른 사용자 PC에서는 확인하지 않았다.
+
+## 2026-11-17 ChatGPT·Codex 플러그인 찾기
+- Codex PC 파일에는 설치한 플러그인과 기본 제공 몇 개만 있고 전체 목록은 없다. ChatGPT와 Codex는 같은 디렉터리를 쓰므로 chatgpt.com/plugins 공개 화면에서 모은 5,390개(2026-11-12, 카테고리 16개)를 web/public/chatgpt-plugins-2026-11-12.json(약 840KB)으로 넣었다(eval/recommend/build_chatgpt_plugins.mjs).
+- 화면: Claude와 같은 "플러그인 찾기"를 ChatGPT 기록에도 보인다. 순서는 디렉터리 표시 순(설치 수는 공개되지 않음), 설명은 영문 그대로(한국어는 추천 후보 22개만), 각 항목에 디렉터리 링크. 펼칠 때만 내려받는다.
+- 본인 파일 확인: 5,390개 표시, figma 검색 1건, Codex plugins 폴더에서 찾은 GitHub·Figma에 "이미 설치됨".
+- 이름이 같은 항목 17개는 디렉터리 id로 구분한다.

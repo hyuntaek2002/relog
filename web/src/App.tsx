@@ -235,7 +235,7 @@ export default function App() {
     ? buildSnapshot({ platform, stats: s, utterances: result.utterances, okIds: result.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: cls.linear, candidates: eff.candidates, detect: eff.summary, subByConversation: subByConversation(result.conversations) })
     : null
   const detected = result ? detectFeatures(result.conversations) : []
-  const installed = result ? installedPlugins(result.conversations) : [] // Claude Code 기록의 설치 플러그인 id
+  const installed = result ? [...installedPlugins(result.conversations), ...result.codexPlugins] : [] // Claude Code 기록 + Codex plugins 폴더의 설치 플러그인
   const prescriptions = snapshot && ctx ? recommend(snapshot, withDetected(ctx, detected), feedback) : []
   function onFeedback(id: string, f: Feedback) {
     const next = { ...feedback, [id]: f }
@@ -309,7 +309,7 @@ export default function App() {
         <input type="file" accept=".zip" multiple onChange={(e) => onFile(e.target.files)} />
         {result ? '다른 파일 분석' : 'ChatGPT·Claude 내보내기 zip을 끌어다 놓거나 클릭'}
       </label>
-      {!result && <p className="detail">Claude Code 기록(.claude 폴더 안의 projects 폴더를 zip으로 묶은 것)도 같이 넣을 수 있습니다.</p>}
+      {!result && <p className="detail">Claude Code 기록(.claude 폴더 안의 projects 폴더를 zip으로 묶은 것)도 같이 넣을 수 있습니다. Codex에 설치한 플러그인을 추천에서 '이미 설치됨'으로 보려면 .codex 폴더 안의 plugins 폴더를 zip으로 묶어 같이 넣으세요(폴더 이름만 읽습니다).</p>}
 
       {step !== 'idle' && step !== 'done' && ( // 진행 막대는 분석 중에만
         <>
@@ -382,7 +382,7 @@ export default function App() {
                 <>
                   <p className="label">대화 종류별 플러그인{platform === 'chatgpt' ? ' (ChatGPT·Codex)' : ''}<Help text={`많이 쓴 대화 종류 순입니다. 그 종류 메시지가 ${TASK_PLUGIN_MIN_MESSAGES}개 이상일 때만 플러그인을 권합니다. ${platform === 'claude' ? 'Claude Code 기록의 메시지는 모두 코딩으로 셉니다. ' : 'ChatGPT와 Codex는 같은 플러그인 목록을 써서, 같은 이름으로 Codex에도 설치할 수 있습니다. '}효과는 아직 검증되지 않았습니다.`} /></p>
                   <TaskPlugins snapshot={snapshot} installed={installed} platform={platform} notes={notes} />
-                  {platform === 'claude' && <PluginSearch installed={installed} />}
+                  <PluginSearch key={platform} installed={installed} platform={platform} />
                 </>
               )}
             </>
@@ -443,6 +443,7 @@ export default function App() {
               <table>
                 <tbody>
                   <tr><td>읽은 파일</td><td>{result.files.join(', ')}</td></tr>
+                  {result.codexPlugins.length > 0 && <tr><td>Codex 설치 플러그인</td><td>{result.codexPlugins.join(', ')}</td></tr>}
                   <tr><td>AI 답변 수</td><td>{s.assistantTurns}</td></tr>
                   <tr><td>비교한 내 메시지 (메시지 2개 이상인 대화)</td><td>{s.judgeableUserTurns}</td></tr>
                   <tr><td>내 메시지 분량 (토큰, 추정)</td><td>{s.userTokenEstimate.toLocaleString()}</td></tr>

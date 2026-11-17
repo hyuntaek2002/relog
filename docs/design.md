@@ -25,7 +25,7 @@
 | 모듈 | 위치 | 설계 요점 |
 |---|---|---|
 | 분석 워커 | web/src/worker/analyze.worker.ts | 파일을 8MB 조각으로 읽어 fflate 스트리밍 해제. zip 여러 개 병합. 항목별로 파서에 넘겨 zip 전체를 메모리에 올리지 않는다. |
-| 파서 | web/src/parser/ | chatgpt.ts(mapping + current_node 활성 경로), claude.ts(chat_messages 트리), claudeCode.ts(세션 .jsonl). 공통 출력은 Conversation(id, platform, client, turns, toolNames, pluginNames). 필드가 빠진 대화는 오류로 기록하고 계속한다. |
+| 파서 | web/src/parser/ | chatgpt.ts(mapping + current_node 활성 경로), claude.ts(chat_messages 트리), claudeCode.ts(세션 .jsonl), codexPlugins.ts(Codex plugins 폴더 zip의 경로 이름에서 설치 플러그인만 뽑음, 내용은 풀지 않음). 공통 출력은 Conversation(id, platform, client, turns, toolNames, pluginNames). 필드가 빠진 대화는 오류로 기록하고 계속한다. |
 | 정규화 | parser/normalize.ts | 코드 블록 → [CODE_BLOCK: 언어], 정보량 없는 메시지 제외(skipped), 짧고 문맥 의존(context_required), 토큰 근사. |
 | 임베딩 | worker/embed.worker.ts | transformers.js(ONNX Runtime Web), multilingual-e5-small q8, "query:" 접두어, WebGPU 우선·WASM 기본. 분석이 끝나면 워커를 종료해 메모리를 돌려준다. 비교군 static-e5(정적 표). |
 | 과업 분류 | classify/classifier.ts | 제품 기본은 D 선형 분류기(임베딩에 가중치를 곱해 8유형 + 기타 중 점수가 가장 높은 것. 가중치는 예시 발화와 라벨된 공개 표본으로 학습해 labeled-centroids.json에 넣는다. 학습은 eval/classify/linear.mjs, build_centroids.mjs). 다른 임베딩 모델이면 가중치를 쓰지 않고 B로 대신한다. B 유형별 중심점(예시 발화의 임베딩 합 + 라벨 표본의 유형별 임베딩 합)과 C k-NN(예시 발화)은 개발 패널에서 비교용. A(TF-IDF+선형)는 평가 스크립트에만 둔다. 비교 실험에서 Macro F1이 D 0.52, B·예시+학습 0.45(기타 포함 0.49), C·예시만 0.36이었다. Claude Code 세션 메시지는 코딩으로 고정하고 세션 단위 키워드로 코딩 세부를 나눈다(codingSub.ts). |

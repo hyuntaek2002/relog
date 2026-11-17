@@ -1,7 +1,8 @@
 // 플러그인 찾기 데이터 형식과 검색 규칙(화면 없이 Node 테스트에서도 쓰므로 .ts로 분리)
-export interface PluginEntry { n: string; s: string; r: string; c: string[]; i: number | null; a: boolean; k?: string } // 이름·영문 요약·저장소·카테고리 slug·설치 수·Anthropic 작성·한국어 한 줄
+export interface PluginEntry { n: string; s: string; r: string; c: string[]; i: number | null; a: boolean; k?: string; id?: string } // 이름·영문 요약·저장소·카테고리 slug·설치 수·Anthropic 작성·한국어 한 줄·디렉터리 id(ChatGPT)
 export interface PluginFile { format: string; fetchedAt: string; note: string; categories: Record<string, string>; plugins: PluginEntry[] }
-export const PLUGIN_FILE = 'plugins-2026-11-10.json'
+// Claude: 탐색 탭(설치 수 순). ChatGPT·Codex: 공용 디렉터리 chatgpt.com/plugins(표시 순서, 설치 수 비공개). 만드는 법은 eval/recommend/build_chatgpt_plugins.mjs
+export const PLUGIN_FILES = { claude: 'plugins-2026-11-10.json', chatgpt: 'chatgpt-plugins-2026-11-12.json' } as const
 export const PLUGIN_FORMAT = 'relog-plugins-1'
 
 // 검색어는 공백으로 나눈 모든 조각이 이름·요약·한국어 설명 중 어딘가에 들어 있어야 한다. 카테고리는 slug 하나로 거른다.
