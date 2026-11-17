@@ -1,6 +1,7 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "web", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev", "--prefix", "web", "--", "--port", "5173", "--strictPort"], "port": 5173 }
+    { "name": "web", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev", "--prefix", "web", "--", "--port", "5173", "--strictPort"], "port": 5173 },
+    { "name": "server", "runtimeExecutable": "powershell", "runtimeArgs": ["-NoProfile", "-Command", "Set-Location C:/Dev/relog/server; ./mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=dev'"], "port": 8080 }
   ]
 }

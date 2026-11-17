@@ -10,7 +10,13 @@ export const STORAGE_MODE_KEY = 'relog-storage-mode'
 export const loadStorageMode = (): StorageMode => { try { return localStorage.getItem(STORAGE_MODE_KEY) === 'local' ? 'local' : 'none' } catch { return 'none' } }
 
 const fmt = (ms: number) => new Date(ms).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
-const fmtRange = (r: [number, number] | null) => (r ? `${fmt(r[0])} ~ ${fmt(r[1] - 1)}` : '-')
+// 기간이 해를 넘기면 연도를 붙인다(없으면 "11월 25일 ~ 10월 25일"처럼 거꾸로 읽힌다)
+const fmtY = (ms: number) => new Date(ms).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' })
+const fmtRange = (r: [number, number] | null) => {
+  if (!r) return '-'
+  const f = new Date(r[0]).getFullYear() === new Date(r[1] - 1).getFullYear() ? fmt : fmtY
+  return `${f(r[0])} ~ ${f(r[1] - 1)}`
+}
 const taskName = (t: string) => (t === 'all' ? '전체' : t === 'other' ? '기타' : (TASK_LABELS as Record<string, string>)[t] ?? t)
 const pct = (v: number | null) => (v == null ? '-' : `${v.toFixed(1)}%`)
 

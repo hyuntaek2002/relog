@@ -34,9 +34,10 @@ function Pick({ p, how, alt, installed }: { p: PluginPick; how: string; alt?: Pl
   )
 }
 
-function Card({ r, codingSub, installed }: { r: TaskPluginRow; codingSub: Partial<Record<CodingSub, number>>; installed: string[] }) {
+function Card({ r, codingSub, installed, platform }: { r: TaskPluginRow; codingSub: Partial<Record<CodingSub, number>>; installed: string[]; platform: PluginPlatform }) {
   const subs = r.task === 'coding' ? (Object.entries(codingSub) as [CodingSub, number][]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]) : []
-  const subPicks = subs.map(([s, n]) => [s, n, codingSubPlugin(s, n)] as const).filter(([, , sp]) => sp)
+  // 세부 유형 플러그인 후보는 Claude 디렉터리 것뿐이라 ChatGPT에서는 세부 숫자만 보인다
+  const subPicks = platform === 'claude' ? subs.map(([s, n]) => [s, n, codingSubPlugin(s, n)] as const).filter(([, , sp]) => sp) : []
   return (
     <article className={'tp' + (r.status === 'recommend' ? '' : ' muted')}>
       <header className="meta"><b>{TASK[r.task]}</b><span>메시지 {r.count}개 · {Math.round(r.share * 100)}%</span></header>
@@ -59,7 +60,7 @@ export default function TaskPlugins({ snapshot, installed = [], platform = 'clau
   return (
     <div>
       {installed.length > 0 && <p className="detail">설치됨: {installed.join(' · ')}</p>}
-      <div className="tp-grid">{rows.map((r) => <Card key={r.task} r={r} codingSub={snapshot.codingSub ?? {}} installed={installed} />)}</div>
+      <div className="tp-grid">{rows.map((r) => <Card key={r.task} r={r} codingSub={snapshot.codingSub ?? {}} installed={installed} platform={platform} />)}</div>
     </div>
   )
 }

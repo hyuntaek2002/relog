@@ -1,8 +1,9 @@
 {
-  "version": "pcand-0.1.0",
-  "note": "대화 종류별 플러그인 후보. 제품(ChatGPT)은 종류별 첫 후보만 쓴다. 나머지 후보는 내 메시지와 가장 가까운 것을 고르는 맞춤 방식 평가용(eval/recommend, 실제 기록에서 자주 빗나가 제품에는 넣지 않음). 이름은 ChatGPT 디렉터리(chatgpt.com/plugins, 2026-11-12 확인)와 Claude 목록(web/public/plugins-2026-11-10.json)에 있는 것만.",
-  "chatgptHowTo": "1) ChatGPT 왼쪽 사이드바에서 플러그인을 엽니다. 2) 검색창에 '{plugin}'을 입력하고 포함된 앱을 확인한 뒤 플러그인 설치를 누릅니다. 3) 대화에서 @{plugin}으로 부르거나 그냥 요청하면 관련될 때 쓰입니다.",
+  "version": "pcand-0.2.0",
+  "note": "대화 종류별 플러그인 후보. 제품(ChatGPT·Codex)은 종류별 첫 후보만 쓴다. 나머지 후보는 내 메시지와 가장 가까운 것을 고르는 맞춤 방식 평가용(eval/recommend, 실제 기록에서 자주 빗나가 제품에는 넣지 않음). 이름은 ChatGPT 디렉터리(chatgpt.com/plugins, 2026-11-12 확인)와 Claude 목록(web/public/plugins-2026-11-10.json)에 있는 것만. ChatGPT와 Codex는 같은 공개 플러그인 목록을 쓴다(learn.chatgpt.com/docs/plugins, 2026-11-17 확인). 그래서 ChatGPT 기록의 추천은 Codex에서도 같은 이름으로 설치할 수 있다.",
+  "chatgptHowTo": "1) ChatGPT 왼쪽 사이드바에서 플러그인을 엽니다. 2) 검색창에 '{plugin}'을 입력하고 포함된 앱을 확인한 뒤 플러그인 설치를 누릅니다. 3) 대화에서 @{plugin}으로 부르거나 그냥 요청하면 관련될 때 쓰입니다. 4) Codex에서는 앱의 플러그인 탭에서 같은 이름을 찾아 설치하거나, CLI에서 /plugins를 열어 설치한 뒤 새 세션을 시작합니다.",
   "chatgptEvidence": "https://help.openai.com/en/articles/20001256-plugins-in-chatgpt",
+  "codexEvidence": "https://learn.chatgpt.com/docs/plugins",
   "chatgptInfo": {
     "GitHub": { "id": "plugin_connector_1p_1a69035c238881919c4190932b2df699", "oneLiner": "PR·이슈·CI를 정리하고 배포 흐름을 다룹니다." },
     "Supabase": { "id": "plugin_asdk_app_69d3e5ee6a708191baa733f7b8931995", "oneLiner": "데이터베이스를 관리하고 조회합니다." },

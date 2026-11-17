@@ -292,11 +292,11 @@ console.log('ledger ok')
   assert.equal(by.writing.status, 'recommend'); assert.equal(by.writing.pick.name, 'Humanizer'); assert.ok(by.writing.how.includes("'Humanizer'"))
   assert.ok(rows.filter((r) => r.status === 'recommend').every((r) => r.pick.evidenceUrl !== '' || r.pick.maker === 'Anthropic'), '근거 URL 또는 Anthropic 제공')
   assert.ok(!rows.some((r) => /낭비|잊었|확실히 개선/.test((r.pick?.oneLiner ?? '') + (r.alt?.oneLiner ?? ''))))
-  // ChatGPT: 종류별 첫 후보와 디렉터리 링크, ChatGPT용 설치 방법
+  // ChatGPT: 종류별 첫 후보와 디렉터리 링크, ChatGPT·Codex 설치 방법(같은 플러그인 목록)
   const snap = { taskCounts: { coding: 40, writing: 0, learning: 0, workdoc: 0, search: 0, ideation: 0, translation: 0, counseling: 30 }, taskShare: {} }
   const cg = Object.fromEntries(resolveTaskPlugins(snap, TASK_PLUGIN_MIN_MESSAGES, 'chatgpt').map((r) => [r.task, r]))
   assert.equal(cg.coding.pick.name, 'GitHub'); assert.ok(cg.coding.pick.evidenceUrl.startsWith('https://chatgpt.com/plugins/plugin_'))
-  assert.equal(cg.counseling.status, 'none'); assert.ok(cg.coding.how.includes("'GitHub'") && cg.coding.how.includes('사이드바'))
+  assert.equal(cg.counseling.status, 'none'); assert.ok(cg.coding.how.includes("'GitHub'") && cg.coding.how.includes('사이드바') && cg.coding.how.includes('/plugins'), 'ChatGPT·Codex 설치 방법')
   assert.ok(Object.values(cg).every((r) => !r.pick || r.pick.oneLiner), '모든 ChatGPT 후보에 한국어 한 줄')
   // 평가 전용 맞춤(eval/recommend): 평소 유사도(m·d)로 표준화한 점수
   const { bestAmong, Q_SCALE } = await import('./recommend/pluginMatch.ts')

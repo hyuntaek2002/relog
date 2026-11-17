@@ -351,7 +351,7 @@ export default function App() {
               {AB ? <AbMode platform={platform} personalized={prescriptions} snapshot={snapshot} weeks={weeks} version={version} ctx={withDetected(ctx, detected)} /> : <Prescriptions items={shownRx} feedback={feedback} onFeedback={onFeedback} installed={installed} />}
               {!AB && (
                 <>
-                  <p className="label">대화 종류별 플러그인<Help text={`많이 쓴 대화 종류 순입니다. 그 종류 메시지가 ${TASK_PLUGIN_MIN_MESSAGES}개 이상일 때만 플러그인을 권합니다. ${platform === 'claude' ? 'Claude Code 기록의 메시지는 모두 코딩으로 셉니다. ' : ''}효과는 아직 검증되지 않았습니다.`} /></p>
+                  <p className="label">대화 종류별 플러그인{platform === 'chatgpt' ? ' (ChatGPT·Codex)' : ''}<Help text={`많이 쓴 대화 종류 순입니다. 그 종류 메시지가 ${TASK_PLUGIN_MIN_MESSAGES}개 이상일 때만 플러그인을 권합니다. ${platform === 'claude' ? 'Claude Code 기록의 메시지는 모두 코딩으로 셉니다. ' : 'ChatGPT와 Codex는 같은 플러그인 목록을 써서, 같은 이름으로 Codex에도 설치할 수 있습니다. '}효과는 아직 검증되지 않았습니다.`} /></p>
                   <TaskPlugins snapshot={snapshot} installed={installed} platform={platform} />
                   {platform === 'claude' && <PluginSearch installed={installed} />}
                 </>
