@@ -31,7 +31,8 @@ type Classified = Extract<EmbedOut, { type: 'classified' }>
 type Step = 'idle' | 'read' | 'analyze' | 'model' | 'classify' | 'done'
 
 const STEPS: [Step, string][] = [['read', '파일 읽기'], ['analyze', '정리'], ['model', '모델 준비'], ['classify', '분석'], ['done', '완료']]
-const MODELS = ['Xenova/multilingual-e5-small', 'Xenova/paraphrase-multilingual-MiniLM-L12-v2', 'static-e5'] as const
+// 첫 항목이 제품 기본. e5-base·large는 개발 패널 속도 비교용(정밀도 실험, docs/measurements.md 2026-11-17)
+const MODELS = ['Xenova/multilingual-e5-small', 'Xenova/paraphrase-multilingual-MiniLM-L12-v2', 'static-e5', 'Xenova/multilingual-e5-base', 'Xenova/multilingual-e5-large'] as const
 const DEFAULT_MODEL = MODELS[0]
 const DEVICE: 'wasm' | 'webgpu' = 'gpu' in navigator ? 'webgpu' : 'wasm'
 const DEV = new URLSearchParams(location.search).has('dev')

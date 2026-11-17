@@ -4,7 +4,8 @@
 // 유형별 건수 차이가 커서(기획 5건, 학습 100건 이상) 유형 가중치를 건수의 역수로 준다.
 const dot = (a, b) => { let s = 0; for (let i = 0; i < a.length; i++) s += a[i] * b[i]; return s }
 
-export function trainLinear(X, y, { l2 = 1e-2, iters = 400, lr = 1, scale = 10 } = {}) {
+// balance: 유형 가중치 = 건수^-balance (1이면 역수, 0이면 가중치 없음). 정밀도 실험(run_precision.mjs)용, 기본값은 1.
+export function trainLinear(X, y, { l2 = 1e-2, iters = 400, lr = 1, scale = 10, balance = 1 } = {}) {
   const dim = X[0].length
   const classes = [...new Set(y)]
   const mean = new Float64Array(dim)
@@ -12,7 +13,9 @@ export function trainLinear(X, y, { l2 = 1e-2, iters = 400, lr = 1, scale = 10 }
   const Xs = X.map((v) => Float64Array.from(v, (x, d) => (x - mean[d]) * scale))
   const yi = y.map((c) => classes.indexOf(c))
   const cnt = classes.map((_, k) => yi.filter((q) => q === k).length)
-  const w = yi.map((k) => 1 / (classes.length * cnt[k])) // 합 1
+  const raw = yi.map((k) => cnt[k] ** -balance)
+  const tot = raw.reduce((a, c) => a + c, 0)
+  const w = raw.map((x) => x / tot) // 합 1 (balance=1이면 1 / (유형 수 × 건수)와 같다)
   const W = classes.map(() => new Float64Array(dim)), b = new Float64Array(classes.length)
   for (let it = 0; it < iters; it++) {
     const gW = classes.map(() => new Float64Array(dim)), gb = new Float64Array(classes.length)
