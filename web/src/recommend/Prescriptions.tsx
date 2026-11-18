@@ -16,7 +16,12 @@ const CATEGORY: Record<string, string> = { feature: '기능', plugin: '플러그
 // "1) … 2) … 3) …" 형식의 30초 사용법을 단계 배열로
 export const steps = (how: string) => how.split(/\s*\d\)\s*/).map((s) => s.trim()).filter(Boolean)
 
-export default function Prescriptions({ items, feedback, onFeedback, installed = [], notes = {} }: { items: Prescription[]; feedback: FeedbackMap; onFeedback: (id: string, f: Feedback) => void; installed?: string[]; notes?: Record<string, RepeatNote> }) {
+// 적용함: 실제로 써 봤다는 내 표시. 분석 기록에 같이 남겨 다음 분석 때 그 카드가 겨냥한 대화 종류의 변화를 보여 준다.
+export function AppliedButton({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+  return <button className={on ? 'on' : ''} title="실제로 써 봤으면 눌러 두세요. 다음 분석 때 적용한 뒤의 변화를 따로 보여 줍니다." onClick={onToggle}>{on ? '적용함 ✓' : '적용함'}</button>
+}
+
+export default function Prescriptions({ items, feedback, onFeedback, installed = [], notes = {}, applied = [], onApplied }: { items: Prescription[]; feedback: FeedbackMap; onFeedback: (id: string, f: Feedback) => void; installed?: string[]; notes?: Record<string, RepeatNote>; applied?: string[]; onApplied?: (key: string) => void }) {
   const [open, setOpen] = useState<Record<string, boolean>>({})
   if (items.length === 0) return <p className="detail">{NO_RECOMMENDATION}</p>
   return (
@@ -36,6 +41,7 @@ export default function Prescriptions({ items, feedback, onFeedback, installed =
             {steps(p.how).map((s, i) => <li key={i}>{s}</li>)}
           </ol>
           <p className="actions">
+            {onApplied && <AppliedButton on={applied.includes(p.catalogId)} onToggle={() => onApplied(p.catalogId)} />}
             {FB.map(([f, label, tip]) => (
               <button key={f} title={tip} className={feedback[p.catalogId] === f ? 'on' : ''} onClick={() => onFeedback(p.catalogId, f)}>{label}</button>
             ))}

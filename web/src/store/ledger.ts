@@ -171,9 +171,10 @@ export const conversationsOf = (entries: LedgerEntry[]) => new Set(entries.map((
 // 과업 유형별 발화 수·반복 의심 수·비율을 나란히 놓는다. 모델 응답 이행 여부와 무관한 집계 숫자.
 export interface TaskCompareRow {
   task: string
-  before: { ok: number; flagged: number; ratio: number | null }
-  after: { ok: number; flagged: number; ratio: number | null }
+  before: { ok: number; flagged: number; ratio: number | null; share: number | null }
+  after: { ok: number; flagged: number; ratio: number | null; share: number | null }
   delta: number | null // after.ratio - before.ratio (퍼센트포인트). 한쪽이라도 표본이 없으면 null
+  shareDelta: number | null // 그 종류가 전체 메시지에서 차지한 비중(%)의 변화(퍼센트포인트)
 }
 export interface TaskCompare {
   beforeRange: [number, number] | null // [첫 주 시작, 마지막 주 끝)
@@ -201,11 +202,16 @@ export function compareSides(before: PeriodSnapshot[], after: PeriodSnapshot[], 
     return { ok, flagged, okAll, flaggedAll }
   }
   const b = sum(before), a = sum(after)
-  const side = (ok: number, flagged: number) => ({ ok, flagged, ratio: ok >= minSamples ? (100 * flagged) / ok : null })
+  // share: 그 쪽 전체 분류된 메시지 중 이 종류의 비중(%). 전체가 minSamples 미만이면 비운다
+  const side = (ok: number, flagged: number, all: number) => ({ ok, flagged, ratio: ok >= minSamples ? (100 * flagged) / ok : null, share: all >= minSamples ? (100 * ok) / all : null })
   const tasks = [...new Set([...Object.keys(b.ok), ...Object.keys(a.ok)])].sort((x, y) => (a.ok[y] ?? 0) + (b.ok[y] ?? 0) - ((a.ok[x] ?? 0) + (b.ok[x] ?? 0)))
-  const row = (task: string, bs: ReturnType<typeof side>, as: ReturnType<typeof side>): TaskCompareRow => ({ task, before: bs, after: as, delta: bs.ratio != null && as.ratio != null ? as.ratio - bs.ratio : null })
-  const rows = tasks.map((t) => row(t, side(b.ok[t] ?? 0, b.flagged[t] ?? 0), side(a.ok[t] ?? 0, a.flagged[t] ?? 0)))
+  const row = (task: string, bs: ReturnType<typeof side>, as: ReturnType<typeof side>): TaskCompareRow => ({
+    task, before: bs, after: as,
+    delta: bs.ratio != null && as.ratio != null ? as.ratio - bs.ratio : null,
+    shareDelta: bs.share != null && as.share != null ? as.share - bs.share : null,
+  })
+  const rows = tasks.map((t) => row(t, side(b.ok[t] ?? 0, b.flagged[t] ?? 0, b.okAll), side(a.ok[t] ?? 0, a.flagged[t] ?? 0, a.okAll)))
   const range = (ws: PeriodSnapshot[]): [number, number] | null => (ws.length ? [ws[0].periodStart, ws[ws.length - 1].periodEnd] : null)
-  return { beforeRange: range(before), afterRange: range(after), rows, total: row('all', side(b.okAll, b.flaggedAll), side(a.okAll, a.flaggedAll)) }
+  return { beforeRange: range(before), afterRange: range(after), rows, total: row('all', side(b.okAll, b.flaggedAll, b.okAll), side(a.okAll, a.flaggedAll, a.okAll)) }
 }
 export type { Conversation }

@@ -21,7 +21,10 @@ public class AnalysisRecordController {
                             @NotBlank @Size(max = 200) @Pattern(regexp = "[\\w.|@/+-]+") String versionKey,
                             @Min(0) int judgeable, @Min(0) int high, @Min(0) int tokenEstimate,
                             @NotNull @Size(max = 20) List<@NotBlank @Pattern(regexp = "[a-z0-9_.-]{1,64}") String> rx,
-                            @NotNull @Size(max = 20) List<@NotBlank @Pattern(regexp = "[^<>\\p{Cntrl}]{1,80}") String> plugins) {}
+                            @NotNull @Size(max = 20) List<@NotBlank @Pattern(regexp = "[^<>\\p{Cntrl}]{1,80}") String> plugins,
+                            // 적용함 표시한 항목 키와 항목 → 겨냥한 대화 종류. 예전 클라이언트는 보내지 않으므로 비어도 된다.
+                            @Size(max = 40) List<@NotBlank @Pattern(regexp = "[^<>\\p{Cntrl}]{1,80}") String> applied,
+                            @Size(max = 60) Map<@Pattern(regexp = "[^<>\\p{Cntrl}]{1,80}") String, @Pattern(regexp = "[a-z]{1,20}") String> tasks) {}
 
     private static final int MAX_PER_USER = 100;
     private final AnalysisRecordRepository repo;
@@ -36,7 +39,9 @@ public class AnalysisRecordController {
         var e = repo.findByUserAndPlatformAndLastAt(me, d.platform(), d.lastAt()).orElseGet(AnalysisRecordEntity::new);
         e.user = me; e.platform = d.platform(); e.savedAt = d.savedAt(); e.firstAt = d.firstAt(); e.lastAt = d.lastAt();
         e.versionKey = d.versionKey(); e.judgeable = d.judgeable(); e.high = d.high(); e.tokenEstimate = d.tokenEstimate();
-        e.rx = Json.write(d.rx()); e.plugins = Json.write(d.plugins()); e.updatedAt = Instant.now();
+        e.rx = Json.write(d.rx()); e.plugins = Json.write(d.plugins());
+        e.applied = Json.write(d.applied() == null ? List.of() : d.applied()); e.tasks = Json.write(d.tasks() == null ? Map.of() : d.tasks());
+        e.updatedAt = Instant.now();
         repo.save(e);
         var all = repo.findByUserOrderByLastAtAsc(me);
         if (all.size() > MAX_PER_USER) repo.deleteAll(all.subList(0, all.size() - MAX_PER_USER));
@@ -48,13 +53,17 @@ public class AnalysisRecordController {
     public List<RecordDto> list() {
         UserAccount me = BearerTokenFilter.current();
         return repo.findByUserOrderByLastAtAsc(me).stream().map(e -> new RecordDto(e.savedAt, e.platform, e.firstAt, e.lastAt, e.versionKey,
-                e.judgeable, e.high, e.tokenEstimate, strings(e.rx), strings(e.plugins))).toList();
+                e.judgeable, e.high, e.tokenEstimate, strings(e.rx), strings(e.plugins), strings(e.applied), stringMap(e.tasks))).toList();
     }
 
     @DeleteMapping
     @Transactional
     public Map<String, Long> deleteAll() {
         return Map.of("deleted", repo.deleteByUser(BearerTokenFilter.current()));
+    }
+
+    private static Map<String, String> stringMap(String json) {
+        try { return json == null ? Map.of() : Json.MAPPER.readValue(json, new tools.jackson.core.type.TypeReference<Map<String, String>>() {}); } catch (Exception ex) { return Map.of(); }
     }
 
     private static List<String> strings(String json) {

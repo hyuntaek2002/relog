@@ -460,3 +460,8 @@
 - 브라우저 확인(로컬 웹 + 로컬 서버, 시험용 계정은 확인 뒤 삭제): 토큰 없음 → 로그인 화면, 가입 시 비밀번호 확인 불일치 안내, 가입 → 분석 화면과 상단 계정·로그아웃, 로그아웃 → 로그인 화면, 틀린 비밀번호 → 서버 오류 문구, 가짜 토큰 → 401로 토큰을 지우고 로그인 화면, 서버 꺼짐 → 다시 시도 안내.
 - 로그인이 필수가 되면서, 로그인한 경우에 서버로 올리던 분석 기록(요약 숫자와 추천 항목 이름)이 모든 사용자에게 올라간다. 가입 화면에 이 내용을 적었다.
 - 내보내기 안내: 공식 도움말 기준. ChatGPT는 설정 → 데이터 제어 → 내보내기 → 내보내기 확인, 이메일(또는 문자) 링크, 최대 7일, 링크 24시간. Claude는 웹·데스크톱의 설정 → Privacy → Export data, 이메일 링크 24시간(한 번만 열릴 수 있음), 휴대폰 앱은 불가. Claude는 받은 파일 중 conversations로 시작하는 zip을 넣는다.
+
+## 2026-11-18 서버 공개 배포와 도메인 연결
+- 서버: AWS Lightsail 서울(2GB, Ubuntu 24.04), 고정 IP, Docker Compose(MySQL + 서버 + Caddy HTTPS). `https://api.relog.ai.kr/api/health` 정상, `https://relog.ai.kr` 출처만 허용(다른 출처 403).
+- 웹: 저장소 변수 RELOG_API_BASE=https://api.relog.ai.kr, Pages 사용자 도메인 relog.ai.kr(인증서 승인, 2027-02-16 만료 전 자동 갱신), HTTPS 강제 켬. 예전 주소 hyuntaek2002.github.io/relog/는 relog.ai.kr로 넘어간다.
+- 확인: https://relog.ai.kr에서 로그인 화면, 배포 번들의 서버 주소가 api.relog.ai.kr, 페이지에서 서버 상태 요청 성공. 운영 서버라 시험 계정 가입은 하지 않았다.

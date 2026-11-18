@@ -52,6 +52,7 @@ export interface Prescription {
   signalsUsed: string[]
   score: number
   pluginName?: string // 플러그인 카드가 가리키는 구체 플러그인 이름(howTo의 {plugin}에 넣은 값). '이미 설치됨' 표시용
+  task?: SnapshotTask // 이 카드가 겨냥한 대화 종류(다음 분석 때 그 종류의 변화로 효과를 본다). 없으면 전체
 }
 
 export interface ScoredItem {
@@ -151,12 +152,20 @@ function why(snapshot: UsageSnapshot, s: ScoredItem): string {
   return parts.join('. ') + '.'
 }
 
-// howTo의 {plugin} 자리에 다시 말한 지시가 가장 몰린 대화 종류의 항목 이름을 넣는다
-function fillHow(item: CatalogItem, snapshot: UsageSnapshot): { how: string; pluginName?: string } {
+// howTo의 {plugin} 자리에 다시 말한 지시가 가장 몰린 대화 종류의 항목 이름을 넣는다. 다시 말한 지시가 없으면 가장 많이 한 종류.
+// catalog-0.3.2: byTask는 '대화 종류별 플러그인' 카드(taskPlugins·plugin-candidates)의 첫 후보와 같게 맞춤
+function fillHow(item: CatalogItem, snapshot: UsageSnapshot): { how: string; pluginName?: string; task?: SnapshotTask } {
   if (!item.howTo30s.includes('{plugin}')) return { how: item.howTo30s }
-  const top = (Object.entries(snapshot.restatement.perTask) as [SnapshotTask, number][]).sort((a, b) => b[1] - a[1])[0]
+  const desc = (o: Partial<Record<SnapshotTask, number>>) => (Object.entries(o) as [SnapshotTask, number][]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1])[0]
+  const top = desc(snapshot.restatement.perTask) ?? desc(snapshot.taskShare)
   const name = (top && item.byTask?.[top[0]]) || undefined
-  return { how: item.howTo30s.replaceAll('{plugin}', name ?? '내 작업에 맞는 플러그인'), pluginName: name }
+  return { how: item.howTo30s.replaceAll('{plugin}', name ?? '내 작업에 맞는 플러그인'), pluginName: name, task: name ? top[0] : undefined }
+}
+
+// 카드가 겨냥한 대화 종류: {plugin}으로 고른 종류, 아니면 과업 신호가 걸린 종류 중 비중이 가장 큰 것
+function targetTask(item: CatalogItem, snapshot: UsageSnapshot, filled?: SnapshotTask): SnapshotTask | undefined {
+  if (filled) return filled
+  return item.taskSignals.filter((ts) => (snapshot.taskShare[ts.task] ?? 0) >= ts.minShare).sort((a, b) => (snapshot.taskShare[b.task] ?? 0) - (snapshot.taskShare[a.task] ?? 0))[0]?.task
 }
 
 // 3)·4) 점수 > 0, 상위 3개, category당 최대 2개
@@ -171,6 +180,7 @@ export function recommend(snapshot: UsageSnapshot, ctx: UserContext, feedback: F
     const n = perCategory.get(s.item.category) ?? 0
     if (n >= 2) continue
     perCategory.set(s.item.category, n + 1)
+    const filled = fillHow(s.item, snapshot)
     out.push({
       catalogId: s.item.id,
       name: s.item.name,
@@ -179,7 +189,8 @@ export function recommend(snapshot: UsageSnapshot, ctx: UserContext, feedback: F
       summary: summaryOf(snapshot, s),
       why: why(snapshot, s),
       what: s.item.oneLiner,
-      ...fillHow(s.item, snapshot),
+      ...filled,
+      task: targetTask(s.item, snapshot, filled.task),
       caveat: s.item.caveat,
       signalsUsed: [...s.problemHits, ...s.taskHits],
       score: Math.round(s.score * 100) / 100,

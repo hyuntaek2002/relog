@@ -11,10 +11,10 @@ import AbMode from './recommend/AbMode'
 import RecommendDev from './recommend/RecommendDev'
 import TaskPlugins from './recommend/TaskPlugins'
 import PluginSearch from './recommend/PluginSearch'
-import { installedPlugins, resolveTaskPlugins, TASK_PLUGIN_MIN_MESSAGES } from './recommend/taskPluginRules'
+import { codingSubPlugin, installedPlugins, resolveTaskPlugins, TASK_PLUGIN_MIN_MESSAGES } from './recommend/taskPluginRules'
 import Help from './ui/Help'
 import { buildSnapshot } from './recommend/snapshot'
-import { pinCodeToCoding, subByConversation } from './classify/codingSub'
+import { pinCodeToCoding, subByConversation, type CodingSub } from './classify/codingSub'
 import { CATALOG_VERSION, RECOMMENDATION_RULE_VERSION, recommend, type Feedback, type FeedbackMap, type Platform, type Prescription, type UserContext } from './recommend/recommend'
 import ExportGuide from './ExportGuide'
 import { doneFraction, fmtRemaining, remainingMs } from './worker/eta'
@@ -22,7 +22,7 @@ import Trend, { CompareTable, ReportFile, StorageChoice, loadStorageMode, STORAG
 import SyncPanel from './store/SyncPanel'
 import { deleteServerRecords, getToken, listServerRecords, putServerRecord, sendFeedback } from './store/sync'
 import History from './store/History'
-import { clearRecords, compareSince, loadRecords, previousRecords, putRecord, putRecords, repeatNotes, type AnalysisRecord } from './store/records'
+import { clearRecords, compareSince, loadApplied, loadRecords, previousRecords, promptKey, putRecord, putRecords, repeatNotes, saveApplied, type AnalysisRecord } from './store/records'
 import { applyDismissed, loadDismissed, saveDismissed } from './detect/corrections'
 import { aggregateWeekly, buildLedger, versionKey, type AnalysisVersion, type LedgerEntry, type PeriodSnapshot, type TaskCompare } from './store/ledger'
 import { clearAll, getLedger, putLedger } from './store/db'
@@ -104,6 +104,10 @@ export default function App() {
   const [serverTrend, setServerTrend] = useState<(TaskCompare & { weeks: number }) | null>(null) // 서버 보관 집계로 계산한 변화
   const [records, setRecords] = useState<AnalysisRecord[]>(loadRecords) // 분석 기록(전후 비교용)
   const [prevSel, setPrevSel] = useState(0) // 비교할 지난 기록(0 = 가장 최근)
+  const [applied, setApplied] = useState<string[]>(loadApplied) // '적용함'으로 표시한 항목 키
+  function onApplied(key: string) {
+    setApplied((cur) => { const next = cur.includes(key) ? cur.filter((k) => k !== key) : [...cur, key]; saveApplied(next); return next })
+  }
 
   // 서버 동기화에 로그인돼 있으면 다른 기기에서 남긴 분석 기록도 합친다
   useEffect(() => { if (getToken()) listServerRecords().then((rs) => setRecords(putRecords(rs))).catch(() => {}) }, [])
@@ -124,7 +128,7 @@ export default function App() {
     setLedger([]); setWeeks([]); setFeedback({}); setStorageMode('none'); setRecords([])
   }
   function onClearRecords() {
-    if (!confirm('저장된 분석 기록(요약 숫자와 추천 이름)을 모두 지웁니다. 서버 동기화 중이면 서버 기록도 지웁니다. 계속할까요?')) return
+    if (!confirm('저장된 분석 기록(요약 숫자, 추천 이름, 적용함 표시)을 모두 지웁니다. 서버 동기화 중이면 서버 기록도 지웁니다. 계속할까요?')) return
     clearRecords(); setRecords([]); setPrevSel(0)
     if (getToken()) deleteServerRecords().catch(() => {})
   }
@@ -256,9 +260,18 @@ export default function App() {
   const shownRx = serverRx ?? prescriptions
 
   // 분석 기록: 이번 회차의 요약 숫자 + 추천 항목 이름. 분석이 끝나면 자동 저장(같은 내보내기는 덮어씀)
-  const pluginNames = snapshot ? resolveTaskPlugins(snapshot, TASK_PLUGIN_MIN_MESSAGES, platform).flatMap((r) => (r.status === 'recommend' && r.pick ? [r.pick.name] : [])) : []
+  const pluginRows = snapshot ? resolveTaskPlugins(snapshot, TASK_PLUGIN_MIN_MESSAGES, platform) : []
+  const pluginNames = pluginRows.flatMap((r) => (r.status === 'recommend' && r.pick ? [r.pick.name] : []))
+  const promptKeys = pluginRows.filter((r) => r.count > 0).map((r) => promptKey(r.task))
+  // 항목 키 → 겨냥한 대화 종류. 다음 분석 때 그 종류의 변화로 효과를 본다(코딩 세부 플러그인은 코딩).
+  const itemTasks: Record<string, string> = Object.fromEntries([
+    ...shownRx.flatMap((p) => (p.task ? [[p.catalogId, p.task]] : [])),
+    ...pluginRows.flatMap((r) => (r.pick ? [[r.pick.name, r.task]] : [])),
+    ...pluginRows.map((r) => [promptKey(r.task), r.task]),
+    ...Object.entries(snapshot?.codingSub ?? {}).flatMap(([sub, n]) => { const sp = codingSubPlugin(sub as CodingSub, n ?? 0); return sp ? [[sp.pick.name, 'coding']] : [] }),
+  ])
   const curRecord: AnalysisRecord | null = step === 'done' && !AB && snapshot && eff && version && s && s.firstAt != null && s.lastAt != null
-    ? { savedAt: 0, platform, firstAt: s.firstAt, lastAt: s.lastAt, versionKey: versionKey(version), judgeable: eff.summary.judgeable, high: eff.summary.byGrade.high, tokenEstimate: eff.summary.tokenEstimate, rx: shownRx.map((p) => p.catalogId), plugins: pluginNames }
+    ? { savedAt: 0, platform, firstAt: s.firstAt, lastAt: s.lastAt, versionKey: versionKey(version), judgeable: eff.summary.judgeable, high: eff.summary.byGrade.high, tokenEstimate: eff.summary.tokenEstimate, rx: shownRx.map((p) => p.catalogId), plugins: pluginNames, applied: applied.slice(-40), tasks: Object.fromEntries(Object.entries(itemTasks).filter(([k]) => applied.includes(k) || shownRx.some((p) => p.catalogId === k) || pluginNames.includes(k) || promptKeys.includes(k))) }
     : null
   const recKey = curRecord ? JSON.stringify(curRecord) : ''
   useEffect(() => {
@@ -270,7 +283,7 @@ export default function App() {
   const prevs = curRecord ? previousRecords(records, curRecord) : []
   const prevRecord = prevs[prevSel] ?? null
   const sinceCmp = prevRecord ? compareSince(weeks, prevRecord) : null
-  const notes = repeatNotes(prevRecord, sinceCmp, [...(curRecord?.rx ?? []), ...pluginNames])
+  const notes = repeatNotes(prevRecord, sinceCmp, [...(curRecord?.rx ?? []), ...pluginNames, ...promptKeys, ...Object.keys(itemTasks)])
 
   const flagged = eff ? eff.candidates : []
   const codeConvIds = new Set((result?.conversations ?? []).filter((c) => c.client === 'code').map((c) => c.id)) // 개발 패널: 다시 말한 지시 출처 나눔
@@ -389,11 +402,11 @@ export default function App() {
           <p className="label wide">{AB ? '추천 평가' : '추천'}</p>
           {snapshot && ctx && (
             <>
-              {AB ? <AbMode platform={platform} personalized={prescriptions} snapshot={snapshot} weeks={weeks} version={version} ctx={withDetected(ctx, detected)} /> : <Prescriptions items={shownRx} feedback={feedback} onFeedback={onFeedback} installed={installed} notes={notes} />}
+              {AB ? <AbMode platform={platform} personalized={prescriptions} snapshot={snapshot} weeks={weeks} version={version} ctx={withDetected(ctx, detected)} /> : <Prescriptions items={shownRx} feedback={feedback} onFeedback={onFeedback} installed={installed} notes={notes} applied={applied} onApplied={onApplied} />}
               {!AB && (
                 <>
                   <p className="label">대화 종류별 플러그인{platform === 'chatgpt' ? ' (ChatGPT·Codex)' : ''}<Help text={`많이 쓴 대화 종류 순입니다. 그 종류 메시지가 ${TASK_PLUGIN_MIN_MESSAGES}개 이상일 때만 플러그인을 권합니다. ${platform === 'claude' ? 'Claude Code 기록의 메시지는 모두 코딩으로 셉니다. ' : 'ChatGPT와 Codex는 같은 플러그인 목록을 써서, 같은 이름으로 Codex에도 설치할 수 있습니다. '}효과는 아직 검증되지 않았습니다.`} /></p>
-                  <TaskPlugins snapshot={snapshot} installed={installed} platform={platform} notes={notes} />
+                  <TaskPlugins snapshot={snapshot} installed={installed} platform={platform} notes={notes} applied={applied} onApplied={onApplied} />
                   <PluginSearch key={platform} installed={installed} platform={platform} />
                 </>
               )}

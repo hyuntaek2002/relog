@@ -25,7 +25,7 @@ export function StorageChoice({ mode, storedCount, onMode, onClear }: { mode: St
   return (
     <div className="checklist">
       <div className="row">
-        <span>보관<Help text="남기면 메시지별 집계(시각·대화 종류·다시 말한 지시 여부·분량)만 이 브라우저 안에 저장됩니다. 대화 내용은 저장하지 않습니다. 같은 기간을 다시 올리면 덮어쓰고 새 기간만 추가됩니다. 분석 기록(요약 숫자와 추천한 항목 이름)은 이 선택과 상관없이 남고, 변화 탭에서 지울 수 있습니다." /></span>
+        <span>보관<Help text="남기면 메시지별 집계(시각·대화 종류·다시 말한 지시 여부·분량)만 이 브라우저 안에 저장됩니다. 대화 내용은 저장하지 않습니다. 같은 기간을 다시 올리면 덮어쓰고 새 기간만 추가됩니다. 분석 기록(요약 숫자, 추천한 항목 이름, 적용함 표시)은 이 선택과 상관없이 남고, 변화 탭에서 지울 수 있습니다." /></span>
         <label><input type="radio" name="storage" checked={mode === 'none'} onChange={() => onMode('none')} /> 이번만 보기</label>
         <label><input type="radio" name="storage" checked={mode === 'local'} onChange={() => onMode('local')} /> 이 브라우저에 남기기</label>
       </div>
@@ -34,15 +34,19 @@ export function StorageChoice({ mode, storedCount, onMode, onClear }: { mode: St
   )
 }
 
-/** 대화 종류별 이전→이후 비율 표(3열). 변화 방향만 색으로, 원인은 판정하지 않는다. */
+/** 대화 종류별 이전→이후 표: 그 종류가 전체에서 차지한 비중, 그 종류 안의 다시 말한 지시 비율. 변화 방향만 색으로, 원인은 판정하지 않는다. */
+const change = (d: number | null | undefined, unit = '%p') => (d == null ? '-' : Math.abs(d) < 0.05 ? '그대로' : `${d > 0 ? '+' : ''}${d.toFixed(1)}${unit}`)
 export function CompareTable({ cmp, before, after }: { cmp: TaskCompare; before: string; after: string }) {
   return (
     <table>
-      <thead><tr><th>대화 종류</th><th>{before} → {after}</th><th>변화</th></tr></thead>
+      <thead><tr><th>대화 종류</th><th>비중 {before} → {after}<Help text="그 종류가 전체 메시지에서 차지한 비율입니다. 늘었으면 그 종류의 대화를 더 많이 했다는 뜻입니다." /></th><th>다시 말한 지시 {before} → {after}</th><th>변화</th></tr></thead>
       <tbody>
         {[cmp.total, ...cmp.rows].map((r) => (
           <tr key={r.task} className={r.task === 'all' ? 'total' : ''} title={`${before}: 메시지 ${r.before.ok}개 중 ${r.before.flagged}개 · ${after}: 메시지 ${r.after.ok}개 중 ${r.after.flagged}개`}>
             <td>{taskName(r.task)}</td>
+            <td>{r.task === 'all'
+              ? `메시지 ${r.before.ok}개 → ${r.after.ok}개`
+              : <>{pct(r.before.share ?? null)} → {pct(r.after.share ?? null)}{r.shareDelta != null && Math.abs(r.shareDelta) >= 0.05 && <span className="detail"> ({change(r.shareDelta)})</span>}</>}</td>
             <td>{pct(r.before.ratio)} → {pct(r.after.ratio)}</td>
             <td className={r.delta == null ? '' : r.delta < 0 ? 'down' : r.delta > 0 ? 'up' : ''}>{r.delta == null ? '-' : r.delta === 0 ? '그대로' : `${r.delta > 0 ? '늘어남 +' : '줄어듦 '}${r.delta.toFixed(1)}%p`}</td>
           </tr>

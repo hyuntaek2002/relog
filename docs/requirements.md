@@ -51,6 +51,7 @@
 | FR-23 | 통계·처방을 열람하는 최소 뷰어(내부 테스트용). | 표 6 | viewer/Viewer.tsx (?view=1) | 완료 |
 | FR-24 | 일반 추천과 개인화 추천을 블라인드·무작위 순서로 보여 주는 평가 화면. | 표 7 | recommend/AbMode.tsx, abEval.ts (?ab=1), eval/ab/summarize.mjs | 부분(평가·1주 뒤 후속·집계 스크립트 완료, 참여자 평가 대기) |
 | FR-25 | 회원가입·로그인해야 분석 화면을 쓸 수 있다. 첫 화면에 ChatGPT·Claude 내보내기 방법을 안내한다. | 사용자 요청(2026-11-18) | auth/AuthGate.tsx, ExportGuide.tsx | 완료(로컬 서버로 확인, 배포판은 서버 공개 배포 필요) |
+| FR-26 | 전후 비교에 대화 종류별 비중 변화를 함께 보인다. 추천 카드·플러그인·대화 종류별 새 채팅 시작 문구에 '적용함' 표시를 두고, 다음 분석 때 그 항목이 겨냥한 대화 종류의 다시 말한 지시 비율 변화를 붙인다(원인은 판정하지 않음). 대화 내용은 저장하지 않는다. | 사용자 요청(2026-11-18) | store/records.ts, store/History.tsx, store/Trend.tsx, recommend/starterPrompts.ts, 서버 /api/records(applied·tasks) | 완료(로컬 서버로 확인, 운영 서버 재배포 필요) |
 
 ## 4. 비기능 요구사항
 

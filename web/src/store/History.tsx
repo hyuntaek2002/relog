@@ -3,10 +3,15 @@ import { CATALOG } from '../recommend/recommend'
 import { isInstalled } from '../recommend/taskPluginRules'
 import { CompareTable } from './Trend'
 import type { TaskCompare } from './ledger'
-import type { AnalysisRecord, RepeatNote } from './records'
+import { TASK_LABELS } from '../classify/classifier'
+import { effectOf, ledgerTask, type AnalysisRecord, type RepeatNote } from './records'
 
 const day = (ms: number) => new Date(ms).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' })
-const rxName = (id: string) => CATALOG.find((c) => c.id === id)?.name ?? id
+const taskLabel = (t: string) => (TASK_LABELS as Record<string, string>)[t] ?? t
+const rxName = (id: string) => id.startsWith('prompt:') ? `${taskLabel(ledgerTask(id.slice(7)))} 시작 문구` : CATALOG.find((c) => c.id === id)?.name ?? id
+// 효과 한 줄: "그 뒤 코딩 대화의 다시 말한 지시 비율: 줄어듦 2.9%p"
+const effectText = (task: string, d: number | null) =>
+  `그 뒤 ${task === 'all' ? '전체' : `${taskLabel(task)} 대화의`} 다시 말한 지시 비율: ${d == null ? '아직 잴 메시지가 부족합니다' : Math.abs(d) < 0.05 ? '그대로' : d < 0 ? `줄어듦 ${d.toFixed(1)}%p` : `늘어남 +${d.toFixed(1)}%p`}`
 const pct = (r: Pick<AnalysisRecord, 'judgeable' | 'high'>) => (r.judgeable ? `${((100 * r.high) / r.judgeable).toFixed(1)}%` : '-')
 
 /** 전후 비교: 지난 분석 기록(그때 숫자·추천)과 지금. 비율 변화는 지금 분석을 지난 기록의 마지막 메시지 시각으로 나눠 잰다. */
@@ -17,7 +22,10 @@ export default function History({ cur, prevs, sel, onSel, cmp, installed, onClea
   if (!prev) return <p className="detail">이번 분석을 기록했습니다({day(cur.savedAt)}). 다음에 새 내보내기를 올리면 지금과 비교해 보여 줍니다.</p>
   const newMsgs = cmp?.total.after.ok ?? 0
   const now = new Set([...cur.rx, ...cur.plugins])
-  const was = [...prev.rx.map((id) => ({ key: id, name: rxName(id) })), ...prev.plugins.map((n) => ({ key: n, name: n }))]
+  const applied = new Set(prev.applied ?? [])
+  const keys = [...new Set([...prev.rx, ...prev.plugins, ...applied])]
+  const was = keys.map((k) => ({ key: k, name: prev.rx.includes(k) || k.startsWith('prompt:') ? rxName(k) : k, applied: applied.has(k), eff: effectOf(cmp, prev.tasks?.[k]) }))
+    .sort((a, b) => Number(b.applied) - Number(a.applied))
   return (
     <div>
       <p className="detail">
@@ -40,12 +48,14 @@ export default function History({ cur, prevs, sel, onSel, cmp, installed, onClea
         : <p className="detail">지난 기록 뒤로 새 메시지가 없어 비율 변화는 아직 잴 수 없습니다.</p>}
       {was.length > 0 && (
         <>
-          <p className="label">지난번 추천은 지금</p>
+          <p className="label">지난번 추천은 지금<Help text="'적용함'은 지난 분석 화면에서 직접 표시한 항목입니다. 비율 변화는 그 항목이 겨냥한 대화 종류를 지난 기록 전과 후로 나눠 잰 값이고, 그 항목 때문에 바뀌었다고 판정하지는 않습니다." /></p>
           <ul className="history">
             {was.map((w) => (
               <li key={w.key}>
                 <b>{w.name}</b>{' '}
-                {isInstalled(w.name, installed) ? '설치함' : now.has(w.key) ? '이번에도 추천' : '이번엔 추천에서 빠짐'}
+                {w.applied && <span className="tag have">적용함</span>}{' '}
+                {isInstalled(w.name, installed) ? '설치함' : now.has(w.key) ? '이번에도 추천' : w.key.startsWith('prompt:') ? '' : '이번엔 추천에서 빠짐'}
+                {newMsgs > 0 && <span className="detail"> · {effectText(w.eff.task, w.eff.delta)}</span>}
               </li>
             ))}
           </ul>
@@ -59,6 +69,5 @@ export default function History({ cur, prevs, sel, onSel, cmp, installed, onClea
 /** 추천 카드 안 한 줄: 지난 기록에서도 추천했는지, 그 뒤 비율이 어떻게 됐는지 */
 export function RepeatLine({ note }: { note?: RepeatNote }) {
   if (!note) return null
-  const d = note.delta
-  return <p className="detail">{day(note.since)} 기록에서도 추천했습니다. 그 뒤 다시 말한 지시 비율: {d == null ? '아직 잴 메시지가 부족합니다' : d === 0 ? '그대로' : d < 0 ? `줄어듦 ${d.toFixed(1)}%p` : `늘어남 +${d.toFixed(1)}%p`}.</p>
+  return <p className="detail">{day(note.since)} 기록에서도 추천했습니다{note.applied ? '(적용함으로 표시)' : ''}. {effectText(note.task, note.delta)}.</p>
 }

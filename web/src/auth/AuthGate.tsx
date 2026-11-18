@@ -58,7 +58,7 @@ function AuthForm({ initialMsg, onDone }: { initialMsg?: string; onDone: () => v
       {mode === 'register' && <label>비밀번호 확인<input type="password" required minLength={8} autoComplete="new-password" value={pw2} onChange={(e) => setPw2(e.target.value)} /></label>}
       <button type="submit" disabled={busy}>{mode === 'login' ? '로그인' : '가입하고 시작하기'}</button>
       {msg && <p className="err">{msg}</p>}
-      <p className="detail">가입에는 이메일과 비밀번호만 씁니다. 대화 내용은 서버로 보내지 않습니다. 로그인하면 분석 기록(요약 숫자와 추천한 항목 이름)이 계정에 저장되어 다음 분석 때 전후 비교에 쓰이며, 변화 탭에서 지울 수 있습니다.</p>
+      <p className="detail">가입에는 이메일과 비밀번호만 씁니다. 대화 내용은 서버로 보내지 않습니다. 로그인하면 분석 기록(요약 숫자, 추천한 항목 이름, 내가 누른 적용함 표시)이 계정에 저장되어 다음 분석 때 전후 비교에 쓰이며, 변화 탭에서 지울 수 있습니다.</p>
     </form>
   )
 }

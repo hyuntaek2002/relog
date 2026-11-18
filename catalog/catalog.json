@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "catalog-0.3.1",
+  "catalogVersion": "catalog-0.3.2",
   "verifiedNote": "verified=true 항목은 2026-11-03에 공식 도움말(help.openai.com / support.claude.com)에서 기능명·메뉴 경로·요금제를 대조했다. false 항목은 화면에 내보내지 않는다.",
   "items": [
     {
@@ -531,7 +531,7 @@
       "name": "플러그인 디렉터리",
       "category": "plugin",
       "oneLiner": "앱·스킬을 묶은 작업 흐름(플러그인)을 설치해 재사용합니다. 2026-07부터 앱 디렉터리를 대체.",
-      "howTo30s": "1) 왼쪽 사이드바에서 Plugins를 엽니다. 2) 내 작업에 맞는 플러그인을 골라 설명과 필요한 앱 연결을 확인한 뒤 Install plugin을 누릅니다. 3) 대화에서 @플러그인 이름으로 부르거나 그냥 요청하면 관련될 때 자동으로 쓰입니다.",
+      "howTo30s": "1) 왼쪽 사이드바에서 Plugins를 엽니다. 2) 검색창에 '{plugin}'을 입력하고 설명과 필요한 앱 연결을 확인한 뒤 Install plugin을 누릅니다. 3) 대화에서 @{plugin}으로 부르거나 그냥 요청하면 관련될 때 자동으로 쓰입니다.",
       "requiresPlan": [],
       "hardExclude": {
         "featuresInUse": [
@@ -564,7 +564,16 @@
       "verifiedAt": "2026-11-11",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "byTask": {
+        "coding": "GitHub",
+        "writing": "Notion",
+        "learning": "Wolfram",
+        "workdoc": "Google Drive",
+        "search": "Consensus",
+        "ideation": "Miro",
+        "translation": "DeepL"
+      }
     },
     {
       "id": "cg_voice",
@@ -1014,12 +1023,13 @@
       "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
       "evidenceNote": "Claude 한국어 데스크톱 앱 설정→플러그인→탐색 탭 캡처 2026-11-10: Data, UI Design Review, SwiftUI App Design, learn, doc-coauthoring, web-artifacts-builder, Productivity(3.4M), Marketing(2.7M); 내 항목: Engineering, Design, Unity",
       "byTask": {
-        "workdoc": "doc-coauthoring",
-        "writing": "doc-coauthoring",
         "coding": "Engineering",
-        "learning": "learn",
-        "search": "Data",
-        "ideation": "Productivity"
+        "writing": "Humanizer",
+        "learning": "Study Desk",
+        "workdoc": "doc-coauthoring",
+        "search": "Exa Deep Research",
+        "ideation": "Product Management",
+        "translation": "DeepL"
       }
     },
     {

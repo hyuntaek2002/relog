@@ -6,7 +6,7 @@ ChatGPT·Claude 대화 내보내기 파일을 브라우저 안에서만 분석�
 - "다시 말한 지시"는 의심 표시입니다. AI가 지시를 따랐는지는 판정하지 않습니다.
 - 선문대학교 SW중심대학 기업연계 프로젝트(2026년 2학기) 과제입니다.
 
-배포판(서버 없는 로컬 전용 모드): https://hyuntaek2002.github.io/relog/
+배포판: https://relog.ai.kr (서버 https://api.relog.ai.kr, 로그인해야 사용)
 
 ## 구성
 

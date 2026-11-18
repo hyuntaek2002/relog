@@ -27,6 +27,10 @@ public class AnalysisRecordEntity {
     public String rx; // JSON 배열: 추천한 catalogId
     @Column(length = 2000)
     public String plugins; // JSON 배열: 추천한 플러그인 이름
+    @Column(length = 4000)
+    public String applied; // JSON 배열: 적용함으로 표시한 항목 키
+    @Column(length = 6000)
+    public String tasks; // JSON 객체: 항목 키 → 겨냥한 대화 종류
     @Column(nullable = false)
     public Instant updatedAt = Instant.now();
 }

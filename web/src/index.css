@@ -144,6 +144,11 @@ details.conv .cand { margin: 8px 0 0; }
 .tp .tp-line { font-size: 0.95rem; line-height: 1.5; }
 .tp button.link { background: none; border: none; color: var(--accent); cursor: pointer; padding: 0; margin: 6px 0 0; }
 .tp .tp-sub { border-top: 1px dashed var(--line); margin-top: 8px; }
+.tp .tp-starter { border-top: 1px dashed var(--line); margin-top: 8px; padding-top: 6px; color: var(--fg); }
+.tp .tp-starter summary { cursor: pointer; font-size: 0.9rem; color: var(--accent); }
+.tp .tp-starter pre { background: var(--soft, rgba(127,127,127,0.08)); border-radius: 6px; padding: 8px; margin: 6px 0 0; }
+.tp .actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.history .tag.have { border: 1px solid #3a8; color: #3a8; border-radius: 4px; padding: 0 6px; font-size: 0.8rem; }
 
 /* 플러그인 찾기: 추천 아래 펼침. 검색창 + 카테고리 선택 + 설치 수 순 목록 */
 .plugin-search { margin-top: 24px; border-top: 1px solid var(--line); }

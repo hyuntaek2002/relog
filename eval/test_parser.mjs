@@ -193,6 +193,15 @@ const calm = { ...snap, longConversationShare: 0, avgTurnsPerConversation: 3, re
 const r3 = recommend(calm, { plan: 'pro', featuresInUse: [] })
 assert.ok(r3.every((p) => p.grade === '참고'), '문제 신호 없으면 참고만')
 assert.equal(genericDefaults('claude').length, 3)
+// 플러그인 카드는 구체 이름을 말한다: 다시 말한 지시가 몰린 종류, 없으면 가장 많이 한 종류의 첫 후보(대화 종류별 카드와 같은 이름)
+{
+  const only = (id) => CATALOG.filter((c) => c.id === id).map((c) => ({ ...c, verified: true, requiresPlan: [], problemSignals: [{ signal: 'restatement.high', op: '>=', value: 0, weight: 1 }] }))
+  const cgSnap = { ...snap, platform: 'chatgpt', taskShare: { ...snap.taskShare, coding: 0.56 }, restatement: { ...snap.restatement, perTask: { coding: 9, workdoc: 3 } } }
+  const [cg] = recommend(cgSnap, { plan: 'plus', featuresInUse: [] }, {}, only('cg_plugins'))
+  assert.equal(cg.pluginName, 'GitHub'); assert.match(cg.how, /'GitHub'/); assert.ok(!cg.how.includes('{plugin}') && !cg.how.includes('맞는 플러그인'), '일반 문구 대신 이름'); assert.equal(cg.task, 'coding')
+  const [cl] = recommend({ ...calm, taskShare: { ...calm.taskShare, learning: 0.6 } }, { plan: 'pro', featuresInUse: [] }, {}, only('cl_plugins'))
+  assert.equal(cl.pluginName, 'Study Desk', '다시 말한 지시가 없으면 가장 많이 한 종류(학습)')
+}
 console.log('recommend ok', r1.map((p) => `${p.catalogId}:${p.grade}:${p.score}`))
 
 // 기능 자동 감지: 도구 이름 → 카탈로그 id, 대화 수 집계
@@ -518,8 +527,23 @@ console.log('ledger ok')
   assert.equal(cmp.total.before.ok, 20); assert.equal(cmp.total.after.ok, 10, '마지막 메시지가 든 주는 이전 쪽')
   assert.equal(cmp.total.delta, 0, '10% → 10%')
   const notes = repeatNotes(rec(5, W + 5, 'chatgpt', ['a'], ['GitHub']), cmp, ['a', 'z', 'GitHub'])
-  assert.deepEqual(Object.keys(notes).sort(), ['GitHub', 'a']); assert.equal(notes.a.delta, 0)
+  assert.deepEqual(Object.keys(notes).sort(), ['GitHub', 'a']); assert.equal(notes.a.delta, 0); assert.equal(notes.a.task, 'all', '겨냥 종류가 없으면 전체')
   assert.deepEqual(repeatNotes(null, cmp, ['a']), {})
+  // 적용함·겨냥 종류: 그 종류 행의 변화를 쓰고, 지난번 추천에 없어도 적용한 항목이면 보인다
+  const { effectOf } = await import('../web/src/store/records.ts')
+  const wk2 = (start, tc, pt) => ({ ...wk(start, 0, 0), taskCounts: tc, restatement: { ...wk(start, 0, 0).restatement, high: Object.values(pt).reduce((x, y) => x + y, 0), perTask: pt } })
+  const cmp2 = compareSince([wk2(0, { coding: 10, writing: 10 }, { coding: 4, writing: 1 }), wk2(W, { coding: 30, writing: 10 }, { coding: 3, writing: 1 })], { lastAt: 5 })
+  assert.equal(effectOf(cmp2, 'coding').delta, -30, '코딩 40% → 10%')
+  assert.equal(effectOf(cmp2, 'search').task, 'all', '그 종류 행이 없으면 전체')
+  const cmp3 = compareSince([wk2(0, { work_doc: 10, chat: 10 }, { work_doc: 4 }), wk2(W, { work_doc: 10, chat: 10 }, { work_doc: 1 })], { lastAt: 5 })
+  assert.deepEqual(effectOf(cmp3, 'workdoc'), { task: 'work_doc', delta: -30 }, '추천 쪽 이름(workdoc) → 분류기 이름(work_doc)')
+  const coding = cmp2.rows.find((r) => r.task === 'coding')
+  assert.equal(coding.before.share, 50); assert.equal(coding.after.share, 75); assert.equal(coding.shareDelta, 25, '코딩 비중 50% → 75%')
+  const prev2 = { ...rec(5, 5), rx: [], plugins: [], applied: ['prompt:coding'], tasks: { 'prompt:coding': 'coding' } }
+  const n2 = repeatNotes(prev2, cmp2, ['prompt:coding', 'x'])
+  assert.deepEqual(Object.keys(n2), ['prompt:coding']); assert.equal(n2['prompt:coding'].applied, true); assert.equal(n2['prompt:coding'].delta, -30)
+  const { starterPrompt } = await import('../web/src/recommend/starterPrompts.ts')
+  assert.match(starterPrompt('coding', 'GitHub'), /^GitHub 플러그인을 써서/); assert.ok(!starterPrompt('writing').includes('플러그인'))
   console.log('records ok')
 }
 

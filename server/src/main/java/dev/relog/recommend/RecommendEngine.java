@@ -124,8 +124,10 @@ public final class RecommendEngine {
     /** 플러그인 카드가 가리키는 구체 플러그인 이름. 해당 없으면 null(웹의 pluginName과 동일) */
     private static String pluginFor(CatalogItem item, Snapshot s) {
         if (!item.howTo30s().contains("{plugin}")) return null;
-        var top = s.restatement().perTask().entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
-        return top != null && item.byTask() != null ? item.byTask().get(top.getKey()) : null;
+        // 다시 말한 지시가 가장 몰린 종류, 없으면 가장 많이 한 종류(웹 fillHow와 동일)
+        String top = s.restatement().perTask().entrySet().stream().filter(e -> e.getValue() > 0).max(Map.Entry.comparingByValue()).map(Map.Entry::getKey)
+                .orElseGet(() -> s.taskShare().entrySet().stream().filter(e -> e.getValue() > 0).max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse(null));
+        return top != null && item.byTask() != null ? item.byTask().get(top) : null;
     }
 
     private static String why(Snapshot s, Scored sc) {

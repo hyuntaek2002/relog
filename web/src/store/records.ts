@@ -1,4 +1,5 @@
 import { compareSides, type PeriodSnapshot, type TaskCompare } from './ledger.ts'
+import { TASK_MAP } from '../recommend/snapshot.ts'
 
 // 분석 기록: 분석할 때마다 그 회차의 요약 숫자와 추천한 항목 이름만 남긴다(전후 비교용). 대화 내용·메시지 id·해시는 없다.
 // 이 브라우저(localStorage)에 남기고, 서버 동기화에 로그인했으면 같은 내용을 서버에도 올린다.
@@ -13,6 +14,8 @@ export interface AnalysisRecord {
   tokenEstimate: number
   rx: string[] // 추천한 습관·기능 catalogId
   plugins: string[] // 추천한 플러그인 이름
+  applied?: string[] // 내가 '적용함'으로 표시한 항목 키(catalogId·플러그인 이름·prompt:<대화 종류>)
+  tasks?: Record<string, string> // 항목 키 → 그 항목이 겨냥한 대화 종류(없으면 전체로 본다)
 }
 
 export const RECORDS_KEY = 'relog-records-v1'
@@ -61,10 +64,26 @@ export function compareSince(weeks: PeriodSnapshot[], prev: Pick<AnalysisRecord,
   return compareSides(sorted.filter((w) => w.periodStart <= prev.lastAt), sorted.filter((w) => w.periodStart > prev.lastAt))
 }
 
-export type RepeatNote = { since: number; delta: number | null }
-/** 지난 기록에서도 추천한 항목 → 그 뒤 다시 말한 지시 비율이 어떻게 됐는지(전체 기준). 원인은 판정하지 않는다. */
+// 적용함 표시: 이 브라우저에 항목 키 목록으로 둔다. 분석 기록에도 같이 넣어 다음 분석 때 '적용한 뒤'를 본다.
+export const APPLIED_KEY = 'relog-applied-v1'
+export const loadApplied = (): string[] => { try { return JSON.parse(localStorage.getItem(APPLIED_KEY) ?? '[]') } catch { return [] } }
+export const saveApplied = (a: string[]) => { try { localStorage.setItem(APPLIED_KEY, JSON.stringify(a)) } catch { /* 무시 */ } }
+export const promptKey = (task: string) => `prompt:${task}`
+
+// 기록의 종류 키는 추천 쪽 이름(workdoc·counseling), 비교 표는 분류기 이름(work_doc·chat)이라 맞춰 준다
+export const ledgerTask = (t: string) => Object.keys(TASK_MAP).find((k) => TASK_MAP[k] === t) ?? t
+
+/** 항목이 겨냥한 대화 종류의 전후 비율 변화(종류가 없거나 그 종류 표본이 부족하면 전체). task는 분류기 이름으로 돌려준다. */
+export function effectOf(cmp: TaskCompare | null, task?: string): { task: string; delta: number | null } {
+  const row = task ? cmp?.rows.find((r) => r.task === ledgerTask(task)) : undefined
+  return row && row.delta != null ? { task: row.task, delta: row.delta } : { task: 'all', delta: cmp?.total.delta ?? null }
+}
+
+export type RepeatNote = { since: number; delta: number | null; task: string; applied: boolean }
+/** 지난 기록에서도 추천한 항목 → 그 뒤 그 항목이 겨냥한 대화 종류의 다시 말한 지시 비율이 어떻게 됐는지. 원인은 판정하지 않는다. */
 export function repeatNotes(prev: AnalysisRecord | null, cmp: TaskCompare | null, ids: string[]): Record<string, RepeatNote> {
   if (!prev) return {}
-  const was = new Set([...prev.rx, ...prev.plugins])
-  return Object.fromEntries(ids.filter((id) => was.has(id)).map((id) => [id, { since: prev.savedAt, delta: cmp?.total.delta ?? null }]))
+  const was = new Set([...prev.rx, ...prev.plugins, ...(prev.applied ?? [])])
+  const applied = new Set(prev.applied ?? [])
+  return Object.fromEntries(ids.filter((id) => was.has(id)).map((id) => [id, { since: prev.savedAt, ...effectOf(cmp, prev.tasks?.[id]), applied: applied.has(id) }]))
 }
