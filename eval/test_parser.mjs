@@ -566,3 +566,20 @@ console.log('ledger ok')
   assert.equal(linearWithContext(noW, [v(1, 0)], ['a'])[0].type, 'coding', '가중치 없으면 B로')
   console.log('context classify ok')
 }
+
+// 임베딩 남은 시간 추정(eta.ts): 길이순 묶음 비용 비율, 시작 시점 이후 속도로 남은 시간
+{
+  const { doneFraction, remainingMs, fmtRemaining, EMBED_BATCH } = await import('../web/src/worker/eta.ts')
+  const lens = [...Array(16).fill(10), ...Array(16).fill(990)] // 짧은 묶음 하나, 긴 묶음 하나
+  assert.equal(EMBED_BATCH, 16)
+  assert.ok(Math.abs(doneFraction(lens, 16) - (16 * 30) / (16 * 30 + 16 * 1010)) < 1e-9, '짧은 묶음은 비용이 작다')
+  assert.equal(doneFraction(lens, 32), 1)
+  assert.equal(doneFraction(lens.reverse(), 16), doneFraction(lens, 16), '입력 순서와 무관')
+  assert.equal(remainingMs({ f: 0.1, t: 0 }, 0.1, 10000), null, '진행이 없으면 계산 안 함')
+  assert.equal(remainingMs({ f: 0, t: 0 }, 0.5, 2000), null, '3초 전에는 계산 안 함')
+  assert.ok(Math.abs(remainingMs({ f: 0.2, t: 0 }, 0.6, 60000) - 60000) < 1e-6, '0.4에 1분 → 남은 0.4에 1분')
+  assert.equal(fmtRemaining(null), '남은 시간을 계산하고 있습니다')
+  assert.equal(fmtRemaining(20000), '1분 안에 끝납니다')
+  assert.equal(fmtRemaining(7.4 * 60000), '약 7분 남았습니다')
+  console.log('eta ok')
+}

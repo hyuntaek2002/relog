@@ -16,6 +16,7 @@ import Help from './ui/Help'
 import { buildSnapshot } from './recommend/snapshot'
 import { pinCodeToCoding, subByConversation } from './classify/codingSub'
 import { CATALOG_VERSION, RECOMMENDATION_RULE_VERSION, recommend, type Feedback, type FeedbackMap, type Platform, type Prescription, type UserContext } from './recommend/recommend'
+import { doneFraction, fmtRemaining, remainingMs } from './worker/eta'
 import Trend, { CompareTable, ReportFile, StorageChoice, loadStorageMode, STORAGE_MODE_KEY, type StorageMode } from './store/Trend'
 import SyncPanel from './store/SyncPanel'
 import { deleteServerRecords, getToken, listServerRecords, putServerRecord, sendFeedback } from './store/sync'
@@ -154,11 +155,18 @@ export default function App() {
     const clientOf = new Map(r.conversations.map((c) => [c.id, c.client ?? 'app'])) // 기준선 묶음: 앱 / Claude Code
     const inputs = ok.map((u) => ({ conversationId: u.conversationId, messageId: u.messageId, idx: u.idx, createdAt: u.createdAt, text: u.text, tokenEstimate: u.tokenEstimate, hasAttachment: u.hasAttachment, prevAssistantIdx: u.prevAssistantIdx, group: clientOf.get(u.conversationId) ?? 'app' }))
     setStep('model')
+    // 남은 시간: 워커와 같은 문장('query: ' 접두어 포함) 길이로 진행 비율을 셈
+    const lengths = texts.map((t) => t.length + 7)
+    let etaStart: { f: number; t: number } | null = null
     const w = new Worker(new URL('./worker/embed.worker.ts', import.meta.url), { type: 'module' })
     w.onmessage = (e: MessageEvent<EmbedOut>) => {
       const m = e.data
       if (m.type === 'download') { setStep('model'); setDetail(`${m.file.split('/').pop()} ${m.percent}%`) }
-      else if (m.type === 'progress') { setStep('classify'); setDetail(`${m.done} / ${m.total}`) }
+      else if (m.type === 'progress') {
+        const f = doneFraction(lengths, m.done), now = performance.now()
+        etaStart ??= { f, t: now }
+        setStep('classify'); setDetail(`${m.done} / ${m.total} · ${fmtRemaining(remainingMs(etaStart, f, now))}`)
+      }
       else if (m.type === 'classified') { m.knn = pinCodeToCoding(m.knn, ok, r.conversations); m.centroid = pinCodeToCoding(m.centroid, ok, r.conversations); m.linear = pinCodeToCoding(m.linear, ok, r.conversations); setCls(m); setStep('done'); setDetail(''); record(r, m, dismissed); w.terminate(); setNet((n) => [...n, ...m.net]); if (DEV) { measureMemory('분석 완료 직후'); Object.assign(window, { __relog: { result: r, cls: m } }) } } // 개발 모드: 콘솔에서 숫자 집계용(원문은 화면 밖으로 안 나감) // 임베딩·모델 메모리 회수
       else if (m.type === 'error') { setError(m.message); setStep('done'); w.terminate() }
     }
@@ -310,6 +318,7 @@ export default function App() {
         <input type="file" accept=".zip" multiple onChange={(e) => onFile(e.target.files)} />
         {result ? '다른 파일 분석' : 'ChatGPT·Claude 내보내기 zip을 끌어다 놓거나 클릭'}
       </label>
+      {!result && <p className="detail">처음 한 번은 분석 모델(약 560MB)을 내려받습니다. 분석 시간은 메시지 수와 컴퓨터에 따라 다르며, 메시지가 수천 개면 1시간 넘게 걸릴 수 있습니다. 분석하는 동안 남은 시간을 보여 드립니다. 창을 닫거나 다른 탭에 오래 두면 느려질 수 있습니다.</p>}
       {!result && <p className="detail">Claude Code 기록(.claude 폴더 안의 projects 폴더를 zip으로 묶은 것)도 같이 넣을 수 있습니다. Codex에 설치한 플러그인을 추천에서 '이미 설치됨'으로 보려면 .codex 폴더 안의 plugins 폴더를 zip으로 묶어 같이 넣으세요(폴더 이름만 읽습니다).</p>}
 
       {step !== 'idle' && step !== 'done' && ( // 진행 막대는 분석 중에만

@@ -4,6 +4,7 @@ import { DEFAULT_OPTIONS, DETECTOR_VERSION, detect, nullDistribution, quantile, 
 
 import { installFetchAudit, setAuditProbes, takeAuditRecords, type NetRecord } from './netaudit.ts'
 import { STATIC_MODEL_ID, StaticEmbedder, browserLoader } from '../classify/staticEmbed.ts'
+import { EMBED_BATCH } from './eta.ts'
 
 // 모델은 1회 다운로드 후 Cache Storage에 캐시된다(transformers.js 기본 동작).
 env.allowLocalModels = false
@@ -25,8 +26,8 @@ function allRecords(): NetRecord[] {
   return recs
 }
 
-// 배치 안에서 가장 긴 문장 길이로 패딩되므로 작은 배치 + 길이순 정렬.
-const BATCH = 16
+// 배치 안에서 가장 긴 문장 길이로 패딩되므로 작은 배치 + 길이순 정렬. 남은 시간 추정(eta.ts)도 같은 묶음 크기를 쓴다.
+const BATCH = EMBED_BATCH
 
 export type EmbedIn =
   | { type: 'embed'; model: string; device: 'wasm' | 'webgpu'; texts: string[] } // 속도 측정용
