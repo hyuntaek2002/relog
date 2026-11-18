@@ -169,3 +169,20 @@ button.link { background: none; border: none; color: var(--accent); cursor: poin
 /* 라벨링: AI 제안 표시 */
 .choices button.suggest { outline: 2px solid var(--accent); outline-offset: 1px; }
 .suggest-line { margin: 8px 0; }
+
+/* 로그인 화면(AuthGate) */
+main.authpage { max-width: 420px; }
+.auth { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+.auth label { display: flex; flex-direction: column; gap: 4px; font-size: 0.95rem; }
+.auth input { padding: 8px 10px; font-size: 1rem; }
+.auth button[type=submit] { padding: 10px; font-size: 1rem; background: var(--accent); color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+.authtabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); }
+.authtabs button { background: none; border: none; border-bottom: 2px solid transparent; margin: 0 0 -1px; padding: 8px 12px; font-size: 1rem; color: var(--muted); cursor: pointer; }
+.authtabs button.on { color: var(--fg); border-color: var(--accent); font-weight: 600; }
+.authbar { display: flex; justify-content: flex-end; align-items: center; gap: 8px; max-width: 1100px; margin: 0 auto; padding: 12px 24px 0; font-size: 0.9rem; color: var(--muted); }
+
+/* 내보내기 방법 안내(ExportGuide) */
+.guide { margin: 0 0 16px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; }
+.guide summary { cursor: pointer; font-weight: 600; }
+.guide h3 { margin: 14px 0 4px; font-size: 1rem; }
+.guide ol { margin: 4px 0; padding-left: 20px; line-height: 1.6; }

@@ -16,6 +16,7 @@ import Help from './ui/Help'
 import { buildSnapshot } from './recommend/snapshot'
 import { pinCodeToCoding, subByConversation } from './classify/codingSub'
 import { CATALOG_VERSION, RECOMMENDATION_RULE_VERSION, recommend, type Feedback, type FeedbackMap, type Platform, type Prescription, type UserContext } from './recommend/recommend'
+import ExportGuide from './ExportGuide'
 import { doneFraction, fmtRemaining, remainingMs } from './worker/eta'
 import Trend, { CompareTable, ReportFile, StorageChoice, loadStorageMode, STORAGE_MODE_KEY, type StorageMode } from './store/Trend'
 import SyncPanel from './store/SyncPanel'
@@ -309,6 +310,7 @@ export default function App() {
       <h1>relog</h1>
       <p className="sub">이 브라우저 안에서만 분석합니다. 대화 내용은 어디로도 보내지 않습니다.</p>
 
+      {!result && <ExportGuide />}
       <label
         className={'drop' + (over ? ' over' : '') + (result ? ' small' : '')}
         onDragOver={(e) => { e.preventDefault(); setOver(true) }}

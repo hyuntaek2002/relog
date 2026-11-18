@@ -25,6 +25,7 @@
 | 모듈 | 위치 | 설계 요점 |
 |---|---|---|
 | 분석 워커 | web/src/worker/analyze.worker.ts | 파일을 8MB 조각으로 읽어 fflate 스트리밍 해제. zip 여러 개 병합. 항목별로 파서에 넘겨 zip 전체를 메모리에 올리지 않는다. |
+| 로그인 | web/src/auth/AuthGate.tsx | 2026-11-18부터 로그인해야 쓸 수 있다(배포판 포함). 가입·로그인은 이메일과 비밀번호만 쓰고(서버 /api/auth), 시작할 때 /api/me로 토큰을 확인한다. 401이면 로그인 화면, 서버에 닿지 않으면 다시 시도 안내. 대화 분석은 그대로 브라우저 안에서만 한다. 로그인하면 분석 기록(요약 숫자와 추천 항목 이름)이 계정에 저장된다. 서버 없는 배포판은 서버를 공개 배포하고 RELOG_API_BASE를 설정하기 전까지 쓸 수 없다. |
 | 파서 | web/src/parser/ | chatgpt.ts(mapping + current_node 활성 경로), claude.ts(chat_messages 트리), claudeCode.ts(세션 .jsonl), codexPlugins.ts(Codex plugins 폴더 zip의 경로 이름에서 설치 플러그인만 뽑음, 내용은 풀지 않음). 공통 출력은 Conversation(id, platform, client, turns, toolNames, pluginNames). 필드가 빠진 대화는 오류로 기록하고 계속한다. |
 | 정규화 | parser/normalize.ts | 코드 블록 → [CODE_BLOCK: 언어], 정보량 없는 메시지 제외(skipped), 짧고 문맥 의존(context_required), 토큰 근사. |
 | 임베딩 | worker/embed.worker.ts | transformers.js(ONNX Runtime Web), multilingual-e5-large q8(2026-11-17 e5-small에서 바꿈: 분류 성능 우선, 모델 약 560MB·분석 시간 약 11배), "query:" 접두어, WebGPU 우선·WASM 기본. 분석이 끝나면 워커를 종료해 메모리를 돌려준다. 비교군 static-e5(정적 표). |
@@ -35,6 +36,7 @@
 | 집계 | store/ledger.ts, store/db.ts | 발화 대장 키 = 대화 ID#메시지 ID#내용 해시. 메시지 생성일 기준 주 단위 집계, 대장에서 언제든 재계산. IndexedDB 보관은 동의했을 때만. |
 | 추천 | recommend/recommend.ts, catalog/catalog.json | 필수 조건 필터(플랫폼·요금제·이미 사용) → 점수(문제 신호 가중치×2 + 대화 종류 가중치 + 우선순위/100 + 피드백) → 상위 3건, 종류당 최대 2건. 서버 RecommendEngine.java는 같은 규칙의 포팅이며 같은 테스트를 통과한다. |
 | 리포트 | App.tsx | 요약 한 줄 + [다시 말한 지시][추천][변화]. 넓은 화면은 2열. 설명은 ? 아이콘. 상세 원문은 화면에만 표시. |
+| 내보내기 안내 | web/src/ExportGuide.tsx | 첫 화면에 ChatGPT·Claude 내보내기 파일 받는 방법을 접힌 안내로 둔다. 공식 도움말(OpenAI 7260999, Anthropic 9450526) 2026-11-18 내용 기준. |
 | 뷰어 | viewer/Viewer.tsx | ?view=1. 서버 보관 집계·최근 처방·변화만 열람. manifest로 홈 화면 추가 가능(내부 테스트용). |
 | 서버 | server/ | Spring Boot 4.0.9, Java 21, Spring Security(Bearer 토큰, 세션 없음), JPA, MySQL 8(개발은 H2). |
 
