@@ -13,7 +13,8 @@
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--fg); line-height: 1.5; }
-main { max-width: 1100px; margin: 0 auto; padding: 48px 24px; }
+main { max-width: 1440px; margin: 0 auto; padding: 48px 32px; }
+@media (max-width: 600px) { main { padding: 32px 16px; } .authbar { padding: 12px 16px 0; } }
 h1 { font-size: 1.5rem; margin: 0 0 4px; }
 h2 { font-size: 1rem; margin: 32px 0 8px; color: var(--muted); font-weight: 600; }
 .sub { color: var(--muted); margin: 0 0 24px; }
@@ -67,6 +68,8 @@ button { margin-right: 4px; }
 .checklist .row > span { color: var(--muted); font-size: 0.9rem; min-width: 90px; }
 .checklist label { font-size: 0.9rem; }
 .rx { border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin: 8px 0; }
+.rx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 8px; align-items: start; }
+.rx-grid .rx { margin: 0; }
 .rx .meta { display: flex; gap: 10px; align-items: baseline; color: var(--muted); font-size: 0.85rem; }
 .rx .meta b { color: var(--fg); font-size: 1rem; }
 .rx p { margin: 6px 0; }
@@ -100,15 +103,10 @@ td.up { color: #c0392b; }
 .strip b { color: var(--fg); font-weight: 600; }
 .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 16px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
-/* 넓은 화면은 탭 대신 2열(왼쪽 다시 말한 지시 / 오른쪽 추천·변화), 좁은 화면은 탭으로 하나씩 */
-.label.wide { display: none; }
-@media (max-width: 899px) { .panel:not(.on) { display: none; } }
-@media (min-width: 900px) {
-  .tabs { display: none; }
-  .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
-  .label.wide { display: block; margin: 0 0 8px; font-size: 1.05rem; color: var(--fg); }
-  .side .panel + .panel { margin-top: 40px; }
-}
+/* 결과 화면은 폭과 상관없이 탭으로 하나씩 보여 준다(요약 숫자는 탭 위) */
+.panel:not(.on) { display: none; }
+.summary { margin: 12px 0 16px; }
+.panel table { max-width: 960px; } /* 표가 너무 넓으면 숫자끼리 멀어져 읽기 어렵다 */
 .tabs button { background: none; border: none; border-bottom: 2px solid transparent; margin: 0 0 -1px; padding: 8px 12px; font-size: 1rem; color: var(--muted); cursor: pointer; white-space: nowrap; }
 .tabs button.on { color: var(--fg); border-color: var(--accent); font-weight: 600; }
 .tabs em { font-style: normal; font-size: 0.85rem; margin-left: 6px; color: var(--accent); }
@@ -131,7 +129,7 @@ details.conv .cand { margin: 8px 0 0; }
 .more > details > summary { padding: 10px 0; }
 
 /* 대화 종류별 플러그인 카드 격자 */
-.tp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; margin-top: 8px; }
+.tp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: 8px; margin-top: 8px; }
 .tp { border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
 .tp.muted { color: var(--muted); }
 .tp .meta { display: flex; gap: 8px; align-items: baseline; color: var(--muted); font-size: 0.85rem; }
@@ -184,7 +182,7 @@ main.authpage { max-width: 420px; }
 .authtabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); }
 .authtabs button { background: none; border: none; border-bottom: 2px solid transparent; margin: 0 0 -1px; padding: 8px 12px; font-size: 1rem; color: var(--muted); cursor: pointer; }
 .authtabs button.on { color: var(--fg); border-color: var(--accent); font-weight: 600; }
-.authbar { display: flex; justify-content: flex-end; align-items: center; gap: 8px; max-width: 1100px; margin: 0 auto; padding: 12px 24px 0; font-size: 0.9rem; color: var(--muted); }
+.authbar { display: flex; justify-content: flex-end; align-items: center; gap: 8px; max-width: 1440px; margin: 0 auto; padding: 12px 32px 0; font-size: 0.9rem; color: var(--muted); }
 
 /* 내보내기 방법 안내(ExportGuide) */
 .guide { margin: 0 0 16px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; }

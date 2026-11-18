@@ -5,6 +5,7 @@ import App from './App.tsx'
 import Viewer from './viewer/Viewer.tsx'
 import AuthGate from './auth/AuthGate.tsx'
 import { installFetchAudit } from './worker/netaudit.ts'
+import { DEMO } from './dev/demo.ts'
 
 // 페이지의 fetch도 감사한다(개발 패널 "네트워크 감사"에서 확인).
 installFetchAudit('page')
@@ -15,6 +16,7 @@ const VIEW = new URLSearchParams(location.search).has('view')
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     {/* 로그인해야 쓸 수 있다(2026-11-18). 분석은 그대로 브라우저 안에서만 한다 */}
-    <AuthGate>{VIEW ? <Viewer /> : <App />}</AuthGate>
+    {/* 개발 확인용 예시 화면(?demo=1)은 로그인 없이 바로 띄운다. 배포판에서는 DEMO가 항상 꺼져 있다 */}
+    {DEMO ? <App /> : <AuthGate>{VIEW ? <Viewer /> : <App />}</AuthGate>}
   </StrictMode>,
 )

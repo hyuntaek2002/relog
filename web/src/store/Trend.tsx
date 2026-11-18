@@ -48,7 +48,7 @@ export function CompareTable({ cmp, before, after }: { cmp: TaskCompare; before:
               ? `메시지 ${r.before.ok}개 → ${r.after.ok}개`
               : <>{pct(r.before.share ?? null)} → {pct(r.after.share ?? null)}{r.shareDelta != null && Math.abs(r.shareDelta) >= 0.05 && <span className="detail"> ({change(r.shareDelta)})</span>}</>}</td>
             <td>{pct(r.before.ratio)} → {pct(r.after.ratio)}</td>
-            <td className={r.delta == null ? '' : r.delta < 0 ? 'down' : r.delta > 0 ? 'up' : ''}>{r.delta == null ? '-' : r.delta === 0 ? '그대로' : `${r.delta > 0 ? '늘어남 +' : '줄어듦 '}${r.delta.toFixed(1)}%p`}</td>
+            <td className={r.delta == null ? '' : r.delta < 0 ? 'down' : r.delta > 0 ? 'up' : ''}>{r.delta == null ? '-' : r.delta === 0 ? '그대로' : `${r.delta > 0 ? '늘어남 +' : '줄어듦 '}${Math.abs(r.delta).toFixed(1)}%p`}</td>
           </tr>
         ))}
       </tbody>

@@ -25,7 +25,7 @@ export default function Prescriptions({ items, feedback, onFeedback, installed =
   const [open, setOpen] = useState<Record<string, boolean>>({})
   if (items.length === 0) return <p className="detail">{NO_RECOMMENDATION}</p>
   return (
-    <div>
+    <div className="rx-grid">
       {items.map((p) => (
         <article className="rx" key={p.catalogId}>
           <header className="meta">

@@ -11,7 +11,7 @@ const taskLabel = (t: string) => (TASK_LABELS as Record<string, string>)[t] ?? t
 const rxName = (id: string) => id.startsWith('prompt:') ? `${taskLabel(ledgerTask(id.slice(7)))} 시작 문구` : CATALOG.find((c) => c.id === id)?.name ?? id
 // 효과 한 줄: "그 뒤 코딩 대화의 다시 말한 지시 비율: 줄어듦 2.9%p"
 const effectText = (task: string, d: number | null) =>
-  `그 뒤 ${task === 'all' ? '전체' : `${taskLabel(task)} 대화의`} 다시 말한 지시 비율: ${d == null ? '아직 잴 메시지가 부족합니다' : Math.abs(d) < 0.05 ? '그대로' : d < 0 ? `줄어듦 ${d.toFixed(1)}%p` : `늘어남 +${d.toFixed(1)}%p`}`
+  `그 뒤 ${task === 'all' ? '전체' : `${taskLabel(task)} 대화의`} 다시 말한 지시 비율: ${d == null ? '아직 잴 메시지가 부족합니다' : Math.abs(d) < 0.05 ? '그대로' : d < 0 ? `줄어듦 ${Math.abs(d).toFixed(1)}%p` : `늘어남 +${d.toFixed(1)}%p`}`
 const pct = (r: Pick<AnalysisRecord, 'judgeable' | 'high'>) => (r.judgeable ? `${((100 * r.high) / r.judgeable).toFixed(1)}%` : '-')
 
 /** 전후 비교: 지난 분석 기록(그때 숫자·추천)과 지금. 비율 변화는 지금 분석을 지난 기록의 마지막 메시지 시각으로 나눠 잰다. */

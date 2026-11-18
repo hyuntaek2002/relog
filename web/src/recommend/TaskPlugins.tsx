@@ -68,11 +68,11 @@ function Card({ r, codingSub, installed, platform, notes, applied, onApplied }: 
   // 세부 유형 플러그인 후보는 Claude 디렉터리 것뿐이라 ChatGPT에서는 세부 숫자만 보인다
   const subPicks = platform === 'claude' ? subs.map(([s, n]) => [s, n, codingSubPlugin(s, n)] as const).filter(([, , sp]) => sp) : []
   return (
-    <article className={'tp' + (r.status === 'recommend' ? '' : ' muted')}>
+    <article className="tp">
       <header className="meta"><b>{TASK[r.task]}</b><span>메시지 {r.count}개 · {Math.round(r.share * 100)}%</span></header>
-      {r.status === 'none' && <p className="tp-line">맞는 플러그인이 아직 없습니다.</p>}
-      {r.status === 'insufficient' && <p className="tp-line">메시지 {TASK_PLUGIN_MIN_MESSAGES}개 미만이라 아직 추천하지 않습니다.</p>}
-      {r.status === 'recommend' && <Pick p={r.pick!} how={r.how} alt={r.alt} installed={installed} note={notes[r.pick!.name]} applied={applied} onApplied={onApplied} />}
+      {r.status === 'none' && <p className="tp-line">이 종류에 맞는 플러그인은 아직 없습니다. 아래 시작 문구만 써 보세요.</p>}
+      {r.pick && <Pick p={r.pick} how={r.how} alt={r.alt} installed={installed} note={notes[r.pick.name]} applied={applied} onApplied={onApplied} />}
+      {r.status === 'insufficient' && <p className="detail">이 종류 메시지가 {r.count}개({TASK_PLUGIN_MIN_MESSAGES}개 미만)라 내 기록 근거는 약합니다. 이 종류 대화를 할 때 참고하세요.</p>}
       {subs.length > 0 && <p className="detail">세부: {subs.map(([s, n]) => `${CODING_SUB_LABEL[s]} ${n}`).join(' · ')}</p>}
       {subPicks.map(([s, n, sp]) => (
         <div key={s} className="tp-sub">
@@ -80,7 +80,7 @@ function Card({ r, codingSub, installed, platform, notes, applied, onApplied }: 
           <Pick p={sp!.pick} how={sp!.how} installed={installed} applied={applied} onApplied={onApplied} />
         </div>
       ))}
-      {r.count > 0 && <Starter task={r.task} plugin={r.pick && isInstalled(r.pick.name, installed) ? r.pick.name : undefined} note={notes[promptKey(r.task)]} applied={applied} onApplied={onApplied} />}
+      <Starter task={r.task} plugin={r.pick && isInstalled(r.pick.name, installed) ? r.pick.name : undefined} note={notes[promptKey(r.task)]} applied={applied} onApplied={onApplied} />
     </article>
   )
 }
