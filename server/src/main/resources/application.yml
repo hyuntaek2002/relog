@@ -14,7 +14,7 @@ spring:
 server:
   port: 8080
 relog:
-  cors-origins: http://localhost:5173,https://hyuntaek2002.github.io
+  cors-origins: http://localhost:5173,https://relog.ai.kr,https://hyuntaek2002.github.io
 ---
 spring:
   config:

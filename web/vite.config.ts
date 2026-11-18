@@ -4,8 +4,8 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  // GitHub Pages(https://<user>.github.io/relog/)에 올릴 때만 하위 경로. 로컬·다른 호스팅은 루트.
-  base: process.env.GITHUB_PAGES === '1' ? '/relog/' : '/',
+  // 배포판은 사용자 도메인(https://relog.ai.kr, 2026-11-18 등록) 루트에 올린다. 사용자 도메인 없이 https://<user>.github.io/relog/ 로 올릴 때만 GITHUB_PAGES_SUBPATH=1.
+  base: process.env.GITHUB_PAGES_SUBPATH === '1' ? '/relog/' : '/',
   server: {
     // 개발 중 /@fs/ 로 저장소 상위(exports/)의 실제 내보내기 파일을 불러 테스트하기 위함. 빌드에는 영향 없음.
     fs: { allow: ['..'] },

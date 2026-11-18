@@ -33,7 +33,7 @@ services:
       SPRING_DATASOURCE_USERNAME: relog
       SPRING_DATASOURCE_PASSWORD: ${RELOG_DB_PASSWORD}
       # 웹이 열리는 주소만 허용한다(쉼표로 여러 개)
-      RELOG_CORS_ORIGINS: ${RELOG_CORS_ORIGINS:-https://hyuntaek2002.github.io}
+      RELOG_CORS_ORIGINS: ${RELOG_CORS_ORIGINS:-https://relog.ai.kr}
     ports:
       - "${RELOG_BIND:-127.0.0.1}:${RELOG_PORT:-8080}:8080"
   # HTTPS 앞단. 웹(GitHub Pages)이 https라 서버도 https여야 브라우저가 요청을 막지 않는다.
