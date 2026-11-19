@@ -5,8 +5,10 @@ import type { Utterance } from '../parser/normalize.ts'
 import type { BasicStats } from '../parser/stats.ts'
 
 // 추천 엔진 입력. 원문 없음. 집계 숫자만.
-export type SnapshotTask = 'coding' | 'writing' | 'learning' | 'workdoc' | 'search' | 'ideation' | 'translation' | 'counseling'
-export const SNAPSHOT_TASKS: SnapshotTask[] = ['coding', 'writing', 'learning', 'workdoc', 'search', 'ideation', 'translation', 'counseling']
+// cls-0.5.0부터 6가지(업무 문서는 글·문서, 정보 탐색은 정보·학습에 합침)
+export type SnapshotTask = 'coding' | 'writing' | 'learning' | 'ideation' | 'translation' | 'counseling'
+export const SNAPSHOT_TASKS: SnapshotTask[] = ['coding', 'writing', 'learning', 'ideation', 'translation', 'counseling']
+export const SNAPSHOT_LABEL: Record<SnapshotTask, string> = { coding: '코딩', writing: '글·문서', learning: '정보·학습', ideation: '아이디어·기획', translation: '번역', counseling: '상담·대화' }
 
 export interface UsageSnapshot {
   platform: 'chatgpt' | 'claude'
@@ -32,8 +34,8 @@ export interface UsageSnapshot {
   }
 }
 
-// 내부 분류 키 → 스냅샷 키
-export const TASK_MAP: Record<string, SnapshotTask> = { coding: 'coding', writing: 'writing', learning: 'learning', work_doc: 'workdoc', search: 'search', ideation: 'ideation', translation: 'translation', chat: 'counseling' }
+// 분류 키 → 스냅샷 키(work_doc·search는 예전 기록용)
+export const TASK_MAP: Record<string, SnapshotTask> = { coding: 'coding', writing: 'writing', learning: 'learning', ideation: 'ideation', translation: 'translation', chat: 'counseling', work_doc: 'writing', search: 'learning' }
 
 export function buildSnapshot(args: {
   platform: 'chatgpt' | 'claude'

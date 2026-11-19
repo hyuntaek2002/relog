@@ -16,9 +16,9 @@ export const DEMO: 'chatgpt' | 'claude' | null = (() => {
 
 const DAY = 86400000
 const WEEKS = 12
-// 종류별 주당 대화 수(코딩·업무 문서가 많고 번역은 드묾). 뒤쪽 주로 갈수록 코딩이 늘게 해 비중 변화가 보이게 한다.
-const PER_WEEK: [TaskType, number][] = [['coding', 3], ['work_doc', 2], ['writing', 1], ['learning', 1], ['ideation', 1], ['search', 1], ['chat', 1], ['translation', 0.3]]
-const WORD: Record<TaskType, string> = { coding: '로그인 화면 코드', work_doc: '주간 보고서', writing: '안내 글', learning: '자료구조 개념', ideation: '동아리 행사 기획', search: '노트북 사양 비교', chat: '진로 고민', translation: '영문 메일' }
+// 종류별 주당 대화 수(코딩·글·문서가 많고 번역은 드묾). 뒤쪽 주로 갈수록 코딩이 늘게 해 비중 변화가 보이게 한다.
+const PER_WEEK: [TaskType, number][] = [['coding', 3], ['writing', 3], ['learning', 2], ['ideation', 1], ['chat', 1], ['translation', 0.3]]
+const WORD: Record<TaskType, string> = { coding: '로그인 화면 코드', writing: '주간 보고서', learning: '자료구조 개념', ideation: '동아리 행사 기획', chat: '진로 고민', translation: '영문 메일' }
 
 export function demoData(platform: 'chatgpt' | 'claude') {
   const end = Date.now() - DAY
@@ -50,12 +50,12 @@ export function demoData(platform: 'chatgpt' | 'claude') {
   const ok = utterances.filter((u) => u.status === 'ok')
   const preds: Prediction[] = ok.map((u) => ({ type: typeOf.get(u.conversationId)!, score: 0.8 }))
 
-  // 다시 말한 지시: 코딩·업무 문서 대화의 세 번째 요청 일부를 '확실함'으로. 앞쪽 주에 더 많이 둬서 줄어든 변화가 보이게 한다.
+  // 다시 말한 지시: 코딩·글·문서 대화의 세 번째 요청 일부를 '확실함'으로. 앞쪽 주에 더 많이 둬서 줄어든 변화가 보이게 한다.
   const pairs: Candidate[] = []
   for (const u of ok) {
     const task = typeOf.get(u.conversationId)!
     const week = Math.floor(((u.createdAt ?? start) - start) / (7 * DAY))
-    const p = (task === 'coding' ? 0.5 : task === 'work_doc' ? 0.35 : 0.08) * (week < WEEKS / 2 ? 1 : 0.4)
+    const p = (task === 'coding' ? 0.5 : task === 'writing' ? 0.35 : 0.08) * (week < WEEKS / 2 ? 1 : 0.4)
     if (!u.messageId.endsWith('-u2') || rnd() > p) continue
     pairs.push({ conversationId: u.conversationId, messageId: u.messageId, priorMessageId: u.messageId.replace(/-u2$/, '-u0'), similarity: 0.93, kind: 'instruction', repeatMarker: rnd() < 0.4, complaintMarker: rnd() < 0.2, gapMinutes: 10, responseBetween: true, grade: 'high', exclusion: null, tokenEstimate: u.tokenEstimate })
   }

@@ -25,8 +25,8 @@ public final class RecommendEngine {
     public record Scored(CatalogItem item, double score, List<String> problemHits, List<String> taskHits, String excluded) {}
     public record Prescription(String catalogId, String name, String category, String grade, String summary, String why, String what, String how, String caveat, List<String> signalsUsed, double score, String pluginName) {}
 
-    private static final Map<String, String> TASK_LABEL = Map.of("coding", "코딩", "writing", "글쓰기·교정", "learning", "학습·설명", "workdoc", "업무 문서",
-            "search", "정보 탐색", "ideation", "아이디어·기획", "translation", "번역", "counseling", "상담·대화");
+    private static final Map<String, String> TASK_LABEL = Map.of("coding", "코딩", "writing", "글·문서", "learning", "정보·학습",
+            "ideation", "아이디어·기획", "translation", "번역", "counseling", "상담·대화"); // catalog-0.4.0부터 6가지
     private static final Map<String, String> SIGNAL_LABEL = Map.of("restatement.high", "다시 말한 지시(확실함)", "restatement.mid", "다시 말한 지시(가능성 있음)",
             "restatement.low", "다시 말한 지시(약함)", "restatement.misunderstanding", "말이 안 통한 듯한 표현", "restatement.repeatedQuestion", "비슷한 질문 다시 함",
             "longConversationShare", "긴 대화 비율", "avgTurnsPerConversation", "대화당 평균 발화", "codeShare", "코드 포함 비율",

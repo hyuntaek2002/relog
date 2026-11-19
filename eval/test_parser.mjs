@@ -68,10 +68,14 @@ assert.equal(ns.skipped, 1, '고마워 제외')
 console.log('normalize ok', ns)
 
 // 분류기 B·C: 2차원 단위 벡터로 동작 확인
-const { TaskClassifier, SEED_TEXTS, SEED_TYPES, TASK_TYPES } = await import('../web/src/classify/classifier.ts')
-assert.equal(TASK_TYPES.length, 8)
+const { TaskClassifier, SEED_TEXTS, SEED_TYPES, TASK_TYPES, TASK_LABELS, toTask } = await import('../web/src/classify/classifier.ts')
+const FINE = [...new Set(SEED_TYPES)]
+assert.equal(TASK_TYPES.length, 6, '화면·추천 대화 종류 6가지'); assert.equal(FINE.length, 8, '모델은 세부 8가지로 배운다')
 assert.equal(SEED_TEXTS.length, SEED_TYPES.length)
-assert.ok(TASK_TYPES.every((t) => SEED_TYPES.filter((s) => s === t).length >= 15), '유형별 15개 이상')
+assert.ok(FINE.every((t) => SEED_TYPES.filter((s) => s === t).length >= 15), '유형별 15개 이상')
+assert.ok(FINE.every((t) => TASK_TYPES.includes(toTask({ type: t, score: 0 }).type)), '세부 종류는 모두 6가지 중 하나로 합쳐진다')
+assert.equal(toTask({ type: 'work_doc', score: 0.7 }).type, 'writing'); assert.equal(toTask({ type: 'search', score: 0 }).type, 'learning'); assert.equal(toTask({ type: 'other', score: 0 }).type, 'other')
+assert.equal(TASK_LABELS.writing, '글·문서'); assert.equal(TASK_LABELS.learning, '정보·학습')
 const unit = (deg) => new Float32Array([Math.cos((deg * Math.PI) / 180), Math.sin((deg * Math.PI) / 180)])
 const vecs = [unit(0), unit(5), unit(-5), unit(90), unit(85), unit(95)]
 const types = ['coding', 'coding', 'coding', 'chat', 'chat', 'chat']
@@ -168,9 +172,9 @@ assert.ok(verifiedCount >= 15, `verified ${verifiedCount} >= 15`)
 assert.ok(CATALOG.filter((c) => c.verified && c.category !== 'practice').every((c) => c.evidenceUrl && c.verifiedAt), 'verified 항목은 evidenceUrl·verifiedAt 필수')
 const snap = {
   platform: 'claude',
-  taskShare: { coding: 0.1, writing: 0.3, learning: 0.05, workdoc: 0.2, search: 0.05, ideation: 0.1, translation: 0.05, counseling: 0.15 },
+  taskShare: { coding: 0.1, writing: 0.5, learning: 0.1, ideation: 0.1, translation: 0.05, counseling: 0.15 },
   taskCounts: {}, userTurnCount: 500, conversationCount: 15, longConversationShare: 0.5, avgTurnsPerConversation: 33, codeShare: 0, hourHistogram: new Array(24).fill(0),
-  restatement: { high: 1, mid: 20, low: 2, misunderstanding: 10, repeatedQuestion: 60, perTask: { workdoc: 8 }, tokenEstimate: 8000, ratio: 16 },
+  restatement: { high: 1, mid: 20, low: 2, misunderstanding: 10, repeatedQuestion: 60, perTask: { writing: 8 }, tokenEstimate: 8000, ratio: 16 },
 }
 const r1 = recommend(snap, { plan: 'pro', featuresInUse: [] })
 assert.ok(r1.length >= 1 && r1.length <= 3, '0~3개')
@@ -196,7 +200,7 @@ assert.equal(genericDefaults('claude').length, 3)
 // 플러그인 카드는 구체 이름을 말한다: 다시 말한 지시가 몰린 종류, 없으면 가장 많이 한 종류의 첫 후보(대화 종류별 카드와 같은 이름)
 {
   const only = (id) => CATALOG.filter((c) => c.id === id).map((c) => ({ ...c, verified: true, requiresPlan: [], problemSignals: [{ signal: 'restatement.high', op: '>=', value: 0, weight: 1 }] }))
-  const cgSnap = { ...snap, platform: 'chatgpt', taskShare: { ...snap.taskShare, coding: 0.56 }, restatement: { ...snap.restatement, perTask: { coding: 9, workdoc: 3 } } }
+  const cgSnap = { ...snap, platform: 'chatgpt', taskShare: { ...snap.taskShare, coding: 0.56 }, restatement: { ...snap.restatement, perTask: { coding: 9, writing: 3 } } }
   const [cg] = recommend(cgSnap, { plan: 'plus', featuresInUse: [] }, {}, only('cg_plugins'))
   assert.equal(cg.pluginName, 'GitHub'); assert.match(cg.how, /'GitHub'/); assert.ok(!cg.how.includes('{plugin}') && !cg.how.includes('맞는 플러그인'), '일반 문구 대신 이름'); assert.equal(cg.task, 'coding')
   const [cl] = recommend({ ...calm, taskShare: { ...calm.taskShare, learning: 0.6 } }, { plan: 'pro', featuresInUse: [] }, {}, only('cl_plugins'))
@@ -292,17 +296,17 @@ console.log('ledger ok')
 // 대화 종류별 플러그인: 기준 미만은 데이터 부족, 상담·대화는 맞는 플러그인 없음
 {
   const { resolveTaskPlugins, TASK_PLUGIN_MIN_MESSAGES } = await import('../web/src/recommend/taskPluginRules.ts')
-  const rows = resolveTaskPlugins({ taskCounts: { coding: 36, writing: 118, learning: 27, workdoc: 90, search: 5, ideation: 50, translation: 14, counseling: 153 }, taskShare: { coding: 0.07, writing: 0.24, learning: 0.05, workdoc: 0.18, search: 0.01, ideation: 0.1, translation: 0.03, counseling: 0.31 } })
-  assert.equal(rows.length, 8); assert.equal(rows[0].task, 'counseling', '많이 쓴 순')
-  assert.equal(rows[0].status, 'none')
+  const rows = resolveTaskPlugins({ taskCounts: { coding: 36, writing: 208, learning: 12, ideation: 50, translation: 14, counseling: 153 }, taskShare: { coding: 0.07, writing: 0.42, learning: 0.02, ideation: 0.1, translation: 0.03, counseling: 0.31 } })
+  assert.equal(rows.length, 6); assert.equal(rows[0].task, 'writing', '많이 쓴 순')
   const by = Object.fromEntries(rows.map((r) => [r.task, r]))
+  assert.equal(by.counseling.status, 'none')
   assert.equal(by.translation.status, 'insufficient'); assert.ok(14 < TASK_PLUGIN_MIN_MESSAGES)
-  assert.equal(by.search.status, 'insufficient')
-  assert.equal(by.writing.status, 'recommend'); assert.equal(by.writing.pick.name, 'Humanizer'); assert.ok(by.writing.how.includes("'Humanizer'"))
+  assert.equal(by.learning.status, 'insufficient')
+  assert.equal(by.writing.status, 'recommend'); assert.equal(by.writing.pick.name, 'doc-coauthoring'); assert.equal(by.writing.alt.name, 'Humanizer', '글·문서: 합친 두 종류의 후보를 첫 후보·대신 쓸 것으로'); assert.ok(by.writing.how.includes("'doc-coauthoring'"))
   assert.ok(rows.filter((r) => r.status === 'recommend').every((r) => r.pick.evidenceUrl !== '' || r.pick.maker === 'Anthropic'), '근거 URL 또는 Anthropic 제공')
   assert.ok(!rows.some((r) => /낭비|잊었|확실히 개선/.test((r.pick?.oneLiner ?? '') + (r.alt?.oneLiner ?? ''))))
   // ChatGPT: 종류별 첫 후보와 디렉터리 링크, ChatGPT·Codex 설치 방법(같은 플러그인 목록)
-  const snap = { taskCounts: { coding: 40, writing: 0, learning: 0, workdoc: 0, search: 0, ideation: 0, translation: 0, counseling: 30 }, taskShare: {} }
+  const snap = { taskCounts: { coding: 40, writing: 0, learning: 0, ideation: 0, translation: 0, counseling: 30 }, taskShare: {} }
   const cg = Object.fromEntries(resolveTaskPlugins(snap, TASK_PLUGIN_MIN_MESSAGES, 'chatgpt').map((r) => [r.task, r]))
   assert.equal(cg.coding.pick.name, 'GitHub'); assert.ok(cg.coding.pick.evidenceUrl.startsWith('https://chatgpt.com/plugins/plugin_'))
   assert.equal(cg.counseling.status, 'none'); assert.ok(cg.coding.how.includes("'GitHub'") && cg.coding.how.includes('사이드바') && cg.coding.how.includes('/plugins'), 'ChatGPT·Codex 설치 방법')
@@ -478,14 +482,15 @@ console.log('ledger ok')
 
 // 라벨 데이터 합(labeled-centroids.json): 형식 검사 + 중심점에 더해지면 판정이 그쪽으로 움직이는지
 {
-  const { TaskClassifier, LABELED, labeledFor, TASK_TYPES, CLASSIFIER_VERSION } = await import('../web/src/classify/classifier.ts')
-  assert.equal(CLASSIFIER_VERSION, 'cls-0.4.0')
-  assert.equal(LABELED.dim, 1024); assert.deepEqual(Object.keys(LABELED.sums).sort(), [...TASK_TYPES, 'other'].sort())
-  assert.deepEqual([...LABELED.linear.classes].sort(), [...TASK_TYPES, 'other'].sort(), '선형 분류기는 8유형 + 기타')
+  const { TaskClassifier, LABELED, labeledFor, SEED_TYPES, CLASSIFIER_VERSION } = await import('../web/src/classify/classifier.ts')
+  const FINE = [...new Set(SEED_TYPES)]
+  assert.equal(CLASSIFIER_VERSION, 'cls-0.5.0')
+  assert.equal(LABELED.dim, 1024); assert.deepEqual(Object.keys(LABELED.sums).sort(), [...FINE, 'other'].sort())
+  assert.deepEqual([...LABELED.linear.classes].sort(), [...FINE, 'other'].sort(), '선형 분류기는 세부 8유형 + 기타')
   assert.ok(LABELED.linear.W.length === 9 && LABELED.linear.b.length === 9 && LABELED.linear.W.every((r) => r.length === LABELED.dim && r.every((x) => Number.isFinite(x))))
   assert.ok(Object.values(LABELED.sums).every((v) => v.length === LABELED.dim && v.every((x) => Number.isFinite(x))))
   assert.ok(Object.values(LABELED.counts).reduce((a, b) => a + b, 0) > 300, '라벨 300건 이상')
-  assert.equal(labeledFor('Xenova/multilingual-e5-large'), LABELED); assert.equal(labeledFor('Xenova/multilingual-e5-small'), undefined); assert.equal(labeledFor('static-e5'), undefined, '다른 모델이면 쓰지 않는다')
+  assert.equal(labeledFor('Xenova/multilingual-e5-large'), LABELED); assert.equal(labeledFor('Xenova/multilingual-e5-small').dim, 384, '빠른 분석용 자료'); assert.equal(labeledFor('static-e5'), undefined, '다른 모델이면 쓰지 않는다')
   // 2차원 장난감: 예시만으로는 v가 a에 가깝지만, b 쪽에 큰 합을 더하면 b의 중심점이 v 쪽으로 옮겨 온다
   const u = (deg) => new Float32Array([Math.cos((deg * Math.PI) / 180), Math.sin((deg * Math.PI) / 180)])
   const seedVecs = [u(0), u(90)], seedTypes = ['coding', 'writing']
@@ -534,9 +539,12 @@ console.log('ledger ok')
   const wk2 = (start, tc, pt) => ({ ...wk(start, 0, 0), taskCounts: tc, restatement: { ...wk(start, 0, 0).restatement, high: Object.values(pt).reduce((x, y) => x + y, 0), perTask: pt } })
   const cmp2 = compareSince([wk2(0, { coding: 10, writing: 10 }, { coding: 4, writing: 1 }), wk2(W, { coding: 30, writing: 10 }, { coding: 3, writing: 1 })], { lastAt: 5 })
   assert.equal(effectOf(cmp2, 'coding').delta, -30, '코딩 40% → 10%')
-  assert.equal(effectOf(cmp2, 'search').task, 'all', '그 종류 행이 없으면 전체')
-  const cmp3 = compareSince([wk2(0, { work_doc: 10, chat: 10 }, { work_doc: 4 }), wk2(W, { work_doc: 10, chat: 10 }, { work_doc: 1 })], { lastAt: 5 })
-  assert.deepEqual(effectOf(cmp3, 'workdoc'), { task: 'work_doc', delta: -30 }, '추천 쪽 이름(workdoc) → 분류기 이름(work_doc)')
+  assert.equal(effectOf(cmp2, 'translation').task, 'all', '그 종류 행이 없으면 전체')
+  // 예전 8가지 키: 지난 기록의 workdoc·주별 숫자의 work_doc은 글·문서(writing)로 합쳐 본다
+  const cmp3 = compareSince([wk2(0, { work_doc: 10, chat: 10 }, { work_doc: 4 }), wk2(W, { writing: 10, chat: 10 }, { writing: 1 })], { lastAt: 5 })
+  assert.deepEqual(effectOf(cmp3, 'workdoc'), { task: 'writing', delta: -30 }, '예전 workdoc → writing')
+  assert.equal(effectOf(cmp3, 'counseling').task, 'chat', '추천 쪽 이름(counseling) → 분류기 이름(chat)')
+  assert.ok(!cmp3.rows.some((r) => r.task === 'work_doc'), '예전 키 행이 따로 남지 않음')
   const coding = cmp2.rows.find((r) => r.task === 'coding')
   assert.equal(coding.before.share, 50); assert.equal(coding.after.share, 75); assert.equal(coding.shareDelta, 25, '코딩 비중 50% → 75%')
   const prev2 = { ...rec(5, 5), rx: [], plugins: [], applied: ['prompt:coding'], tasks: { 'prompt:coding': 'coding' } }

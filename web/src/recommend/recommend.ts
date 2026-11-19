@@ -1,5 +1,5 @@
 import catalog from '../../../catalog/catalog.json' with { type: 'json' }
-import type { SnapshotTask, UsageSnapshot } from './snapshot.ts'
+import { SNAPSHOT_LABEL, type SnapshotTask, type UsageSnapshot } from './snapshot.ts'
 
 // 처방 엔진. 순수 함수: (snapshot, context, catalog, feedback) → Prescription[]. 원문 없음, LLM 호출 없음.
 export const RECOMMENDATION_RULE_VERSION = 'rec-0.1.1' // 0.1.1: restatement.perTask.<task> 신호(대화 종류 집중) 지원
@@ -63,7 +63,7 @@ export interface ScoredItem {
   excluded: string | null // 필터 탈락 사유
 }
 
-const TASK_LABEL: Record<SnapshotTask, string> = { coding: '코딩', writing: '글쓰기·교정', learning: '학습·설명', workdoc: '업무 문서', search: '정보 탐색', ideation: '아이디어·기획', translation: '번역', counseling: '상담·대화' }
+const TASK_LABEL = SNAPSHOT_LABEL
 const SIGNAL_LABEL: Record<string, string> = {
   'restatement.high': '다시 말한 지시(확실함)',
   'restatement.mid': '다시 말한 지시(가능성 있음)',

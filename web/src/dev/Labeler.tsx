@@ -13,10 +13,8 @@ const NAME: Record<string, string> = { ...TASK_LABELS, other: '기타', context_
 // 한 줄 기준(eval/labels/README.md 요약). 버튼에 마우스를 올리거나 제안 옆에서 보인다.
 const HINT: Record<string, string> = {
   coding: '코드를 짜거나 고치거나 설명해 달라, 명령어·오류 해결',
-  writing: '글을 써 달라, 다듬어 달라, 요약·제목·감상문·창작',
-  learning: '개념이나 이유를 설명해 달라, 문제 풀이, 공부',
-  work_doc: '업무용 문서: 보고서·계획서·확약서·사과문·메일',
-  search: '사실·수치·추천을 알려 달라(답이 설명보다 정보)',
+  writing: '글을 써 달라·다듬어 달라·요약·창작, 보고서·계획서·메일 같은 업무 문서',
+  learning: '개념·이유 설명, 문제 풀이·공부, 사실·수치·추천을 알려 달라',
   ideation: '아이디어·계획·일정·전략을 짜 달라',
   translation: '번역, 외국어 표현이 맞는지·무슨 뜻인지',
   chat: '고민·감정·잡담·인사, AI의 생각을 묻기',

@@ -5,16 +5,16 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { unzipSync } from '../../web/node_modules/fflate/esm/index.mjs'
-import { pipeline } from '../../web/node_modules/@huggingface/transformers/dist/transformers.node.mjs'
+import { makeEmbedder } from './embedders.mjs'
 import { parseConversationsJson } from '../../web/src/parser/chatgpt.ts'
 import { normalizeConversations } from '../../web/src/parser/normalize.ts'
-import { SEED_TEXTS, SEED_TYPES, TASK_TYPES } from '../../web/src/classify/classifier.ts'
+import { SEED_TEXTS, SEED_TYPES, FINE_TYPES } from '../../web/src/classify/classifier.ts'
 import { trainLinear } from './linear.mjs'
 
 const flag = (k) => process.argv.find((a) => a.startsWith(`--${k}=`))?.slice(k.length + 3)
 const [zip, csv, xzip, xcsv] = process.argv.slice(2).filter((a) => !a.startsWith('--'))
 const MODEL = flag('model') ?? 'Xenova/multilingual-e5-small'
-const C = [...TASK_TYPES, 'other']
+const C = [...FINE_TYPES, 'other'] // 모델·라벨은 세부 8종
 const K = 5
 
 // ---------- 데이터: 라벨 + 같은 대화의 모든 발화(문맥용, 순서 idx) ----------
@@ -31,21 +31,30 @@ const pub = load(zip, csv, false), rare = load(xzip, xcsv, false).filter((x) => 
 const testZip = flag('test-zip'), test = testZip ? load(testZip, flag('test-csv'), true) : []
 
 // ---------- 임베딩(캐시: messageId → 벡터) ----------
+// --model2=를 주면 두 모델 벡터를 이어 붙여(각각 1/√2) 한 분류기로 학습한다(두 모델 합치기 측정용).
 const cacheDir = flag('cache-dir')
-const cachePath = cacheDir && join(cacheDir, `context-emb-${MODEL.split('/').pop()}.json`)
-const cache = cachePath && existsSync(cachePath) ? JSON.parse(readFileSync(cachePath, 'utf8')) : {}
-const pipe = await pipeline('feature-extraction', MODEL, { dtype: 'q8' })
-async function embedAll(list, key) {
-  const need = list.filter((x) => !cache[key(x)])
-  for (let i = 0; i < need.length; i += 16) {
-    const o = await pipe(need.slice(i, i + 16).map((x) => 'query: ' + x.text), { pooling: 'mean', normalize: true })
-    const d = o.dims[1]; for (let k = 0; k < o.dims[0]; k++) cache[key(need[i + k])] = Array.from(o.data.slice(k * d, (k + 1) * d))
+async function vectors(model) {
+  const cachePath = cacheDir && join(cacheDir, `context-emb-${model.split('/').pop()}.json`)
+  const cache = cachePath && existsSync(cachePath) ? JSON.parse(readFileSync(cachePath, 'utf8')) : {}
+  let embed = null // 캐시에 다 있으면 모델을 안 불러온다
+  async function embedAll(list, key) {
+    const need = list.filter((x) => !cache[key(x)])
+    if (need.length && !embed) embed = await makeEmbedder(model) // 모델별 접두어·풀링(embedders.mjs)
+    for (let i = 0; i < need.length; i += 16) {
+      const vs = await embed(need.slice(i, i + 16).map((x) => x.text))
+      vs.forEach((v, k) => (cache[key(need[i + k])] = v))
+    }
+    return list.map((x) => cache[key(x)])
   }
-  return list.map((x) => cache[key(x)])
+  const r = { seedV: await embedAll(SEED_TEXTS.map((t, i) => ({ text: t, i })), (x) => 'seed:' + x.text), pubV: await embedAll(pub, (x) => x.messageId), rareV: await embedAll(rare, (x) => x.messageId), testV: await embedAll(test, (x) => 't:' + x.messageId) }
+  if (cachePath && embed) writeFileSync(cachePath, JSON.stringify(cache))
+  return r
 }
-const seedV = await embedAll(SEED_TEXTS.map((t, i) => ({ text: t, i })), (x) => 'seed:' + x.i)
-const pubV = await embedAll(pub, (x) => x.messageId), rareV = await embedAll(rare, (x) => x.messageId), testV = await embedAll(test, (x) => 't:' + x.messageId)
-if (cachePath) writeFileSync(cachePath, JSON.stringify(cache))
+const MODEL2 = flag('model2')
+const v1 = await vectors(MODEL), v2 = MODEL2 ? await vectors(MODEL2) : null
+const joinV = (a, b) => a.map((x, i) => [...x.map((y) => y * Math.SQRT1_2), ...b[i].map((y) => y * Math.SQRT1_2)])
+const { seedV, pubV, rareV, testV } = v2 ? Object.fromEntries(Object.keys(v1).map((k) => [k, joinV(v1[k], v2[k])])) : v1
+if (MODEL2) console.log(`두 모델 이어 붙이기: ${MODEL} + ${MODEL2} (${pubV[0].length}차원)`)
 
 // ---------- A: TF-IDF(문자 1~3gram) + 소프트맥스, 확률을 낸다(run_abc.mjs와 같은 계산) ----------
 let seed = 7
@@ -94,13 +103,16 @@ function decide(list, base, c) {
 }
 const mix = (pd, pa, beta) => pd.map((p, i) => p.map((x, k) => (1 - beta) * x + beta * pa[i][k]))
 
-function metrics(gold, pred) {
+// --merge=learning:search,writing:work_doc → 평가할 때 앞 종류로 합친다(헷갈리는 종류를 넓게 묶는 측정용, 학습은 그대로)
+const MERGE = new Map((flag('merge') ?? '').split(',').filter(Boolean).flatMap((g) => { const [h, ...t] = g.split(':'); return t.map((x) => [x, h]) }))
+function metrics(gold0, pred0) {
+  const gold = gold0.map((x) => MERGE.get(x) ?? x), pred = pred0.map((x) => MERGE.get(x) ?? x)
   const r = {}; let sp = 0, sf = 0
   for (const c of C) { const ng = gold.filter((g) => g === c).length, np = pred.filter((p) => p === c).length, tp = gold.filter((g, i) => g === c && pred[i] === c).length; const P = np ? tp / np : 0, R = ng ? tp / ng : 0, F = P + R ? (2 * P * R) / (P + R) : 0; r[c] = { P, R, F, ng }; }
   const pres = C.filter((c) => r[c].ng); for (const c of pres) { sp += r[c].P; sf += r[c].F }
   return { P: sp / pres.length, F: sf / pres.length, acc: gold.filter((g, i) => g === pred[i]).length / gold.length, wF: C.reduce((s, c) => s + r[c].F * r[c].ng, 0) / gold.length, r }
 }
-const line = (name, m) => `${name.padEnd(30)} | P ${m.P.toFixed(3)} | F1 ${m.F.toFixed(3)} | 가중F1 ${m.wF.toFixed(3)} | 정확도 ${m.acc.toFixed(3)} | 업무문서 ${m.r.work_doc.P.toFixed(2)}/${m.r.work_doc.R.toFixed(2)} | 기획 ${m.r.ideation.P.toFixed(2)}/${m.r.ideation.R.toFixed(2)}`
+const line = (name, m) => `${name.padEnd(30)} | P ${m.P.toFixed(3)} | F1 ${m.F.toFixed(3)} | 가중F1 ${m.wF.toFixed(3)} | 정확도 ${m.acc.toFixed(3)} | 기획 ${m.r.ideation.P.toFixed(2)}/${m.r.ideation.R.toFixed(2)}`
 
 // ---------- 공개 표본 5겹 교차 검증(분할은 run_abc와 같다: 라벨 대상 대화를 같은 시드로 섞어 i % 5) ----------
 const labeled = pub.filter((x) => x.gold)
@@ -142,4 +154,12 @@ if (test.length) {
   const g = test.map((x, i) => [x.gold, i]).filter(([x]) => x)
   console.log(`\n외부 라벨 평가 (평가 ${g.length}건, 문맥에 쓰인 같은 대화 메시지 ${test.length}건)`)
   for (const c of CONFIGS) { const pr = decide(test, mix(pd, pa, c.beta), c); console.log(line(cname(c), metrics(g.map((x) => x[0]), g.map((x) => pr[x[1]])))) }
+  // --detail: 제품 설정(문맥 대화 평균 ×0.5)의 종류별 정답 수·정밀도·재현율과 혼동표(숫자만)
+  if (process.argv.includes('--detail')) {
+    const pr = decide(test, pd, { beta: 0, mode: 'conv', lam: 0.5 }), gold = g.map((x) => x[0]), pred = g.map((x) => pr[x[1]]), m = metrics(gold, pred)
+    console.log('\n종류별(정답 수 | 예측 수 | 정밀도 | 재현율)')
+    for (const c of C) console.log(`${c.padEnd(12)} ${String(m.r[c].ng).padStart(4)} | ${String(pred.filter((p) => p === c).length).padStart(4)} | ${m.r[c].P.toFixed(2)} | ${m.r[c].R.toFixed(2)}`)
+    console.log('\n혼동표(행=정답, 열=예측): ' + C.join(' '))
+    for (const a of C) console.log(a.padEnd(12) + C.map((b) => String(gold.filter((x, i) => x === a && pred[i] === b).length).padStart(5)).join(''))
+  }
 }

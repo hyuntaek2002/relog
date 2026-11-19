@@ -1,5 +1,5 @@
 import { pipeline, env, type FeatureExtractionPipeline } from '@huggingface/transformers'
-import { CLASSIFIER_VERSION, SEED_TEXTS, SEED_TYPES, SEED_VERSION, TaskClassifier, labeledFor, linearWithContext, type Prediction } from '../classify/classifier.ts'
+import { CLASSIFIER_VERSION, SEED_TEXTS, SEED_TYPES, SEED_VERSION, TaskClassifier, labeledFor, linearWithContext, toTask, type Prediction } from '../classify/classifier.ts'
 import { DEFAULT_OPTIONS, DETECTOR_VERSION, detect, nullDistribution, quantile, summarize, withinConversationNull, type Candidate, type DetectInput, type DetectSummary } from '../detect/detector.ts'
 
 import { installFetchAudit, setAuditProbes, takeAuditRecords, type NetRecord } from './netaudit.ts'
@@ -126,11 +126,11 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
     const knn: Prediction[] = []
     for (let i = 0; i < texts.length; i++) {
       const v = row(data, dim, i)
-      centroid.push(clf.centroid(v))
-      knn.push(clf.knn(v))
+      centroid.push(toTask(clf.centroid(v)))
+      knn.push(toTask(clf.knn(v)))
     }
-    // D + 같은 대화 문맥(cls-0.4.0)
-    const linear: Prediction[] = linearWithContext(clf, texts.map((_, i) => row(data, dim, i)), e.data.inputs.map((u) => u.conversationId))
+    // D + 같은 대화 문맥(cls-0.4.0). 모델은 세부 8가지로 고르고, 화면·추천용 6가지로 합친다(cls-0.5.0)
+    const linear: Prediction[] = linearWithContext(clf, texts.map((_, i) => row(data, dim, i)), e.data.inputs.map((u) => u.conversationId)).map(toTask)
     // 반복 지시 의심 탐지: 귀무분포(서로 다른 대화 무작위 쌍) 상위 1%를 경계로, 같은 대화의 앞선 발화와 비교
     const dIn: DetectInput[] = e.data.inputs.map((u, i) => ({ ...u, taskType: linear[i].type })) // 제품 기본 분류는 D(선형)
     // 경계: 같은 대화 비인접 쌍 분포의 p90(주제 연속 발화의 기본 유사도). 반복 표지가 있는 지시는 다른 대화 쌍 p90만 넘으면 구제.

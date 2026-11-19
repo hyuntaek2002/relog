@@ -189,3 +189,10 @@ main.authpage { max-width: 420px; }
 .guide summary { cursor: pointer; font-weight: 600; }
 .guide h3 { margin: 14px 0 4px; font-size: 1rem; }
 .guide ol { margin: 4px 0; padding-left: 20px; line-height: 1.6; }
+/* 분석 방식 선택(정밀 / 빠른) */
+.modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 8px; border: none; padding: 0; margin: 12px 0; }
+.modes legend { padding: 0; margin-bottom: 6px; font-size: 0.95rem; }
+.modes label { display: grid; grid-template-columns: auto 1fr; column-gap: 8px; align-items: baseline; border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; cursor: pointer; }
+.modes label.on { border-color: var(--accent); }
+.modes label small { grid-column: 2; color: var(--muted); font-size: 0.85rem; }
+.modes:disabled label { opacity: 0.6; cursor: default; }

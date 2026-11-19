@@ -1,8 +1,8 @@
 import { CATALOG, scoreAll, type FeedbackMap, type UserContext } from './recommend'
-import { SNAPSHOT_TASKS, type SnapshotTask, type UsageSnapshot } from './snapshot'
+import { SNAPSHOT_LABEL, SNAPSHOT_TASKS, type SnapshotTask, type UsageSnapshot } from './snapshot'
 
 // 개발 패널: 카탈로그 전 항목 점수표(뺀 이유 포함) + 항목 확인 상태 + 추천 엔진 입력값
-const TASK: Record<SnapshotTask, string> = { coding: '코딩', writing: '글쓰기·교정', learning: '학습·설명', workdoc: '업무 문서', search: '정보 탐색', ideation: '아이디어·기획', translation: '번역', counseling: '상담·대화' }
+const TASK = SNAPSHOT_LABEL
 const pct = (v: number) => `${Math.round(v * 100)}%`
 
 export default function RecommendDev({ snapshot, ctx, feedback }: { snapshot: UsageSnapshot; ctx: UserContext; feedback: FeedbackMap }) {

@@ -23,9 +23,9 @@ class RecommendEngineTest {
     }
 
     static RecommendEngine.Snapshot snap() {
-        Map<String, Double> share = new HashMap<>(Map.of("coding", 0.1, "writing", 0.3, "learning", 0.05, "workdoc", 0.2, "search", 0.05, "ideation", 0.1, "translation", 0.05, "counseling", 0.15));
+        Map<String, Double> share = new HashMap<>(Map.of("coding", 0.1, "writing", 0.5, "learning", 0.1, "ideation", 0.1, "translation", 0.05, "counseling", 0.15));
         return new RecommendEngine.Snapshot("claude", share, 500, 15, 0.5, 33, 0,
-                new RecommendEngine.Restatement(1, 20, 2, 10, 60, Map.of("workdoc", 8), 8000, 16), new RecommendEngine.Answer(300, 3));
+                new RecommendEngine.Restatement(1, 20, 2, 10, 60, Map.of("writing", 8), 8000, 16), new RecommendEngine.Answer(300, 3));
     }
 
     @Test

@@ -36,7 +36,15 @@ type Step = 'idle' | 'read' | 'analyze' | 'model' | 'classify' | 'done'
 const STEPS: [Step, string][] = [['read', '파일 읽기'], ['analyze', '정리'], ['model', '모델 준비'], ['classify', '분석'], ['done', '완료']]
 // 첫 항목이 제품 기본. 2026-11-17 분류 성능을 우선해 e5-small → e5-large(약 560MB, 분석 시간 약 11배). 나머지는 개발 패널 속도 비교용
 const MODELS = ['Xenova/multilingual-e5-large', 'Xenova/multilingual-e5-small', 'Xenova/multilingual-e5-base', 'Xenova/paraphrase-multilingual-MiniLM-L12-v2', 'static-e5'] as const
-const DEFAULT_MODEL = MODELS[0]
+// 분석 방식: 정밀(e5-large, 기본) / 빠른(e5-small, 약 11배 빠름, 분류가 조금 덜 정확). 둘 다 같은 라벨 표본으로 학습한 분류 자료가 있다(labeledFor).
+// 근거(docs/measurements.md 2026-11-17 "같은 대화 문맥 섞기"): 공개 표본 F1 0.655 vs 0.600, 본인 라벨 정확도 0.665 vs 0.641
+const ANALYSIS_MODES = {
+  precise: { model: 'Xenova/multilingual-e5-large', label: '정밀 분석', note: '모델 약 540MB · 메시지 수천 개면 1시간 넘게 걸릴 수 있음 · 대화 종류를 더 정확히 나눔' },
+  quick: { model: 'Xenova/multilingual-e5-small', label: '빠른 분석', note: '모델 약 110MB · 정밀 분석보다 약 10배 빠름(메시지 수천 개면 5~10분) · 대화 종류 분류가 조금 덜 정확함' },
+} as const
+type AnalysisMode = keyof typeof ANALYSIS_MODES
+const MODE_KEY = 'relog-analysis-mode'
+const loadMode = (): AnalysisMode => { try { return localStorage.getItem(MODE_KEY) === 'quick' ? 'quick' : 'precise' } catch { return 'precise' } }
 const DEVICE: 'wasm' | 'webgpu' = 'gpu' in navigator ? 'webgpu' : 'wasm'
 const DEV = new URLSearchParams(location.search).has('dev')
 const AB = new URLSearchParams(location.search).has('ab')
@@ -106,6 +114,8 @@ export default function App() {
   const [serverTrend, setServerTrend] = useState<(TaskCompare & { weeks: number }) | null>(null) // 서버 보관 집계로 계산한 변화
   const [records, setRecords] = useState<AnalysisRecord[]>(() => (DEMO_DATA ? [DEMO_DATA.prev] : loadRecords())) // 분석 기록(전후 비교용)
   const [prevSel, setPrevSel] = useState(0) // 비교할 지난 기록(0 = 가장 최근)
+  const [mode, setMode] = useState<AnalysisMode>(loadMode) // 정밀 / 빠른 분석
+  function onMode(m: AnalysisMode) { setMode(m); try { localStorage.setItem(MODE_KEY, m) } catch { /* 무시 */ } }
   const [applied, setApplied] = useState<string[]>(() => (DEMO_DATA ? [] : loadApplied())) // '적용함'으로 표시한 항목 키
   function onApplied(key: string) {
     setApplied((cur) => { const next = cur.includes(key) ? cur.filter((k) => k !== key) : [...cur, key]; if (!DEMO_DATA) saveApplied(next); return next })
@@ -183,7 +193,7 @@ export default function App() {
       else if (m.type === 'classified') { m.knn = pinCodeToCoding(m.knn, ok, r.conversations); m.centroid = pinCodeToCoding(m.centroid, ok, r.conversations); m.linear = pinCodeToCoding(m.linear, ok, r.conversations); setCls(m); setStep('done'); setDetail(''); record(r, m, dismissed); w.terminate(); setNet((n) => [...n, ...m.net]); if (DEV) { measureMemory('분석 완료 직후'); Object.assign(window, { __relog: { result: r, cls: m } }) } } // 개발 모드: 콘솔에서 숫자 집계용(원문은 화면 밖으로 안 나감) // 임베딩·모델 메모리 회수
       else if (m.type === 'error') { setError(m.message); setStep('done'); w.terminate() }
     }
-    w.postMessage({ type: 'classify', model: DEFAULT_MODEL, device: DEVICE, texts, inputs })
+    w.postMessage({ type: 'classify', model: ANALYSIS_MODES[mode].model, device: DEVICE, texts, inputs })
   }
 
   // 발화 대장 갱신 → 주 단위 집계. 보관 모드면 IndexedDB에 병합(같은 키는 덮어쓰기)하고 전체 대장으로 재계산.
@@ -331,6 +341,16 @@ export default function App() {
       {DEMO_DATA && <p className="err">예시 화면입니다(개발용). 대화는 지어낸 것이고, 기록·서버 전송을 하지 않습니다.</p>}
 
       {!result && <ExportGuide />}
+      <fieldset className="modes" disabled={step !== 'idle' && step !== 'done'}>
+        <legend>분석 방식<Help text="두 방식 모두 대화 내용은 이 브라우저 안에서만 분석합니다. 다시 말한 지시를 찾는 방식은 같고, 대화 종류(코딩·글·문서 등)를 나누는 정확도와 걸리는 시간이 다릅니다. 처음 한 번은 고른 방식의 모델을 내려받습니다." /></legend>
+        {(Object.keys(ANALYSIS_MODES) as AnalysisMode[]).map((k) => (
+          <label key={k} className={mode === k ? 'on' : ''}>
+            <input type="radio" name="mode" checked={mode === k} onChange={() => onMode(k)} />
+            <b>{ANALYSIS_MODES[k].label}</b>
+            <small>{ANALYSIS_MODES[k].note}</small>
+          </label>
+        ))}
+      </fieldset>
       <label
         className={'drop' + (over ? ' over' : '') + (result ? ' small' : '')}
         onDragOver={(e) => { e.preventDefault(); setOver(true) }}
@@ -340,7 +360,7 @@ export default function App() {
         <input type="file" accept=".zip" multiple onChange={(e) => onFile(e.target.files)} />
         {result ? '다른 파일 분석' : 'ChatGPT·Claude 내보내기 zip을 끌어다 놓거나 클릭'}
       </label>
-      {!result && <p className="detail">처음 한 번은 분석 모델(약 560MB)을 내려받습니다. 분석 시간은 메시지 수와 컴퓨터에 따라 다르며, 메시지가 수천 개면 1시간 넘게 걸릴 수 있습니다. 분석하는 동안 남은 시간을 보여 드립니다. 창을 닫거나 다른 탭에 오래 두면 느려질 수 있습니다.</p>}
+      {!result && <p className="detail">처음 한 번은 고른 방식의 분석 모델을 내려받습니다. 분석 시간은 메시지 수와 컴퓨터에 따라 다르며, 분석하는 동안 남은 시간을 보여 드립니다. 창을 닫거나 다른 탭에 오래 두면 느려질 수 있습니다.</p>}
       {!result && <p className="detail">Claude Code 기록(.claude 폴더 안의 projects 폴더를 zip으로 묶은 것)도 같이 넣을 수 있습니다. Codex에 설치한 플러그인을 추천에서 '이미 설치됨'으로 보려면 .codex 폴더 안의 plugins 폴더를 zip으로 묶어 같이 넣으세요(폴더 이름만 읽습니다).</p>}
 
       {step !== 'idle' && step !== 'done' && ( // 진행 막대는 분석 중에만

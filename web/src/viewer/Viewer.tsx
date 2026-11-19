@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { TASK_LABELS } from '../classify/classifier'
+import { TASK_LABELS, foldTask } from '../classify/classifier'
 import { steps } from '../recommend/Prescriptions'
 import { CompareTable } from '../store/Trend'
 import { fetchTrend, getToken, latestRecommendations, listSnapshots, login, logout, me, type ServerWeek, type StoredPrescription } from '../store/sync'
@@ -7,7 +7,7 @@ import type { TaskCompare } from '../store/ledger'
 
 // 최소 뷰어(?view=1): 서버에 보관된 집계 통계와 최근 처방만 열람한다. 파일을 올리거나 분석하지 않는다.
 // 휴대폰 홈 화면에 추가해 앱처럼 열 수 있게 manifest를 둔다(내부 테스트용).
-const taskName = (t: string) => (t === 'other' ? '기타' : (TASK_LABELS as Record<string, string>)[t] ?? t)
+const taskName = (t: string) => (t === 'other' ? '기타' : (TASK_LABELS as Record<string, string>)[foldTask(t)] ?? t) // 예전 8가지 키도 합친 이름으로
 const fmtDay = (ms: number) => new Date(ms).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
 
 interface Data { email: string; weeks: ServerWeek[]; rx: StoredPrescription[]; rxAt?: string; trend: (TaskCompare & { weeks: number }) | null }

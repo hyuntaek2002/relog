@@ -7,14 +7,14 @@ import { unzipSync } from '../../web/node_modules/fflate/esm/index.mjs'
 import { pipeline } from '../../web/node_modules/@huggingface/transformers/dist/transformers.node.mjs'
 import { parseConversationsJson } from '../../web/src/parser/chatgpt.ts'
 import { normalizeConversations } from '../../web/src/parser/normalize.ts'
-import { SEED_TEXTS, SEED_TYPES, TASK_TYPES } from '../../web/src/classify/classifier.ts'
+import { SEED_TEXTS, SEED_TYPES, FINE_TYPES } from '../../web/src/classify/classifier.ts'
 import { trainLinear } from './linear.mjs'
 
 const flag = (k) => process.argv.find((a) => a.startsWith(`--${k}=`))?.slice(k.length + 3)
 const [zip, csv, xzip, xcsv, modelArg] = process.argv.slice(2).filter((a) => !a.startsWith('--'))
 const model = modelArg ?? 'Xenova/multilingual-e5-small'
 const dtype = flag('dtype') ?? 'q8'
-const CLASSES = [...TASK_TYPES, 'other']
+const CLASSES = [...FINE_TYPES, 'other'] // 모델·라벨은 세부 8종
 const RARE = ['work_doc', 'ideation']
 const ABSTAIN = '(보류)'
 

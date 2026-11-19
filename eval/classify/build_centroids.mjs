@@ -3,7 +3,7 @@
 //   linear: 선형 분류기(D) 가중치. 예시 발화 + 라벨 표본 전체로 학습한다(비교 실험의 "예시+학습" 설정, linear.mjs).
 // 파일에는 숫자와 건수만 들어간다. 표본 원문은 들어가지 않는다.
 // 사용: node eval/classify/build_centroids.mjs exports/public/wildchat-ko-400.zip eval/labels/wildchat-ko-400.labels.csv [보강 zip 보강 라벨 CSV …]
-//   zip·CSV 쌍을 더 주면 그 라벨도 함께 쓴다(표본이 적은 유형 보강분, pick_rare.mjs). --model=로 임베딩 모델을 바꾼다(기본 e5-large)
+//   zip·CSV 쌍을 더 주면 그 라벨도 함께 쓴다(표본이 적은 유형 보강분, pick_rare.mjs). --model=로 임베딩 모델을 바꾼다(기본 e5-large), --out=으로 파일 이름을 바꾼다
 import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -11,13 +11,13 @@ import { unzipSync } from '../../web/node_modules/fflate/esm/index.mjs'
 import { pipeline } from '../../web/node_modules/@huggingface/transformers/dist/transformers.node.mjs'
 import { parseConversationsJson } from '../../web/src/parser/chatgpt.ts'
 import { normalizeConversations } from '../../web/src/parser/normalize.ts'
-import { SEED_TEXTS, SEED_TYPES, TASK_TYPES } from '../../web/src/classify/classifier.ts'
+import { SEED_TEXTS, SEED_TYPES, FINE_TYPES } from '../../web/src/classify/classifier.ts'
 import { trainLinear } from './linear.mjs'
 
 const argv = process.argv.slice(2).filter((a) => !a.startsWith('--'))
 const MODEL = process.argv.find((a) => a.startsWith('--model='))?.slice(8) ?? 'Xenova/multilingual-e5-large' // 제품 기본 모델과 같아야 쓰인다(labeledFor)
 const L2 = 1e-2 // 교차 검증의 안쪽 분할에서 가장 자주 골라진 값(docs/measurements.md)
-const CLASSES = [...TASK_TYPES, 'other'] // 문맥 필요는 분류 대상이 아니다
+const CLASSES = [...FINE_TYPES, 'other'] // 모델·라벨은 세부 8종, 문맥 필요는 분류 대상이 아니다
 const here = dirname(fileURLToPath(import.meta.url))
 const items = []
 for (let a = 0; a + 1 < argv.length; a += 2) {
@@ -58,6 +58,7 @@ const file = {
   sums: Object.fromEntries(CLASSES.map((t) => [t, Array.from(sums[t], r4)])),
   linear: { classes: lin.classes, W: lin.W.map((r) => r.map(r4)), b: lin.b.map(r4) },
 }
-const dest = join(here, '../../web/src/classify/labeled-centroids.json')
+// 제품 기본(e5-large)은 labeled-centroids.json, 빠른 분석 등 다른 모델은 --out=파일이름으로 따로 둔다
+const dest = join(here, '../../web/src/classify', process.argv.find((a) => a.startsWith('--out='))?.slice(6) ?? 'labeled-centroids.json')
 writeFileSync(dest, JSON.stringify(file))
 console.log({ items: items.length, counts, classes: lin.classes, bytes: JSON.stringify(file).length, dest })

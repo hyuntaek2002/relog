@@ -15,7 +15,7 @@ import { unzipSync } from '../../web/node_modules/fflate/esm/index.mjs'
 import { pipeline } from '../../web/node_modules/@huggingface/transformers/dist/transformers.node.mjs'
 import { parseConversationsJson } from '../../web/src/parser/chatgpt.ts'
 import { normalizeConversations } from '../../web/src/parser/normalize.ts'
-import { SEED_TEXTS, SEED_TYPES, TASK_TYPES, TaskClassifier } from '../../web/src/classify/classifier.ts'
+import { SEED_TEXTS, SEED_TYPES, FINE_TYPES, TaskClassifier } from '../../web/src/classify/classifier.ts'
 import { trainLinear, predictLinear } from './linear.mjs'
 
 const CV = process.argv.includes('--cv') // 대화 단위 5겹 교차 검증(평가 분할에 빠지는 유형이 없도록 전체를 한 번씩 평가)
@@ -46,7 +46,7 @@ function loadItems(zipPath, csvPath) {
   }
   return out
 }
-const CLASSES = [...TASK_TYPES, 'other']
+const CLASSES = [...FINE_TYPES, 'other'] // 모델·라벨은 세부 8종
 console.log(`items=${items.length} classes=${CLASSES.length} model=${model}${smoke ? ' (smoke)' : ''}`)
 
 // ---------- 대화 단위 분할(결정적) ----------

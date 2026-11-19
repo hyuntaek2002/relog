@@ -1,4 +1,4 @@
-import type { Prediction } from '../classify/classifier.ts'
+import { foldTask, type Prediction } from '../classify/classifier.ts'
 import { isCounted, type Candidate } from '../detect/detector.ts'
 import type { Utterance } from '../parser/normalize.ts'
 import type { Conversation } from '../parser/types.ts'
@@ -195,8 +195,9 @@ export function compareSides(before: PeriodSnapshot[], after: PeriodSnapshot[], 
     const ok: Record<string, number> = {}, flagged: Record<string, number> = {}
     let okAll = 0, flaggedAll = 0
     for (const w of ws) {
-      for (const [t, n] of Object.entries(w.taskCounts)) { ok[t] = (ok[t] ?? 0) + n; okAll += n }
-      for (const [t, n] of Object.entries(w.restatement.perTask)) { flagged[t] = (flagged[t] ?? 0) + n }
+      // 예전 분석(8가지 키)의 주가 섞여도 6가지로 합쳐 센다
+      for (const [t0, n] of Object.entries(w.taskCounts)) { const t = foldTask(t0); ok[t] = (ok[t] ?? 0) + n; okAll += n }
+      for (const [t0, n] of Object.entries(w.restatement.perTask)) { const t = foldTask(t0); flagged[t] = (flagged[t] ?? 0) + n }
       flaggedAll += w.restatement.high
     }
     return { ok, flagged, okAll, flaggedAll }
