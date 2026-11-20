@@ -3,7 +3,8 @@ name: pages
 on:
   push:
     branches: [master]
-    paths: [web/**, .github/workflows/pages.yml]
+    # 웹은 catalog/catalog.json도 함께 묶으므로 카탈로그만 바뀌어도 다시 배포한다
+    paths: [web/**, catalog/**, .github/workflows/pages.yml]
   workflow_dispatch:
 permissions:
   contents: read
