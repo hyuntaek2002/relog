@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "catalog-0.4.0",
+  "catalogVersion": "catalog-0.4.1",
   "verifiedNote": "verified=true 항목은 2026-11-03에 공식 도움말(help.openai.com / support.claude.com)에서 기능명·메뉴 경로·요금제를 대조했다. false 항목은 화면에 내보내지 않는다.",
   "items": [
     {
@@ -995,7 +995,7 @@
       "evidenceNote": "Claude 한국어 데스크톱 앱 설정→플러그인→탐색 탭 캡처 2026-11-10: Data, UI Design Review, SwiftUI App Design, learn, doc-coauthoring, web-artifacts-builder, Productivity(3.4M), Marketing(2.7M)",
       "byTask": {
         "coding": "Engineering",
-        "writing": "doc-coauthoring",
+        "writing": "Humanizer",
         "learning": "Study Desk",
         "ideation": "Product Management",
         "translation": "DeepL"
@@ -1291,14 +1291,6 @@
       {
         "task": "writing",
         "pick": {
-          "name": "doc-coauthoring",
-          "kind": "plugin",
-          "maker": "Anthropic",
-          "installs": null,
-          "oneLiner": "문서를 함께 쓰는 방식입니다. 구조 잡기 → 초안 → 검토 순서로 진행해 매번 형식을 설명하지 않아도 됩니다.",
-          "evidenceUrl": ""
-        },
-        "alt": {
           "name": "Humanizer",
           "kind": "plugin",
           "maker": "blader",
@@ -1306,7 +1298,15 @@
           "oneLiner": "AI 티가 나는 문장을 뜻은 그대로 두고 사람이 쓴 글처럼 고칩니다.",
           "evidenceUrl": "https://github.com/blader/humanizer"
         },
-        "evidenceNote": "사용자 탐색 탭 캡처 2026-11-10 / Claude 앱 설정 → 플러그인 → 탐색 탭 실측 2026-11-10"
+        "alt": {
+          "name": "Writing Desk",
+          "kind": "plugin",
+          "maker": "najikay",
+          "installs": "1.6K",
+          "oneLiner": "고친 부분을 변경표로 보여 주고, 내 요구 조건에 맞는지 검토합니다. 지어내지 않는 것이 원칙입니다.",
+          "evidenceUrl": "https://github.com/najikay/claude-writing-desk"
+        },
+        "evidenceNote": "Claude 앱 설정 → 플러그인 → 탐색 탭 실측 2026-11-10"
       },
       {
         "task": "learning",

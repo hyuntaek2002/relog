@@ -504,5 +504,5 @@
 | 코딩 + 학습 + 정보 탐색(참고) | 0.759 | 0.771 |
 
 - 6종으로 라벨을 합쳐 다시 학습하면 공개 0.716 / 본인 0.708로, 8종으로 고른 뒤 합치는 쪽(0.747 / 0.711)보다 낮았다. 그래서 모델·라벨 CSV·분류 자료(labeled-0.4.0)는 8종 그대로 두고 결과만 합친다(cls-0.5.0, toTask). 기획까지 합치면 0.6%p만 더 올라 따로 둔다. 코딩에 합치는 것은 숫자는 높지만 코딩이 다 삼켜 구분 의미가 없어 쓰지 않는다.
-- 추천: catalog-0.4.0. 종류 신호의 workdoc → writing, search → learning(겹치면 낮은 기준·높은 가중치). Claude 글·문서 카드는 doc-coauthoring(대신: Humanizer), 정보·학습은 Study Desk(대신: Exa Deep Research). ChatGPT는 Notion, Wolfram.
+- 추천: catalog-0.4.0. 종류 신호의 workdoc → writing, search → learning(겹치면 낮은 기준·높은 가중치). Claude 글·문서 카드는 Humanizer(대신: Writing Desk. 처음엔 doc-coauthoring으로 했으나 2026-11-20 목록 점검에서 어느 플러그인 목록에도 없어 catalog-0.4.1에서 되돌림), 정보·학습은 Study Desk(대신: Exa Deep Research). ChatGPT는 Notion, Wolfram.
 - 브라우저 확인(공개 표본 401건, 빠른 분석): 카드 6장(정보·학습 45%, 글·문서 18%, 번역 18%, 상담·대화 9%, 코딩 9%, 기획 1%), 예전 이름 없음.
