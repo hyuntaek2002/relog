@@ -59,7 +59,7 @@ await finish('chatgpt', cg, cg.map((p) => `passage: ${p.n}: ${p.s}`))
 writeFileSync(new URL(`plugins-chatgpt-${DATE}.json`, pub), JSON.stringify({ format: 'relog-plugins-cg-1', fetchedAt: DATE, note: 'chatgpt.com/plugins 카테고리 화면에서 모음. r = 카테고리 화면 노출 순서 중 가장 앞. m·d = 공개 표본 메시지와의 평소 유사도 평균·표준편차', plugins: cg }))
 
 // Claude: 기존 목록 파일에 m·d를 더해 같은 순서로 벡터를 만든다
-const clFile = new URL('../../web/public/plugins-2026-11-10.json', import.meta.url)
+const clFile = new URL('../../web/public/plugins-claude.json', import.meta.url)
 const cl = JSON.parse(readFileSync(clFile, 'utf8'))
 await finish('claude', cl.plugins, cl.plugins.map((p) => `passage: ${p.n}: ${p.s}${p.k ? ' ' + p.k : ''}`))
 writeFileSync(new URL('plugins-claude-2026-11-10.json', pub), JSON.stringify(cl))

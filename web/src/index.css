@@ -196,3 +196,35 @@ main.authpage { max-width: 420px; }
 .modes label.on { border-color: var(--accent); }
 .modes label small { grid-column: 2; color: var(--muted); font-size: 0.85rem; }
 .modes:disabled label { opacity: 0.6; cursor: default; }
+
+/* 내 기록(로그인 줄의 버튼으로 펼침) */
+.myrec-wrap { padding-bottom: 0; }
+.myrec { border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+.myrec h2 { margin: 0 0 4px; font-size: 1.1rem; }
+.myrec table { max-width: 100%; }
+@media (max-width: 600px) { .myrec { overflow-x: auto; } }
+
+/* 플러그인 카드를 칸으로 나눔: 머리 | 추천 | 효과 | 행동 | 세부 | 시작 문구 (2026-11-20) */
+.tp { padding: 0; display: flex; flex-direction: column; }
+.tp > .meta { padding: 10px 14px; border-bottom: 1px solid var(--line); justify-content: space-between; }
+.tp > .tp-pick, .tp > .tp-none, .tp > .tp-weak { padding: 0 14px; }
+.tp > .tp-pick { padding-bottom: 10px; }
+.tp > .tp-none { padding-top: 10px; padding-bottom: 10px; margin: 0; }
+.tp > .tp-weak { padding-bottom: 10px; margin: 0; }
+.tp .tp-pick .tp-name { margin-top: 10px; font-size: 1.05rem; }
+.tp .tp-pick .actions { margin-top: 10px; gap: 12px; }
+.tp .tp-pick .actions button.link { margin: 0; }
+.tp .tp-pick .actions a { font-size: 0.9rem; }
+.tp > .tp-sub { border-top: 1px solid var(--line); margin: 0; padding: 8px 14px 10px; }
+.tp .tp-sub .tp-pick { padding: 0; }
+.tp .tp-label { color: var(--muted); font-size: 0.85rem; margin: 0; }
+.tp > .tp-starter { border-top: 1px solid var(--line); margin: auto 0 0; padding: 8px 14px 10px; }
+/* 효과 칸: 숫자 배지를 오른쪽 끝에 크게, 설명은 아래 작은 글씨 */
+.eff { background: var(--soft, rgba(127,127,127,0.08)); border-radius: 6px; padding: 6px 10px; margin: 10px 0 0; }
+.eff p { margin: 0; }
+.eff-top { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--muted); }
+.eff-top .tag { border: 1px solid #3a8; color: #3a8; border-radius: 4px; padding: 0 6px; font-size: 0.75rem; }
+.eff-badge { margin-left: auto; font-weight: 700; font-size: 1rem; color: var(--fg); }
+.eff-badge.down { color: #2e9e6a; }
+.eff-badge.up { color: #d9534f; }
+.eff-sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px !important; }

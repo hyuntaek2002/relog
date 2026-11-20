@@ -53,6 +53,8 @@
 | FR-25 | 회원가입·로그인해야 분석 화면을 쓸 수 있다. 첫 화면에 ChatGPT·Claude 내보내기 방법을 안내한다. | 사용자 요청(2026-11-18) | auth/AuthGate.tsx, ExportGuide.tsx | 완료(로컬 서버로 확인, 배포판은 서버 공개 배포 필요) |
 | FR-26 | 전후 비교에 대화 종류별 비중 변화를 함께 보인다. 추천 카드·플러그인·대화 종류별 새 채팅 시작 문구에 '적용함' 표시를 두고, 다음 분석 때 그 항목이 겨냥한 대화 종류의 다시 말한 지시 비율 변화를 붙인다(원인은 판정하지 않음). 대화 내용은 저장하지 않는다. | 사용자 요청(2026-11-18) | store/records.ts, store/History.tsx, store/Trend.tsx, recommend/starterPrompts.ts, 서버 /api/records(applied·tasks) | 완료(로컬 서버로 확인, 운영 서버 재배포 필요) |
 | FR-27 | 화면·추천·기록의 대화 종류를 6종으로 합친다(업무 문서 → 글·문서, 정보 탐색 → 정보·학습). 모델은 세부 8종으로 고른 뒤 합치고, 예전 기록의 8종 키는 합친 종류로 읽는다. | 사용자 요청(2026-11-18, 라벨 붙일 때 경계가 헷갈림) | classify/classifier.ts(toTask·foldTask), recommend/snapshot.ts, catalog-0.4.0, store/records.ts·ledger.ts, 서버 RecommendEngine | 완료(로컬 서버로 확인, 운영 서버 재배포 필요) |
+| FR-28 | 로그인한 사용자는 파일을 올리지 않아도 '내 기록'에서 계정(이메일·가입일), 분석한 날짜·서비스·대화 기간, 회차별 다시 말한 지시 비율, 같은 서비스 직전 기록 뒤 새 메시지의 비율과 변화(두 기록 숫자 차이로 추정), 추천·적용함 수를 본다. 서버에 이미 있는 요약 숫자만 읽고 새로 저장하는 것은 없다. 대화 내용은 저장하지 않는다. | 사용자 요청(2026-11-20) | store/MyRecords.tsx, store/records.ts(sinceLast), auth/AuthGate.tsx, 서버 GET /api/me·/api/records | 완료(로컬 서버로 확인) |
+| FR-29 | Claude 플러그인 목록을 갱신하고 추천 후보가 목록에 아직 있는지 점검한다. 공식 마켓플레이스(공개 GitHub)는 매일 GitHub Actions가 받아 바뀌면 PR을 올리고, 플러그인 디렉터리는 이 PC의 Claude Code 캐시로 손으로 갱신한다(`node catalog/refresh_plugins.mjs --local-cache`). ChatGPT 목록과 Claude 앱 설치 수는 약관·로그인 문제로 손으로 갱신한다. | 사용자 요청(2026-11-20) | catalog/refresh_plugins.mjs, catalog/build_plugins.mjs, .github/workflows/plugins.yml | 부분(로컬 실행 확인, Actions는 푸시 뒤 확인) |
 
 ## 4. 비기능 요구사항
 

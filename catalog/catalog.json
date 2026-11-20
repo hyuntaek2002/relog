@@ -992,7 +992,7 @@
       "verified": true,
       "isPopularDefault": false,
       "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
-      "evidenceNote": "Claude 한국어 데스크톱 앱 설정→플러그인→탐색 탭 캡처 2026-11-10: Data, UI Design Review, SwiftUI App Design, learn, doc-coauthoring, web-artifacts-builder, Productivity(3.4M), Marketing(2.7M); 내 항목: Engineering, Design, Unity",
+      "evidenceNote": "Claude 한국어 데스크톱 앱 설정→플러그인→탐색 탭 캡처 2026-11-10: Data, UI Design Review, SwiftUI App Design, learn, doc-coauthoring, web-artifacts-builder, Productivity(3.4M), Marketing(2.7M)",
       "byTask": {
         "coding": "Engineering",
         "writing": "doc-coauthoring",

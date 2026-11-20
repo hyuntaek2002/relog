@@ -1,22 +1,25 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { getToken, login, logout, me, register } from '../store/sync'
+import MyRecords from '../store/MyRecords'
 
 // 로그인해야 쓸 수 있게 막는 화면(2026-11-18 결정: 서버 없는 배포판도 포함). 가입·로그인에는 이메일과 비밀번호만 쓰고,
 // 대화 분석은 그대로 브라우저 안에서만 한다. 토큰이 없거나 서버가 거절하면(401) 로그인 화면으로 돌아온다.
-type State = { kind: 'checking' } | { kind: 'out'; msg?: string } | { kind: 'offline' } | { kind: 'in'; email: string }
+type State = { kind: 'checking' } | { kind: 'out'; msg?: string } | { kind: 'offline' } | { kind: 'in'; email: string; createdAt: string }
 
 export default function AuthGate({ children }: { children: ReactNode }) {
   const [st, setSt] = useState<State>({ kind: 'checking' })
+  const [mine, setMine] = useState(false) // 내 기록 펼침
   const check = () => {
     if (!getToken()) { setSt({ kind: 'out' }); return }
     setSt({ kind: 'checking' })
-    me().then((w) => setSt({ kind: 'in', email: w.email })).catch((e: Error) => setSt(getToken() ? { kind: 'offline' } : { kind: 'out', msg: e.message }))
+    me().then((w) => setSt({ kind: 'in', email: w.email, createdAt: w.createdAt })).catch((e: Error) => setSt(getToken() ? { kind: 'offline' } : { kind: 'out', msg: e.message }))
   }
   useEffect(check, [])
 
   if (st.kind === 'in') return (
     <>
-      <div className="authbar"><span>{st.email}</span><button onClick={() => { logout(); setSt({ kind: 'out' }) }}>로그아웃</button></div>
+      <div className="authbar"><span>{st.email}</span><button onClick={() => setMine(!mine)}>{mine ? '내 기록 닫기' : '내 기록'}</button><button onClick={() => { logout(); setMine(false); setSt({ kind: 'out' }) }}>로그아웃</button></div>
+      {mine && <main className="myrec-wrap"><MyRecords email={st.email} createdAt={st.createdAt} /></main>}
       {children}
     </>
   )

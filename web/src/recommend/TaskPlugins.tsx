@@ -26,13 +26,13 @@ function Pick({ p, how, alt, installed, note, applied, onApplied }: { p: PluginP
       </p>
       <p className="tp-line">{p.oneLiner}</p>
       <RepeatLine note={note} />
-      {p.evidenceUrl.startsWith('https://chatgpt.com/plugins/') && <p className="detail"><a href={p.evidenceUrl} target="_blank" rel="noreferrer">디렉터리에서 보기</a></p>}
+      {/* 행동은 한 줄로: 적용함 · 설치 방법 · 디렉터리 */}
       <p className="actions">
         {onApplied && <AppliedButton on={applied.includes(p.name)} onToggle={() => onApplied(p.name)} />}
-        {have
-          ? <span className="detail">대화 첫 메시지에 '{p.name} 플러그인 써서'라고 적으면 됩니다.</span>
-          : <button className="link" onClick={() => setOpen((o) => !o)}>{open ? '닫기' : '설치 방법'}</button>}
+        {!have && <button className="link" onClick={() => setOpen((o) => !o)}>{open ? '닫기' : '설치 방법'}</button>}
+        {p.evidenceUrl.startsWith('https://chatgpt.com/plugins/') && <a href={p.evidenceUrl} target="_blank" rel="noreferrer">디렉터리</a>}
       </p>
+      {have && <p className="detail">대화 첫 메시지에 '{p.name} 플러그인 써서'라고 적으면 됩니다.</p>}
       {open && !have && (
         <div className="detail">
           <ol className="rx-steps">{steps(how).map((s, i) => <li key={i}>{s}</li>)}</ol>
@@ -70,16 +70,15 @@ function Card({ r, codingSub, installed, platform, notes, applied, onApplied }: 
   return (
     <article className="tp">
       <header className="meta"><b>{TASK[r.task]}</b><span>메시지 {r.count}개 · {Math.round(r.share * 100)}%</span></header>
-      {r.status === 'none' && <p className="tp-line">이 종류에 맞는 플러그인은 아직 없습니다. 아래 시작 문구만 써 보세요.</p>}
+      {r.status === 'none' && <p className="tp-line tp-none">이 종류에 맞는 플러그인은 아직 없습니다. 아래 시작 문구만 써 보세요.</p>}
       {r.pick && <Pick p={r.pick} how={r.how} alt={r.alt} installed={installed} note={notes[r.pick.name]} applied={applied} onApplied={onApplied} />}
-      {r.status === 'insufficient' && <p className="detail">이 종류 메시지가 {r.count}개({TASK_PLUGIN_MIN_MESSAGES}개 미만)라 내 기록 근거는 약합니다. 이 종류 대화를 할 때 참고하세요.</p>}
-      {subs.length > 0 && <p className="detail">세부: {subs.map(([s, n]) => `${CODING_SUB_LABEL[s]} ${n}`).join(' · ')}</p>}
-      {subPicks.map(([s, n, sp]) => (
-        <div key={s} className="tp-sub">
-          <p className="detail">{CODING_SUB_LABEL[s]} {n}개 →</p>
-          <Pick p={sp!.pick} how={sp!.how} installed={installed} applied={applied} onApplied={onApplied} />
+      {r.status === 'insufficient' && <p className="detail tp-weak">메시지 {r.count}개({TASK_PLUGIN_MIN_MESSAGES}개 미만)라 내 기록 근거는 약합니다. 참고만 하세요.</p>}
+      {subs.length > 0 && (
+        <div className="tp-sub">
+          <p className="tp-label">세부: {subs.map(([s, n]) => `${CODING_SUB_LABEL[s]} ${n}개`).join(' · ')}{subPicks.length > 0 && ' → 맞는 플러그인'}</p>
+          {subPicks.map(([s, , sp]) => <Pick key={s} p={sp!.pick} how={sp!.how} installed={installed} applied={applied} onApplied={onApplied} />)}
         </div>
-      ))}
+      )}
       <Starter task={r.task} plugin={r.pick && isInstalled(r.pick.name, installed) ? r.pick.name : undefined} note={notes[promptKey(r.task)]} applied={applied} onApplied={onApplied} />
     </article>
   )

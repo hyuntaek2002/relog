@@ -8,7 +8,7 @@ import { effectOf, ledgerTask, type AnalysisRecord, type RepeatNote } from './re
 
 const day = (ms: number) => new Date(ms).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' })
 const taskLabel = (t: string) => (TASK_LABELS as Record<string, string>)[t] ?? t
-const rxName = (id: string) => id.startsWith('prompt:') ? `${taskLabel(ledgerTask(id.slice(7)))} 시작 문구` : CATALOG.find((c) => c.id === id)?.name ?? id
+export const rxName = (id: string) => id.startsWith('prompt:') ? `${taskLabel(ledgerTask(id.slice(7)))} 시작 문구` : CATALOG.find((c) => c.id === id)?.name ?? id
 // 효과 한 줄: "그 뒤 코딩 대화의 다시 말한 지시 비율: 줄어듦 2.9%p"
 const effectText = (task: string, d: number | null) =>
   `그 뒤 ${task === 'all' ? '전체' : `${taskLabel(task)} 대화의`} 다시 말한 지시 비율: ${d == null ? '아직 잴 메시지가 부족합니다' : Math.abs(d) < 0.05 ? '그대로' : d < 0 ? `줄어듦 ${Math.abs(d).toFixed(1)}%p` : `늘어남 +${d.toFixed(1)}%p`}`
@@ -66,8 +66,17 @@ export default function History({ cur, prevs, sel, onSel, cmp, installed, onClea
   )
 }
 
-/** 추천 카드 안 한 줄: 지난 기록에서도 추천했는지, 그 뒤 비율이 어떻게 됐는지 */
+/** 추천 카드 안 효과 칸: 위 줄은 '지난 기록 뒤 [적용함] ▼ 5.8%p'처럼 숫자를 배지로, 아래 줄에 날짜와 무엇을 잰 것인지 작게 */
 export function RepeatLine({ note }: { note?: RepeatNote }) {
   if (!note) return null
-  return <p className="detail">{day(note.since)} 기록에서도 추천했습니다{note.applied ? '(적용함으로 표시)' : ''}. {effectText(note.task, note.delta)}.</p>
+  const d = note.delta
+  const badge = d == null ? <span className="eff-badge">잴 메시지 부족</span>
+    : Math.abs(d) < 0.05 ? <span className="eff-badge">그대로</span>
+    : <span className={`eff-badge ${d < 0 ? 'down' : 'up'}`}>{d < 0 ? '▼' : '▲'} {Math.abs(d).toFixed(1)}%p</span>
+  return (
+    <div className="eff">
+      <p className="eff-top"><span>지난 기록 뒤</span>{note.applied && <span className="tag have">적용함</span>}{badge}</p>
+      <p className="eff-sub">{day(note.since)} 기록에서도 추천 · {note.task === 'all' ? '전체' : `${taskLabel(note.task)} 대화의`} 다시 말한 지시 비율</p>
+    </div>
+  )
 }

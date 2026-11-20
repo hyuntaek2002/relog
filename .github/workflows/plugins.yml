@@ -1,0 +1,40 @@
+# 매일 Claude Code 공식 마켓플레이스(공개 GitHub)를 받아 플러그인 목록을 갱신하고, 바뀐 게 있으면 PR을 올린다.
+# PR 본문에는 새로 생기거나 빠진 플러그인과, 추천 카드에 쓰는 후보가 목록에서 사라졌는지 점검한 결과가 들어간다.
+# 합치면 web/public이 바뀌므로 pages.yml이 웹을 다시 배포한다. 디렉터리 캐시·ChatGPT 목록은 여기서 받지 않는다(catalog/refresh_plugins.mjs 참고).
+# 저장소 설정 → Actions → General → "Allow GitHub Actions to create and approve pull requests"를 켜야 PR을 만들 수 있다.
+name: plugins
+on:
+  schedule:
+    - cron: '0 21 * * *' # 매일 06:00(한국 시간)
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: plugins
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node catalog/refresh_plugins.mjs --report=${{ runner.temp }}/report.md
+      - name: 바뀌었으면 PR(같은 가지를 덮어써서 PR은 하나만 둔다)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- catalog web/public; then echo "바뀐 것 없음"; cat "${{ runner.temp }}/report.md"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -C plugins/refresh
+          git add catalog web/public
+          git commit -q -m "플러그인 목록 갱신 $(date -u +%F)"
+          git push -f origin plugins/refresh
+          if gh pr view plugins/refresh --json state -q .state 2>/dev/null | grep -q OPEN; then
+            gh pr edit plugins/refresh --body-file "${{ runner.temp }}/report.md"
+          else
+            gh pr create --head plugins/refresh --base master --title "플러그인 목록 갱신" --body-file "${{ runner.temp }}/report.md"
+          fi
