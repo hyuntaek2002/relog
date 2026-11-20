@@ -31,7 +31,8 @@ for (const r of rows) if (!dirNames.has(norm(r.name))) out.push({ n: r.name, s: 
 const known = new Set(out.map((p) => norm(p.n)))
 const mktRepo = (p) => p.homepage || (typeof p.source === 'object' ? p.source.url ?? '' : 'https://github.com/anthropics/claude-plugins-official')
 for (const p of mkt.plugins) if (!known.has(norm(p.name))) out.push({ n: p.name, s: trim(p.description), r: mktRepo(p), c: [], i: null, a: p.author?.name === 'Anthropic', k: ko[p.name] })
-out.sort((x, y) => (y.i || 0) - (x.i || 0) || x.n.localeCompare(y.n))
+// 이름은 문자 코드 순(localeCompare는 실행 환경 언어에 따라 달라 CI에서 가짜 변경이 생긴다)
+out.sort((x, y) => (y.i || 0) - (x.i || 0) || (x.n < y.n ? -1 : x.n > y.n ? 1 : 0))
 const at = (s) => String(s ?? '').slice(0, 10)
 const file = { format: 'relog-plugins-1', fetchedAt: at(dirFile.fetchedAt), note: `플러그인 디렉터리 캐시(${at(dirFile.fetchedAt)})와 Claude Code 공식 마켓플레이스(${at(mkt.fetchedAt)}), Claude 앱 탐색 탭 실측(${DATE}, 카테고리당 설치 수 상위 100까지)을 합친 것. 카테고리·설치 수가 없는 항목은 탐색 탭 상위 100 밖이거나 실측 뒤 새로 생긴 것.`, categories: slugMap, plugins: out }
 const dest = path.join(here, '..', 'web', 'public', 'plugins-claude.json')
