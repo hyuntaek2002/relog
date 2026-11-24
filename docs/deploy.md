@@ -53,7 +53,7 @@ curl https://<RELOG_DOMAIN>/api/health
 ## 운영
 
 - 갱신: `git pull` 뒤 3번 명령을 다시 실행합니다. 스키마는 서버가 시작할 때 맞춥니다(`ddl-auto: update`, 프로토타입 단계).
-- 백업: `docker compose -f docker-compose.prod.yml exec mysql mysqldump -urelog -p relog > backup.sql`
+- 백업: `docker compose -f docker-compose.prod.yml exec -T mysql sh -c 'mysqldump -urelog -p"$MYSQL_PASSWORD" --no-tablespaces relog' > backup.sql` (비밀번호는 컨테이너 환경 값을 쓴다. `-p`만 주고 입력받는 방식은 여러 줄을 붙여 넣으면 다음 줄이 비밀번호로 들어가 0바이트 파일이 된다)
 - 중지: `docker compose -f docker-compose.prod.yml --profile tls down` (데이터는 볼륨에 남습니다. 볼륨까지 지우려면 `-v`)
 - 로그: `docker compose -f docker-compose.prod.yml logs -f server`
 
