@@ -1,15 +1,23 @@
+/* 디자인 B(따뜻한 카드형, 2026-11-24): 크림 바탕, 크게 둥근 카드, 초록 강조 + 주황 포인트. 글꼴은 Pretendard(자체 배포) */
 :root {
-  --bg: #fff;
-  --fg: #1a1a1a;
-  --muted: #6b6b6b;
-  --line: #ddd;
-  --accent: #2563eb;
-  --accent-bg: #eff4ff;
-  font-family: system-ui, -apple-system, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --bg: #f7f1e6;      /* 바탕 */
+  --card: #fffdf8;    /* 카드 */
+  --soft: #f2ebdd;    /* 카드 안 옅은 칸 */
+  --fg: #2b2620;
+  --muted: #7d7366;
+  --line: #e8dfcd;
+  --accent: #0f7a5c;  /* 초록: 주요 숫자·선택·주 버튼 */
+  --accent-bg: #d8f0e6;
+  --on-accent: #fff;
+  --hot: #e0582c;     /* 주황: 지금 필요한 것 */
+  --good: #0f7a5c;
+  --bad: #d14b28;
+  --radius: 20px;
+  font-family: 'Pretendard Variable', Pretendard, system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #121212; --fg: #ececec; --muted: #9a9a9a; --line: #333; --accent: #7aa2ff; --accent-bg: #1b2440; }
+  :root { --bg: #1b1814; --card: #25211c; --soft: #2f2a23; --fg: #f3ede3; --muted: #a99e8f; --line: #3a342b; --accent: #3fbf93; --accent-bg: #17392e; --on-accent: #0d1f19; --hot: #f07a52; --good: #3fbf93; --bad: #ff7a5c; }
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--fg); line-height: 1.5; }
@@ -228,3 +236,99 @@ main.authpage { max-width: 420px; }
 .eff-badge.down { color: #2e9e6a; }
 .eff-badge.up { color: #d9534f; }
 .eff-sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px !important; }
+
+/* ===== 디자인 B 덮어쓰기(2026-11-24). 위 규칙의 모양만 바꾸고 배치는 그대로 둔다 ===== */
+body { font-feature-settings: 'tnum'; -webkit-font-smoothing: antialiased; letter-spacing: -0.01em; }
+main { padding: 28px 40px 48px; }
+@media (max-width: 600px) { main { padding: 20px 16px 40px; } }
+button { font: inherit; font-size: 0.9rem; font-weight: 600; color: var(--fg); background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 6px 12px; cursor: pointer; }
+button:hover { border-color: var(--muted); }
+button.on, .rx button.on, .choices button.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+button.link, .rx button.link, .tp button.link { border: none; background: none; padding: 0 4px; font-weight: 600; }
+.help-btn { border-radius: 50%; padding: 0; font-weight: 400; background: transparent; }
+.help-pop { background: var(--card); border-radius: 12px; }
+input, select, textarea { font: inherit; }
+a { color: var(--accent); }
+.err { color: var(--bad); }
+
+/* 카드류는 모두 같은 둥근 카드 */
+.card, .rx, .tp, .cand, details.conv, .checklist, .guide, .myrec, .ps-list li, .modes label { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); }
+.rx { padding: 18px 20px; }
+.rx-grid, .tp-grid { gap: 14px; }
+.cand { border-radius: 14px; }
+.ps-list li { border-radius: 14px; }
+.tag, .rx .meta .tag, .tp .tag, .ps-head .tag { border-radius: 99px; padding: 1px 8px; }
+.tag.have, .tp .tag.have, .ps-head .tag.have, .eff-top .tag { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+.grade-high { color: var(--hot); }
+.tp > .meta { padding: 14px 18px; }
+.tp > .tp-pick, .tp > .tp-none, .tp > .tp-weak { padding-left: 18px; padding-right: 18px; }
+.tp > .tp-sub, .tp > .tp-starter { padding-left: 18px; padding-right: 18px; }
+.tp .tp-starter summary, .tp .tp-starter pre { border-radius: 12px; }
+.eff { background: var(--soft); border-radius: 12px; padding: 8px 12px; }
+.eff-badge.down { color: var(--good); }
+.eff-badge.up { color: var(--bad); }
+td.down { color: var(--good); }
+td.up { color: var(--bad); }
+
+/* 요약: 초록 큰 카드(비율) + 흰 카드 + 주황 카드(지금 필요한 것) */
+.summary { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 14px; margin: 8px 0 20px; }
+@media (max-width: 720px) { .summary { grid-template-columns: 1fr; } }
+.summary .card { padding: 18px 22px; display: flex; flex-direction: column; gap: 4px; }
+.summary .card b { font-size: 2.3rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; order: 2; }
+.summary .card span { order: 1; font-weight: 600; }
+.summary .card small { order: 3; }
+.summary .hero { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.summary .hero span, .summary .hero small { color: color-mix(in srgb, var(--on-accent) 82%, transparent); }
+.summary .hero b { font-size: 2.8rem; }
+.summary .hot { background: var(--hot); border-color: var(--hot); color: #fff; cursor: pointer; text-align: left; }
+.summary .hot span, .summary .hot small { color: #ffffffd9; }
+.summary .hot b { font-size: 1.45rem; }
+.summary .help-btn { border-color: currentColor; color: inherit; }
+
+/* 결과 탭: 알약 모양 */
+.tabs { border-bottom: none; gap: 8px; margin-bottom: 18px; padding: 2px 0; }
+.tabs button { border: 1px solid var(--line); background: var(--card); border-radius: 99px; margin: 0; padding: 8px 16px; font-weight: 600; color: var(--muted); }
+.tabs button.on { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+.tabs button.on em { color: var(--bg); opacity: 0.8; }
+.tabs em { color: var(--accent); font-weight: 700; }
+.strip { margin: 4px 0 12px; }
+
+/* 첫 화면: 분석 방식 카드 + 큰 업로드 칸 */
+.modes label { padding: 14px 18px; border-radius: 16px; }
+.modes label.on { border: 2px solid var(--accent); padding: 13px 17px; }
+.modes input[type=radio] { accent-color: var(--accent); }
+.drop { border: 2px dashed color-mix(in srgb, var(--accent) 45%, var(--line)); border-radius: var(--radius); background: color-mix(in srgb, var(--accent) 5%, var(--card)); padding: 56px 16px; font-size: 1.1rem; font-weight: 700; color: var(--fg); }
+.drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-bg); }
+.drop.small { padding: 12px 16px; font-size: 0.95rem; font-weight: 600; }
+.steps li { border-top-width: 4px; border-radius: 2px; }
+.guide { padding: 14px 18px; }
+
+/* 위쪽 줄: 로고 + 계정 */
+.authbar { justify-content: flex-start; padding: 20px 40px 0; gap: 10px; }
+.authbar .logo { margin-right: auto; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.04em; color: var(--fg); }
+.authbar .logo i { font-style: normal; color: var(--accent); }
+@media (max-width: 600px) { .authbar { padding: 14px 16px 0; } }
+
+/* 로그인 화면: 가운데 카드 */
+main.authpage { max-width: 440px; margin-top: 8vh; background: var(--card); border: 1px solid var(--line); border-radius: 28px; padding: 36px 32px; }
+main.authpage h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.04em; }
+.auth input { border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--fg); padding: 10px 12px; }
+.auth button[type=submit] { border-radius: 12px; padding: 12px; font-weight: 700; color: var(--on-accent); }
+.authtabs { border-bottom: none; gap: 6px; }
+.authtabs button { border: 1px solid var(--line); border-radius: 99px; margin: 0; padding: 6px 14px; font-size: 0.9rem; }
+.authtabs button.on { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+
+/* 내 기록 */
+.myrec { padding: 22px 24px; }
+.myrec h2 { color: var(--fg); font-size: 1.3rem; font-weight: 800; }
+details.conv { border-radius: 14px; padding: 10px 16px; margin: 8px 0; }
+.rx .meta b { font-size: 1.1rem; font-weight: 800; }
+.rx .actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.rx .actions button { margin: 0; }
+/* 표도 카드 안에(바탕에 바로 놓이면 B의 카드 느낌과 어긋난다) */
+.panel table, .myrec table { background: var(--card); border: 1px solid var(--line); border-radius: 16px; border-collapse: separate; border-spacing: 0; overflow: hidden; }
+.panel th, .panel td, .myrec th, .myrec td { padding: 10px 14px; }
+.panel tr:last-child td, .myrec tr:last-child td { border-bottom: none; }
+.panel th, .myrec th { background: var(--soft); }
+select { border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--fg); padding: 4px 8px; }
+@media (max-width: 720px) { .summary { grid-template-columns: 1fr 1fr; gap: 10px; } .summary .hero { grid-column: 1 / -1; } .summary .card b { font-size: 1.8rem; } .summary .hot b { font-size: 1.2rem; } }

@@ -55,6 +55,7 @@
 | FR-27 | 화면·추천·기록의 대화 종류를 6종으로 합친다(업무 문서 → 글·문서, 정보 탐색 → 정보·학습). 모델은 세부 8종으로 고른 뒤 합치고, 예전 기록의 8종 키는 합친 종류로 읽는다. | 사용자 요청(2026-11-18, 라벨 붙일 때 경계가 헷갈림) | classify/classifier.ts(toTask·foldTask), recommend/snapshot.ts, catalog-0.4.0, store/records.ts·ledger.ts, 서버 RecommendEngine | 완료(로컬 서버로 확인, 운영 서버 재배포 필요) |
 | FR-28 | 로그인한 사용자는 파일을 올리지 않아도 '내 기록'에서 계정(이메일·가입일), 분석한 날짜·서비스·대화 기간, 회차별 다시 말한 지시 비율, 같은 서비스 직전 기록 뒤 새 메시지의 비율과 변화(두 기록 숫자 차이로 추정), 추천·적용함 수를 본다. 서버에 이미 있는 요약 숫자만 읽고 새로 저장하는 것은 없다. 대화 내용은 저장하지 않는다. | 사용자 요청(2026-11-20) | store/MyRecords.tsx, store/records.ts(sinceLast), auth/AuthGate.tsx, 서버 GET /api/me·/api/records | 완료(로컬 서버로 확인) |
 | FR-29 | Claude 플러그인 목록을 갱신하고 추천 후보가 목록에 아직 있는지 점검한다. 공식 마켓플레이스(공개 GitHub)는 매일 GitHub Actions가 받아 바뀌면 PR을 올리고, 플러그인 디렉터리는 이 PC의 Claude Code 캐시로 손으로 갱신한다(`node catalog/refresh_plugins.mjs --local-cache`). ChatGPT 목록과 Claude 앱 설치 수는 약관·로그인 문제로 손으로 갱신한다. | 사용자 요청(2026-11-20) | catalog/refresh_plugins.mjs, catalog/build_plugins.mjs, .github/workflows/plugins.yml | 부분(로컬 실행 확인, Actions는 푸시 뒤 확인) |
+| FR-30 | 카탈로그를 기능 조사(docs/feature-survey-2026-11.md)에 맞춰 고친다(catalog-0.5.0): 캔버스 내림·쓰기 블록 추가, 음성·Claude 지침 이름 정정, 다시 말한 지시를 줄이는 데 도움이 큰 항목 21개 추가. Claude Code·Codex 전용 항목은 그 도구 기록이 있을 때만 추천한다(`requiresTool`, 감지 항목 `tool:claude_code`·`tool:codex`, 체크리스트에서 해제 가능). | 사용자 요청(2026-11-24) | catalog/catalog.json, recommend/recommend.ts, recommend/detectFeatures.ts, recommend/Checklist.tsx, 서버 RecommendEngine·CatalogItem | 부분(테스트 통과, 실제 Claude Code 기록으로 화면 확인 전) |
 
 ## 4. 비기능 요구사항
 

@@ -18,14 +18,14 @@ export default function AuthGate({ children }: { children: ReactNode }) {
 
   if (st.kind === 'in') return (
     <>
-      <div className="authbar"><span>{st.email}</span><button onClick={() => setMine(!mine)}>{mine ? '내 기록 닫기' : '내 기록'}</button><button onClick={() => { logout(); setMine(false); setSt({ kind: 'out' }) }}>로그아웃</button></div>
+      <div className="authbar"><span className="logo">re<i>log</i></span><span>{st.email}</span><button onClick={() => setMine(!mine)}>{mine ? '내 기록 닫기' : '내 기록'}</button><button onClick={() => { logout(); setMine(false); setSt({ kind: 'out' }) }}>로그아웃</button></div>
       {mine && <main className="myrec-wrap"><MyRecords email={st.email} createdAt={st.createdAt} /></main>}
       {children}
     </>
   )
   return (
     <main className="authpage">
-      <h1>relog</h1>
+      <h1>re<span style={{ color: "var(--accent)" }}>log</span></h1>
       <p className="sub">이 브라우저 안에서만 분석합니다. 대화 내용은 어디로도 보내지 않습니다.</p>
       {st.kind === 'checking' && <p className="detail">로그인 상태를 확인하고 있습니다.</p>}
       {st.kind === 'offline' && <p className="err">서버에 연결하지 못했습니다. 잠시 뒤 다시 시도해 주세요. <button onClick={check}>다시 시도</button></p>}

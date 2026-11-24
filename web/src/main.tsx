@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css' // 글꼴은 이 사이트에서 직접 내려받는다(외부 글꼴 서버 요청 없음)
 import './index.css'
 import App from './App.tsx'
 import Viewer from './viewer/Viewer.tsx'

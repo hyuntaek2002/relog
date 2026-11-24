@@ -266,7 +266,8 @@ export default function App() {
   const snapshot = result && cls && s && eff
     ? buildSnapshot({ platform, stats: s, utterances: result.utterances, okIds: result.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: cls.linear, candidates: eff.candidates, detect: eff.summary, subByConversation: subByConversation(result.conversations) })
     : null
-  const detected = result ? detectFeatures(result.conversations) : []
+  // Codex는 plugins 폴더 zip에 설치 플러그인이 있으면 쓰는 것으로 본다(대화 기록은 받지 않음)
+  const detected = result ? [...detectFeatures(result.conversations), ...(result.codexPlugins.length ? [{ catalogId: 'tool:codex', conversations: 0 }] : [])] : []
   const installed = result ? [...installedPlugins(result.conversations), ...result.codexPlugins] : [] // Claude Code 기록 + Codex plugins 폴더의 설치 플러그인
   const prescriptions = snapshot && ctx ? recommend(snapshot, withDetected(ctx, detected), feedback) : []
   function onFeedback(id: string, f: Feedback) {
@@ -392,14 +393,17 @@ export default function App() {
           <p className="strip">대화 <b>{s.conversations}</b> · 내 메시지 <b>{s.userTurns}</b> · 긴 대화 <b>{s.longConversations}</b> · {fmtDate(s.firstAt)} ~ {fmtDate(s.lastAt)}</p>
           {/* 요약 숫자는 탭 위에 늘 보이고, 나머지는 화면 폭과 상관없이 탭으로 하나씩 넓게 보여 준다(2026-11-18 사용자 요청) */}
           {cls && eff && (
-            <div className="cards three summary">
-              <div className="card">
-                <b>{eff.summary.byGrade.high}</b>
-                <span>다시 말한 지시<Help text="같은 대화에서 앞서 한 지시를 다시 말한 것이 확실해 보이는 메시지입니다. AI가 지시를 따랐는지는 판정하지 않습니다. 내용은 이 화면에만 보입니다." /></span>
-                <small>확실함만 셉니다. 참고: 가능성 있음 {eff.summary.byGrade.medium} · 약함 {eff.summary.byGrade.low}</small>
+            <div className="summary">
+              {/* 디자인 B: 핵심 숫자(비율)는 초록 큰 카드, 지금 필요한 추천은 주황 카드(누르면 추천 탭) */}
+              <div className="card hero">
+                <b>{eff.summary.ratio.toFixed(1)}%</b>
+                <span>다시 말한 지시 비율<Help text="같은 대화에서 앞서 한 지시를 다시 말한 것이 확실해 보이는 메시지의 비율입니다. AI가 지시를 따랐는지는 판정하지 않습니다. 내용은 이 화면에만 보입니다." /></span>
+                <small>비교한 내 메시지 {eff.summary.judgeable}개 중 {eff.summary.byGrade.high}건 · 참고: 가능성 있음 {eff.summary.byGrade.medium} · 약함 {eff.summary.byGrade.low}</small>
               </div>
-              <div className="card"><b>{eff.summary.ratio.toFixed(1)}%</b><span>비교한 내 메시지 {eff.summary.judgeable}개 중</span></div>
-              <div className="card"><b>{eff.summary.tokenEstimate.toLocaleString()}</b><span>다시 친 분량 (토큰, 추정)</span></div>
+              <div className="card"><b>{eff.summary.tokenEstimate.toLocaleString()}</b><span>다시 친 분량</span><small>토큰, 추정</small></div>
+              {!AB && shownRx[0]
+                ? <button className="card hot" onClick={() => setTab('rx')}><b>{shownRx[0].name}</b><span>{shownRx[0].grade === '핵심' ? '지금 필요한 것' : '해 볼 만한 것'}</span><small>{shownRx[0].summary}</small></button>
+                : <div className="card"><b>{eff.summary.byGrade.high}</b><span>다시 말한 지시</span><small>확실함만 셉니다</small></div>}
             </div>
           )}
           <nav className="tabs">

@@ -19,6 +19,7 @@ export function detectFeatures(convs: Conversation[]): DetectedFeature[] {
   const count = new Map<string, number>()
   for (const c of convs) {
     const hit = new Set<string>()
+    if (c.client === 'code') hit.add('tool:claude_code') // Claude Code 기록을 같이 올렸으면 Claude Code 전용 항목을 추천 대상에 넣는다
     for (const name of c.toolNames) for (const [id, re] of RULES) if (re.test(name)) hit.add(id)
     for (const id of hit) count.set(id, (count.get(id) ?? 0) + 1)
   }

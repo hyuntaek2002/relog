@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>relog 디자인 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<!-- 디자인 시안(정적). ?style=a|b|c&screen=1..4. 숫자는 모두 예시 값 -->
+<style>
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { font-family: Pretendard, system-ui, sans-serif; background: var(--page); color: var(--fg); -webkit-font-smoothing: antialiased; }
+.num { font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+/* A: 밝은 대시보드 */
+.a { --page:#f3f4f7; --card:#fff; --fg:#191c24; --muted:#6b7280; --line:#e7e9ee; --acc:#2f6bff; --acc-bg:#eaf0ff; --good:#16a36b; --bad:#e5484d; --soft:#f6f7fa; --side:#fff; --r:16px; }
+/* B: 따뜻한 카드형 */
+.b { --page:#f7f1e6; --card:#fffdf8; --fg:#2b2620; --muted:#857b6e; --line:#ece3d3; --acc:#0f7a5c; --acc-bg:#d8f0e6; --good:#0f7a5c; --bad:#d9572b; --soft:#f2ebdd; --hot:#e8643a; --r:24px; }
+/* C: 어두운 대시보드 */
+.c { --page:#101114; --card:#1a1c21; --fg:#eef0f3; --muted:#8b919c; --line:#2a2d34; --acc:#3ddc97; --acc-bg:#16332a; --good:#3ddc97; --bad:#ff6b6b; --soft:#22252b; --side:#15171b; --r:14px; }
+.frame { width: 1280px; height: 800px; overflow: hidden; display: flex; background: var(--page); }
+.side { width: 220px; background: var(--side, transparent); border-right: 1px solid var(--line); padding: 24px 16px; display: flex; flex-direction: column; gap: 4px; }
+.logo { font-weight: 800; font-size: 22px; letter-spacing: -0.03em; padding: 0 10px 20px; }
+.logo i { font-style: normal; color: var(--acc); }
+.nav { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; color: var(--muted); font-size: 14px; font-weight: 500; }
+.nav.on { background: var(--acc-bg); color: var(--acc); font-weight: 700; }
+.nav b { margin-left: auto; font-size: 12px; background: var(--soft); color: var(--muted); padding: 1px 8px; border-radius: 99px; }
+.side .foot { margin-top: auto; font-size: 12px; color: var(--muted); padding: 12px; border-top: 1px solid var(--line); line-height: 1.6; }
+.main { flex: 1; padding: 28px 36px; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.top { display: flex; align-items: center; gap: 12px; }
+.top h1 { font-size: 24px; margin: 0; letter-spacing: -0.02em; }
+.top .sub { color: var(--muted); font-size: 13px; }
+.top .sp { margin-left: auto; }
+.btn { white-space: nowrap; border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 10px; padding: 9px 14px; font: inherit; font-size: 13px; font-weight: 600; }
+.btn.pri { background: var(--acc); border-color: var(--acc); color: #fff; }
+.c .btn.pri { color: #0c1a14; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 18px 20px; }
+.lbl { font-size: 13px; color: var(--muted); font-weight: 500; }
+.big { font-size: 34px; font-weight: 800; margin-top: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 99px; }
+.down { color: var(--good); background: color-mix(in srgb, var(--good) 14%, transparent); }
+.up { color: var(--bad); background: color-mix(in srgb, var(--bad) 14%, transparent); }
+.tag { font-size: 11px; font-weight: 600; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 1px 7px; }
+.tag.ok { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+.grid { display: grid; gap: 16px; }
+.row { display: flex; align-items: center; gap: 8px; }
+.bars { display: flex; align-items: flex-end; gap: 10px; flex: 1; min-height: 150px; padding-top: 16px; }
+.col { display: flex; flex-direction: column; }
+.bars div { flex: 1; border-radius: 6px 6px 2px 2px; background: color-mix(in srgb, var(--acc) 28%, transparent); position: relative; }
+.bars div.now { background: var(--acc); }
+.axis { display: flex; gap: 10px; font-size: 11px; color: var(--muted); }
+.axis span { flex: 1; text-align: center; }
+.mix { display: flex; flex-direction: column; gap: 10px; }
+.mix .r { display: grid; grid-template-columns: 76px 1fr 44px; align-items: center; gap: 10px; font-size: 13px; }
+.mix .t { height: 10px; border-radius: 99px; background: var(--soft); overflow: hidden; }
+.mix .t i { display: block; height: 100%; background: var(--acc); border-radius: 99px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; color: var(--muted); font-weight: 600; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+td { padding: 12px 8px; border-bottom: 1px solid var(--line); }
+.steps { margin: 8px 0 0; padding-left: 18px; font-size: 13px; color: var(--muted); line-height: 1.7; }
+.pcard { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+.pcard > div { padding: 14px 18px; }
+.pcard > div + div { border-top: 1px solid var(--line); }
+.eff { background: var(--soft); border-radius: 10px; padding: 8px 12px; margin-top: 10px; }
+.drop { border: 2px dashed color-mix(in srgb, var(--acc) 45%, var(--line)); border-radius: var(--r); background: color-mix(in srgb, var(--acc) 5%, var(--card)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; }
+.mode { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: var(--card); }
+.mode.on { border: 2px solid var(--acc); }
+/* B는 왼쪽 메뉴 대신 위쪽 알약 탭 */
+.b .frame { flex-direction: column; }
+.b .bar { display: flex; align-items: center; gap: 8px; padding: 22px 40px 0; }
+.b .pill { padding: 9px 16px; border-radius: 99px; background: var(--card); border: 1px solid var(--line); font-size: 14px; font-weight: 600; color: var(--muted); }
+.b .pill.on { background: var(--fg); color: var(--page); border-color: var(--fg); }
+.b .main { padding: 24px 40px; }
+.b .big { font-size: 40px; }
+.hero { background: var(--acc); color: #fff; }
+.hero .lbl { color: #ffffffcc; }
+.hot { background: var(--hot); color: #fff; border: 0; }
+.hot .lbl { color: #ffffffd0; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const q = new URLSearchParams(location.search), S = q.get('style') || 'a', N = +(q.get('screen') || 2)
+document.body.className = S
+const NAV = [['ti-upload', '분석하기'], ['ti-chart-bar', '다시 말한 지시', 24], ['ti-bulb', '추천', 3], ['ti-puzzle', '종류별 플러그인'], ['ti-trending-down', '변화'], ['ti-history', '내 기록']]
+const onNav = [0, 0, 1, 2, 5][N]
+const icon = (n) => `<span style="width:18px;text-align:center">${{ 'ti-upload': '⇪', 'ti-chart-bar': '▥', 'ti-bulb': '✦', 'ti-puzzle': '◈', 'ti-trending-down': '↘', 'ti-history': '◷' }[n]}</span>`
+const side = () => `<aside class="side"><div class="logo">re<i>log</i></div>${NAV.map(([ic, t, b], i) => `<div class="nav ${i === onNav ? 'on' : ''}">${icon(ic)}${t}${b ? `<b>${b}</b>` : ''}</div>`).join('')}<div class="foot">user@example.com<br>대화 내용은 이 브라우저 안에서만 분석합니다</div></aside>`
+const pills = () => `<div class="bar"><div class="logo" style="padding:0 18px 0 0">re<i>log</i></div>${NAV.map(([, t, b], i) => `<span class="pill ${i === onNav ? 'on' : ''}">${t}${b ? ` ${b}` : ''}</span>`).join('')}<span style="margin-left:auto;font-size:13px;color:var(--muted)">user@example.com</span></div>`
+const WEEKS = [9.1, 8.2, 7.4, 8.8, 6.9, 6.1, 4.2, 3.6, 2.9, 2.2, 1.9, 1.7]
+const bars = () => `<div class="bars">${WEEKS.map((v, i) => `<div class="${i >= 8 ? 'now' : ''}" style="height:${v * 10}%"></div>`).join('')}</div><div class="axis">${WEEKS.map((_, i) => `<span>${i + 1}주</span>`).join('')}</div>`
+const MIX = [['코딩', 36], ['글·문서', 26], ['정보·학습', 18], ['상담·대화', 10], ['기획', 9], ['번역', 1]]
+const mix = () => `<div class="mix">${MIX.map(([t, p]) => `<div class="r"><span>${t}</span><div class="t"><i style="width:${p * 2.4}%"></i></div><span class="num" style="text-align:right">${p}%</span></div>`).join('')}</div>`
+const kpis = () => S === 'b'
+  ? `<div class="grid" style="grid-template-columns:1.4fr 1fr 1fr">
+      <div class="card hero"><div class="lbl">다시 말한 지시 비율</div><div class="big num">4.0%</div><div style="font-size:13px;margin-top:6px">비교한 내 메시지 601개 중 24건 · 지난 기록보다 <b>2.3%p 줄었어요</b></div></div>
+      <div class="card"><div class="lbl">다시 친 분량</div><div class="big num">720<span style="font-size:15px;font-weight:600"> 토큰</span></div><div class="lbl" style="margin-top:6px">추정치</div></div>
+      <div class="card hot"><div class="lbl">지금 필요한 습관</div><div style="font-size:22px;font-weight:800;margin-top:8px">스킬로 묶기</div><div style="font-size:13px;margin-top:6px">코딩 대화에서 같은 지시 11번</div></div></div>`
+  : `<div class="grid" style="grid-template-columns:repeat(4,1fr)">
+      ${[['다시 말한 지시', '24', '건', '<span class="chip down">▼ 7건</span>'], ['비율', '4.0', '%', '<span class="chip down">▼ 2.3%p</span>'], ['다시 친 분량', '720', '토큰', '<span class="lbl">추정</span>'], ['비교한 내 메시지', '601', '개', '<span class="lbl">대화 134개</span>']]
+        .map(([l, v, u, x]) => `<div class="card"><div class="lbl">${l}</div><div class="big num">${v}<span style="font-size:15px;font-weight:600;color:var(--muted)"> ${u}</span></div><div style="margin-top:8px">${x}</div></div>`).join('')}</div>`
+const head = (t, sub, btn) => `<div class="top"><div><h1>${t}</h1><div class="sub">${sub}</div></div><div class="sp"></div>${btn ?? '<button class="btn">다른 파일 분석</button><button class="btn pri">결과 저장</button>'}</div>`
+
+const screens = {
+  1: () => `${head('대화를 올려 주세요', 'ChatGPT·Claude 내보내기 zip을 이 브라우저 안에서 분석합니다. 대화 내용은 어디로도 보내지 않습니다.', '<button class="btn">내보내기 받는 법</button>')}
+    <div class="grid" style="grid-template-columns:1fr 1fr">
+      <div class="mode on"><div class="row"><b>정밀 분석</b><span class="tag ok">추천</span></div><div class="lbl" style="margin-top:6px">모델 약 540MB · 대화 종류를 더 정확히 나눔</div></div>
+      <div class="mode"><b>빠른 분석</b><div class="lbl" style="margin-top:6px">모델 약 110MB · 약 10배 빠름 · 분류가 조금 덜 정확함</div></div></div>
+    <div class="drop" style="flex:1"><div style="font-size:44px;color:var(--acc)">⇪</div><div style="font-size:20px;font-weight:700">내보내기 zip을 끌어다 놓거나 클릭</div><div class="lbl">Claude Code 기록·Codex 플러그인 폴더 zip도 같이 넣을 수 있습니다</div><button class="btn pri" style="margin-top:6px">파일 고르기</button></div>
+    <div class="grid" style="grid-template-columns:repeat(3,1fr)">${[['1', '파일 읽기', '대화 182개 · 메시지 406개'], ['2', '모델 준비', '처음 한 번만 내려받기'], ['3', '분석', '남은 시간을 보여 드립니다']].map(([n, t, d]) => `<div class="card row" style="gap:14px"><span class="num" style="width:30px;height:30px;border-radius:99px;background:var(--acc-bg);color:var(--acc);display:grid;place-items:center;font-weight:800">${n}</span><div><b style="font-size:14px">${t}</b><div class="lbl">${d}</div></div></div>`).join('')}</div>`,
+  2: () => `${head('분석 결과', '대화 134 · 내 메시지 601 · 2026년 8월 26일 ~ 11월 16일')}
+    ${kpis()}
+    <div class="grid" style="grid-template-columns:1.6fr 1fr;flex:1">
+      <div class="card col"><div class="row"><b>주별 다시 말한 지시 비율</b><span class="sp" style="margin-left:auto"></span><span class="lbl">지난 기록 뒤 4주 강조</span></div>${bars()}</div>
+      <div class="card"><b>대화 종류</b><div style="height:14px"></div>${mix()}</div></div>`,
+  3: () => `${head('추천', '다시 말한 지시가 몰린 곳에 맞춘 습관·기능 3가지')}
+    <div class="grid" style="grid-template-columns:repeat(3,1fr);flex:1;align-items:start">
+    ${[['스킬로 묶기', '기능', '코딩 대화에서 같은 지시를 11번 다시 말했습니다. 반복하는 작업 방식을 스킬로 묶어 두면 필요할 때 자동으로 불러 씁니다.', ['설정 → 사이드바 Skills를 엽니다', '자주 쓰는 작업 방식을 스킬로 만듭니다', '켜 두면 관련 작업에서 자동으로 쓰입니다'], '▼ 5.8%p', true],
+       ['요구사항을 첫 메시지에 고정', '습관', '형식·언어·제외 조건 같은 규칙을 첫 메시지에 번호 목록으로 적고, 바뀔 때만 다시 보냅니다.', ['첫 메시지 맨 위에 규칙 블록', "이후엔 '규칙 3 적용'처럼 참조", '규칙이 바뀌면 블록 전체를 다시 보냄'], null, false],
+       ['프로젝트 지침', '기능', '프로젝트의 모든 대화에 적용되는 역할·톤·규칙을 한 번만 적습니다.', ['프로젝트를 엽니다', "'Set project instructions' 클릭", "규칙을 적고 'Save instructions'"], '▲ 0.4%p', false]]
+      .map(([t, k, d, st, eff, ap], i) => `<div class="card pcard ${S === 'b' && i === 0 ? '' : ''}"><div><div class="row"><b style="font-size:16px">${t}</b><span class="tag">${k}</span>${i === 0 ? '<span class="chip" style="margin-left:auto;color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)">지금 필요</span>' : '<span class="lbl" style="margin-left:auto">참고</span>'}</div><p style="font-size:13px;line-height:1.6;margin:10px 0 0">${d}</p>
+        ${eff ? `<div class="eff row"><span class="lbl">지난 기록 뒤</span>${ap ? '<span class="tag ok">적용함</span>' : ''}<span class="chip ${eff.startsWith('▼') ? 'down' : 'up'}" style="margin-left:auto">${eff}</span></div>` : ''}</div>
+        <div><div class="lbl" style="font-weight:700">이렇게 하세요</div><ol class="steps">${st.map((s) => `<li>${s}</li>`).join('')}</ol></div>
+        <div class="row"><button class="btn ${ap ? 'pri' : ''}">적용함</button><button class="btn">도움됨</button><button class="btn">아님</button><span class="lbl" style="margin-left:auto;white-space:nowrap">왜?</span></div></div>`).join('')}</div>`,
+  4: () => `${head('내 기록', 'user@example.com · 2026년 10월 2일 가입 · 분석 3회', '<button class="btn">기록 지우기</button>')}
+    <div class="grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="card"><div class="lbl">첫 기록 → 지금</div><div class="big num">8.0% → 4.0%</div><span class="chip down" style="margin-top:8px">▼ 4.0%p</span></div>
+      <div class="card"><div class="lbl">적용한 항목</div><div class="big num">3<span style="font-size:15px;color:var(--muted)"> 개</span></div><div class="lbl" style="margin-top:8px">GitHub · 코딩 시작 문구 · 스킬</div></div>
+      <div class="card"><div class="lbl">마지막 분석</div><div class="big num">11월 15일</div><div class="lbl" style="margin-top:8px">Claude · 정밀 분석</div></div></div>
+    <div class="card" style="flex:1"><table><thead><tr><th>분석한 날</th><th>서비스</th><th>대화 기간</th><th>다시 말한 지시</th><th>직전 기록 뒤</th><th>추천 · 적용함</th></tr></thead><tbody>
+      ${[['26.11.15', 'Claude', '05.04 ~ 11.14', '12건 / 300개 (4.0%)', '<span class="lbl">첫 기록</span>', '2 · 0'], ['26.11.10', 'ChatGPT', '05.04 ~ 11.09', '76건 / 1,100개 (6.9%)', '새 메시지 300개 중 12건 <span class="chip down">▼ 4.0%p</span>', '2 · 2'], ['26.10.11', 'ChatGPT', '05.04 ~ 10.10', '64건 / 800개 (8.0%)', '<span class="lbl">첫 기록</span>', '2 · 1']]
+        .map((r) => `<tr>${r.map((c) => `<td class="num">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`,
+}
+const body = screens[N]()
+document.getElementById('app').innerHTML = S === 'b' ? `<div class="frame">${pills()}<main class="main">${body}</main></div>` : `<div class="frame">${side()}<main class="main">${body}</main></div>`
+</script>
+</body>
+</html>

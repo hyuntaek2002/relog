@@ -4,6 +4,8 @@ import type { DetectedFeature } from './detectFeatures'
 
 // 체크리스트: 요금제, 목표(선택), 그리고 파일에서 자동 감지한 사용 기능(해제 가능). 사용 기능을 묻지 않는다.
 export const CONTEXT_KEY = 'relog-user-context-v1'
+// 도구 사용 여부(감지 항목에 함께 보이고, 해제하면 그 도구 전용 추천이 빠진다)
+const TOOL_NAME: Record<string, string> = { 'tool:claude_code': 'Claude Code', 'tool:codex': 'Codex' }
 const EMPTY: UserContext = { plan: 'free', featuresInUse: [], goals: [], ignored: [] }
 export const loadContext = (platform: Platform): UserContext => {
   try {
@@ -25,7 +27,7 @@ export const withDetected = (ctx: UserContext, detected: DetectedFeature[]): Use
 })
 
 export default function Checklist({ platform, value, detected, onChange }: { platform: Platform; value: UserContext; detected: DetectedFeature[]; onChange: (c: UserContext) => void }) {
-  const nameOf = (id: string) => CATALOG.find((c) => c.id === id)?.name ?? id
+  const nameOf = (id: string) => TOOL_NAME[id] ?? CATALOG.find((c) => c.id === id)?.name ?? id
   const toggleGoal = (g: string) => { const gs = value.goals ?? []; onChange({ ...value, goals: gs.includes(g) ? gs.filter((x) => x !== g) : [...gs, g] }) }
   const toggleIgnore = (id: string) => { const ig = value.ignored ?? []; onChange({ ...value, ignored: ig.includes(id) ? ig.filter((x) => x !== id) : [...ig, id] }) }
   return (
@@ -41,7 +43,7 @@ export default function Checklist({ platform, value, detected, onChange }: { pla
         {detected.length === 0 && <em className="detail">파일에서 감지된 기능 없음</em>}
         {detected.map((d) => (
           <label key={d.catalogId} title={`대화 ${d.conversations}개에서 감지. 아니면 체크 해제`}>
-            <input type="checkbox" checked={!(value.ignored ?? []).includes(d.catalogId)} onChange={() => toggleIgnore(d.catalogId)} /> {nameOf(d.catalogId)} <em className="detail">({d.conversations})</em>
+            <input type="checkbox" checked={!(value.ignored ?? []).includes(d.catalogId)} onChange={() => toggleIgnore(d.catalogId)} /> {nameOf(d.catalogId)} {d.conversations > 0 && <em className="detail">({d.conversations})</em>}
           </label>
         ))}
       </div>

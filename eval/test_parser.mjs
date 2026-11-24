@@ -206,6 +206,20 @@ assert.equal(genericDefaults('claude').length, 3)
   const [cl] = recommend({ ...calm, taskShare: { ...calm.taskShare, learning: 0.6 } }, { plan: 'pro', featuresInUse: [] }, {}, only('cl_plugins'))
   assert.equal(cl.pluginName, 'Study Desk', '다시 말한 지시가 없으면 가장 많이 한 종류(학습)')
 }
+// 도구 전용 항목(catalog-0.5.0): Claude Code·Codex를 쓰는 사람(featuresInUse의 tool:*)에게만
+{
+  const codeSnap = { ...snap, taskShare: { ...snap.taskShare, coding: 0.6 }, restatement: { ...snap.restatement, perTask: { coding: 9 } } }
+  const ex = (ctx) => Object.fromEntries(scoreAll(codeSnap, ctx).map((s) => [s.item.id, s.excluded]))
+  assert.equal(ex({ plan: 'pro', featuresInUse: [] }).cc_claude_md, '도구 미사용')
+  assert.equal(ex({ plan: 'pro', featuresInUse: ['tool:claude_code'] }).cc_claude_md, null, 'Claude Code를 쓰면 후보')
+  assert.equal(ex({ plan: 'pro', featuresInUse: ['tool:claude_code'] }).cx_agents_md, '플랫폼 불일치', 'Codex 항목은 ChatGPT 기록에서만')
+  const cg = { ...codeSnap, platform: 'chatgpt' }
+  assert.equal(Object.fromEntries(scoreAll(cg, { plan: 'plus', featuresInUse: ['tool:codex'] }).map((s) => [s.item.id, s.excluded])).cx_agents_md, null)
+  assert.equal(Object.fromEntries(scoreAll(cg, { plan: 'plus', featuresInUse: [] }).map((s) => [s.item.id, s.excluded])).cg_skills, '요금제 미지원(business)', 'ChatGPT 스킬은 업무용 요금제')
+  assert.ok(CATALOG.find((c) => c.id === 'cg_canvas').verified === false, '캔버스는 GPT-5.5부터 미지원')
+  const { detectFeatures } = await import('../web/src/recommend/detectFeatures.ts')
+  assert.deepEqual(detectFeatures([{ id: 'a', platform: 'claude', client: 'code', title: '', createdAt: 0, turns: [], toolNames: [] }]).map((d) => d.catalogId), ['tool:claude_code'])
+}
 console.log('recommend ok', r1.map((p) => `${p.catalogId}:${p.grade}:${p.score}`))
 
 // 기능 자동 감지: 도구 이름 → 카탈로그 id, 대화 수 집계

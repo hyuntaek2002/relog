@@ -27,6 +27,7 @@ export interface CatalogItem {
   isPopularDefault: boolean
   caveat: string
   byTask?: Partial<Record<SnapshotTask, string>> // 대화 종류별 구체 항목 이름(howTo의 {plugin}에 치환)
+  requiresTool?: 'claude_code' | 'codex' // 이 도구를 쓰는 사람에게만(featuresInUse의 'tool:<이름>'으로 판단, catalog-0.5.0)
 }
 export const CATALOG = catalog.items as CatalogItem[]
 
@@ -102,6 +103,7 @@ export function scoreAll(snapshot: UsageSnapshot, ctx: UserContext, feedback: Fe
     let excluded: string | null = null
     if (!item.verified) excluded = '미검증'
     else if (item.platform !== 'both' && item.platform !== snapshot.platform) excluded = '플랫폼 불일치'
+    else if (item.requiresTool && !ctx.featuresInUse.includes(`tool:${item.requiresTool}`)) excluded = '도구 미사용'
     else if (item.requiresPlan.length && !item.requiresPlan.includes(ctx.plan)) excluded = `요금제 미지원(${item.requiresPlan.join('/')})`
     else if (inUse.has(item.id) || item.hardExclude.featuresInUse.some((f) => inUse.has(f))) excluded = '이미 사용 중'
 

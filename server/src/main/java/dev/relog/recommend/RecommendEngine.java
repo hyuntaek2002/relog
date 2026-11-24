@@ -77,6 +77,7 @@ public final class RecommendEngine {
             String excluded = null;
             if (!it.verified()) excluded = "미검증";
             else if (!it.platform().equals("both") && !it.platform().equals(s.platform())) excluded = "플랫폼 불일치";
+            else if (it.requiresTool() != null && !ctx.featuresInUse().contains("tool:" + it.requiresTool())) excluded = "도구 미사용";
             else if (!it.requiresPlan().isEmpty() && !it.requiresPlan().contains(ctx.plan())) excluded = "요금제 미지원(" + String.join("/", it.requiresPlan()) + ")";
             else if (inUse.contains(it.id()) || it.hardExclude().featuresInUse().stream().anyMatch(inUse::contains)) excluded = "이미 사용 중";
 
