@@ -173,8 +173,8 @@ assert.ok(CATALOG.filter((c) => c.verified && c.category !== 'practice').every((
 const snap = {
   platform: 'claude',
   taskShare: { coding: 0.1, writing: 0.5, learning: 0.1, ideation: 0.1, translation: 0.05, counseling: 0.15 },
-  taskCounts: {}, userTurnCount: 500, conversationCount: 15, longConversationShare: 0.5, avgTurnsPerConversation: 33, codeShare: 0, hourHistogram: new Array(24).fill(0),
-  restatement: { high: 1, mid: 20, low: 2, misunderstanding: 10, repeatedQuestion: 60, perTask: { writing: 8 }, tokenEstimate: 8000, ratio: 16 },
+  taskCounts: {}, userTurnCount: 500, conversationCount: 40, longConversationShare: 0.5, avgTurnsPerConversation: 33, codeShare: 0, hourHistogram: new Array(24).fill(0),
+  answer: { avgTokens: 300, ratio: 2 },
 }
 const r1 = recommend(snap, { plan: 'pro', featuresInUse: [] })
 assert.ok(r1.length >= 1 && r1.length <= 3, '0~3개')
@@ -193,22 +193,31 @@ assert.ok(sc.find((s) => s.item.id === 'cl_chat_search').excluded?.startsWith('�
 assert.ok(sc.find((s) => s.item.id === 'cg_projects').excluded === '플랫폼 불일치')
 assert.ok(sc.filter((s) => s.excluded === '미검증').length >= 1)
 // 문제 신호 없는 스냅샷 → 과업 신호만으로는 참고 등급
-const calm = { ...snap, longConversationShare: 0, avgTurnsPerConversation: 3, restatement: { high: 0, mid: 0, low: 0, misunderstanding: 0, repeatedQuestion: 0, perTask: {}, tokenEstimate: 0, ratio: 0 } }
+const calm = { ...snap, conversationCount: 5, longConversationShare: 0, avgTurnsPerConversation: 3 }
 const r3 = recommend(calm, { plan: 'pro', featuresInUse: [] })
 assert.ok(r3.every((p) => p.grade === '참고'), '문제 신호 없으면 참고만')
 assert.equal(genericDefaults('claude').length, 3)
-// 플러그인 카드는 구체 이름을 말한다: 다시 말한 지시가 몰린 종류, 없으면 가장 많이 한 종류의 첫 후보(대화 종류별 카드와 같은 이름)
+// rec-0.2.0: 다시 말한 지시 신호는 카탈로그에 없고, 숫자 신호가 아예 없는 항목은 '기본 추천'(참고)으로 나간다
+assert.ok(!JSON.stringify(CATALOG).includes('restatement'), '카탈로그에 다시 말한 지시 신호 없음')
 {
-  const only = (id) => CATALOG.filter((c) => c.id === id).map((c) => ({ ...c, verified: true, requiresPlan: [], problemSignals: [{ signal: 'restatement.high', op: '>=', value: 0, weight: 1 }] }))
-  const cgSnap = { ...snap, platform: 'chatgpt', taskShare: { ...snap.taskShare, coding: 0.56 }, restatement: { ...snap.restatement, perTask: { coding: 9, writing: 3 } } }
+  const base = CATALOG.filter((c) => c.id === 'pr_pin_requirements').map((c) => ({ ...c, problemSignals: [], taskSignals: [] }))
+  const [b] = recommend(calm, { plan: 'pro', featuresInUse: [] }, {}, base)
+  assert.equal(b.grade, '참고'); assert.match(b.summary, /기본/)
+  const [pin] = recommend(snap, { plan: 'pro', featuresInUse: [] }, {}, CATALOG.filter((c) => c.id === 'pr_pin_requirements'))
+  assert.equal(pin.grade, '핵심'); assert.match(pin.summary, /대화를 40개/, '대화 수 신호 문구')
+}
+// 플러그인 카드는 구체 이름을 말한다: 가장 많이 한 종류의 첫 후보(대화 종류별 카드와 같은 이름)
+{
+  const only = (id) => CATALOG.filter((c) => c.id === id).map((c) => ({ ...c, verified: true, requiresPlan: [], problemSignals: [{ signal: 'conversationCount', op: '>=', value: 0, weight: 1 }] }))
+  const cgSnap = { ...snap, platform: 'chatgpt', taskShare: { ...snap.taskShare, coding: 0.56 } }
   const [cg] = recommend(cgSnap, { plan: 'plus', featuresInUse: [] }, {}, only('cg_plugins'))
   assert.equal(cg.pluginName, 'GitHub'); assert.match(cg.how, /'GitHub'/); assert.ok(!cg.how.includes('{plugin}') && !cg.how.includes('맞는 플러그인'), '일반 문구 대신 이름'); assert.equal(cg.task, 'coding')
   const [cl] = recommend({ ...calm, taskShare: { ...calm.taskShare, learning: 0.6 } }, { plan: 'pro', featuresInUse: [] }, {}, only('cl_plugins'))
-  assert.equal(cl.pluginName, 'Study Desk', '다시 말한 지시가 없으면 가장 많이 한 종류(학습)')
+  assert.equal(cl.pluginName, 'Study Desk', '가장 많이 한 종류(학습)')
 }
 // 도구 전용 항목(catalog-0.5.0): Claude Code·Codex를 쓰는 사람(featuresInUse의 tool:*)에게만
 {
-  const codeSnap = { ...snap, taskShare: { ...snap.taskShare, coding: 0.6 }, restatement: { ...snap.restatement, perTask: { coding: 9 } } }
+  const codeSnap = { ...snap, taskShare: { ...snap.taskShare, coding: 0.6 } }
   const ex = (ctx) => Object.fromEntries(scoreAll(codeSnap, ctx).map((s) => [s.item.id, s.excluded]))
   assert.equal(ex({ plan: 'pro', featuresInUse: [] }).cc_claude_md, '도구 미사용')
   assert.equal(ex({ plan: 'pro', featuresInUse: ['tool:claude_code'] }).cc_claude_md, null, 'Claude Code를 쓰면 후보')
@@ -254,22 +263,20 @@ const mkU = (conv, id, text, dayOffset, status = 'ok', hasCode = false) => ({ co
 const lu = [mkU('c1', 'a', '첫', 0), mkU('c1', 'b', '둘', 1), mkU('c1', 'c', '셋', 8), mkU('c2', 'd', '홀로', 2), mkU('c2', 'e', '응', 2, 'skipped')]
 const okIds = lu.filter((u) => u.status === 'ok').map((u) => u.messageId)
 const preds = okIds.map(() => ({ type: 'coding', score: 1 }))
-const pairs = [{ conversationId: 'c1', messageId: 'b', priorMessageId: 'a', similarity: 0.95, kind: 'instruction', repeatMarker: true, complaintMarker: false, gapMinutes: 1, responseBetween: true, grade: 'high', exclusion: null, tokenEstimate: 5 }]
-const led = buildLedger({ platform: 'claude', utterances: lu, okIds, preds, pairs, version: ver, analyzedAt: 1 })
+const led = buildLedger({ platform: 'claude', utterances: lu, okIds, preds, version: ver, analyzedAt: 1 })
 assert.equal(led.length, 5)
-assert.equal(led.find((e) => e.messageId === 'b').grade, 'high')
+assert.equal(led.find((e) => e.messageId === 'b').grade, undefined, '다시 말한 지시 등급은 대장에 없음')
 let weeks = aggregateWeekly(led, vk)
 assert.equal(weeks.length, 2, '2주 버킷')
-assert.deepEqual([weeks[0].userTurnCount, weeks[0].okCount, weeks[0].judgeable, weeks[0].conversationCount], [4, 3, 2, 2], '1주차: 발화 4(제외 포함), ok 3, 판단 가능 2(c1만), 대화 2')
-assert.equal(weeks[0].restatement.high, 1)
-assert.equal(weeks[0].restatement.ratio, 50, '1/2 × 100')
+assert.deepEqual([weeks[0].userTurnCount, weeks[0].okCount, weeks[0].conversationCount], [4, 3, 2], '1주차: 발화 4(제외 포함), ok 3, 대화 2')
+assert.equal(weeks[0].restatement, undefined)
 assert.equal(weeks[1].userTurnCount, 1)
 // 편집된 메시지(같은 messageId, 다른 해시)는 새 항목으로 들어가되 집계는 최신 것만
-const edited = buildLedger({ platform: 'claude', utterances: [mkU('c1', 'b', '둘(수정)', 1)], okIds: ['b'], preds: [{ type: 'writing', score: 1 }], pairs: [], version: ver, analyzedAt: 2 })
+const edited = buildLedger({ platform: 'claude', utterances: [mkU('c1', 'b', '둘(수정)', 1)], okIds: ['b'], preds: [{ type: 'writing', score: 1 }], version: ver, analyzedAt: 2 })
 const merged = mergeLedger(led, edited)
 assert.equal(merged.length, 6, '해시가 달라 새 키')
 weeks = aggregateWeekly(merged, vk)
-assert.equal(weeks[0].taskCounts.writing, 1); assert.equal(weeks[0].taskCounts.coding, 2); assert.equal(weeks[0].restatement.high, 0, '최신 분석엔 후보 없음')
+assert.equal(weeks[0].taskCounts.writing, 1); assert.equal(weeks[0].taskCounts.coding, 2)
 // 같은 키 재전송 = 덮어쓰기
 assert.equal(mergeLedger(led, led).length, 5)
 // 다른 버전은 집계에서 제외
@@ -277,27 +284,26 @@ assert.equal(aggregateWeekly(led, 'other').length, 0)
 console.log('ledger ok')
 }
 
-// 과업별 전후 비교
+// 전후 비교: 종류 비중과 대화 습관(대화당 메시지, 긴 대화 비율)
 {
-  const { compareTasks } = await import('../web/src/store/ledger.ts')
-  const wk = (start, taskCounts, perTask, high = 0, medium = 0) => ({ periodStart: start, periodEnd: start + 7 * 86400000, versionKey: 'v', platform: 'claude', userTurnCount: 0, okCount: 0, judgeable: 0, conversationCount: 0, longConversationCount: 0, codeCount: 0, taskCounts, restatement: { high, medium, low: 0, tokenEstimate: 0, ratio: 0, perTask, repeatedQuestion: 0, misunderstanding: 0 }, hourHistogram: [] })
+  const { compareTasks, habitText } = await import('../web/src/store/ledger.ts')
+  const wk = (start, taskCounts, convs, long) => ({ periodStart: start, periodEnd: start + 7 * 86400000, versionKey: 'v', platform: 'claude', userTurnCount: 0, okCount: 0, conversationCount: convs, longConversationCount: long, codeCount: 0, taskCounts, hourHistogram: [] })
   const weeks = [
-    // det-0.4.1: perTask와 전체 건수는 확실함만. 가능성 있음(medium)은 세지 않는다
-    wk(0, { coding: 10, writing: 5 }, { coding: 4 }, 4, 3),
-    wk(7 * 86400000, { coding: 10 }, { coding: 2 }, 2, 2),
-    wk(14 * 86400000, { coding: 10, writing: 2 }, { coding: 1 }, 1, 5),
-    wk(21 * 86400000, { coding: 10 }, {}, 0, 0),
+    wk(0, { coding: 10, writing: 10 }, 4, 2),
+    wk(7 * 86400000, { coding: 10 }, 6, 1),
+    wk(14 * 86400000, { coding: 15, writing: 5 }, 5, 0),
+    wk(21 * 86400000, { coding: 10 }, 5, 1),
   ]
   const c = compareTasks(weeks, 2)
   assert.deepEqual(c.beforeRange, [0, 14 * 86400000]); assert.deepEqual(c.afterRange, [14 * 86400000, 28 * 86400000])
   const coding = c.rows.find((r) => r.task === 'coding')
-  assert.deepEqual([coding.before.ok, coding.before.flagged, coding.before.ratio], [20, 6, 30])
-  assert.deepEqual([coding.after.ok, coding.after.flagged, coding.after.ratio], [20, 1, 5])
-  assert.equal(coding.delta, -25)
-  const writing = c.rows.find((r) => r.task === 'writing')
-  assert.equal(writing.after.ratio, null, '표본 5개 미만이면 비율 없음'); assert.equal(writing.delta, null)
-  assert.equal(c.total.before.flagged, 6); assert.equal(c.total.after.flagged, 1)
+  assert.deepEqual([coding.before.ok, coding.after.ok], [20, 25])
+  assert.equal(Math.round(coding.before.share), 67); assert.equal(Math.round(coding.after.share), 83); assert.equal(Math.round(coding.shareDelta), 17)
+  assert.deepEqual(c.habits.before, { ok: 30, conversations: 10, avgTurns: 3, longShare: 30 })
+  assert.deepEqual(c.habits.after, { ok: 30, conversations: 10, avgTurns: 3, longShare: 10 })
+  assert.equal(habitText(c.habits.before, c.habits.after), '대화당 메시지 3.0 → 3.0개 · 긴 대화 30% → 10%')
   assert.equal(c.rows[0].task, 'coding', '발화 많은 순')
+  assert.equal(compareTasks([wk(0, { coding: 2 }, 1, 0), wk(7 * 86400000, { coding: 2 }, 1, 0)], 1).rows[0].before.share, null, '5개 미만이면 비중 없음')
   console.log('compare ok')
 }
 
@@ -305,17 +311,18 @@ console.log('ledger ok')
 {
   const { compareSides } = await import('../web/src/store/ledger.ts')
   const { buildReport, parseReport, REPORT_FORMAT } = await import('../web/src/store/report.ts')
-  const wk = (start, taskCounts, perTask, medium = 0) => ({ periodStart: start, periodEnd: start + 7 * 86400000, versionKey: 'v', platform: 'claude', userTurnCount: 0, okCount: 0, judgeable: 0, conversationCount: 0, longConversationCount: 0, codeCount: 0, taskCounts, restatement: { high: 0, medium, low: 0, tokenEstimate: 0, ratio: 0, perTask, repeatedQuestion: 0, misunderstanding: 0 }, hourHistogram: [] })
-  const snapshot = { platform: 'claude', taskShare: {}, taskCounts: {}, userTurnCount: 1, conversationCount: 1, longConversationShare: 0, avgTurnsPerConversation: 1, codeShare: 0, hourHistogram: [1, 2], restatement: { high: 0, mid: 0, low: 0, misunderstanding: 0, repeatedQuestion: 0, perTask: {}, tokenEstimate: 0, ratio: 0 } }
+  const wk = (start, taskCounts, convs = 4) => ({ periodStart: start, periodEnd: start + 7 * 86400000, versionKey: 'v', platform: 'claude', userTurnCount: 0, okCount: 0, conversationCount: convs, longConversationCount: 0, codeCount: 0, taskCounts, hourHistogram: [] })
+  const snapshot = { platform: 'claude', taskShare: {}, taskCounts: {}, userTurnCount: 1, conversationCount: 1, longConversationShare: 0, avgTurnsPerConversation: 1, codeShare: 0, hourHistogram: [1, 2] }
   const version = { parserVersion: 'p', normalizerVersion: 'n', modelVersion: 'm', classifierVersion: 'c', detectorVersion: 'd', catalogVersion: 'k', recommendationRuleVersion: 'r' }
-  const oldWeeks = [wk(0, { coding: 10, writing: 10 }, { coding: 4, writing: 1 }, 5)]
+  const oldWeeks = [wk(0, { coding: 10, writing: 10 })]
   const rep = parseReport(JSON.stringify(buildReport(snapshot, oldWeeks, version)))
   assert.equal(rep.format, REPORT_FORMAT); assert.equal(rep.snapshot.hourHistogram, undefined, '시간대 분포는 넣지 않음'); assert.equal(rep.weeks.length, 1)
   assert.throws(() => parseReport('{"format":"other"}'), /결과 파일이 아닙니다/)
   assert.throws(() => parseReport('not json'), /JSON/)
-  const c = compareSides(rep.weeks, [wk(7 * 86400000, { coding: 10, writing: 10 }, { coding: 1, writing: 3 }, 4)])
-  assert.equal(c.rows.find((r) => r.task === 'coding').delta, -30, '코딩 줄어듦')
-  assert.equal(c.rows.find((r) => r.task === 'writing').delta, 20, '글쓰기 늘어남')
+  assert.throws(() => parseReport(JSON.stringify({ ...buildReport(snapshot, oldWeeks, version), weeks: [{ periodStart: 1, taskCounts: {} }] })), /손상/, '대화 수 없는 주는 거부')
+  const c = compareSides(rep.weeks, [wk(7 * 86400000, { coding: 15, writing: 5 }, 10)])
+  assert.equal(c.rows.find((r) => r.task === 'coding').shareDelta, 25, '코딩 비중 50% → 75%')
+  assert.deepEqual([c.habits.before.avgTurns, c.habits.after.avgTurns], [5, 2], '대화당 메시지 5 → 2')
   console.log('report ok')
 }
 
@@ -337,6 +344,25 @@ console.log('ledger ok')
   assert.equal(cg.coding.pick.name, 'GitHub'); assert.ok(cg.coding.pick.evidenceUrl.startsWith('https://chatgpt.com/plugins/plugin_'))
   assert.equal(cg.counseling.status, 'none'); assert.ok(cg.coding.how.includes("'GitHub'") && cg.coding.how.includes('사이드바') && cg.coding.how.includes('/plugins'), 'ChatGPT·Codex 설치 방법')
   assert.ok(Object.values(cg).every((r) => !r.pick || r.pick.oneLiner), '모든 ChatGPT 후보에 한국어 한 줄')
+  // 종류별 1~3순위(2026-11-24): 후보는 6가지 종류로 합쳤고, 비교값이 있으면 내 대화와 비슷한 순, Claude는 설치 많은 순도
+  const { pluginPool, poolTexts, similarityScores } = await import('../web/src/recommend/taskPluginRules.ts')
+  assert.ok(pluginPool('claude', 'writing').some((p) => p.name === 'Notion'), '업무 문서 후보가 글·문서로'); assert.ok(pluginPool('chatgpt', 'learning').some((p) => p.name === 'Consensus'), '정보 탐색 후보가 정보·학습으로')
+  assert.equal(pluginPool('claude', 'counseling').length, 0); assert.equal(pluginPool('claude', 'translation').length, 1, '후보가 하나면 하나만')
+  assert.ok(['claude', 'chatgpt'].every((p) => poolTexts(p).texts.every((t) => t.length > 10)), '모든 후보에 임베딩할 설명')
+  assert.equal(new Set(poolTexts('claude').names).size, poolTexts('claude').names.length, '이름 중복 없음')
+  // 2차원 예: 코딩 메시지는 x축, 글 메시지는 y축. 후보 A(x)·B(y)·C(대각선)
+  const emb = new Float32Array([1, 0, 1, 0, 0, 1]), types = ['coding', 'coding', 'writing']
+  const pv = new Float32Array([1, 0, 0, 1, Math.SQRT1_2, Math.SQRT1_2])
+  const sc = similarityScores(emb, 2, types, pv, ['A', 'B', 'C'])
+  assert.ok(sc.coding.A > sc.coding.C && sc.coding.C > sc.coding.B, '코딩: x축 후보가 1위'); assert.ok(sc.writing.B > sc.writing.A, '글: y축 후보가 위')
+  assert.equal(sc.learning, undefined, '메시지 없는 종류는 비교하지 않음')
+  const names = pluginPool('claude', 'coding').map((p) => p.name)
+  const fake = { coding: Object.fromEntries(names.map((n, i) => [n, i])) } // 뒤 후보일수록 높게
+  const cl = Object.fromEntries(resolveTaskPlugins({ taskCounts: { coding: 40, writing: 3 }, taskShare: {} }, TASK_PLUGIN_MIN_MESSAGES, 'claude', { ...fake, writing: { Humanizer: -1 } }).map((r) => [r.task, r]))
+  assert.equal(cl.coding.bySimilarity, true); assert.deepEqual(cl.coding.ranked.map((p) => p.name), [...names].reverse())
+  assert.equal(cl.writing.bySimilarity, false, '메시지가 기준 미만이면 사람이 정한 순'); assert.equal(cl.writing.ranked[0].name, 'Humanizer')
+  assert.ok(cl.coding.popular.every((p, i, a) => i === 0 || a[i - 1].installs >= p.installs) && cl.coding.popular.every((p) => p.installs != null), '설치 많은 순, 설치 수 있는 것만')
+  assert.equal(cg.coding.popular.length, 0, 'ChatGPT는 설치 수가 없음')
   // 평가 전용 맞춤(eval/recommend): 평소 유사도(m·d)로 표준화한 점수
   const { bestAmong, Q_SCALE } = await import('./recommend/pluginMatch.ts')
   const q = new Float32Array([1, 0]), vecs = new Int8Array([127, 0, 90, 90, 0, 127])
@@ -421,7 +447,7 @@ console.log('ledger ok')
   const T = (role, n) => ({ idx: 0, role, text: 'x', createdAt: null, messageId: role + n, tokenEstimate: n, hasAttachment: false })
   const st = basicStats([{ id: 'c', platform: 'claude', title: '', createdAt: null, toolNames: [], turns: [T('user', 50), T('assistant', 900), T('user', 50), T('assistant', 1100)] }])
   assert.equal(st.assistantTokenEstimate, 2000); assert.equal(st.userTokenEstimate, 100)
-  const base = { platform: 'claude', taskShare: {}, taskCounts: {}, userTurnCount: 2, conversationCount: 1, longConversationShare: 0, avgTurnsPerConversation: 2, codeShare: 0, codingSub: {}, hourHistogram: [], restatement: { high: 0, mid: 0, low: 0, misunderstanding: 0, repeatedQuestion: 0, perTask: {}, tokenEstimate: 0, ratio: 0 } }
+  const base = { platform: 'claude', taskShare: {}, taskCounts: {}, userTurnCount: 2, conversationCount: 1, longConversationShare: 0, avgTurnsPerConversation: 2, codeShare: 0, codingSub: {}, hourHistogram: [] }
   const ctx = { plan: 'pro', featuresInUse: [], goals: [], ignored: [] }
   const hot = scoreAll({ ...base, answer: { avgTokens: 1000, ratio: 20 } }, ctx).find((x) => x.item.id === 'cl_plugin_concise')
   assert.ok(hot.problemHits.some((h) => h.includes('1000토큰')) && hot.problemHits.some((h) => h.includes('20.0배')), hot.problemHits.join())
@@ -464,17 +490,17 @@ console.log('ledger ok')
 // 서버 전송 본문: 숫자·열거형·버전 문자열만 들어가고 글이 들어갈 자리가 없다
 {
   const { toDto, toRecommendRequest } = await import('../web/src/store/sync.ts')
-  const week = { periodStart: 1, periodEnd: 2, versionKey: 'v', platform: 'claude', userTurnCount: 5, okCount: 4, judgeable: 4, conversationCount: 1, longConversationCount: 0, codeCount: 1, taskCounts: { coding: 4 }, restatement: { high: 0, medium: 1, low: 0, tokenEstimate: 12, ratio: 250, perTask: { coding: 1 }, repeatedQuestion: 0, misunderstanding: 0 }, hourHistogram: new Array(24).fill(0) }
+  const week = { periodStart: 1, periodEnd: 2, versionKey: 'v', platform: 'claude', userTurnCount: 5, okCount: 4, conversationCount: 1, longConversationCount: 0, codeCount: 1, taskCounts: { coding: 4 }, hourHistogram: new Array(24).fill(0) }
   const ver = { parserVersion: 'p', normalizerVersion: 'n', modelVersion: 'm', classifierVersion: 'c', detectorVersion: 'd', catalogVersion: 'k', recommendationRuleVersion: 'r' }
   const dto = toDto(week, ver)
-  assert.equal(dto.restatement.ratio, 100, '비율은 0~100으로 자른다')
+  assert.equal(dto.restatement, undefined, '다시 말한 지시 숫자는 보내지 않는다')
   const strings = []
   const walk = (o, path) => { if (typeof o === 'string') strings.push(path); else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) walk(v, path + '.' + k) }
   walk(dto, 'dto')
   assert.deepEqual(strings.sort(), ['dto.analysisVersion.catalogVersion', 'dto.analysisVersion.classifierVersion', 'dto.analysisVersion.detectorVersion', 'dto.analysisVersion.modelVersion', 'dto.analysisVersion.normalizerVersion', 'dto.analysisVersion.parserVersion', 'dto.analysisVersion.recommendationRuleVersion', 'dto.platform'], '문자열 필드는 플랫폼과 버전뿐')
-  const snap = { platform: 'claude', taskShare: { coding: 1 }, taskCounts: { coding: 4 }, userTurnCount: 5, conversationCount: 1, longConversationShare: 1.2, avgTurnsPerConversation: 5, codeShare: 0.25, codingSub: {}, answer: { avgTokens: 900, ratio: 6 }, hourHistogram: [], restatement: { high: 0, mid: 1, low: 0, misunderstanding: 0, repeatedQuestion: 0, perTask: { coding: 1 }, tokenEstimate: 12, ratio: 25 } }
+  const snap = { platform: 'claude', taskShare: { coding: 1 }, taskCounts: { coding: 4 }, userTurnCount: 5, conversationCount: 1, longConversationShare: 1.2, avgTurnsPerConversation: 5, codeShare: 0.25, codingSub: {}, answer: { avgTokens: 900, ratio: 6 }, hourHistogram: [] }
   const req = toRecommendRequest(snap, { plan: 'pro', featuresInUse: ['cl_web_search'] })
-  assert.equal(req.longConversationShare, 1); assert.equal(req.plan, 'pro'); assert.equal(req.mode, 'personalized'); assert.ok(!('hourHistogram' in req) && !('codingSub' in req))
+  assert.equal(req.longConversationShare, 1); assert.equal(req.plan, 'pro'); assert.equal(req.mode, 'personalized'); assert.ok(!('hourHistogram' in req) && !('codingSub' in req) && !('restatement' in req))
   console.log('sync dto ok')
 }
 
@@ -547,46 +573,48 @@ console.log('ledger ok')
 {
   const { mergeRecords, previousRecords, compareSince, repeatNotes } = await import('../web/src/store/records.ts')
   const W = 7 * 86400000
-  const rec = (savedAt, lastAt, platform = 'chatgpt', rx = ['a'], plugins = ['GitHub']) => ({ savedAt, platform, firstAt: 1, lastAt, versionKey: 'v', judgeable: 10, high: 1, tokenEstimate: 0, rx, plugins })
+  const rec = (savedAt, lastAt, platform = 'chatgpt', rx = ['a'], plugins = ['GitHub']) => ({ savedAt, platform, firstAt: 1, lastAt, versionKey: 'v', conversations: 10, userTurns: 50, longConversations: 2, rx, plugins })
   const merged = mergeRecords([rec(1, 100), rec(2, 200)], [rec(3, 100, 'chatgpt', ['b']), rec(4, 100, 'claude')])
   assert.equal(merged.length, 3, '같은 플랫폼·마지막 시각은 덮어씀')
   assert.deepEqual(merged.find((r) => r.platform === 'chatgpt' && r.lastAt === 100).rx, ['b'])
   assert.equal(mergeRecords([rec(9, 100)], [rec(1, 100, 'chatgpt', ['old'])])[0].rx[0], 'a', '더 오래된 저장은 덮지 않음')
   assert.deepEqual(previousRecords(merged, { platform: 'chatgpt', lastAt: 200 }).map((r) => r.lastAt), [100], '앞선 같은 플랫폼 기록만')
-  const wk = (start, ok, high) => ({ periodStart: start, periodEnd: start + W, versionKey: 'v', platform: 'chatgpt', userTurnCount: ok, okCount: ok, judgeable: ok, conversationCount: 1, longConversationCount: 0, codeCount: 0, taskCounts: { coding: ok }, restatement: { high, medium: 0, low: 0, tokenEstimate: 0, ratio: 0, perTask: { coding: high }, repeatedQuestion: 0, misunderstanding: 0 }, hourHistogram: [] })
-  const cmp = compareSince([wk(0, 10, 2), wk(W, 10, 0), wk(2 * W, 10, 1)], { lastAt: W + 5 })
-  assert.equal(cmp.total.before.ok, 20); assert.equal(cmp.total.after.ok, 10, '마지막 메시지가 든 주는 이전 쪽')
-  assert.equal(cmp.total.delta, 0, '10% → 10%')
+  const wk = (start, ok, convs = 2, long = 0, tc = { coding: ok }) => ({ periodStart: start, periodEnd: start + W, versionKey: 'v', platform: 'chatgpt', userTurnCount: ok, okCount: ok, conversationCount: convs, longConversationCount: long, codeCount: 0, taskCounts: tc, hourHistogram: [] })
+  const cmp = compareSince([wk(0, 10, 2, 1), wk(W, 10, 2, 1), wk(2 * W, 10, 5, 0)], { lastAt: W + 5 })
+  assert.equal(cmp.habits.before.ok, 20); assert.equal(cmp.habits.after.ok, 10, '마지막 메시지가 든 주는 이전 쪽')
+  assert.deepEqual([cmp.habits.before.avgTurns, cmp.habits.after.avgTurns], [5, 2], '대화당 메시지 5 → 2')
   const notes = repeatNotes(rec(5, W + 5, 'chatgpt', ['a'], ['GitHub']), cmp, ['a', 'z', 'GitHub'])
-  assert.deepEqual(Object.keys(notes).sort(), ['GitHub', 'a']); assert.equal(notes.a.delta, 0); assert.equal(notes.a.task, 'all', '겨냥 종류가 없으면 전체')
+  assert.deepEqual(Object.keys(notes).sort(), ['GitHub', 'a']); assert.equal(notes.a.habits.after.avgTurns, 2); assert.equal(notes.a.applied, false)
   assert.deepEqual(repeatNotes(null, cmp, ['a']), {})
-  // 적용함·겨냥 종류: 그 종류 행의 변화를 쓰고, 지난번 추천에 없어도 적용한 항목이면 보인다
-  const { effectOf } = await import('../web/src/store/records.ts')
-  const wk2 = (start, tc, pt) => ({ ...wk(start, 0, 0), taskCounts: tc, restatement: { ...wk(start, 0, 0).restatement, high: Object.values(pt).reduce((x, y) => x + y, 0), perTask: pt } })
-  const cmp2 = compareSince([wk2(0, { coding: 10, writing: 10 }, { coding: 4, writing: 1 }), wk2(W, { coding: 30, writing: 10 }, { coding: 3, writing: 1 })], { lastAt: 5 })
-  assert.equal(effectOf(cmp2, 'coding').delta, -30, '코딩 40% → 10%')
-  assert.equal(effectOf(cmp2, 'translation').task, 'all', '그 종류 행이 없으면 전체')
-  // 예전 8가지 키: 지난 기록의 workdoc·주별 숫자의 work_doc은 글·문서(writing)로 합쳐 본다
-  const cmp3 = compareSince([wk2(0, { work_doc: 10, chat: 10 }, { work_doc: 4 }), wk2(W, { writing: 10, chat: 10 }, { writing: 1 })], { lastAt: 5 })
-  assert.deepEqual(effectOf(cmp3, 'workdoc'), { task: 'writing', delta: -30 }, '예전 workdoc → writing')
-  assert.equal(effectOf(cmp3, 'counseling').task, 'chat', '추천 쪽 이름(counseling) → 분류기 이름(chat)')
+  assert.equal(repeatNotes(rec(5, 2 * W + 5), compareSince([wk(0, 10)], { lastAt: 2 * W + 5 }), ['a']).a.habits, null, '그 뒤 메시지가 없으면 변화 없음')
+  // 쓰고 있음: 지난번 추천에 없어도 그때 쓰고 있다고 표시한 항목이면 보인다
+  const prev2 = { ...rec(5, 5), rx: [], plugins: [], applied: ['prompt:coding'] }
+  const n2 = repeatNotes(prev2, cmp, ['prompt:coding', 'x'])
+  assert.deepEqual(Object.keys(n2), ['prompt:coding']); assert.equal(n2['prompt:coding'].applied, true)
+  // 예전 8가지 키: 주별 숫자의 work_doc은 글·문서(writing)로 합쳐 본다
+  const cmp3 = compareSince([wk(0, 20, 2, 0, { work_doc: 10, chat: 10 }), wk(W, 20, 2, 0, { writing: 10, chat: 10 })], { lastAt: 5 })
   assert.ok(!cmp3.rows.some((r) => r.task === 'work_doc'), '예전 키 행이 따로 남지 않음')
-  const coding = cmp2.rows.find((r) => r.task === 'coding')
-  assert.equal(coding.before.share, 50); assert.equal(coding.after.share, 75); assert.equal(coding.shareDelta, 25, '코딩 비중 50% → 75%')
-  const prev2 = { ...rec(5, 5), rx: [], plugins: [], applied: ['prompt:coding'], tasks: { 'prompt:coding': 'coding' } }
-  const n2 = repeatNotes(prev2, cmp2, ['prompt:coding', 'x'])
-  assert.deepEqual(Object.keys(n2), ['prompt:coding']); assert.equal(n2['prompt:coding'].applied, true); assert.equal(n2['prompt:coding'].delta, -30)
-  // 내 기록: 같은 서비스 직전 기록과의 숫자 차이 = 그 사이 새 메시지(추정)
+  assert.equal(cmp3.rows.find((r) => r.task === 'writing').shareDelta, 0)
+  // 내 기록: 같은 서비스 직전 기록과의 숫자 차이 = 그 사이 새 대화(추정)
   const { sinceLast } = await import('../web/src/store/records.ts')
   const vk = (cls, model = 'e5-large') => ['p', 'n', model, cls, 'det'].join('|')
-  const r1 = { ...rec(1, 10), versionKey: vk('cls-0.4.0'), judgeable: 200, high: 20 }
-  const r2 = { ...rec(2, 20), versionKey: vk('cls-0.5.0'), judgeable: 300, high: 25 }
+  const r1 = { ...rec(1, 10), versionKey: vk('cls-0.4.0'), conversations: 10, userTurns: 80, longConversations: 4 }
+  const r2 = { ...rec(2, 20), versionKey: vk('cls-0.5.0', 'e5-small'), conversations: 20, userTurns: 110, longConversations: 5, applied: ['a', 'zz'] }
   assert.equal(sinceLast(undefined, r1), 'first')
   const s12 = sinceLast(r1, r2)
-  assert.equal(s12.judgeable, 100); assert.equal(s12.high, 5); assert.equal(s12.ratio, 5); assert.equal(s12.delta, -5, '10% → 그 사이 5%, 분류기 버전만 다르면 비교한다')
-  assert.equal(sinceLast(r1, { ...r2, versionKey: vk('cls-0.5.0', 'e5-small') }), 'version', '모델이 다르면 비교하지 않음')
-  assert.equal(sinceLast(r1, { ...r2, judgeable: 200 }), 'none', '새 메시지 없음')
-  assert.equal(sinceLast(r1, { ...r2, high: 10 }), 'none', '숫자가 줄면 비교하지 않음')
+  assert.deepEqual(s12.now, { conversations: 10, avgTurns: 3, longShare: 10 }, '그 사이 새 대화 10개: 대화당 3개, 긴 대화 10%')
+  assert.deepEqual(s12.prev, { conversations: 10, avgTurns: 8, longShare: 40 })
+  assert.equal(s12.applied, 1, '직전 추천(a) 중 지금 쓰고 있음')
+  assert.equal(sinceLast(r1, { ...r2, versionKey: 'p2|n|m|c|d' }), 'version', '파서가 다르면 비교하지 않음')
+  assert.equal(sinceLast(r1, { ...r2, conversations: 10 }), 'none', '새 대화 없음')
+  assert.equal(sinceLast({ ...r1, conversations: undefined }, r2), 'legacy', '예전 방식 기록')
+  // 쓰고 있음 / 사용하지 않음 표시: 같은 표시를 다시 누르면 지우고, 서버 기록은 마지막 값이 이긴다
+  const { toggleMark, marksFromFeedback, mergeServerMarks, usingKeys } = await import('../web/src/store/marks.ts')
+  assert.deepEqual(toggleMark({}, 'x', 'using'), { x: 'using' }); assert.deepEqual(toggleMark({ x: 'using' }, 'x', 'using'), {}); assert.deepEqual(toggleMark({ x: 'using' }, 'x', 'not_using'), { x: 'not_using' })
+  const rows = [{ catalogId: 'a', value: 'already_using' }, { catalogId: 'b', value: 'using' }, { catalogId: 'b', value: 'unmarked' }, { catalogId: 'c', value: 'helpful' }, { catalogId: 'd', value: 'not_using' }]
+  assert.deepEqual(marksFromFeedback(rows), { a: 'using', d: 'not_using' })
+  assert.deepEqual(mergeServerMarks({ b: 'using', c: 'using', e: 'not_using' }, rows), { c: 'using', e: 'not_using', a: 'using', d: 'not_using' }, '서버에서 지운 b는 빠지고, 서버에 표시 기록이 없는 c·e는 그대로')
+  assert.deepEqual(usingKeys({ a: 'using', d: 'not_using' }), ['a'])
   const { starterPrompt } = await import('../web/src/recommend/starterPrompts.ts')
   assert.match(starterPrompt('coding', 'GitHub'), /^GitHub 플러그인을 써서/); assert.ok(!starterPrompt('writing').includes('플러그인'))
   console.log('records ok')

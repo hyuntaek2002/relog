@@ -20,7 +20,10 @@ public class AnalysisRecordEntity {
     public long lastAt;
     @Column(nullable = false, length = 200)
     public String versionKey;
-    public int judgeable;
+    public Integer conversations; // 2026-11-24부터. 예전 기록은 비어 있다(열 추가 때 기존 행이 있어도 되게 null 허용)
+    public Integer userTurns;
+    public Integer longConversations;
+    public int judgeable; // 예전(다시 말한 지시) 숫자. 새 기록은 0
     public int high;
     public int tokenEstimate;
     @Column(length = 2000)

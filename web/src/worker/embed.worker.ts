@@ -1,10 +1,10 @@
 import { pipeline, env, type FeatureExtractionPipeline } from '@huggingface/transformers'
 import { CLASSIFIER_VERSION, SEED_TEXTS, SEED_TYPES, SEED_VERSION, TaskClassifier, labeledFor, linearWithContext, toTask, type Prediction } from '../classify/classifier.ts'
-import { DEFAULT_OPTIONS, DETECTOR_VERSION, detect, nullDistribution, quantile, summarize, withinConversationNull, type Candidate, type DetectInput, type DetectSummary } from '../detect/detector.ts'
 
 import { installFetchAudit, setAuditProbes, takeAuditRecords, type NetRecord } from './netaudit.ts'
 import { STATIC_MODEL_ID, StaticEmbedder, browserLoader } from '../classify/staticEmbed.ts'
 import { EMBED_BATCH } from './eta.ts'
+import { DETECTOR_OFF } from '../store/ledger.ts'
 
 // 모델은 1회 다운로드 후 Cache Storage에 캐시된다(transformers.js 기본 동작).
 env.allowLocalModels = false
@@ -31,7 +31,8 @@ const BATCH = EMBED_BATCH
 
 export type EmbedIn =
   | { type: 'embed'; model: string; device: 'wasm' | 'webgpu'; texts: string[] } // 속도 측정용
-  | { type: 'classify'; model: string; device: 'wasm' | 'webgpu'; texts: string[]; inputs: DetectInput[] } // inputs[i].text === texts[i]
+  // conversationIds[i]는 texts[i]의 대화(같은 대화 문맥 섞기용). plugins는 플러그인 후보 설명(공개 문구)으로, 같은 모델로 임베딩해 돌려준다
+  | { type: 'classify'; model: string; device: 'wasm' | 'webgpu'; texts: string[]; conversationIds: string[]; plugins?: string[] }
 export type EmbedOut =
   | { type: 'download'; file: string; percent: number }
   | { type: 'progress'; done: number; total: number }
@@ -44,11 +45,7 @@ export type EmbedOut =
       embeddings: Float32Array
       dim: number
       embedMs: number
-      candidates: Candidate[] // grade가 있는 쌍
-      pairs: Candidate[] // 모든 쌍(제외 사유 포함, 개발 화면용)
-      sims: number[] // 판단 가능 발화별 최대 유사도
-      nullSims: number[] // 귀무분포(정렬됨)
-      detectSummary: DetectSummary
+      pluginVecs: Float32Array // 플러그인 후보 설명 임베딩((후보 수) × dim, 요청 순서)
       modelVersion: string
       classifierVersion: string
       detectorVersion: string
@@ -78,8 +75,8 @@ async function load(model: string, device: 'wasm' | 'webgpu'): Promise<Embedder>
   }
 }
 
-// E5 계열은 "query: " 접두어 필수(정적 표는 토큰 평균이라 접두어 불필요)
-const prep = (model: string, texts: string[]) => (model.includes('e5') && model !== STATIC_MODEL_ID ? texts.map((t) => 'query: ' + t) : texts)
+// E5 계열은 접두어 필수: 내 메시지는 "query: ", 플러그인 설명은 "passage: "(정적 표는 토큰 평균이라 접두어 불필요)
+const prep = (model: string, texts: string[], prefix = 'query: ') => (model.includes('e5') && model !== STATIC_MODEL_ID ? texts.map((t) => prefix + t) : texts)
 
 // 길이순으로 묶어 임베딩하고 원래 순서로 되돌린다. 결과는 (n × dim) 한 덩어리.
 async function embedAll(embed: Embedder, texts: string[], onProgress?: (done: number) => void): Promise<{ data: Float32Array; dim: number }> {
@@ -130,22 +127,9 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
       knn.push(toTask(clf.knn(v)))
     }
     // D + 같은 대화 문맥(cls-0.4.0). 모델은 세부 8가지로 고르고, 화면·추천용 6가지로 합친다(cls-0.5.0)
-    const linear: Prediction[] = linearWithContext(clf, texts.map((_, i) => row(data, dim, i)), e.data.inputs.map((u) => u.conversationId)).map(toTask)
-    // 반복 지시 의심 탐지: 귀무분포(서로 다른 대화 무작위 쌍) 상위 1%를 경계로, 같은 대화의 앞선 발화와 비교
-    const dIn: DetectInput[] = e.data.inputs.map((u, i) => ({ ...u, taskType: linear[i].type })) // 제품 기본 분류는 D(선형)
-    // 경계: 같은 대화 비인접 쌍 분포의 p90(주제 연속 발화의 기본 유사도). 반복 표지가 있는 지시는 다른 대화 쌍 p90만 넘으면 구제.
-    const crossSims = nullDistribution(dIn, (i) => row(data, dim, i))
-    const withinSims = withinConversationNull(dIn, (i) => row(data, dim, i))
-    const nullThreshold = withinSims.length >= 20 ? quantile(withinSims, 0.9) : quantile(crossSims, 0.99)
-    // 묶음(앱/Claude Code)별 기준: 그 묶음의 같은 대화 비인접 쌍이 20개 이상이면 그 p90, 아니면 전체 기준
-    const groupThreshold: Record<string, number> = {}
-    for (const g of new Set(dIn.map((u) => u.group).filter((g): g is string => g != null))) {
-      const ids = dIn.map((_, i) => i).filter((i) => dIn[i].group === g)
-      const ws = withinConversationNull(ids.map((i) => dIn[i]), (k) => row(data, dim, ids[k]))
-      if (ws.length >= 20) groupThreshold[g] = quantile(ws, 0.9)
-    }
-    const pairs = detect(dIn, (i) => row(data, dim, i), { ...DEFAULT_OPTIONS, nullThreshold, groupThreshold, markerFloor: quantile(crossSims, 0.9) })
-    const nullSims = withinSims.length >= 20 ? withinSims : crossSims
+    const linear: Prediction[] = linearWithContext(clf, texts.map((_, i) => row(data, dim, i)), e.data.conversationIds).map(toTask)
+    // 다시 말한 지시 찾기는 제품에서 뺐다(2026-11-24). 대신 플러그인 후보 설명을 같은 모델로 임베딩해 '내 대화와 비슷한 순'에 쓴다
+    const plugins = e.data.plugins?.length ? await embedAll(pipe, prep(model, e.data.plugins, 'passage: ')) : { data: new Float32Array(0), dim }
     post(
       {
         type: 'classified',
@@ -155,17 +139,13 @@ self.onmessage = async (e: MessageEvent<EmbedIn>) => {
         embeddings: data,
         dim,
         embedMs: Math.round(performance.now() - t1),
-        candidates: pairs.filter((c) => c.grade),
-        pairs,
-        sims: pairs.map((c) => c.similarity),
-        nullSims,
-        detectSummary: summarize(pairs, dIn, nullThreshold, groupThreshold),
+        pluginVecs: plugins.data,
         modelVersion: `${model}@q8/${device}`,
         classifierVersion: `${CLASSIFIER_VERSION}+${SEED_VERSION}${extra ? '+' + extra.version : ''}`,
-        detectorVersion: DETECTOR_VERSION,
+        detectorVersion: DETECTOR_OFF,
         net: allRecords(),
       },
-      [data.buffer],
+      [data.buffer, plugins.data.buffer],
     )
   } catch (err) {
     post({ type: 'error', message: (err as Error).message })

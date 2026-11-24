@@ -1,51 +1,403 @@
 {
-  "version": "pcand-0.2.0",
-  "note": "대화 종류별 플러그인 후보. 제품(ChatGPT·Codex)은 종류별 첫 후보만 쓴다. 나머지 후보는 내 메시지와 가장 가까운 것을 고르는 맞춤 방식 평가용(eval/recommend, 실제 기록에서 자주 빗나가 제품에는 넣지 않음). 이름은 ChatGPT 디렉터리(chatgpt.com/plugins, 2026-11-12 확인)와 Claude 목록(web/public/plugins-2026-11-10.json)에 있는 것만. ChatGPT와 Codex는 같은 공개 플러그인 목록을 쓴다(learn.chatgpt.com/docs/plugins, 2026-11-17 확인). 그래서 ChatGPT 기록의 추천은 Codex에서도 같은 이름으로 설치할 수 있다.",
+  "version": "pcand-0.3.0",
+  "note": "대화 종류별 플러그인 후보(종류 6가지). 화면은 후보 안에서 내 대화와 비슷한 순 1~3위와, Claude는 설치 수 많은 순 1~3위를 보여 주고 나머지는 전체 목록으로 연다. 비슷한 순은 브라우저 안에서 후보 설명과 그 종류 내 메시지 평균을 같은 모델로 비교한다. 이름은 ChatGPT 디렉터리(chatgpt.com/plugins, 2026-11-12 확인)와 Claude 목록(web/public/plugins-claude.json)에 있는 것만. ChatGPT와 Codex는 같은 공개 플러그인 목록을 쓴다(learn.chatgpt.com/docs/plugins, 2026-11-17 확인).",
   "chatgptHowTo": "1) ChatGPT 왼쪽 사이드바에서 플러그인을 엽니다. 2) 검색창에 '{plugin}'을 입력하고 포함된 앱을 확인한 뒤 플러그인 설치를 누릅니다. 3) 대화에서 @{plugin}으로 부르거나 그냥 요청하면 관련될 때 쓰입니다. 4) Codex에서는 앱의 플러그인 탭에서 같은 이름을 찾아 설치하거나, CLI에서 /plugins를 열어 설치한 뒤 새 세션을 시작합니다.",
   "chatgptEvidence": "https://help.openai.com/en/articles/20001256-plugins-in-chatgpt",
   "codexEvidence": "https://learn.chatgpt.com/docs/plugins",
   "chatgptInfo": {
-    "GitHub": { "id": "plugin_connector_1p_1a69035c238881919c4190932b2df699", "oneLiner": "PR·이슈·CI를 정리하고 배포 흐름을 다룹니다." },
-    "Supabase": { "id": "plugin_asdk_app_69d3e5ee6a708191baa733f7b8931995", "oneLiner": "데이터베이스를 관리하고 조회합니다." },
-    "Vercel": { "id": "plugin_connector_690a90ec05c881918afb6a55dc9bbaa1", "oneLiner": "웹 앱을 만들고 배포합니다." },
-    "Lovable": { "id": "plugin_asdk_app_693a0a79ffe48191901173077edcf914", "oneLiner": "대화로 풀스택 앱을 만듭니다." },
-    "Replit": { "id": "plugin_asdk_app_6934801c799081918131791660f02890", "oneLiner": "아이디어를 실제로 돌아가는 앱으로 만듭니다." },
-    "Notion": { "id": "plugin_asdk_app_69c18c28f1188191bf5b8445c4ab0a2e", "oneLiner": "문서·할 일·데이터베이스를 만듭니다." },
-    "Google Drive": { "id": "plugin_connector_1p_ab21a553bfbc81919ea8fd1858e3ffa7", "oneLiner": "드라이브의 문서·시트·슬라이드를 찾고 다룹니다." },
-    "Canva": { "id": "plugin_connector_68df33b1a2d081918778431a9cfca8ba", "oneLiner": "디자인을 만들고 검토하고 고칩니다." },
-    "Wolfram": { "id": "plugin_asdk_app_69fe0bf66c8481919c513d799406436e", "oneLiner": "계산과 수학·과학 지식을 더합니다." },
-    "Quizlet": { "id": "plugin_asdk_app_694336f3c5088191bcdfe35bb532ad83", "oneLiner": "플래시카드를 만듭니다." },
-    "Consensus": { "id": "plugin_asdk_app_6943e6f4a928819195962de16fb9ffe4", "oneLiner": "동료 심사를 거친 논문을 찾습니다." },
-    "Khan Academy": { "id": "plugin_asdk_app_69127e3e55288191a8b5c2b401fb732d", "oneLiner": "초중고 수학 연습 문제를 만듭니다." },
-    "Kahoot!": { "id": "plugin_asdk_app_6992711879b48191b818f44be2767fbe", "oneLiner": "퀴즈를 바로 만듭니다." },
-    "SharePoint": { "id": "plugin_connector_1p_dca009ae2c848191ae14df3a47c5e7fd", "oneLiner": "SharePoint 문서를 요약합니다." },
-    "Outlook Email": { "id": "plugin_connector_1p_6bcb5879c73c819196abc70016166099", "oneLiner": "Outlook 받은편지함을 정리합니다." },
-    "Gamma": { "id": "plugin_asdk_app_698a098735908191989f5788d7ee317e", "oneLiner": "발표 자료와 문서를 만듭니다." },
-    "Scite": { "id": "plugin_asdk_app_6952b3a3f1e881918951582d59483c78", "oneLiner": "과학 문헌을 찾습니다." },
-    "Elicit": { "id": "plugin_asdk_app_69fcf53d4d8481919b65501a96bbed02", "oneLiner": "과학 문헌을 찾고 정리합니다." },
-    "Exa": { "id": "plugin_asdk_app_69ea4ed2cf7c8191b742ef3622479ddd", "oneLiner": "웹을 검색합니다." },
-    "Miro": { "id": "plugin_asdk_app_6a392799cb58819185f82dc01ac13dad", "oneLiner": "아이디어를 보드에 시각화하고 구조를 잡습니다." },
-    "Figma": { "id": "plugin_connector_68df038e0ba48191908c8434991bbac2", "oneLiner": "디자인을 만들고 코드로 옮깁니다." },
-    "DeepL": { "id": "plugin_asdk_app_6a4df46ad864819185a140122a0f835d", "oneLiner": "글과 문서를 번역합니다." }
+    "GitHub": {
+      "id": "plugin_connector_1p_1a69035c238881919c4190932b2df699",
+      "oneLiner": "PR·이슈·CI를 정리하고 배포 흐름을 다룹니다.",
+      "summary": "Triage PRs, issues, CI, and publish flows"
+    },
+    "Supabase": {
+      "id": "plugin_asdk_app_69d3e5ee6a708191baa733f7b8931995",
+      "oneLiner": "데이터베이스를 관리하고 조회합니다.",
+      "summary": "Manage and query databases"
+    },
+    "Vercel": {
+      "id": "plugin_connector_690a90ec05c881918afb6a55dc9bbaa1",
+      "oneLiner": "웹 앱을 만들고 배포합니다.",
+      "summary": "Build and deploy apps"
+    },
+    "Lovable": {
+      "id": "plugin_asdk_app_693a0a79ffe48191901173077edcf914",
+      "oneLiner": "대화로 풀스택 앱을 만듭니다.",
+      "summary": "Build full-stack apps by chat"
+    },
+    "Replit": {
+      "id": "plugin_asdk_app_6934801c799081918131791660f02890",
+      "oneLiner": "아이디어를 실제로 돌아가는 앱으로 만듭니다.",
+      "summary": "Turn your ideas into real apps"
+    },
+    "Notion": {
+      "id": "plugin_asdk_app_69c18c28f1188191bf5b8445c4ab0a2e",
+      "oneLiner": "문서·할 일·데이터베이스를 만듭니다.",
+      "summary": "Create docs, tasks, databases"
+    },
+    "Google Drive": {
+      "id": "plugin_connector_1p_ab21a553bfbc81919ea8fd1858e3ffa7",
+      "oneLiner": "드라이브의 문서·시트·슬라이드를 찾고 다룹니다.",
+      "summary": "Drive, Docs, Sheets or Slides"
+    },
+    "Canva": {
+      "id": "plugin_connector_68df33b1a2d081918778431a9cfca8ba",
+      "oneLiner": "디자인을 만들고 검토하고 고칩니다.",
+      "summary": "Create, review, edit designs"
+    },
+    "Wolfram": {
+      "id": "plugin_asdk_app_69fe0bf66c8481919c513d799406436e",
+      "oneLiner": "계산과 수학·과학 지식을 더합니다.",
+      "summary": "Add computation & knowledge"
+    },
+    "Quizlet": {
+      "id": "plugin_asdk_app_694336f3c5088191bcdfe35bb532ad83",
+      "oneLiner": "플래시카드를 만듭니다.",
+      "summary": "Create flashcards"
+    },
+    "Consensus": {
+      "id": "plugin_asdk_app_6943e6f4a928819195962de16fb9ffe4",
+      "oneLiner": "동료 심사를 거친 논문을 찾습니다.",
+      "summary": "Search peer-reviewed research"
+    },
+    "Khan Academy": {
+      "id": "plugin_asdk_app_69127e3e55288191a8b5c2b401fb732d",
+      "oneLiner": "초중고 수학 연습 문제를 만듭니다.",
+      "summary": "Create K-12 math exercises"
+    },
+    "Kahoot!": {
+      "id": "plugin_asdk_app_6992711879b48191b818f44be2767fbe",
+      "oneLiner": "퀴즈를 바로 만듭니다.",
+      "summary": "Create kahoots instantly"
+    },
+    "SharePoint": {
+      "id": "plugin_connector_1p_dca009ae2c848191ae14df3a47c5e7fd",
+      "oneLiner": "SharePoint 문서를 요약합니다.",
+      "summary": "Summarize SharePoint content"
+    },
+    "Outlook Email": {
+      "id": "plugin_connector_1p_6bcb5879c73c819196abc70016166099",
+      "oneLiner": "Outlook 받은편지함을 정리합니다.",
+      "summary": "Triage Outlook inboxes"
+    },
+    "Gamma": {
+      "id": "plugin_asdk_app_698a098735908191989f5788d7ee317e",
+      "oneLiner": "발표 자료와 문서를 만듭니다.",
+      "summary": "Create presentations and docs"
+    },
+    "Scite": {
+      "id": "plugin_asdk_app_6952b3a3f1e881918951582d59483c78",
+      "oneLiner": "과학 문헌을 찾습니다.",
+      "summary": "Search scientific literature"
+    },
+    "Elicit": {
+      "id": "plugin_asdk_app_69fcf53d4d8481919b65501a96bbed02",
+      "oneLiner": "과학 문헌을 찾고 정리합니다.",
+      "summary": "Search scientific literature"
+    },
+    "Exa": {
+      "id": "plugin_asdk_app_69ea4ed2cf7c8191b742ef3622479ddd",
+      "oneLiner": "웹을 검색합니다.",
+      "summary": "Web search for AI agents"
+    },
+    "Miro": {
+      "id": "plugin_asdk_app_6a392799cb58819185f82dc01ac13dad",
+      "oneLiner": "아이디어를 보드에 시각화하고 구조를 잡습니다.",
+      "summary": "Visualize and structure ideas"
+    },
+    "Figma": {
+      "id": "plugin_connector_68df038e0ba48191908c8434991bbac2",
+      "oneLiner": "디자인을 만들고 코드로 옮깁니다.",
+      "summary": "Create designs, ship to code"
+    },
+    "DeepL": {
+      "id": "plugin_asdk_app_6a4df46ad864819185a140122a0f835d",
+      "oneLiner": "글과 문서를 번역합니다.",
+      "summary": "Translate text and documents"
+    }
   },
   "chatgpt": {
-    "coding": ["GitHub", "Supabase", "Vercel", "Lovable", "Replit"],
-    "writing": ["Notion", "Google Drive", "Canva"],
-    "learning": ["Wolfram", "Quizlet", "Consensus", "Khan Academy", "Kahoot!"],
-    "workdoc": ["Google Drive", "SharePoint", "Notion", "Outlook Email", "Gamma", "Canva"],
-    "search": ["Consensus", "Scite", "Elicit", "Exa"],
-    "ideation": ["Miro", "Notion", "Figma", "Canva"],
-    "translation": ["DeepL"],
+    "coding": [
+      "GitHub",
+      "Supabase",
+      "Vercel",
+      "Lovable",
+      "Replit"
+    ],
+    "writing": [
+      "Notion",
+      "Google Drive",
+      "Canva",
+      "SharePoint",
+      "Outlook Email",
+      "Gamma"
+    ],
+    "learning": [
+      "Wolfram",
+      "Quizlet",
+      "Consensus",
+      "Khan Academy",
+      "Kahoot!",
+      "Scite",
+      "Elicit",
+      "Exa"
+    ],
+    "ideation": [
+      "Miro",
+      "Notion",
+      "Figma",
+      "Canva"
+    ],
+    "translation": [
+      "DeepL"
+    ],
     "counseling": []
   },
   "claude": {
-    "coding": ["Engineering", "Superpowers", "Data", "UI Design Review", "Unity", "Vercel"],
-    "writing": ["Humanizer", "Writing Desk", "Writing Skills", "novel-studio", "Claude ghost writer"],
-    "learning": ["Study Desk", "learn", "math-olympiad", "pubmed"],
-    "workdoc": ["PDF Viewer", "Productivity", "Notion", "Box", "Marketing"],
-    "search": ["Exa Deep Research", "Research Desk", "pubmed"],
-    "ideation": ["Product Management", "strategy-frameworks", "Miro", "Figma", "Canva", "Design"],
-    "translation": ["DeepL"],
+    "coding": [
+      "Engineering",
+      "Superpowers",
+      "Data",
+      "UI Design Review",
+      "Unity",
+      "Vercel"
+    ],
+    "writing": [
+      "Humanizer",
+      "Writing Desk",
+      "Writing Skills",
+      "novel-studio",
+      "Claude ghost writer",
+      "PDF Viewer",
+      "Productivity",
+      "Notion",
+      "Box",
+      "Marketing"
+    ],
+    "learning": [
+      "Study Desk",
+      "learn",
+      "math-olympiad",
+      "pubmed",
+      "Exa Deep Research",
+      "Research Desk"
+    ],
+    "ideation": [
+      "Product Management",
+      "strategy-frameworks",
+      "Miro",
+      "Figma",
+      "Canva",
+      "Design"
+    ],
+    "translation": [
+      "DeepL"
+    ],
     "counseling": []
+  },
+  "claudeInfo": {
+    "Engineering": {
+      "oneLiner": "",
+      "summary": "Streamline engineering workflows — standups, code review, architecture decisions, incident response, and technical documentation. Works with your existing tools or standalone.",
+      "installs": null,
+      "repo": "https://github.com/anthropics/knowledge-work-plugins",
+      "category": ""
+    },
+    "Superpowers": {
+      "oneLiner": "TDD·디버깅·협업 패턴 등 Claude Code 핵심 스킬 모음입니다.",
+      "summary": "Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques",
+      "installs": 136592,
+      "repo": "https://github.com/obra/superpowers",
+      "category": "engineering"
+    },
+    "Data": {
+      "oneLiner": "SQL 작성, 데이터 탐색, 시각화·대시보드 제작을 빠르게 합니다.",
+      "summary": "Write SQL, explore datasets, and generate insights faster. Build visualizations and dashboards, and turn raw data into clear stories for stakeholders.",
+      "installs": 2898738,
+      "repo": "https://github.com/anthropics/knowledge-work-plugins",
+      "category": "data"
+    },
+    "UI Design Review": {
+      "oneLiner": "",
+      "summary": "Review any app or website screen the way a senior designer would: look at the rendered result on phone and desktop, list what to fix most important first, fix the issues you pick i",
+      "installs": null,
+      "repo": "https://github.com/uxkin/agent",
+      "category": "design"
+    },
+    "Unity": {
+      "oneLiner": "",
+      "summary": "Unity's official plugin for Claude Code, with curated skills for game development, monetization, and performance optimization.",
+      "installs": null,
+      "repo": "https://github.com/unity-technologies/unity-agent-plugin",
+      "category": ""
+    },
+    "Vercel": {
+      "oneLiner": "",
+      "summary": "Build and deploy web apps and agents",
+      "installs": null,
+      "repo": "https://github.com/vercel/vercel-plugin",
+      "category": ""
+    },
+    "Humanizer": {
+      "oneLiner": "",
+      "summary": "Rewrite AI-sounding text so it reads like the writer without changing what it says.",
+      "installs": 23398,
+      "repo": "https://github.com/blader/humanizer",
+      "category": "files-documents"
+    },
+    "Writing Desk": {
+      "oneLiner": "",
+      "summary": "Write from what you actually have, and see every change: edits with a change table, honest reviews against your brief or rubric, outlines and drafts built only from your notes with",
+      "installs": 1607,
+      "repo": "https://github.com/najikay/claude-writing-desk",
+      "category": "writing"
+    },
+    "Writing Skills": {
+      "oneLiner": "쉬운 글, AP 저널리즘, GOV.UK, 오웰의 규칙 등 글쓰기 스타일 스킬 16개입니다.",
+      "summary": "16 production writing-style skills for AI agents: 9 measurable frameworks (plain language, ASD-STE100, AP journalism, GOV.UK, Orwell's rules) and 7 character voices, as portable SK",
+      "installs": 12825,
+      "repo": "https://github.com/surendranb/writing-skills",
+      "category": "writing"
+    },
+    "novel-studio": {
+      "oneLiner": "AI 웹소설 창작 하네스입니다. 기획→설계→집필→윤문→재작성 전 과정을 자동화합니다.",
+      "summary": "AI 웹소설 창작 하네스. 18개 전문 에이전트와 10개 스킬로 기획→설계→집필→윤문→재작성 전 과정을 자동화. Web novel creation harness with end-to-end automation from planning to publishing.",
+      "installs": 2491,
+      "repo": "https://github.com/mjbae/novel-studio",
+      "category": "media-entertainment"
+    },
+    "Claude ghost writer": {
+      "oneLiner": "저자 인터뷰·기획·목소리 분석 뒤 구조화된 사이클로 책을 함께 씁니다.",
+      "summary": "Collaborative ghost writing assistant for books and long-form writing. Full onboarding (author interview, book brainstorm, voice fingerprint) + structured writing cycle (concept di",
+      "installs": 6685,
+      "repo": "https://github.com/simonediroma/claude-ghost-writer",
+      "category": "writing"
+    },
+    "PDF Viewer": {
+      "oneLiner": "PDF를 보고 주석을 달고 양식을 채우고 서명한 뒤 내려받습니다.",
+      "summary": "View, annotate, and sign PDFs in a live interactive viewer. Mark up contracts, fill forms with visual feedback, stamp approvals, and place signatures — then download the annotated ",
+      "installs": 1754539,
+      "repo": "https://github.com/anthropics/knowledge-work-plugins",
+      "category": "legal"
+    },
+    "Productivity": {
+      "oneLiner": "할 일·하루 계획·업무 맥락 기억을 캘린더·메일·채팅과 묶어 관리합니다.",
+      "summary": "Manage tasks, plan your day, and build up memory of important context about your work. Syncs with your calendar, email, and chat to keep everything organized and on track.",
+      "installs": 3352012,
+      "repo": "https://github.com/anthropics/knowledge-work-plugins",
+      "category": "jobs-career"
+    },
+    "Notion": {
+      "oneLiner": "",
+      "summary": "Notion Skills + Notion MCP server packaged as a Claude Code plugin.",
+      "installs": 14264,
+      "repo": "https://github.com/makenotion/claude-code-notion-plugin",
+      "category": "notes-memory"
+    },
+    "Box": {
+      "oneLiner": "Box 파일을 검색·정리하고 Box AI로 문서를 요약합니다.",
+      "summary": "Work with your Box content directly from Claude Code — search files, organize folders, collaborate with your team, and use Box AI to answer questions, summarize documents, and extr",
+      "installs": 150733,
+      "repo": "https://github.com/box/skills",
+      "category": "files-documents"
+    },
+    "Marketing": {
+      "oneLiner": "콘텐츠 제작, 캠페인 계획, 채널별 성과 분석과 브랜드 톤 유지를 돕습니다.",
+      "summary": "Create content, plan campaigns, and analyze performance across marketing channels. Maintain brand voice consistency, track competitors, and report on what's working.",
+      "installs": 2664339,
+      "repo": "https://github.com/anthropics/knowledge-work-plugins",
+      "category": "marketing"
+    },
+    "Study Desk": {
+      "oneLiner": "내 노트·슬라이드·교재에서만 플래시카드·연습 문제·모의시험을 만듭니다.",
+      "summary": "Learn material you already have, honestly: flashcards, practice questions and mock exams drawn only from your notes, slides or textbook, each tied to its passage; grading that says",
+      "installs": 6172,
+      "repo": "https://github.com/najikay/claude-study-desk",
+      "category": "learning"
+    },
+    "learn": {
+      "oneLiner": "",
+      "summary": "Teaching-first pair programming — ensures developers understand every line written and why",
+      "installs": null,
+      "repo": "https://github.com/varmabudharaju/learn",
+      "category": ""
+    },
+    "math-olympiad": {
+      "oneLiner": "IMO·Putnam 수준 경시 수학을 풀고 별도 검증자가 증명을 공격해 오류를 잡습니다.",
+      "summary": "Solve competition math (IMO, Putnam, USAMO) with adversarial verification that catches what self-verification misses. Fresh-context verifiers attack proofs with specific failure pa",
+      "installs": 2004,
+      "repo": "https://github.com/anthropics/claude-plugins-official",
+      "category": "learning"
+    },
+    "pubmed": {
+      "oneLiner": "PubMed 의학 문헌을 검색하는 MCP 서버입니다.",
+      "summary": "PubMed MCP server for searching biomedical literature and research articles",
+      "installs": 6913,
+      "repo": "https://github.com/anthropics/life-sciences",
+      "category": "data"
+    },
+    "Exa Deep Research": {
+      "oneLiner": "Exa 웹 검색, 본문 가져오기, 여러 단계 리서치를 합니다.",
+      "summary": "Exa web search, content fetching, and multi-step research via MCP tools and skills.",
+      "installs": 119690,
+      "repo": "https://github.com/exa-labs/exa-mcp-server",
+      "category": "data"
+    },
+    "Research Desk": {
+      "oneLiner": "",
+      "summary": "Research work you can stand behind: check that references are real, take faithful notes on a paper, compare papers, draft related work from your own sources, review a draft like a ",
+      "installs": 10722,
+      "repo": "https://github.com/najikay/claude-research-skills",
+      "category": "research"
+    },
+    "Product Management": {
+      "oneLiner": "",
+      "summary": "Write feature specs, plan roadmaps, and synthesize user research faster. Keep stakeholders updated and stay ahead of the competitive landscape.",
+      "installs": null,
+      "repo": "https://github.com/anthropics/knowledge-work-plugins",
+      "category": ""
+    },
+    "strategy-frameworks": {
+      "oneLiner": "",
+      "summary": "Strategic Thinking Agent — meta-router for 47 business strategy frameworks (Porter Five Forces/Value Chain/Generic Strategies, Drucker MBO/5Q, BSC, Blue Ocean, Wardley Mapping, BCG",
+      "installs": 4681,
+      "repo": "https://github.com/ironyjk/strategy-frameworks",
+      "category": "product"
+    },
+    "Miro": {
+      "oneLiner": "Miro 보드 내용을 읽고 다이어그램을 만들고 코드를 생성합니다.",
+      "summary": "Secure access to Miro boards. Enables AI to read board context, create diagrams, and generate code with enterprise-grade security.",
+      "installs": 232562,
+      "repo": "https://github.com/miroapp/miro-ai",
+      "category": "engineering"
+    },
+    "Figma": {
+      "oneLiner": "Figma 파일·컴포넌트·디자인 토큰을 읽고 디자인을 코드로 옮깁니다.",
+      "summary": "Figma design platform integration. Access design files, extract component information, read design tokens, and translate designs into code. Bridge the gap between design and develo",
+      "installs": 968588,
+      "repo": "https://github.com/figma/mcp-server-guide",
+      "category": "design"
+    },
+    "Canva": {
+      "oneLiner": "Canva 디자인을 만들고 고치고 크기를 바꾸고 브랜드 기준을 점검합니다.",
+      "summary": "Create, edit, review, resize, and brand-check Canva designs with the Canva MCP server.",
+      "installs": 527774,
+      "repo": "https://github.com/canva-sdks/canva-skills",
+      "category": "marketing"
+    },
+    "Design": {
+      "oneLiner": "",
+      "summary": "Accelerate design workflows — critique, design system management, UX writing, accessibility audits, research synthesis, and dev handoff. From exploration to pixel-perfect specs.",
+      "installs": null,
+      "repo": "https://github.com/anthropics/knowledge-work-plugins",
+      "category": ""
+    },
+    "DeepL": {
+      "oneLiner": "",
+      "summary": "Translate, rephrase, and correct text with DeepL",
+      "installs": null,
+      "repo": "https://github.com/deepl/claude-plugin",
+      "category": ""
+    }
   }
 }

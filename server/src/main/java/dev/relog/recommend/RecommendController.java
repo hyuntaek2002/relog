@@ -23,7 +23,7 @@ public class RecommendController {
             @NotNull Map<@Pattern(regexp = "coding|writing|learning|workdoc|search|ideation|translation|counseling") String, @DecimalMin("0") @DecimalMax("1") Double> taskShare,
             @Min(0) int userTurnCount, @Min(0) int conversationCount,
             @DecimalMin("0") @DecimalMax("1") double longConversationShare, @DecimalMin("0") double avgTurnsPerConversation, @DecimalMin("0") @DecimalMax("1") double codeShare,
-            @NotNull @Valid Restatement restatement,
+            @Valid Restatement restatement, // 예전 클라이언트가 보내는 값. rec-0.2.0부터 쓰지 않는다
             @Valid Answer answer,
             @NotBlank @Size(max = 16) String plan,
             @NotNull List<@Size(max = 64) String> featuresInUse,
@@ -45,8 +45,7 @@ public class RecommendController {
     public Map<String, Object> recommend(@Valid @RequestBody Request r) {
         UserAccount me = BearerTokenFilter.current();
         var snap = new RecommendEngine.Snapshot(r.platform(), r.taskShare(), r.userTurnCount(), r.conversationCount(), r.longConversationShare(),
-                r.avgTurnsPerConversation(), r.codeShare(), new RecommendEngine.Restatement(r.restatement().high(), r.restatement().mid(), r.restatement().low(),
-                r.restatement().misunderstanding(), r.restatement().repeatedQuestion(), r.restatement().perTask(), r.restatement().tokenEstimate(), r.restatement().ratio()),
+                r.avgTurnsPerConversation(), r.codeShare(),
                 r.answer() == null ? new RecommendEngine.Answer(0, 0) : new RecommendEngine.Answer(r.answer().avgTokens(), r.answer().ratio()));
         // 사용자의 최근 피드백(항목당 마지막 값)
         Map<String, String> fb = new HashMap<>();

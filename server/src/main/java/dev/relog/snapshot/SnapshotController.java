@@ -38,6 +38,7 @@ public class SnapshotController {
             e.conversationCount = d.conversationCount(); e.longConversationCount = d.longConversationCount(); e.codeCount = d.codeCount();
             e.taskCounts = Json.write(d.taskCounts()); e.hourHistogram = Json.write(d.hourHistogram()); e.updatedAt = Instant.now();
             e = snapshots.save(e);
+            if (d.restatement() == null) continue; // 2026-11-24부터 웹은 다시 말한 지시 집계를 보내지 않는다
             RestatementStatEntity s = stats.findBySnapshot(e).orElseGet(RestatementStatEntity::new);
             s.snapshot = e; s.high = d.restatement().high(); s.medium = d.restatement().medium(); s.low = d.restatement().low();
             s.tokenEstimate = d.restatement().tokenEstimate(); s.ratio = d.restatement().ratio();

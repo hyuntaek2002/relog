@@ -24,8 +24,7 @@ class RecommendEngineTest {
 
     static RecommendEngine.Snapshot snap() {
         Map<String, Double> share = new HashMap<>(Map.of("coding", 0.1, "writing", 0.5, "learning", 0.1, "ideation", 0.1, "translation", 0.05, "counseling", 0.15));
-        return new RecommendEngine.Snapshot("claude", share, 500, 15, 0.5, 33, 0,
-                new RecommendEngine.Restatement(1, 20, 2, 10, 60, Map.of("writing", 8), 8000, 16), new RecommendEngine.Answer(300, 3));
+        return new RecommendEngine.Snapshot("claude", share, 500, 40, 0.5, 33, 0, new RecommendEngine.Answer(300, 3));
     }
 
     @Test
@@ -45,10 +44,9 @@ class RecommendEngineTest {
         Map<String, Long> cats = new HashMap<>();
         r.forEach(p -> cats.merge(p.category(), 1L, Long::sum));
         assertTrue(cats.values().stream().allMatch(n -> n <= 2), "category당 최대 2");
-        // 반복이 업무 문서에 몰린 스냅샷이라 rec-0.1.1부터는 스킬(perTask 가산)이 1순위, 요구사항 고정 습관도 상위 3 안
+        // rec-0.2.0(다시 말한 지시 신호 없음): 웹 test_parser.mjs와 같은 스냅샷이면 같은 순서
         var ids = r.stream().map(RecommendEngine.Prescription::catalogId).toList();
-        assertEquals("cl_skills", ids.get(0));
-        assertTrue(ids.contains("pr_pin_requirements"), ids.toString());
+        assertEquals(List.of("pr_split_long", "cl_project_knowledge", "cl_connectors_google"), ids);
     }
 
     @Test
@@ -69,7 +67,7 @@ class RecommendEngineTest {
     @Test
     void longAnswersRecommendConcisePlugin() {
         var s = snap();
-        var longAnswers = new RecommendEngine.Snapshot(s.platform(), s.taskShare(), s.userTurnCount(), s.conversationCount(), s.longConversationShare(), s.avgTurnsPerConversation(), s.codeShare(), s.restatement(), new RecommendEngine.Answer(994, 13.3));
+        var longAnswers = new RecommendEngine.Snapshot(s.platform(), s.taskShare(), s.userTurnCount(), s.conversationCount(), s.longConversationShare(), s.avgTurnsPerConversation(), s.codeShare(), new RecommendEngine.Answer(994, 13.3));
         var sc = RecommendEngine.scoreAll(longAnswers, new RecommendEngine.Context("pro", Set.of()), Map.of(), items);
         var concise = sc.stream().filter(x -> x.item().id().equals("cl_plugin_concise")).findFirst().orElseThrow();
         assertTrue(concise.problemHits().stream().anyMatch(h -> h.contains("994토큰")), concise.problemHits().toString());
@@ -79,10 +77,17 @@ class RecommendEngineTest {
 
     @Test
     void noProblemSignalsMeansReferenceGradeOnly() {
-        var calm = new RecommendEngine.Snapshot("claude", snap().taskShare(), 500, 15, 0, 3, 0,
-                new RecommendEngine.Restatement(0, 0, 0, 0, 0, Map.of(), 0, 0), new RecommendEngine.Answer(0, 0));
+        var calm = new RecommendEngine.Snapshot("claude", snap().taskShare(), 500, 5, 0, 3, 0, new RecommendEngine.Answer(0, 0));
         var r = RecommendEngine.recommend(calm, new RecommendEngine.Context("pro", Set.of()), Map.of(), items);
         assertTrue(r.stream().allMatch(p -> p.grade().equals("참고")));
         assertEquals(3, RecommendEngine.genericDefaults("claude", items).size());
+    }
+
+    @Test
+    void catalogHasNoRestatementSignalsAndBaselineItemsAreReference() {
+        assertTrue(items.stream().flatMap(i -> i.problemSignals().stream()).noneMatch(ps -> ps.signal().startsWith("restatement")));
+        var pin = items.stream().filter(i -> i.id().equals("pr_pin_requirements")).findFirst().orElseThrow();
+        var r = RecommendEngine.recommend(snap(), new RecommendEngine.Context("pro", Set.of()), Map.of(), List.of(pin));
+        assertTrue(r.get(0).summary().contains("대화를 40개"), r.get(0).summary());
     }
 }

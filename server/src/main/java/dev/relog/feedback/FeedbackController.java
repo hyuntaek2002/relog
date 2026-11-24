@@ -13,7 +13,7 @@ import java.util.Map;
 @RequestMapping("/api/feedback")
 public class FeedbackController {
     public record Item(@NotBlank @Size(max = 64) String catalogId,
-                       @NotBlank @Pattern(regexp = "helpful|not_helpful|already_using|ab_score") String value,
+                       @NotBlank @Pattern(regexp = "helpful|not_helpful|already_using|using|not_using|unmarked|ab_score") String value, // using·not_using·unmarked: 쓰고 있음 표시(2026-11-24)
                        @Pattern(regexp = "generic|personalized|both") String source,
                        @Min(1) @Max(5) Integer abScore, @Min(1) @Max(20) Integer abOrder) {}
 

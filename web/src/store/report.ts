@@ -25,7 +25,7 @@ export function parseReport(text: string): Report {
   try { o = JSON.parse(text) } catch { throw new Error('JSON 파일이 아닙니다') }
   const r = o as Partial<Report>
   if (!r || r.format !== REPORT_FORMAT) throw new Error('relog에서 내려받은 결과 파일이 아닙니다')
-  if (!Array.isArray(r.weeks) || r.weeks.length === 0 || !r.weeks.every((w) => typeof w.periodStart === 'number' && w.taskCounts && w.restatement)) throw new Error('주별 집계가 없거나 손상된 파일입니다')
+  if (!Array.isArray(r.weeks) || r.weeks.length === 0 || !r.weeks.every((w) => typeof w.periodStart === 'number' && w.taskCounts && typeof w.conversationCount === 'number')) throw new Error('주별 집계가 없거나 손상된 파일입니다')
   if (!r.version || !r.snapshot) throw new Error('버전 또는 요약이 없는 파일입니다')
   return r as Report
 }

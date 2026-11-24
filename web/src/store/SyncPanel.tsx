@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react'
-import { API_BASE, deleteMe, fetchRecommendations, fetchTrend, getToken, login, logout, me, register, setNotify, upsertSnapshots } from './sync'
-import type { AnalysisVersion, PeriodSnapshot, TaskCompare } from './ledger'
+import { API_BASE, deleteMe, fetchRecommendations, getToken, login, logout, me, register, setNotify, upsertSnapshots } from './sync'
+import type { AnalysisVersion, PeriodSnapshot } from './ledger'
 import type { Prescription, UserContext } from '../recommend/recommend'
 import type { UsageSnapshot } from '../recommend/snapshot'
 import Help from '../ui/Help'
 
-// 서버 동기화(선택): 서비스 계정으로 로그인하고 주별 집계 숫자만 보낸다. 보낸 뒤 서버가 추천과 변화 추이를 계산해 돌려준다.
+// 서버 동기화(선택): 서비스 계정으로 로그인하고 주별 집계 숫자만 보낸다. 보낸 뒤 서버가 추천을 계산해 돌려준다.
 // 로그인하지 않으면 아무것도 보내지 않고 전부 브라우저 안에서 계산한다.
 export default function SyncPanel({ weeks, version, snapshot, ctx, onServer }: {
   weeks: PeriodSnapshot[]
   version: AnalysisVersion | null
   snapshot: UsageSnapshot | null
   ctx: UserContext | null
-  onServer: (r: { prescriptions: Prescription[] | null; trend: (TaskCompare & { weeks: number }) | null }) => void
+  onServer: (r: { prescriptions: Prescription[] | null }) => void
 }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -29,20 +29,19 @@ export default function SyncPanel({ weeks, version, snapshot, ctx, onServer }: {
   const refresh = () => me().then(setWho).catch(() => setWho(null))
   const signOut = () => { logout(); location.reload() } // 로그인해야 쓰는 화면이라 로그인 화면으로 돌아간다
 
-  // 집계 전송 → 서버 추천 → 서버 변화 추이 순서. 추천·추이는 서버가 계산한 값을 화면에 쓴다.
+  // 집계 전송 → 서버 추천 순서. 추천은 서버가 계산한 값을 화면에 쓴다.
   async function sync() {
     const r = await upsertSnapshots(weeks, version!)
     const rx = snapshot && ctx ? (await fetchRecommendations(snapshot, ctx)).prescriptions : null
-    const trend = await fetchTrend(2)
-    onServer({ prescriptions: rx, trend })
+    onServer({ prescriptions: rx })
     await refresh()
-    return `보냈습니다: 새 기간 ${r.created}주, 덮어쓴 기간 ${r.updated}주. 추천과 변화는 서버 계산값으로 바꿨습니다.`
+    return `보냈습니다: 새 기간 ${r.created}주, 덮어쓴 기간 ${r.updated}주. 추천은 서버 계산값으로 바꿨습니다.`
   }
 
   return (
     <div className="checklist">
       <div className="row wrap">
-        <span>서버<Help text={`서버(${API_BASE})에는 주별 집계 숫자(메시지 수·대화 종류별 수·다시 말한 지시 수·토큰 추정치)와 요금제·쓰는 기능·피드백만 보냅니다. 대화 내용과 임베딩은 보내지 않고, ChatGPT·Claude 계정 정보도 다루지 않습니다. 이 서비스용 계정(이메일)이 필요합니다.`} /></span>
+        <span>서버<Help text={`서버(${API_BASE})에는 주별 집계 숫자(메시지 수·대화 종류별 수·대화 수)와 요금제·쓰는 기능·피드백만 보냅니다. 대화 내용과 임베딩은 보내지 않고, ChatGPT·Claude 계정 정보도 다루지 않습니다. 이 서비스용 계정(이메일)이 필요합니다.`} /></span>
         {!who ? (
           <>
             <input placeholder="이메일" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} />

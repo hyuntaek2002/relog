@@ -381,3 +381,22 @@ select { border: 1px solid var(--line); border-radius: 10px; background: var(--c
   .modes { grid-template-columns: 1fr; }
 }
 @media (max-width: 720px) { .facts > .wide { border: 1px solid var(--line); } }
+
+/* 종류별 플러그인 1~3순위(2026-11-24): 순위 번호 · 이름 · 한 줄 · 쓰고 있음/사용하지 않음, 나머지는 전체 후보 창 */
+.tp > .tp-sec, .tp > .actions { padding: 10px 18px 0; margin: 0; }
+.tp > .actions { padding-bottom: 10px; }
+.tp > .tp-sec + .tp-sec { border-top: 1px dashed var(--line); margin-top: 10px; }
+.tp-list { list-style: none; margin: 4px 0 0; padding: 0; }
+.tp-row { padding: 8px 0; }
+.tp-row + .tp-row { border-top: 1px solid var(--line); }
+.tp-row .tp-name { margin: 0; gap: 8px; }
+.tp-row .tp-name a { font-size: 0.85rem; margin-left: auto; }
+.tp-row .tp-line { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
+.tp-row .actions { margin: 6px 0 0; gap: 6px; }
+.tp-row .actions button { font-size: 0.85rem; padding: 3px 10px; }
+.rank { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-bg); color: var(--accent); font-size: 0.8rem; font-weight: 700; flex: none; }
+.tp-dialog { width: min(640px, calc(100vw - 32px)); max-height: min(80vh, 760px); border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); color: var(--fg); padding: 16px 20px; }
+.tp-dialog::backdrop { background: rgb(0 0 0 / 0.35); }
+.tp-dialog > .meta { display: flex; justify-content: space-between; align-items: center; }
+.tp-dialog > .meta b { font-size: 1.05rem; }
+.using-item { display: inline-flex; gap: 2px; align-items: baseline; margin-right: 10px; }

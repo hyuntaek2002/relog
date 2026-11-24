@@ -1,7 +1,8 @@
-import type { AnalysisVersion, PeriodSnapshot, TaskCompare } from './ledger'
+import type { AnalysisVersion, PeriodSnapshot } from './ledger'
 import type { Feedback, Prescription, UserContext } from '../recommend/recommend'
 import type { UsageSnapshot } from '../recommend/snapshot'
 import type { AnalysisRecord } from './records'
+import type { Mark } from './marks'
 
 // 서버 동기화 클라이언트(선택 기능). 보내는 것은 주별 집계 숫자·추천 엔진 입력 숫자·체크리스트·피드백뿐이다.
 // 대화 내용·임베딩·플랫폼 계정 정보를 담을 필드가 없다. 서버 주소는 빌드 시 VITE_API_BASE, 기본은 로컬 개발 서버.
@@ -42,17 +43,11 @@ export function toDto(w: PeriodSnapshot, version: AnalysisVersion) {
     analysisVersion: version,
     userTurnCount: w.userTurnCount,
     okCount: w.okCount,
-    judgeable: w.judgeable,
     conversationCount: w.conversationCount,
     longConversationCount: w.longConversationCount,
     codeCount: w.codeCount,
     taskCounts: w.taskCounts,
     hourHistogram: w.hourHistogram,
-    restatement: {
-      high: w.restatement.high, medium: w.restatement.medium, low: w.restatement.low,
-      tokenEstimate: w.restatement.tokenEstimate, ratio: Math.min(100, Math.max(0, w.restatement.ratio)),
-      repeatedQuestion: w.restatement.repeatedQuestion, misunderstanding: w.restatement.misunderstanding, perTask: w.restatement.perTask,
-    },
   }
 }
 
@@ -66,7 +61,6 @@ export function toRecommendRequest(s: UsageSnapshot, ctx: UserContext) {
     longConversationShare: Math.min(1, s.longConversationShare),
     avgTurnsPerConversation: s.avgTurnsPerConversation,
     codeShare: Math.min(1, s.codeShare),
-    restatement: { high: s.restatement.high, mid: s.restatement.mid, low: s.restatement.low, misunderstanding: s.restatement.misunderstanding, repeatedQuestion: s.restatement.repeatedQuestion, perTask: s.restatement.perTask, tokenEstimate: s.restatement.tokenEstimate, ratio: Math.min(100, Math.max(0, s.restatement.ratio)) },
     answer: { avgTokens: s.answer.avgTokens, ratio: s.answer.ratio },
     plan: ctx.plan,
     featuresInUse: ctx.featuresInUse,
@@ -84,9 +78,6 @@ export const fetchRecommendations = (s: UsageSnapshot, ctx: UserContext) =>
 export interface StoredPrescription { catalogId: string; name: string; category: string; grade: string; summary: string | null; what: string; how: string; caveat: string; score: number }
 export const latestRecommendations = () => call<{ createdAt?: string; prescriptions: StoredPrescription[] }>('/api/recommendations')
 
-// 서버가 보관한 주별 집계로 계산한 변화 추이(이전 기간 vs 최근 recentWeeks주)
-export const fetchTrend = (recentWeeks = 2) => call<TaskCompare & { weeks: number; versionKey: string | null }>(`/api/trend?recentWeeks=${recentWeeks}`)
-
 export type ServerWeek = ReturnType<typeof toDto> & { versionKey: string; updatedAt: string }
 export const listSnapshots = () => call<ServerWeek[]>('/api/snapshots')
 
@@ -95,8 +86,10 @@ export const putServerRecord = (r: AnalysisRecord) => call<{ saved: boolean }>('
 export const listServerRecords = () => call<AnalysisRecord[]>('/api/records')
 export const deleteServerRecords = () => call<{ deleted: number }>('/api/records', { method: 'DELETE' })
 
-export const sendFeedback = (catalogId: string, value: Feedback | 'ab_score', extra: { source?: string; abScore?: number; abOrder?: number } = {}) =>
+export const sendFeedback = (catalogId: string, value: Feedback | Mark | 'unmarked' | 'ab_score', extra: { source?: string; abScore?: number; abOrder?: number } = {}) =>
   call<{ saved: number }>('/api/feedback', { method: 'POST', body: JSON.stringify([{ catalogId, value, ...extra }]) })
+// 내 피드백 기록 전부(시간순). 쓰고 있음/사용하지 않음 표시를 다른 기기에서 이어 받는 데 쓴다
+export const listFeedback = () => call<{ catalogId: string; value: string }[]>('/api/feedback')
 
 export const me = () => call<{ email: string; createdAt: string; snapshots: number; notify: boolean }>('/api/me')
 // 알림 설정: 수신 여부만 서버에 둔다(알림 발송은 후속 범위)

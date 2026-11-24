@@ -1,5 +1,5 @@
 import { CATALOG, scoreAll, type FeedbackMap, type UserContext } from './recommend'
-import { SNAPSHOT_LABEL, SNAPSHOT_TASKS, type SnapshotTask, type UsageSnapshot } from './snapshot'
+import { SNAPSHOT_LABEL, SNAPSHOT_TASKS, type UsageSnapshot } from './snapshot'
 
 // 개발 패널: 카탈로그 전 항목 점수표(뺀 이유 포함) + 항목 확인 상태 + 추천 엔진 입력값
 const TASK = SNAPSHOT_LABEL
@@ -7,13 +7,12 @@ const pct = (v: number) => `${Math.round(v * 100)}%`
 
 export default function RecommendDev({ snapshot, ctx, feedback }: { snapshot: UsageSnapshot; ctx: UserContext; feedback: FeedbackMap }) {
   const rows = scoreAll(snapshot, ctx, feedback).sort((a, b) => b.score - a.score)
-  const r = snapshot.restatement
   return (
     <div>
       <p className="detail">
         추천 카드 3장을 고르려고 카탈로그 {CATALOG.length}개 항목 전부에 매긴 점수입니다. 점수가 높은 순서로, 종류(기능·플러그인·습관 등)당 최대 2개까지 카드로 나갑니다.
         <br />점수 = 맞은 문제 신호의 가중치×2 + 맞은 대화 종류의 가중치 + 항목 기본 우선순위÷100 + 내 피드백(도움됨 +1, 아님 −2).
-        <br />문제 신호 = 다시 말한 지시·긴 대화 비율처럼 "불편이 있었다"는 숫자. 대화 종류 = 그 항목이 겨냥한 대화 종류의 비중이 기준 이상인지. 뺀 이유가 있는 항목은 점수와 상관없이 추천하지 않습니다.
+        <br />문제 신호 = 대화 수·긴 대화 비율·답변 길이처럼 대화 습관 숫자. 신호가 아예 없는 항목은 '기본 추천'(우선순위 점수만)입니다. 대화 종류 = 그 항목이 겨냥한 대화 종류의 비중이 기준 이상인지. 뺀 이유가 있는 항목은 점수와 상관없이 추천하지 않습니다.
       </p>
       <table className="dev">
         <thead><tr><th>항목</th><th>점수</th><th>맞은 문제 신호</th><th>맞은 대화 종류</th><th>추천에서 뺀 이유</th></tr></thead>
@@ -49,10 +48,6 @@ export default function RecommendDev({ snapshot, ctx, feedback }: { snapshot: Us
           <tr><td>대화당 평균 내 메시지</td><td>{snapshot.avgTurnsPerConversation.toFixed(1)}</td></tr>
           <tr><td>코드 포함 메시지 비율</td><td>{pct(snapshot.codeShare)}</td></tr>
           <tr><td>대화 종류별 내 메시지 수 (비율)</td><td>{SNAPSHOT_TASKS.filter((t) => snapshot.taskCounts[t] > 0).map((t) => `${TASK[t]} ${snapshot.taskCounts[t]} (${pct(snapshot.taskShare[t])})`).join(' · ')}</td></tr>
-          <tr><td>다시 말한 지시: 확실함 / 가능성 있음 / 약함</td><td>{r.high} / {r.mid} / {r.low}</td></tr>
-          <tr><td>대화 종류별 다시 말한 지시</td><td>{Object.entries(r.perTask).sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0)).map(([t, n]) => `${TASK[t as SnapshotTask] ?? t} ${n}`).join(' · ') || '없음'}</td></tr>
-          <tr><td>말이 안 통한 듯한 표현 / 비슷한 질문 다시 함</td><td>{r.misunderstanding} / {r.repeatedQuestion}</td></tr>
-          <tr><td>다시 입력한 분량 (토큰 추정) / 내 메시지 대비</td><td>{r.tokenEstimate.toLocaleString()} / {r.ratio.toFixed(1)}%</td></tr>
           <tr><td>AI 답변 하나 평균 분량 (토큰 추정) / 내 메시지 대비</td><td>{Math.round(snapshot.answer.avgTokens)} / {snapshot.answer.ratio.toFixed(1)}배</td></tr>
         </tbody>
       </table>

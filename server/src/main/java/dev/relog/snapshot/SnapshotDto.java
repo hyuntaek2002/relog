@@ -23,7 +23,7 @@ public record SnapshotDto(
         @Min(0) int codeCount,
         @NotNull Map<@Pattern(regexp = "coding|writing|learning|work_doc|search|ideation|translation|chat|other") String, @Min(0) Integer> taskCounts,
         @NotNull @Size(min = 24, max = 24) int[] hourHistogram,
-        @NotNull @Valid Restatement restatement) {
+        @Valid Restatement restatement) { // 다시 말한 지시 집계. 2026-11-24부터 웹이 보내지 않는다(예전 클라이언트용)
 
     public record AnalysisVersion(
             @NotBlank @Size(max = 40) String parserVersion, @NotBlank @Size(max = 40) String normalizerVersion,

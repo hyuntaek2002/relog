@@ -4,7 +4,6 @@ import type { EmbedOut } from './worker/embed.worker'
 import { TASK_LABELS, TASK_TYPES, type Method, type Prediction } from './classify/classifier'
 import Labeler from './dev/Labeler'
 import { DEMO, demoData } from './dev/demo'
-import PairLabeler from './dev/PairLabeler'
 import Checklist, { loadContext, saveContext, withDetected } from './recommend/Checklist'
 import { detectFeatures } from './recommend/detectFeatures'
 import Prescriptions, { loadFeedback, saveFeedback } from './recommend/Prescriptions'
@@ -12,20 +11,20 @@ import AbMode from './recommend/AbMode'
 import RecommendDev from './recommend/RecommendDev'
 import TaskPlugins from './recommend/TaskPlugins'
 import PluginSearch from './recommend/PluginSearch'
-import { codingSubPlugin, installedPlugins, resolveTaskPlugins, TASK_PLUGIN_MIN_MESSAGES } from './recommend/taskPluginRules'
+import { codingSubPlugin, installedPlugins, poolTexts, resolveTaskPlugins, similarityScores, TASK_PLUGIN_MIN_MESSAGES } from './recommend/taskPluginRules'
 import Help from './ui/Help'
-import { buildSnapshot } from './recommend/snapshot'
+import { buildSnapshot, SNAPSHOT_LABEL, TASK_MAP, type SnapshotTask } from './recommend/snapshot'
 import { pinCodeToCoding, subByConversation, type CodingSub } from './classify/codingSub'
 import { CATALOG_VERSION, RECOMMENDATION_RULE_VERSION, recommend, type Feedback, type FeedbackMap, type Platform, type Prescription, type UserContext } from './recommend/recommend'
 import ExportGuide from './ExportGuide'
 import { doneFraction, fmtRemaining, remainingMs } from './worker/eta'
-import Trend, { CompareTable, ReportFile, StorageChoice, loadStorageMode, STORAGE_MODE_KEY, type StorageMode } from './store/Trend'
+import Trend, { ReportFile, StorageChoice, loadStorageMode, STORAGE_MODE_KEY, type StorageMode } from './store/Trend'
 import SyncPanel from './store/SyncPanel'
-import { deleteServerRecords, getToken, listServerRecords, putServerRecord, sendFeedback } from './store/sync'
+import { deleteServerRecords, getToken, listFeedback, listServerRecords, putServerRecord, sendFeedback } from './store/sync'
 import History from './store/History'
-import { clearRecords, compareSince, loadApplied, loadRecords, previousRecords, promptKey, putRecord, putRecords, repeatNotes, saveApplied, type AnalysisRecord } from './store/records'
-import { applyDismissed, loadDismissed, saveDismissed } from './detect/corrections'
-import { aggregateWeekly, buildLedger, versionKey, type AnalysisVersion, type LedgerEntry, type PeriodSnapshot, type TaskCompare } from './store/ledger'
+import { clearRecords, compareSince, loadRecords, previousRecords, promptKey, putRecord, putRecords, repeatNotes, type AnalysisRecord } from './store/records'
+import { loadMarks, mergeServerMarks, saveMarks, toggleMark, usingKeys, type Mark, type Marks } from './store/marks'
+import { aggregateWeekly, buildLedger, versionKey, type AnalysisVersion, type LedgerEntry, type PeriodSnapshot } from './store/ledger'
 import { clearAll, getLedger, putLedger } from './store/db'
 import { peekAuditRecords, setAuditProbes, type NetRecord } from './worker/netaudit'
 
@@ -49,11 +48,6 @@ const DEVICE: 'wasm' | 'webgpu' = 'gpu' in navigator ? 'webgpu' : 'wasm'
 const DEV = new URLSearchParams(location.search).has('dev')
 const AB = new URLSearchParams(location.search).has('ab')
 const DEMO_DATA = DEMO ? demoData(DEMO) : null // 개발 확인용 예시(?demo=1). 저장·서버 전송은 하지 않는다
-
-// 화면 용어: 등급은 내부 high/medium/low, 사용자에겐 확실함/가능성 있음/약함
-const GRADE_LABEL = { high: '확실함', medium: '가능성 있음', low: '약함' } as const
-// 탐지기가 후보에서 뺀 이유(detector.ts exclusion) → 쉬운 말
-const EXCLUSION_LABEL: Record<string, string> = { below_null: '기준 미만', generic: '범용 문구(응, 계속 등)', resend: '몇 분 안 재전송', routine: '같은 명령 다시 내림(커밋하세요 등)', user_dismissed: '내가 반복 아님으로 고침', not_instruction: '지시문 아님', chat_task: '잡담', attachment: '첨부 있음', stale: '하루 넘게 지남' }
 
 const fmtDate = (ms: number | null) => (ms == null ? '-' : new Date(ms).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' }))
 
@@ -82,11 +76,6 @@ function NetAudit({ records }: { records: NetRecord[] }) {
   )
 }
 
-function quantile(xs: number[], q: number) {
-  const s = [...xs].sort((a, b) => a - b)
-  return s.length ? s[Math.min(s.length - 1, Math.floor(q * s.length))] : 0
-}
-
 function countByType(preds: Prediction[]) {
   const c = new Map<string, number>()
   for (const p of preds) c.set(p.type, (c.get(p.type) ?? 0) + 1)
@@ -109,26 +98,35 @@ export default function App() {
   const [weeks, setWeeks] = useState<PeriodSnapshot[]>([])
   const [version, setVersion] = useState<AnalysisVersion | null>(null) // 이번 분석의 AnalysisVersion(결과 파일에 함께 넣음)
   const [net, setNet] = useState<NetRecord[]>([]) // 네트워크 감사 기록(페이지 + 워커)
-  const [dismissed, setDismissed] = useState<string[]>(loadDismissed) // 내가 "반복 아님"으로 고친 메시지 id
   const [serverRx, setServerRx] = useState<Prescription[] | null>(null) // 서버가 계산한 추천(동기화했을 때만)
-  const [serverTrend, setServerTrend] = useState<(TaskCompare & { weeks: number }) | null>(null) // 서버 보관 집계로 계산한 변화
   const [records, setRecords] = useState<AnalysisRecord[]>(() => (DEMO_DATA ? [DEMO_DATA.prev] : loadRecords())) // 분석 기록(전후 비교용)
   const [prevSel, setPrevSel] = useState(0) // 비교할 지난 기록(0 = 가장 최근)
   const [mode, setMode] = useState<AnalysisMode>(loadMode) // 정밀 / 빠른 분석
   function onMode(m: AnalysisMode) { setMode(m); try { localStorage.setItem(MODE_KEY, m) } catch { /* 무시 */ } }
-  const [applied, setApplied] = useState<string[]>(() => (DEMO_DATA ? [] : loadApplied())) // '적용함'으로 표시한 항목 키
-  function onApplied(key: string) {
-    setApplied((cur) => { const next = cur.includes(key) ? cur.filter((k) => k !== key) : [...cur, key]; if (!DEMO_DATA) saveApplied(next); return next })
+  // 쓰고 있음 / 사용하지 않음 표시. 이 브라우저에 두고, 로그인했으면 서버 피드백 기록에도 남긴다(같은 표시를 다시 누르면 지움)
+  const [marks, setMarks] = useState<Marks>(() => (DEMO_DATA ? {} : loadMarks()))
+  function onMark(key: string, m: Mark) {
+    const next = toggleMark(marks, key, m)
+    setMarks(next); setServerRx(null)
+    if (DEMO_DATA) return
+    saveMarks(next)
+    if (getToken()) sendFeedback(key, next[key] ?? 'unmarked').catch(() => {})
   }
+  const applied = usingKeys(marks)
 
   // 서버 동기화에 로그인돼 있으면 다른 기기에서 남긴 분석 기록도 합친다
   // 예시 화면: 분석 없이 정해 둔 결과를 바로 넣는다
   useEffect(() => {
     if (!DEMO_DATA) return
     const { result: r, cls: m } = DEMO_DATA
-    setResult(r); setCtx(loadContext(r.conversations[0].platform)); setCls(m); setStep('done'); record(r, m, [])
+    setResult(r); setCtx(loadContext(r.conversations[0].platform)); setCls(m); setStep('done'); record(r, m)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { if (!DEMO_DATA && getToken()) listServerRecords().then((rs) => setRecords(putRecords(rs))).catch(() => {}) }, [])
+  useEffect(() => {
+    if (DEMO_DATA || !getToken()) return
+    listServerRecords().then((rs) => setRecords(putRecords(rs))).catch(() => {})
+    // 다른 기기나 캐시를 지우기 전에 누른 표시를 이어 받는다(서버 기록이 이긴다)
+    listFeedback().then((rows) => setMarks((cur) => { const next = mergeServerMarks(cur, rows); saveMarks(next); return next })).catch(() => {})
+  }, [])
 
   // 보관 모드면 시작할 때 저장된 대장을 불러와 추이를 보여준다
   useEffect(() => {
@@ -159,7 +157,7 @@ export default function App() {
     w.onmessage = (e: MessageEvent<WorkerOut>) => {
       const m = e.data
       if (m.type === 'progress') setStep(m.stage === 'unzip' ? 'read' : 'analyze')
-      else if (m.type === 'result') { setResult(m); setServerRx(null); setServerTrend(null); setCtx(loadContext(m.conversations[0]?.platform ?? 'chatgpt')); setAuditProbes(m.utterances.map((u) => u.text)); setNet((n) => [...n, ...m.net]); w.terminate(); classify(m) }
+      else if (m.type === 'result') { setResult(m); setServerRx(null); setCtx(loadContext(m.conversations[0]?.platform ?? 'chatgpt')); setAuditProbes(m.utterances.map((u) => u.text)); setNet((n) => [...n, ...m.net]); w.terminate(); classify(m) }
       else { setError(m.message); setStep('idle'); w.terminate() }
     }
     w.postMessage({ type: 'parse', files } satisfies WorkerIn)
@@ -175,8 +173,6 @@ export default function App() {
     const ok = r.utterances.filter((u) => u.status === 'ok')
     const texts = ok.map((u) => u.text)
     if (texts.length === 0) { setStep('done'); return }
-    const clientOf = new Map(r.conversations.map((c) => [c.id, c.client ?? 'app'])) // 기준선 묶음: 앱 / Claude Code
-    const inputs = ok.map((u) => ({ conversationId: u.conversationId, messageId: u.messageId, idx: u.idx, createdAt: u.createdAt, text: u.text, tokenEstimate: u.tokenEstimate, hasAttachment: u.hasAttachment, prevAssistantIdx: u.prevAssistantIdx, group: clientOf.get(u.conversationId) ?? 'app' }))
     setStep('model')
     // 남은 시간: 워커와 같은 문장('query: ' 접두어 포함) 길이로 진행 비율을 셈
     const lengths = texts.map((t) => t.length + 7)
@@ -190,17 +186,17 @@ export default function App() {
         etaStart ??= { f, t: now }
         setStep('classify'); setDetail(`${m.done} / ${m.total} · ${fmtRemaining(remainingMs(etaStart, f, now))}`)
       }
-      else if (m.type === 'classified') { m.knn = pinCodeToCoding(m.knn, ok, r.conversations); m.centroid = pinCodeToCoding(m.centroid, ok, r.conversations); m.linear = pinCodeToCoding(m.linear, ok, r.conversations); setCls(m); setStep('done'); setDetail(''); record(r, m, dismissed); w.terminate(); setNet((n) => [...n, ...m.net]); if (DEV) { measureMemory('분석 완료 직후'); Object.assign(window, { __relog: { result: r, cls: m } }) } } // 개발 모드: 콘솔에서 숫자 집계용(원문은 화면 밖으로 안 나감) // 임베딩·모델 메모리 회수
+      else if (m.type === 'classified') { m.knn = pinCodeToCoding(m.knn, ok, r.conversations); m.centroid = pinCodeToCoding(m.centroid, ok, r.conversations); m.linear = pinCodeToCoding(m.linear, ok, r.conversations); setCls(m); setStep('done'); setDetail(''); record(r, m); w.terminate(); setNet((n) => [...n, ...m.net]); if (DEV) { measureMemory('분석 완료 직후'); Object.assign(window, { __relog: { result: r, cls: m } }) } } // 개발 모드: 콘솔에서 숫자 집계용(원문은 화면 밖으로 안 나감) // 임베딩·모델 메모리 회수
       else if (m.type === 'error') { setError(m.message); setStep('done'); w.terminate() }
     }
-    w.postMessage({ type: 'classify', model: ANALYSIS_MODES[mode].model, device: DEVICE, texts, inputs })
+    // 플러그인 후보 설명(공개 문구)도 같은 모델로 임베딩해 '내 대화와 비슷한 순'을 낸다
+    w.postMessage({ type: 'classify', model: ANALYSIS_MODES[mode].model, device: DEVICE, texts, conversationIds: ok.map((u) => u.conversationId), plugins: poolTexts(r.conversations[0]?.platform ?? 'chatgpt').texts })
   }
 
   // 발화 대장 갱신 → 주 단위 집계. 보관 모드면 IndexedDB에 병합(같은 키는 덮어쓰기)하고 전체 대장으로 재계산.
-  // dismissedIds: 내가 "반복 아님"으로 고친 메시지. 주별 집계에도 반영되도록 대장을 만들 때 등급을 뗀다.
-  async function record(r: Result, m: Classified, dismissedIds: string[]) {
+  async function record(r: Result, m: Classified) {
     const version = { parserVersion: r.parserVersion, normalizerVersion: r.normalizerVersion, modelVersion: m.modelVersion, classifierVersion: m.classifierVersion, detectorVersion: m.detectorVersion, catalogVersion: CATALOG_VERSION, recommendationRuleVersion: RECOMMENDATION_RULE_VERSION }
-    const entries = buildLedger({ platform: r.conversations[0]?.platform ?? 'chatgpt', utterances: r.utterances, okIds: r.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: m.linear, pairs: applyDismissed(m.pairs, m.detectSummary, dismissedIds).pairs, version })
+    const entries = buildLedger({ platform: r.conversations[0]?.platform ?? 'chatgpt', utterances: r.utterances, okIds: r.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: m.linear, version })
     let all = entries
     if (storageMode === 'local' && !DEMO_DATA) {
       try { await putLedger(entries); all = await getLedger() } catch (e) { setError('로컬 보관 실패: ' + (e as Error).message) }
@@ -244,32 +240,25 @@ export default function App() {
     w.postMessage({ type: 'embed', model, device, texts })
   }
 
-  const [tab, setTab] = useState<'restate' | 'rx' | 'plugins' | 'trend'>('restate') // 결과 화면 탭: 다시 말한 지시 / 추천 / 종류별 플러그인·시작 문구 / 변화
+  const [tab, setTab] = useState<'rx' | 'plugins' | 'trend'>('rx') // 결과 화면 탭: 추천 / 종류별 플러그인·시작 문구 / 변화
   const s = result?.stats
   const n = result?.normStats
   const stepIdx = STEPS.findIndex(([k]) => k === step)
-  const textById = new Map(result?.utterances.map((u) => [u.messageId, u.text]))
-  const titleById = new Map(result?.conversations.map((c) => [c.id, c.title]))
-  const textOf = (id: string) => (textById.get(id) ?? '').slice(0, 400)
-  const titleOf = (id: string) => titleById.get(id) || '(제목 없음)'
   const preds = cls ? cls[method] : null
   const byType = preds ? countByType(preds) : null
   const agree = cls ? cls.linear.filter((p, i) => p.type === cls.centroid[i].type).length / cls.linear.length : 0
 
   // 추천: 집계 숫자(snapshot) + 체크리스트(ctx) + 로컬 피드백만 입력. 원문 없음.
-  const platform: Platform = result?.conversations[0]?.platform ?? 'chatgpt'  // 탐지 결과에 내 보정("반복 아님")을 적용한 것. 화면의 건수·비율·추천 입력은 전부 이 값을 쓴다.
-  const eff = cls ? applyDismissed(cls.pairs, cls.detectSummary, dismissed) : null
-  function setDismissedIds(next: string[]) {
-    setDismissed(next); saveDismissed(next); setServerRx(null)
-    if (result && cls) record(result, cls, next)
-  }
-  const snapshot = result && cls && s && eff
-    ? buildSnapshot({ platform, stats: s, utterances: result.utterances, okIds: result.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: cls.linear, candidates: eff.candidates, detect: eff.summary, subByConversation: subByConversation(result.conversations) })
+  const platform: Platform = result?.conversations[0]?.platform ?? 'chatgpt'
+  const snapshot = result && cls && s
+    ? buildSnapshot({ platform, stats: s, utterances: result.utterances, okIds: result.utterances.filter((u) => u.status === 'ok').map((u) => u.messageId), preds: cls.linear, subByConversation: subByConversation(result.conversations) })
     : null
   // Codex는 plugins 폴더 zip에 설치 플러그인이 있으면 쓰는 것으로 본다(대화 기록은 받지 않음)
   const detected = result ? [...detectFeatures(result.conversations), ...(result.codexPlugins.length ? [{ catalogId: 'tool:codex', conversations: 0 }] : [])] : []
   const installed = result ? [...installedPlugins(result.conversations), ...result.codexPlugins] : [] // Claude Code 기록 + Codex plugins 폴더의 설치 플러그인
-  const prescriptions = snapshot && ctx ? recommend(snapshot, withDetected(ctx, detected), feedback) : []
+  // 추천 입력: 저장된 설정 + 파일에서 감지한 기능 + 내가 '쓰고 있음'으로 표시한 습관·기능
+  const ctxIn = ctx ? (() => { const c = withDetected(ctx, detected); return { ...c, featuresInUse: [...new Set([...c.featuresInUse, ...applied])] } })() : null
+  const prescriptions = snapshot && ctxIn ? recommend(snapshot, ctxIn, feedback) : []
   function onFeedback(id: string, f: Feedback) {
     const next = { ...feedback, [id]: f }
     setFeedback(next); saveFeedback(next)
@@ -279,18 +268,22 @@ export default function App() {
   const shownRx = serverRx ?? prescriptions
 
   // 분석 기록: 이번 회차의 요약 숫자 + 추천 항목 이름. 분석이 끝나면 자동 저장(같은 내보내기는 덮어씀)
-  const pluginRows = snapshot ? resolveTaskPlugins(snapshot, TASK_PLUGIN_MIN_MESSAGES, platform) : []
-  const pluginNames = pluginRows.flatMap((r) => (r.status === 'recommend' && r.pick ? [r.pick.name] : []))
+  // 종류별 플러그인 후보를 내 대화와 비교: 메시지 임베딩(분류 때 만든 것)의 종류별 평균 vs 후보 설명 임베딩. 숫자는 이 화면에서만 쓴다
+  const pool = poolTexts(platform)
+  const okTypes = cls ? cls.linear.map((p): SnapshotTask | null => TASK_MAP[p.type] ?? null) : []
+  const simScores = cls && cls.dim > 0 && cls.pluginVecs.length === pool.names.length * cls.dim ? similarityScores(cls.embeddings, cls.dim, okTypes, cls.pluginVecs, pool.names) : {}
+  const pluginRows = snapshot ? resolveTaskPlugins(snapshot, TASK_PLUGIN_MIN_MESSAGES, platform, simScores) : []
+  const pluginNames = [...new Set(pluginRows.flatMap((r) => (r.status === 'recommend' ? r.ranked.slice(0, 3).map((p) => p.name) : [])))]
   const promptKeys = pluginRows.map((r) => promptKey(r.task))
   // 항목 키 → 겨냥한 대화 종류. 다음 분석 때 그 종류의 변화로 효과를 본다(코딩 세부 플러그인은 코딩).
   const itemTasks: Record<string, string> = Object.fromEntries([
     ...shownRx.flatMap((p) => (p.task ? [[p.catalogId, p.task]] : [])),
-    ...pluginRows.flatMap((r) => (r.pick ? [[r.pick.name, r.task]] : [])),
+    ...pluginRows.flatMap((r) => r.ranked.map((p) => [p.name, r.task])),
     ...pluginRows.map((r) => [promptKey(r.task), r.task]),
     ...Object.entries(snapshot?.codingSub ?? {}).flatMap(([sub, n]) => { const sp = codingSubPlugin(sub as CodingSub, n ?? 0); return sp ? [[sp.pick.name, 'coding']] : [] }),
   ])
-  const curRecord: AnalysisRecord | null = step === 'done' && !AB && snapshot && eff && version && s && s.firstAt != null && s.lastAt != null
-    ? { savedAt: 0, platform, firstAt: s.firstAt, lastAt: s.lastAt, versionKey: versionKey(version), judgeable: eff.summary.judgeable, high: eff.summary.byGrade.high, tokenEstimate: eff.summary.tokenEstimate, rx: shownRx.map((p) => p.catalogId), plugins: pluginNames, applied: applied.slice(-40), tasks: Object.fromEntries(Object.entries(itemTasks).filter(([k]) => applied.includes(k) || shownRx.some((p) => p.catalogId === k) || pluginNames.includes(k) || promptKeys.includes(k))) }
+  const curRecord: AnalysisRecord | null = step === 'done' && !AB && snapshot && version && s && s.firstAt != null && s.lastAt != null
+    ? { savedAt: 0, platform, firstAt: s.firstAt, lastAt: s.lastAt, versionKey: versionKey(version), conversations: snapshot.conversationCount, userTurns: s.userTurns, longConversations: s.longConversations, rx: shownRx.map((p) => p.catalogId), plugins: pluginNames, applied: applied.slice(-40), tasks: Object.fromEntries(Object.entries(itemTasks).filter(([k]) => applied.includes(k) || shownRx.some((p) => p.catalogId === k) || pluginNames.includes(k) || promptKeys.includes(k))) }
     : null
   const recKey = curRecord ? JSON.stringify(curRecord) : ''
   useEffect(() => {
@@ -304,38 +297,8 @@ export default function App() {
   const sinceCmp = prevRecord ? compareSince(weeks, prevRecord) : null
   const notes = repeatNotes(prevRecord, sinceCmp, [...(curRecord?.rx ?? []), ...pluginNames, ...promptKeys, ...Object.keys(itemTasks)])
 
-  const flagged = eff ? eff.candidates : []
-  const codeConvIds = new Set((result?.conversations ?? []).filter((c) => c.client === 'code').map((c) => c.id)) // 개발 패널: 다시 말한 지시 출처 나눔
-  // 대화별로 묶는다. 확실함만 본 목록에 두고, 가능성 있음(실제 정밀도 0.13)은 접힌 '참고' 목록에만(det-0.4.1).
-  // '약함'은 같은 주제의 후속 발화가 많이 섞여 개발 모드에서만 참고 목록에 넣는다.
-  const gradeRank = { high: 0, medium: 1, low: 2 } as const
-  const groupBy = (cs: typeof flagged) => [...cs.reduce((m, c) => m.set(c.conversationId, [...(m.get(c.conversationId) ?? []), c]), new Map<string, typeof flagged>())]
-    .map(([id, items]) => ({ id, items: items.sort((a, b) => gradeRank[a.grade ?? 'low'] - gradeRank[b.grade ?? 'low'] || b.similarity - a.similarity) }))
-    .sort((a, b) => b.items.length - a.items.length)
-  const groups = groupBy(flagged.filter((c) => c.grade === 'high'))
-  const refItems = flagged.filter((c) => c.grade === 'medium' || (DEV && c.grade === 'low'))
-  const refGroups = groupBy(refItems)
-  const renderGroup = (g: (typeof groups)[number]) => (
-    // 대화별로 묶어 제목·건수만. 펼치면 그 대화의 건들이, 건을 또 펼치면 앞/뒤 메시지가 보인다(원문은 이 화면에만).
-    <details className="conv" key={g.id}>
-      <summary><b>{titleOf(g.id)}</b><span>{g.items.length}건</span></summary>
-      {g.items.map((c) => (
-        <details className="cand" key={c.messageId}>
-          <summary className="meta">
-            <span className={`grade-${c.grade}`}>{GRADE_LABEL[c.grade ?? 'low']}</span>
-            <span>{textOf(c.messageId).slice(0, 40).replace(/\s+/g, ' ')}{textOf(c.messageId).length > 40 ? '…' : ''}</span>
-            {c.repeatMarker && <span>"아까 말했" 같은 표현</span>}
-            {c.complaintMarker && <span>답답함 표현</span>}
-            {c.gapMinutes != null && <span>{c.gapMinutes < 60 ? `${Math.round(c.gapMinutes)}분 뒤` : `${Math.round(c.gapMinutes / 60)}시간 뒤`}</span>}
-          </summary>
-          <p className="detail">앞 메시지와 비슷한 정도 {c.similarity.toFixed(2)}{!c.responseBetween && ' · 사이에 AI 답이 없음'}</p>
-          <blockquote>{textOf(c.priorMessageId)}</blockquote>
-          <blockquote className="now">{textOf(c.messageId)}</blockquote>
-          <p className="actions"><button title="다시 말한 것이 아니면 눌러 주세요. 목록에서 빠지고, 확실함이면 건수와 비율, 추천에서도 빠집니다." onClick={() => setDismissedIds([...dismissed, c.messageId])}>반복 아님</button></p>
-        </details>
-      ))}
-    </details>
-  )
+  // 요약 카드: 가장 많이 한 대화 종류, 대화 습관(대화당 내 메시지)
+  const topTask = snapshot ? (Object.entries(snapshot.taskShare) as [SnapshotTask, number][]).sort((a, b) => b[1] - a[1])[0] : undefined
 
   return (
     <main>
@@ -343,7 +306,7 @@ export default function App() {
 
       {!result && <ExportGuide />}
       <fieldset className="modes" disabled={step !== 'idle' && step !== 'done'}>
-        <legend>분석 방식<Help text="두 방식 모두 대화 내용은 이 브라우저 안에서만 분석합니다. 다시 말한 지시를 찾는 방식은 같고, 대화 종류(코딩·글·문서 등)를 나누는 정확도와 걸리는 시간이 다릅니다. 처음 한 번은 고른 방식의 모델을 내려받습니다." /></legend>
+        <legend>분석 방식<Help text="두 방식 모두 대화 내용은 이 브라우저 안에서만 분석합니다. 대화 종류(코딩·글·문서 등)를 나누는 정확도와 걸리는 시간이 다릅니다. 처음 한 번은 고른 방식의 모델을 내려받습니다." /></legend>
         {(Object.keys(ANALYSIS_MODES) as AnalysisMode[]).map((k) => (
           <label key={k} className={mode === k ? 'on' : ''}>
             <input type="radio" name="mode" checked={mode === k} onChange={() => onMode(k)} />
@@ -398,47 +361,31 @@ export default function App() {
             <div className="wide"><span>기간</span><b>{fmtDate(s.firstAt)} ~ {fmtDate(s.lastAt)}</b></div>
           </div>
           {/* 요약 숫자는 탭 위에 늘 보이고, 나머지는 화면 폭과 상관없이 탭으로 하나씩 넓게 보여 준다(2026-11-18 사용자 요청) */}
-          {cls && eff && (
+          {snapshot && (
             <div className="summary">
-              {/* 디자인 B: 핵심 숫자(비율)는 초록 큰 카드, 지금 필요한 추천은 주황 카드(누르면 추천 탭) */}
+              {/* 디자인 B: 핵심 숫자(가장 많이 한 대화 종류)는 초록 큰 카드, 지금 필요한 추천은 주황 카드(누르면 추천 탭) */}
               <div className="card hero">
-                <b>{eff.summary.ratio.toFixed(1)}%</b>
-                <span>다시 말한 지시 비율<Help text="같은 대화에서 앞서 한 지시를 다시 말한 것이 확실해 보이는 메시지의 비율입니다. AI가 지시를 따랐는지는 판정하지 않습니다. 내용은 이 화면에만 보입니다." /></span>
-                <small>비교한 내 메시지 {eff.summary.judgeable}개 중 {eff.summary.byGrade.high}건 · 참고: 가능성 있음 {eff.summary.byGrade.medium} · 약함 {eff.summary.byGrade.low}</small>
+                <b>{topTask && topTask[1] > 0 ? `${Math.round(topTask[1] * 100)}%` : '-'}</b>
+                <span>{topTask && topTask[1] > 0 ? `${SNAPSHOT_LABEL[topTask[0]]} 대화` : '대화 종류'}<Help text="내 메시지를 대화 종류(코딩·글·문서 등)로 나눴을 때 가장 많은 종류의 비율입니다. 종류는 자동 추정이라 틀릴 수 있습니다. 전체 비율은 아래 '보관 · 자세한 숫자'에 있습니다." /></span>
+                <small>가장 많이 한 대화 종류 · 내 메시지 {snapshot.userTurnCount.toLocaleString()}개 기준</small>
               </div>
-              <div className="card"><b>{eff.summary.tokenEstimate.toLocaleString()}</b><span>다시 친 분량</span><small>토큰, 추정</small></div>
+              <div className="card"><b>{snapshot.avgTurnsPerConversation.toFixed(1)}개</b><span>대화당 내 메시지</span><small>긴 대화(10개 이상) {Math.round(snapshot.longConversationShare * 100)}%</small></div>
               {!AB && shownRx[0]
                 ? <button className="card hot" onClick={() => setTab('rx')}><b>{shownRx[0].name}</b><span>{shownRx[0].grade === '핵심' ? '지금 필요한 것' : '해 볼 만한 것'}</span><small>{shownRx[0].summary}</small></button>
-                : <div className="card"><b>{eff.summary.byGrade.high}</b><span>다시 말한 지시</span><small>확실함만 셉니다</small></div>}
+                : <div className="card"><b>{snapshot.conversationCount}</b><span>대화</span><small>내 메시지가 있는 대화</small></div>}
             </div>
           )}
           <nav className="tabs">
-            <button className={tab === 'restate' ? 'on' : ''} onClick={() => setTab('restate')}>다시 말한 지시{eff && <em>{eff.summary.byGrade.high}</em>}</button>
             <button className={tab === 'rx' ? 'on' : ''} onClick={() => setTab('rx')}>{AB ? '추천 평가' : '추천'}{shownRx.length > 0 && <em>{shownRx.length}</em>}</button>
             {!AB && <button className={tab === 'plugins' ? 'on' : ''} onClick={() => setTab('plugins')}>종류별 플러그인·시작 문구</button>}
             <button className={tab === 'trend' ? 'on' : ''} onClick={() => setTab('trend')}>변화</button>
           </nav>
 
-          <div className={'panel' + (tab === 'restate' ? ' on' : '')}>
-          {cls && eff ? (
-            <>
-              {eff.dismissedCount > 0 && <p className="detail">내가 반복 아님으로 고친 것 {eff.dismissedCount}건은 뺐습니다. <button onClick={() => setDismissedIds([])}>모두 되돌리기</button></p>}
-              {groups.length === 0 && <p className="detail">확실함으로 잡힌 메시지가 없습니다.</p>}
-              {groups.map(renderGroup)}
-              {refGroups.length > 0 && (
-                <details className="ref">
-                  <summary>참고: 가능성 있음 {refItems.length}건<Help text="앞 메시지와 비슷하지만 다시 말했다는 표현이 없는 메시지입니다. 실제 기록으로 확인했을 때 30건 중 4건만 다시 말한 지시였습니다. 그래서 건수·비율·추천에는 넣지 않고 여기에만 보여 줍니다." /></summary>
-                  {refGroups.map(renderGroup)}
-                </details>
-              )}
-            </>
-          ) : <p className="detail">분석 중입니다.</p>}
-          </div>
-
           <div className={'panel' + (tab === 'rx' ? ' on' : '')}>
-          {snapshot && ctx && (AB
-            ? <AbMode platform={platform} personalized={prescriptions} snapshot={snapshot} weeks={weeks} version={version} ctx={withDetected(ctx, detected)} />
-            : <Prescriptions items={shownRx} feedback={feedback} onFeedback={onFeedback} installed={installed} notes={notes} applied={applied} onApplied={onApplied} />)}
+          {!cls && <p className="detail">분석 중입니다.</p>}
+          {snapshot && ctxIn && (AB
+            ? <AbMode platform={platform} personalized={prescriptions} snapshot={snapshot} weeks={weeks} version={version} ctx={ctxIn} />
+            : <Prescriptions items={shownRx} feedback={feedback} onFeedback={onFeedback} installed={installed} notes={notes} marks={marks} onMark={onMark} />)}
           </div>
 
           {!AB && (
@@ -446,7 +393,7 @@ export default function App() {
             {snapshot && (
               <>
                 <p className="detail">대화 종류마다 추천 플러그인과 새 채팅 첫 메시지로 붙여 넣을 시작 문구입니다{platform === 'chatgpt' ? ' (ChatGPT·Codex)' : ''}.<Help text={`많이 쓴 대화 종류 순이고, 모든 종류에 플러그인과 새 채팅 시작 문구를 보여 줍니다. 그 종류 메시지가 ${TASK_PLUGIN_MIN_MESSAGES}개 미만이면 참고로만 표시합니다. ${platform === 'claude' ? 'Claude Code 기록의 메시지는 모두 코딩으로 셉니다. ' : 'ChatGPT와 Codex는 같은 플러그인 목록을 써서, 같은 이름으로 Codex에도 설치할 수 있습니다. '}효과는 아직 검증되지 않았습니다.`} /></p>
-                <TaskPlugins snapshot={snapshot} installed={installed} platform={platform} notes={notes} applied={applied} onApplied={onApplied} />
+                <TaskPlugins rows={pluginRows} codingSub={snapshot.codingSub} installed={installed} platform={platform} notes={notes} marks={marks} onMark={onMark} />
                 <PluginSearch key={platform} installed={installed} platform={platform} />
               </>
             )}
@@ -462,12 +409,6 @@ export default function App() {
             </>
           )}
           <Trend weeks={weeks} />
-          {serverTrend && (
-            <>
-              <p className="label">서버 보관 기준 ({serverTrend.weeks}주)</p>
-              <CompareTable cmp={serverTrend} before="이전" after="최근" />
-            </>
-          )}
           {snapshot && version && <ReportFile snapshot={snapshot} weeks={weeks} version={version} />}
           </div>
 
@@ -480,7 +421,7 @@ export default function App() {
             )}
             <details>
               <summary>서버 동기화 (선택)</summary>
-              {!DEMO_DATA && <SyncPanel weeks={weeks} version={version} snapshot={snapshot} ctx={ctx ? withDetected(ctx, detected) : null} onServer={(r) => { setServerRx(r.prescriptions); setServerTrend(r.trend) }} />}
+              {!DEMO_DATA && <SyncPanel weeks={weeks} version={version} snapshot={snapshot} ctx={ctxIn} onServer={(r) => setServerRx(r.prescriptions)} />}
             </details>
             <details>
               <summary>보관 · 자세한 숫자</summary>
@@ -508,7 +449,6 @@ export default function App() {
                   <tr><td>비교한 내 메시지 (메시지 2개 이상인 대화)</td><td>{s.judgeableUserTurns}</td></tr>
                   <tr><td>내 메시지 분량 (토큰, 추정)</td><td>{s.userTokenEstimate.toLocaleString()}</td></tr>
                   <tr><td>AI 답변 분량 (토큰, 추정) · 답변 하나 평균 · 내 메시지 대비</td><td>{s.assistantTokenEstimate.toLocaleString()} · {s.assistantTurns ? Math.round(s.assistantTokenEstimate / s.assistantTurns) : 0} · {s.userTokenEstimate ? (s.assistantTokenEstimate / s.userTokenEstimate).toFixed(1) : '0'}배</td></tr>
-                  {cls && <tr><td>비슷한 질문 다시 함 · 말이 안 통한 듯한 표현</td><td>{cls.detectSummary.repeatedQuestions} · {cls.detectSummary.misunderstanding}</td></tr>}
                   <tr><td>분석에서 뺀 메시지 (응, 계속 등)</td><td>{n.skipped}</td></tr>
                   <tr><td>앞뒤 문맥이 있어야 뜻을 아는 짧은 메시지</td><td>{n.context_required}</td></tr>
                   <tr><td>코드가 포함된 메시지</td><td>{n.hasCode}</td></tr>
@@ -527,28 +467,16 @@ export default function App() {
               {snapshot && ctx && (
                 <>
                   <h2>개발: 추천 점수표</h2>
-                  <RecommendDev snapshot={snapshot} ctx={withDetected(ctx, detected)} feedback={feedback} />
-                </>
-              )}
-              {cls && (
-                <>
-                  <h2>개발: 다시 말한 지시 정답 찍기 (비슷한 정도 상위 100쌍)</h2>
-                  <p className="detail">탐지기가 "앞 메시지와 비슷하다"고 본 쌍을 비슷한 정도가 높은 순으로 100쌍 보여 줍니다. 위 회색 글이 앞 메시지, 아래가 다시 말한 것으로 의심되는 메시지입니다. 사람이 정답을 찍어 두면 탐지가 얼마나 맞는지(정밀도)를 eval/detect/eval_pairs.mjs로 계산할 수 있습니다. 같은 대화에서 여러 쌍이 나오면 그 대화가 여러 번 보입니다. CSV에는 대화·메시지 번호, 비슷한 정도, 정답만 들어가고 본문은 없습니다.</p>
-                  <PairLabeler pairs={cls.pairs} utterances={result.utterances} conversations={result.conversations} />
+                  <RecommendDev snapshot={snapshot} ctx={ctxIn ?? withDetected(ctx, detected)} feedback={feedback} />
                 </>
               )}
               <h2>개발: 대화 종류 정답 찍기</h2>
               <p className="detail">내 메시지 하나하나가 어떤 종류(코딩·글쓰기 등)인지 사람이 정답을 찍는 화면입니다. 정답이 쌓이면 자동 분류 A/B/C 세 방식 중 무엇이 가장 잘 맞는지 eval/classify/run_abc.mjs로 비교합니다. 목표 400개.</p>
               <Labeler utterances={result.utterances} conversations={result.conversations} />
-              <h2>개발: 분류·탐지 내부 숫자</h2>
-              <p className="detail">비슷한 정도는 0~1이고 1에 가까울수록 앞 메시지와 같은 말입니다. 기준선은 "같은 대화 안에서 서로 떨어진 메시지끼리 보통 얼마나 비슷한가"이고, 그보다 높아야 다시 말한 지시로 봅니다. 뺀 메시지는 기준에 걸려 후보에서 제외된 수입니다.</p>
+              <h2>개발: 분류 내부 숫자</h2>
               {cls && (
                 <p className="detail">
-                  비슷한 정도 분포(비교한 내 메시지 {cls.sims.length}개): {[0.5, 0.75, 0.9, 0.95, 0.98].map((q) => `p${q * 100}=${quantile(cls.sims, q).toFixed(3)}`).join(' ')}
-                  <br />기준선(같은 대화 안 떨어진 쌍 {cls.nullSims.length}개): {[0.5, 0.9, 0.95, 0.99].map((q) => `p${q * 100}=${quantile(cls.nullSims, q).toFixed(3)}`).join(' ')} → 기준 {cls.detectSummary.nullThreshold.toFixed(3)}, 기준 넘는 메시지 {cls.sims.filter((s) => s >= cls.detectSummary.nullThreshold).length}개
-                  <br />묶음별 기준(같은 대화 안 떨어진 쌍의 p90): {Object.entries(cls.detectSummary.groupThreshold).map(([g, t]) => `${g === 'code' ? 'Claude Code' : '앱'} ${t.toFixed(3)}`).join(' · ') || '없음(전체 기준 사용)'}
-                  <br />뺀 메시지: {Object.entries(cls.detectSummary.excluded).map(([k, v]) => `${EXCLUSION_LABEL[k] ?? k} ${v}`).join(' · ')}
-                  <br />다시 말한 지시(확실함+가능성 있음) 출처: 앱 {cls.candidates.filter((c) => (c.grade === 'high' || c.grade === 'medium') && !codeConvIds.has(c.conversationId)).length} · Claude Code {cls.candidates.filter((c) => (c.grade === 'high' || c.grade === 'medium') && codeConvIds.has(c.conversationId)).length}
+                  플러그인 후보 비교(종류 평균 − 전체 평균): {pluginRows.filter((r) => r.bySimilarity).map((r) => `${SNAPSHOT_LABEL[r.task]} ${r.ranked.slice(0, 3).map((p) => `${p.name} ${(p.score ?? 0).toFixed(3)}`).join(', ')}`).join(' / ') || '비교한 종류 없음'}
                 </p>
               )}
               {cls && (

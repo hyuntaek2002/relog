@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "catalog-0.5.0",
+  "catalogVersion": "catalog-0.6.0",
   "verifiedNote": "verified=true 항목은 2026-11-03에 공식 도움말(help.openai.com / support.claude.com)에서 기능명·메뉴 경로·요금제를 대조했다. false 항목은 화면에 내보내지 않는다.",
   "items": [
     {
@@ -15,15 +15,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 1,
-          "weight": 3
-        },
-        {
-          "signal": "restatement.mid",
-          "op": ">=",
-          "value": 5,
+          "value": 30,
           "weight": 2
         }
       ],
@@ -33,7 +27,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "pr_split_long",
@@ -58,12 +52,6 @@
           "op": ">=",
           "value": 12,
           "weight": 1
-        },
-        {
-          "signal": "restatement.mid",
-          "op": ">=",
-          "value": 5,
-          "weight": 1
         }
       ],
       "taskSignals": [],
@@ -72,7 +60,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "pr_prompt_template",
@@ -80,23 +68,17 @@
       "name": "자주 쓰는 지시를 템플릿으로 보관하기",
       "category": "practice",
       "oneLiner": "반복해서 치는 지시문을 메모 앱에 템플릿으로 두고 붙여 넣습니다.",
-      "howTo30s": "1) 이번 리포트의 반복 의심 목록에서 두 번 이상 나온 지시를 고릅니다. 2) 메모 앱에 '번역용', '코드 리뷰용'처럼 이름 붙여 저장합니다. 3) 새 대화 첫 메시지에 붙여 넣습니다.",
+      "howTo30s": "1) 새 대화를 열 때마다 처음에 적는 지시를 고릅니다. 2) 메모 앱에 '번역용', '코드 리뷰용'처럼 이름 붙여 저장합니다. 3) 새 대화 첫 메시지에 붙여 넣습니다.",
       "requiresPlan": [],
       "hardExclude": {
         "featuresInUse": []
       },
       "problemSignals": [
         {
-          "signal": "restatement.mid",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
+          "value": 30,
           "weight": 2
-        },
-        {
-          "signal": "restatement.repeatedQuestion",
-          "op": ">=",
-          "value": 10,
-          "weight": 1
         }
       ],
       "taskSignals": [],
@@ -105,7 +87,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "pr_clarify_first",
@@ -120,10 +102,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.misunderstanding",
+          "signal": "avgTurnsPerConversation",
           "op": ">=",
-          "value": 3,
-          "weight": 3
+          "value": 6,
+          "weight": 2
         }
       ],
       "taskSignals": [],
@@ -132,7 +114,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cg_projects",
@@ -148,12 +130,6 @@
         ]
       },
       "problemSignals": [
-        {
-          "signal": "restatement.mid",
-          "op": ">=",
-          "value": 3,
-          "weight": 2
-        },
         {
           "signal": "longConversationShare",
           "op": ">=",
@@ -178,7 +154,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": true,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cg_project_instructions",
@@ -195,15 +171,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 1,
-          "weight": 3
-        },
-        {
-          "signal": "restatement.mid",
-          "op": ">=",
-          "value": 3,
+          "value": 30,
           "weight": 2
         }
       ],
@@ -213,7 +183,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cg_custom_instructions",
@@ -230,15 +200,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 1,
-          "weight": 2
-        },
-        {
-          "signal": "restatement.mid",
-          "op": ">=",
-          "value": 3,
+          "value": 30,
           "weight": 2
         }
       ],
@@ -248,7 +212,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cg_memory",
@@ -265,10 +229,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.mid",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
-          "weight": 1
+          "value": 30,
+          "weight": 2
         }
       ],
       "taskSignals": [
@@ -288,7 +252,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": true,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cg_canvas",
@@ -304,12 +268,6 @@
         ]
       },
       "problemSignals": [
-        {
-          "signal": "restatement.mid",
-          "op": ">=",
-          "value": 3,
-          "weight": 1
-        },
         {
           "signal": "longConversationShare",
           "op": ">=",
@@ -334,7 +292,7 @@
       "verifiedAt": "2026-11-03",
       "verified": false,
       "isPopularDefault": true,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "GPT-5.5부터 캔버스 미지원(model release notes 2026-05-28). cg_writing_blocks로 대체. 2026-11-24 확인"
     },
     {
@@ -356,10 +314,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.mid",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
-          "weight": 1
+          "value": 30,
+          "weight": 2
         }
       ],
       "taskSignals": [
@@ -374,7 +332,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cg_scheduled_tasks",
@@ -391,9 +349,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.repeatedQuestion",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 20,
+          "value": 30,
           "weight": 1
         }
       ],
@@ -409,7 +367,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cg_deep_research",
@@ -426,9 +384,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.repeatedQuestion",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 20,
+          "value": 30,
           "weight": 1
         }
       ],
@@ -444,7 +402,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cg_branch",
@@ -479,7 +437,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cg_edit_message",
@@ -496,16 +454,16 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.misunderstanding",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 2,
+          "value": 30,
           "weight": 2
         },
         {
-          "signal": "restatement.mid",
+          "signal": "avgTurnsPerConversation",
           "op": ">=",
-          "value": 3,
-          "weight": 1
+          "value": 6,
+          "weight": 2
         }
       ],
       "taskSignals": [],
@@ -514,7 +472,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cg_plugins",
@@ -531,21 +489,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.mid",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
-          "weight": 1
-        },
-        {
-          "signal": "restatement.perTask.coding",
-          "op": ">=",
-          "value": 3,
-          "weight": 2
-        },
-        {
-          "signal": "restatement.perTask.writing",
-          "op": ">=",
-          "value": 3,
+          "value": 30,
           "weight": 2
         }
       ],
@@ -555,7 +501,7 @@
       "verifiedAt": "2026-11-11",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "byTask": {
         "coding": "GitHub",
         "writing": "Notion",
@@ -590,7 +536,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "Advanced·Standard 음성은 Live로 정리됨. 공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)"
     },
     {
@@ -607,12 +553,6 @@
         ]
       },
       "problemSignals": [
-        {
-          "signal": "restatement.mid",
-          "op": ">=",
-          "value": 3,
-          "weight": 2
-        },
         {
           "signal": "longConversationShare",
           "op": ">=",
@@ -642,7 +582,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": true,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cl_project_instructions",
@@ -659,15 +599,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 1,
-          "weight": 3
-        },
-        {
-          "signal": "restatement.mid",
-          "op": ">=",
-          "value": 3,
+          "value": 30,
           "weight": 2
         }
       ],
@@ -677,7 +611,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cl_project_knowledge",
@@ -694,10 +628,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.mid",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
-          "weight": 1
+          "value": 30,
+          "weight": 2
         }
       ],
       "taskSignals": [
@@ -722,7 +656,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cl_memory",
@@ -739,10 +673,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.mid",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
-          "weight": 1
+          "value": 30,
+          "weight": 2
         }
       ],
       "taskSignals": [
@@ -762,7 +696,7 @@
       "verifiedAt": "2026-11-10",
       "verified": true,
       "isPopularDefault": true,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "Claude 한국어 데스크톱 앱 화면 실측(설정 → 사용자 지정) 2026-11-10"
     },
     {
@@ -784,9 +718,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.mid",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
+          "value": 30,
           "weight": 2
         }
       ],
@@ -796,7 +730,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cl_artifacts",
@@ -812,12 +746,6 @@
         ]
       },
       "problemSignals": [
-        {
-          "signal": "restatement.mid",
-          "op": ">=",
-          "value": 3,
-          "weight": 1
-        },
         {
           "signal": "longConversationShare",
           "op": ">=",
@@ -842,7 +770,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": true,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cl_connectors_google",
@@ -859,10 +787,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.mid",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
-          "weight": 1
+          "value": 30,
+          "weight": 2
         }
       ],
       "taskSignals": [
@@ -877,7 +805,7 @@
       "verifiedAt": "2026-11-10",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "Claude 한국어 데스크톱 앱 화면 실측(설정 → 사용자 지정) 2026-11-10"
     },
     {
@@ -895,28 +823,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 1,
+          "value": 30,
           "weight": 2
-        },
-        {
-          "signal": "restatement.mid",
-          "op": ">=",
-          "value": 5,
-          "weight": 2
-        },
-        {
-          "signal": "restatement.perTask.writing",
-          "op": ">=",
-          "value": 3,
-          "weight": 2
-        },
-        {
-          "signal": "restatement.perTask.coding",
-          "op": ">=",
-          "value": 3,
-          "weight": 1
         }
       ],
       "taskSignals": [
@@ -936,7 +846,7 @@
       "verifiedAt": "2026-11-10",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "Claude 한국어 데스크톱 앱 화면 실측(설정 → 사용자 지정) 2026-11-10"
     },
     {
@@ -958,21 +868,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.mid",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 5,
-          "weight": 1
-        },
-        {
-          "signal": "restatement.perTask.coding",
-          "op": ">=",
-          "value": 3,
-          "weight": 2
-        },
-        {
-          "signal": "restatement.perTask.writing",
-          "op": ">=",
-          "value": 3,
+          "value": 30,
           "weight": 2
         }
       ],
@@ -993,7 +891,7 @@
       "verifiedAt": "2026-11-10",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "Claude 한국어 데스크톱 앱 설정→플러그인→탐색 탭 캡처 2026-11-10: Data, UI Design Review, SwiftUI App Design, learn, doc-coauthoring, web-artifacts-builder, Productivity(3.4M), Marketing(2.7M)",
       "byTask": {
         "coding": "Engineering",
@@ -1022,9 +920,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.repeatedQuestion",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 20,
+          "value": 30,
           "weight": 1
         }
       ],
@@ -1040,7 +938,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cl_web_search",
@@ -1057,9 +955,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.repeatedQuestion",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 20,
+          "value": 30,
           "weight": 1
         }
       ],
@@ -1075,7 +973,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cl_scheduled",
@@ -1096,9 +994,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.repeatedQuestion",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 20,
+          "value": 30,
           "weight": 1
         }
       ],
@@ -1119,7 +1017,7 @@
       "verifiedAt": "2026-11-03",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cl_preferences",
@@ -1136,9 +1034,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 1,
+          "value": 30,
           "weight": 2
         }
       ],
@@ -1148,7 +1046,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 이름이 'Instructions for Claude'로 바뀜(설정 → Your Claude → Instructions). 공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)"
     },
     {
@@ -1166,10 +1064,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.mid",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
-          "weight": 1
+          "value": 30,
+          "weight": 2
         }
       ],
       "taskSignals": [
@@ -1184,7 +1082,7 @@
       "verifiedAt": "",
       "verified": false,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cl_plugin_active_memory",
@@ -1205,12 +1103,6 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.mid",
-          "op": ">=",
-          "value": 10,
-          "weight": 2
-        },
-        {
           "signal": "longConversationShare",
           "op": ">=",
           "value": 0.4,
@@ -1224,7 +1116,7 @@
       "verifiedAt": "2026-11-10",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다."
+      "caveat": "효과는 아직 검증되지 않았습니다."
     },
     {
       "id": "cl_plugin_concise",
@@ -1276,12 +1168,6 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.mid",
-          "op": ">=",
-          "value": 3,
-          "weight": 1
-        },
-        {
           "signal": "longConversationShare",
           "op": ">=",
           "value": 0.15,
@@ -1303,7 +1189,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cg_writing_blocks",
       "platform": "chatgpt",
@@ -1323,17 +1209,17 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 1,
-          "weight": 1
+          "value": 30,
+          "weight": 2
         }
       ],
       "taskSignals": [],
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "실험 기능입니다. 효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "실험 기능입니다. 효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cl_memory_import",
       "platform": "claude",
@@ -1355,9 +1241,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 1,
+          "value": 30,
           "weight": 2
         }
       ],
@@ -1371,7 +1257,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cl_org_instructions",
       "platform": "claude",
@@ -1393,22 +1279,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 1,
+          "value": 30,
           "weight": 2
-        },
-        {
-          "signal": "restatement.perTask.writing",
-          "op": ">=",
-          "value": 3,
-          "weight": 2
-        },
-        {
-          "signal": "restatement.perTask.coding",
-          "op": ">=",
-          "value": 3,
-          "weight": 1
         }
       ],
       "taskSignals": [
@@ -1426,7 +1300,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cg_skills",
       "platform": "chatgpt",
@@ -1451,16 +1325,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
+          "value": 30,
           "weight": 2
-        },
-        {
-          "signal": "restatement.perTask.writing",
-          "op": ">=",
-          "value": 3,
-          "weight": 1
         }
       ],
       "taskSignals": [
@@ -1473,7 +1341,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cg_plugin_creator",
       "platform": "chatgpt",
@@ -1493,12 +1361,6 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
-          "op": ">=",
-          "value": 1,
-          "weight": 1
-        },
-        {
           "signal": "answer.ratio",
           "op": ">=",
           "value": 3,
@@ -1509,7 +1371,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "Characteristics: https://help.openai.com/en/articles/20001038-characteristics-in-chatgpt. 공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cg_personality",
       "platform": "chatgpt",
@@ -1529,16 +1391,16 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 1,
-          "weight": 1
+          "value": 30,
+          "weight": 2
         },
         {
-          "signal": "restatement.misunderstanding",
+          "signal": "avgTurnsPerConversation",
           "op": ">=",
-          "value": 3,
-          "weight": 1
+          "value": 6,
+          "weight": 2
         }
       ],
       "taskSignals": [
@@ -1556,7 +1418,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cg_project_memory",
       "platform": "chatgpt",
@@ -1578,9 +1440,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
+          "value": 30,
           "weight": 2
         }
       ],
@@ -1594,7 +1456,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cg_workspace_agents",
       "platform": "chatgpt",
@@ -1614,15 +1476,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 1,
-          "weight": 2
-        },
-        {
-          "signal": "restatement.perTask.coding",
-          "op": ">=",
-          "value": 3,
+          "value": 30,
           "weight": 2
         }
       ],
@@ -1636,7 +1492,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cc_claude_md",
       "platform": "claude",
@@ -1655,14 +1511,7 @@
           "cc_rules"
         ]
       },
-      "problemSignals": [
-        {
-          "signal": "restatement.perTask.coding",
-          "op": ">=",
-          "value": 5,
-          "weight": 2
-        }
-      ],
+      "problemSignals": [],
       "taskSignals": [
         {
           "task": "coding",
@@ -1673,7 +1522,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cc_rules",
       "platform": "claude",
@@ -1694,10 +1543,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
-          "weight": 1
+          "value": 30,
+          "weight": 2
         }
       ],
       "taskSignals": [
@@ -1710,7 +1559,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cc_auto_memory",
       "platform": "claude",
@@ -1731,16 +1580,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 1,
+          "value": 30,
           "weight": 2
-        },
-        {
-          "signal": "restatement.perTask.coding",
-          "op": ">=",
-          "value": 3,
-          "weight": 1
         }
       ],
       "taskSignals": [
@@ -1753,7 +1596,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cc_skills",
       "platform": "claude",
@@ -1774,9 +1617,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
+          "value": 30,
           "weight": 2
         }
       ],
@@ -1790,7 +1633,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cc_hooks",
       "platform": "claude",
@@ -1811,12 +1654,6 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
-          "op": ">=",
-          "value": 1,
-          "weight": 1
-        },
-        {
           "signal": "answer.ratio",
           "op": ">=",
           "value": 3,
@@ -1833,7 +1670,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cc_output_styles",
       "platform": "claude",
@@ -1854,9 +1691,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
+          "value": 30,
           "weight": 2
         }
       ],
@@ -1870,7 +1707,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cc_md_management",
       "platform": "claude",
@@ -1891,10 +1728,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 5,
-          "weight": 1
+          "value": 30,
+          "weight": 2
         }
       ],
       "taskSignals": [
@@ -1907,7 +1744,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cc_insights",
       "platform": "claude",
@@ -1928,15 +1765,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 1,
-          "weight": 2
-        },
-        {
-          "signal": "restatement.perTask.coding",
-          "op": ">=",
-          "value": 3,
+          "value": 30,
           "weight": 2
         }
       ],
@@ -1950,7 +1781,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cx_agents_md",
       "platform": "chatgpt",
@@ -1971,16 +1802,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 1,
+          "value": 30,
           "weight": 2
-        },
-        {
-          "signal": "restatement.perTask.coding",
-          "op": ">=",
-          "value": 3,
-          "weight": 1
         }
       ],
       "taskSignals": [
@@ -1993,7 +1818,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cx_skills",
       "platform": "chatgpt",
@@ -2014,9 +1839,9 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
+          "value": 30,
           "weight": 2
         }
       ],
@@ -2030,7 +1855,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cx_hooks",
       "platform": "chatgpt",
@@ -2051,10 +1876,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 1,
-          "weight": 1
+          "value": 30,
+          "weight": 2
         }
       ],
       "taskSignals": [
@@ -2067,7 +1892,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cx_memories",
       "platform": "chatgpt",
@@ -2088,10 +1913,10 @@
       },
       "problemSignals": [
         {
-          "signal": "restatement.high",
+          "signal": "conversationCount",
           "op": ">=",
-          "value": 3,
-          "weight": 1
+          "value": 30,
+          "weight": 2
         }
       ],
       "taskSignals": [
@@ -2104,7 +1929,7 @@
       "verifiedAt": "2026-11-24",
       "verified": true,
       "isPopularDefault": false,
-      "caveat": "효과는 아직 검증되지 않았습니다. 다음 분석에서 다시 말한 지시가 줄었는지로 확인합니다.",
+      "caveat": "효과는 아직 검증되지 않았습니다.",
       "evidenceNote": "공식 문서 확인 2026-11-24(docs/feature-survey-2026-11.md)",
       "id": "cx_import",
       "platform": "chatgpt",

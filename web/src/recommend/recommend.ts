@@ -2,7 +2,7 @@ import catalog from '../../../catalog/catalog.json' with { type: 'json' }
 import { SNAPSHOT_LABEL, type SnapshotTask, type UsageSnapshot } from './snapshot.ts'
 
 // 처방 엔진. 순수 함수: (snapshot, context, catalog, feedback) → Prescription[]. 원문 없음, LLM 호출 없음.
-export const RECOMMENDATION_RULE_VERSION = 'rec-0.1.1' // 0.1.1: restatement.perTask.<task> 신호(대화 종류 집중) 지원
+export const RECOMMENDATION_RULE_VERSION = 'rec-0.2.0' // 0.2.0: 다시 말한 지시 신호 제거, 숫자 근거가 없는 항목은 '기본 추천'(참고)으로
 export const CATALOG_VERSION = catalog.catalogVersion
 
 export type Platform = 'chatgpt' | 'claude'
@@ -66,11 +66,7 @@ export interface ScoredItem {
 
 const TASK_LABEL = SNAPSHOT_LABEL
 const SIGNAL_LABEL: Record<string, string> = {
-  'restatement.high': '다시 말한 지시(확실함)',
-  'restatement.mid': '다시 말한 지시(가능성 있음)',
-  'restatement.low': '다시 말한 지시(약함)',
-  'restatement.misunderstanding': '말이 안 통한 듯한 표현',
-  'restatement.repeatedQuestion': '비슷한 질문 다시 함',
+  conversationCount: '대화 수',
   longConversationShare: '긴 대화 비율',
   avgTurnsPerConversation: '대화당 평균 발화',
   codeShare: '코드 포함 비율',
@@ -87,13 +83,12 @@ export function readSignal(s: UsageSnapshot, path: string): number {
 
 const cmp = (a: number, op: ProblemSignal['op'], b: number) => (op === '>=' ? a >= b : op === '>' ? a > b : op === '<=' ? a <= b : a < b)
 const fmtSignal = (path: string, v: number) => {
-  if (path.startsWith('restatement.perTask.')) return `${TASK_LABEL[path.slice(20) as SnapshotTask] ?? path.slice(20)} 대화에서 다시 말한 지시 ${Math.round(v)}건`
   const label = SIGNAL_LABEL[path] ?? path
   if (path === 'longConversationShare' || path === 'codeShare') return `${label} ${Math.round(v * 100)}%`
   if (path === 'avgTurnsPerConversation') return `${label} ${v.toFixed(1)}개`
   if (path === 'answer.avgTokens') return `${label} ${Math.round(v)}토큰`
   if (path === 'answer.ratio') return `${label} ${v.toFixed(1)}배`
-  return `${label} ${Math.round(v)}건`
+  return `${label} ${Math.round(v)}개`
 }
 
 // 2) 점수: 문제 신호 weight×2 + 과업 신호 weight + priority/100 + 피드백 보정
@@ -129,17 +124,15 @@ export function scoreAll(snapshot: UsageSnapshot, ctx: UserContext, feedback: Fe
 
 // 카드 머리말: 가장 강한 신호 하나를 쉬운 문장으로. 숫자는 1~2개만.
 function summaryOf(snapshot: UsageSnapshot, s: ScoredItem): string {
-  const r = snapshot.restatement
-  const perTaskTop = (Object.entries(r.perTask) as [SnapshotTask, number][]).sort((a, b) => b[1] - a[1])[0]
   const hit = (prefix: string) => s.problemHits.find((h) => h.startsWith(prefix))
-  if (hit('다시 말한 지시') && perTaskTop && perTaskTop[1] >= 3) return `${TASK_LABEL[perTaskTop[0]]} 대화에서 같은 지시를 ${perTaskTop[1]}번 다시 말했습니다.`
-  if (hit('다시 말한 지시')) return `같은 지시를 다시 말한 메시지가 ${r.high + r.mid}건입니다.`
-  if (hit('말이 안 통한')) return `AI가 요지를 놓친 듯한 메시지가 ${r.misunderstanding}건입니다.`
   if (hit('긴 대화 비율')) return `대화 ${Math.round(snapshot.longConversationShare * 100)}%가 메시지 10개를 넘는 긴 대화입니다.`
-  if (hit('비슷한 질문')) return `비슷한 질문을 ${r.repeatedQuestion}번 다시 했습니다.`
+  if (hit('대화당 평균 발화')) return `대화 하나에 내 메시지가 평균 ${snapshot.avgTurnsPerConversation.toFixed(1)}개 오갑니다.`
+  if (hit('대화 수')) return `대화를 ${snapshot.conversationCount}개 열었습니다. 새 대화마다 다시 적는 설정은 한 번만 정해 두면 됩니다.`
   if (hit('평균 답변 분량') || hit('답변이 내 메시지보다')) return `AI 답변이 평균 ${Math.round(snapshot.answer.avgTokens)}토큰으로 내 메시지의 ${snapshot.answer.ratio.toFixed(0)}배입니다.`
+  if (hit('코드 포함 비율')) return `내 메시지의 ${Math.round(snapshot.codeShare * 100)}%에 코드가 들어 있습니다.`
   const top = (Object.entries(snapshot.taskShare) as [SnapshotTask, number][]).sort((a, b) => b[1] - a[1])[0]
-  return top && top[1] > 0 ? `${TASK_LABEL[top[0]]} 대화가 ${Math.round(top[1] * 100)}%로 가장 많습니다.` : '최근 대화 패턴 기준 추천입니다.'
+  if (s.taskHits.length && top && top[1] > 0) return `${TASK_LABEL[top[0]]} 대화가 ${Math.round(top[1] * 100)}%로 가장 많습니다.`
+  return '기록과 상관없이 누구에게나 권하는 기본 항목입니다.'
 }
 
 function why(snapshot: UsageSnapshot, s: ScoredItem): string {
@@ -148,18 +141,16 @@ function why(snapshot: UsageSnapshot, s: ScoredItem): string {
   if (s.taskHits.length) parts.push(s.taskHits.join(', ') + '으로 과업 비중이 큼')
   else if (top && top[1] > 0) parts.push(`${TASK_LABEL[top[0]]} ${Math.round(top[1] * 100)}%가 가장 많음`)
   if (s.problemHits.length) parts.push(s.problemHits.join(', '))
-  const r = snapshot.restatement
-  const perTaskTop = (Object.entries(r.perTask) as [SnapshotTask, number][]).sort((a, b) => b[1] - a[1])[0]
-  if (s.problemHits.some((h) => h.includes('다시 말한 지시')) && perTaskTop && perTaskTop[1] > 0) parts.push(`다시 말한 지시는 ${TASK_LABEL[perTaskTop[0]]} 대화에 ${perTaskTop[1]}건으로 몰림`)
+  if (!s.taskHits.length && !s.problemHits.length) parts.push('기록의 숫자로 걸린 근거는 없고 기본으로 권하는 항목')
   return parts.join('. ') + '.'
 }
 
-// howTo의 {plugin} 자리에 다시 말한 지시가 가장 몰린 대화 종류의 항목 이름을 넣는다. 다시 말한 지시가 없으면 가장 많이 한 종류.
+// howTo의 {plugin} 자리에 가장 많이 한 대화 종류의 항목 이름을 넣는다.
 // catalog-0.3.2: byTask는 '대화 종류별 플러그인' 카드(taskPlugins·plugin-candidates)의 첫 후보와 같게 맞춤
 function fillHow(item: CatalogItem, snapshot: UsageSnapshot): { how: string; pluginName?: string; task?: SnapshotTask } {
   if (!item.howTo30s.includes('{plugin}')) return { how: item.howTo30s }
   const desc = (o: Partial<Record<SnapshotTask, number>>) => (Object.entries(o) as [SnapshotTask, number][]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1])[0]
-  const top = desc(snapshot.restatement.perTask) ?? desc(snapshot.taskShare)
+  const top = desc(snapshot.taskShare)
   const name = (top && item.byTask?.[top[0]]) || undefined
   return { how: item.howTo30s.replaceAll('{plugin}', name ?? '내 작업에 맞는 플러그인'), pluginName: name, task: name ? top[0] : undefined }
 }
@@ -170,10 +161,13 @@ function targetTask(item: CatalogItem, snapshot: UsageSnapshot, filled?: Snapsho
   return item.taskSignals.filter((ts) => (snapshot.taskShare[ts.task] ?? 0) >= ts.minShare).sort((a, b) => (snapshot.taskShare[b.task] ?? 0) - (snapshot.taskShare[a.task] ?? 0))[0]?.task
 }
 
+// 숫자 신호가 아예 없는 항목(누구에게나 맞는 습관·설정)은 '기본 추천'으로 우선순위 점수만 받는다(rec-0.2.0)
+export const isBaseline = (item: CatalogItem) => item.problemSignals.length === 0 && item.taskSignals.length === 0
+
 // 3)·4) 점수 > 0, 상위 3개, category당 최대 2개
 export function recommend(snapshot: UsageSnapshot, ctx: UserContext, feedback: FeedbackMap = {}, items: CatalogItem[] = CATALOG): Prescription[] {
   const scored = scoreAll(snapshot, ctx, feedback, items)
-    .filter((s) => !s.excluded && s.score > 0 && (s.problemHits.length > 0 || s.taskHits.length > 0))
+    .filter((s) => !s.excluded && s.score > 0 && (s.problemHits.length > 0 || s.taskHits.length > 0 || isBaseline(s.item)))
     .sort((a, b) => b.score - a.score)
   const out: Prescription[] = []
   const perCategory = new Map<Category, number>()

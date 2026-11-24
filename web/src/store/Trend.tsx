@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Help from '../ui/Help'
 import { TASK_LABELS } from '../classify/classifier'
 import type { UsageSnapshot } from '../recommend/snapshot'
-import { compareSides, compareTasks, versionKey, type AnalysisVersion, type PeriodSnapshot, type TaskCompare } from './ledger'
+import { compareSides, compareTasks, habitText, versionKey, type AnalysisVersion, type PeriodSnapshot, type TaskCompare } from './ledger'
 import { buildReport, parseReport, reportFileName, type Report } from './report'
 
 export type StorageMode = 'none' | 'local'
@@ -25,7 +25,7 @@ export function StorageChoice({ mode, storedCount, onMode, onClear }: { mode: St
   return (
     <div className="checklist">
       <div className="row">
-        <span>보관<Help text="남기면 메시지별 집계(시각·대화 종류·다시 말한 지시 여부·분량)만 이 브라우저 안에 저장됩니다. 대화 내용은 저장하지 않습니다. 같은 기간을 다시 올리면 덮어쓰고 새 기간만 추가됩니다. 분석 기록(요약 숫자, 추천한 항목 이름, 적용함 표시)은 이 선택과 상관없이 남고, 변화 탭에서 지울 수 있습니다." /></span>
+        <span>보관<Help text="남기면 메시지별 집계(시각·대화 종류·분량)만 이 브라우저 안에 저장됩니다. 대화 내용은 저장하지 않습니다. 같은 기간을 다시 올리면 덮어쓰고 새 기간만 추가됩니다. 분석 기록(요약 숫자, 추천한 항목 이름, 쓰고 있음 표시)은 이 선택과 상관없이 남고, 변화 탭에서 지울 수 있습니다." /></span>
         <label><input type="radio" name="storage" checked={mode === 'none'} onChange={() => onMode('none')} /> 이번만 보기</label>
         <label><input type="radio" name="storage" checked={mode === 'local'} onChange={() => onMode('local')} /> 이 브라우저에 남기기</label>
       </div>
@@ -34,21 +34,21 @@ export function StorageChoice({ mode, storedCount, onMode, onClear }: { mode: St
   )
 }
 
-/** 대화 종류별 이전→이후 표: 그 종류가 전체에서 차지한 비중, 그 종류 안의 다시 말한 지시 비율. 변화 방향만 색으로, 원인은 판정하지 않는다. */
+/** 대화 종류별 이전→이후 표: 그 종류가 전체 메시지에서 차지한 비중. 변화 방향만 적고, 원인은 판정하지 않는다. */
 const change = (d: number | null | undefined, unit = '%p') => (d == null ? '-' : Math.abs(d) < 0.05 ? '그대로' : `${d > 0 ? '+' : ''}${d.toFixed(1)}${unit}`)
 export function CompareTable({ cmp, before, after }: { cmp: TaskCompare; before: string; after: string }) {
+  const h = cmp.habits
   return (
     <table>
-      <thead><tr><th>대화 종류</th><th>비중 {before} → {after}<Help text="그 종류가 전체 메시지에서 차지한 비율입니다. 늘었으면 그 종류의 대화를 더 많이 했다는 뜻입니다." /></th><th>다시 말한 지시 {before} → {after}</th><th>변화</th></tr></thead>
+      <thead><tr><th>대화 종류</th><th>메시지 {before} → {after}</th><th>비중 {before} → {after}<Help text="그 종류가 전체 메시지에서 차지한 비율입니다. 늘었으면 그 종류의 대화를 더 많이 했다는 뜻입니다." /></th><th>변화</th></tr></thead>
       <tbody>
-        {[cmp.total, ...cmp.rows].map((r) => (
-          <tr key={r.task} className={r.task === 'all' ? 'total' : ''} title={`${before}: 메시지 ${r.before.ok}개 중 ${r.before.flagged}개 · ${after}: 메시지 ${r.after.ok}개 중 ${r.after.flagged}개`}>
+        <tr className="total"><td>전체</td><td>{h.before.ok}개 → {h.after.ok}개</td><td>대화 {h.before.conversations}개 → {h.after.conversations}개</td><td></td></tr>
+        {cmp.rows.map((r) => (
+          <tr key={r.task}>
             <td>{taskName(r.task)}</td>
-            <td>{r.task === 'all'
-              ? `메시지 ${r.before.ok}개 → ${r.after.ok}개`
-              : <>{pct(r.before.share ?? null)} → {pct(r.after.share ?? null)}{r.shareDelta != null && Math.abs(r.shareDelta) >= 0.05 && <span className="detail"> ({change(r.shareDelta)})</span>}</>}</td>
-            <td>{pct(r.before.ratio)} → {pct(r.after.ratio)}</td>
-            <td className={r.delta == null ? '' : r.delta < 0 ? 'down' : r.delta > 0 ? 'up' : ''}>{r.delta == null ? '-' : r.delta === 0 ? '그대로' : `${r.delta > 0 ? '늘어남 +' : '줄어듦 '}${Math.abs(r.delta).toFixed(1)}%p`}</td>
+            <td>{r.before.ok}개 → {r.after.ok}개</td>
+            <td>{pct(r.before.share)} → {pct(r.after.share)}</td>
+            <td>{change(r.shareDelta)}</td>
           </tr>
         ))}
       </tbody>
@@ -68,8 +68,9 @@ export default function Trend({ weeks }: { weeks: PeriodSnapshot[] }) {
           <p className="detail">
             이전 {fmtRange(cmp.beforeRange)} → 최근 {fmtRange(cmp.afterRange)}
             <span> · 최근 <select value={recent} onChange={(e) => setRecent(Number(e.target.value))}>{[1, 2, 4].map((n) => <option key={n} value={n}>{n}주</option>)}</select></span>
-            <Help text="숫자는 '그 종류의 내 메시지 중 다시 말한 지시의 비율'입니다. 메시지 5개 미만이면 비우고, 변한 이유는 판정하지 않습니다." />
+            <Help text="대화 종류별 메시지 수와 비중, 대화 습관(대화당 내 메시지, 긴 대화 비율)입니다. 메시지 5개 미만이면 비우고, 변한 이유는 판정하지 않습니다." />
           </p>
+          <p className="detail">{habitText(cmp.habits.before, cmp.habits.after)}</p>
           <CompareTable cmp={cmp} before="이전" after="최근" />
         </>
       ) : (
@@ -78,18 +79,15 @@ export default function Trend({ weeks }: { weeks: PeriodSnapshot[] }) {
       <details>
         <summary>주별로 보기</summary>
         <table>
-          <thead><tr><th>주 (월요일 시작)</th><th>내 메시지</th><th>다시 말한 지시</th></tr></thead>
+          <thead><tr><th>주 (월요일 시작)</th><th>내 메시지</th><th>대화 · 긴 대화</th></tr></thead>
           <tbody>
-            {weeks.map((w) => {
-              const flagged = w.restatement.high // 확실함만 센다(det-0.4.1)
-              return (
-                <tr key={w.periodStart} title={`확실함 ${w.restatement.high} · 가능성 있음 ${w.restatement.medium} · 약함 ${w.restatement.low} · 다시 친 분량 약 ${w.restatement.tokenEstimate.toLocaleString()}토큰`}>
-                  <td>{fmt(w.periodStart)}</td>
-                  <td>{w.userTurnCount}</td>
-                  <td>{flagged}건{w.judgeable ? ` (${w.restatement.ratio.toFixed(1)}%)` : ''}</td>
-                </tr>
-              )
-            })}
+            {weeks.map((w) => (
+              <tr key={w.periodStart}>
+                <td>{fmt(w.periodStart)}</td>
+                <td>{w.userTurnCount}</td>
+                <td>{w.conversationCount}개 · {w.longConversationCount}개</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </details>
@@ -114,23 +112,23 @@ export function ReportFile({ snapshot, weeks, version }: { snapshot: UsageSnapsh
   }
 
   const cmp = old ? compareSides(old.weeks, weeks) : null
-  const better = cmp?.rows.filter((r) => r.delta != null && r.delta < 0).map((r) => taskName(r.task)) ?? []
-  const worse = cmp?.rows.filter((r) => r.delta != null && r.delta > 0).map((r) => taskName(r.task)) ?? []
+  const more = cmp?.rows.filter((r) => r.shareDelta != null && r.shareDelta >= 1).map((r) => taskName(r.task)) ?? []
+  const less = cmp?.rows.filter((r) => r.shareDelta != null && r.shareDelta <= -1).map((r) => taskName(r.task)) ?? []
   return (
     <div>
       <p className="actions">
         <button onClick={download}>결과 파일로 저장</button>
         <label className="btn">예전 결과 파일과 비교<input type="file" accept=".json,application/json" onChange={(e) => load(e.target.files?.[0])} /></label>
-        <Help text="파일에는 이 화면의 숫자(대화 종류별 수, 다시 말한 지시 수, 주별 집계)만 들어가고 대화 내용은 없습니다. 다음에 새 내보내기를 분석한 뒤 이 파일을 올리면 종류별로 줄었는지 늘었는지 보여 줍니다." />
+        <Help text="파일에는 이 화면의 숫자(대화 종류별 수, 대화 수, 주별 집계)만 들어가고 대화 내용은 없습니다. 다음에 새 내보내기를 분석한 뒤 이 파일을 올리면 종류별 비중과 대화 습관이 어떻게 바뀌었는지 보여 줍니다." />
       </p>
       {err && <p className="err">{err}</p>}
       {old && cmp && (
         <>
           <p className="detail">
             예전 파일 {old.exportedAt.slice(0, 10)} 저장({fmtRange(cmp.beforeRange)}) → 지금({fmtRange(cmp.afterRange)}).
-            {better.length > 0 && <> 줄어든 종류: <b>{better.join(', ')}</b>.</>}
-            {worse.length > 0 && <> 늘어난 종류: <b>{worse.join(', ')}</b>.</>}
-            {better.length === 0 && worse.length === 0 && ' 비교할 수 있는 종류에서 변화가 없습니다.'}
+            {' '}{habitText(cmp.habits.before, cmp.habits.after)}.
+            {more.length > 0 && <> 비중이 는 종류: <b>{more.join(', ')}</b>.</>}
+            {less.length > 0 && <> 비중이 준 종류: <b>{less.join(', ')}</b>.</>}
             {versionKey(old.version) !== versionKey(version) && ' 분석 방식 버전이 달라 수치가 조금 다를 수 있습니다.'}
           </p>
           <CompareTable cmp={cmp} before="예전" after="지금" />

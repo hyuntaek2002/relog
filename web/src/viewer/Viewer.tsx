@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react'
 import { TASK_LABELS, foldTask } from '../classify/classifier'
 import { steps } from '../recommend/Prescriptions'
 import { CompareTable } from '../store/Trend'
-import { fetchTrend, getToken, latestRecommendations, listSnapshots, login, logout, me, type ServerWeek, type StoredPrescription } from '../store/sync'
-import type { TaskCompare } from '../store/ledger'
+import { getToken, latestRecommendations, listSnapshots, login, logout, me, type ServerWeek, type StoredPrescription } from '../store/sync'
+import { compareTasks, habitText, type TaskCompare } from '../store/ledger'
 
 // 최소 뷰어(?view=1): 서버에 보관된 집계 통계와 최근 처방만 열람한다. 파일을 올리거나 분석하지 않는다.
 // 휴대폰 홈 화면에 추가해 앱처럼 열 수 있게 manifest를 둔다(내부 테스트용).
 const taskName = (t: string) => (t === 'other' ? '기타' : (TASK_LABELS as Record<string, string>)[foldTask(t)] ?? t) // 예전 8가지 키도 합친 이름으로
 const fmtDay = (ms: number) => new Date(ms).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
 
-interface Data { email: string; weeks: ServerWeek[]; rx: StoredPrescription[]; rxAt?: string; trend: (TaskCompare & { weeks: number }) | null }
+interface Data { email: string; weeks: ServerWeek[]; rx: StoredPrescription[]; rxAt?: string; trend: TaskCompare | null }
 
 export default function Viewer() {
   const [email, setEmail] = useState('')
@@ -22,10 +22,11 @@ export default function Viewer() {
   async function load() {
     setBusy(true); setMsg('')
     try {
-      const [who, all, rec, trend] = await Promise.all([me(), listSnapshots(), latestRecommendations(), fetchTrend(2)])
-      // 가장 최근에 올린 분석 버전의 주들만 본다(버전이 다른 기간끼리는 합치지 않음)
+      const [who, all, rec] = await Promise.all([me(), listSnapshots(), latestRecommendations()])
+      // 가장 최근에 올린 분석 버전의 주들만 본다(버전이 다른 기간끼리는 합치지 않음). 변화는 그 주들로 이 화면에서 계산한다
       const vk = [...all].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0]?.versionKey
-      setData({ email: who.email, weeks: all.filter((w) => w.versionKey === vk), rx: rec.prescriptions, rxAt: rec.createdAt, trend })
+      const weeks = all.filter((w) => w.versionKey === vk)
+      setData({ email: who.email, weeks, rx: rec.prescriptions, rxAt: rec.createdAt, trend: weeks.length >= 3 ? compareTasks(weeks, 2) : null })
     } catch (e) { setData(null); setMsg((e as Error).message) } finally { setBusy(false) }
   }
   useEffect(() => { if (getToken()) load() }, [])
@@ -48,8 +49,7 @@ export default function Viewer() {
   }
 
   const sum = (f: (w: ServerWeek) => number) => data.weeks.reduce((a, w) => a + f(w), 0)
-  const flagged = sum((w) => w.restatement.high) // 확실함만 센다(det-0.4.1)
-  const judgeable = sum((w) => w.judgeable)
+  const convs = sum((w) => w.conversationCount)
   const ok = sum((w) => w.okCount)
   const tasks: Record<string, number> = {}
   for (const w of data.weeks) for (const [t, n] of Object.entries(w.taskCounts)) tasks[t] = (tasks[t] ?? 0) + n
@@ -62,9 +62,9 @@ export default function Viewer() {
         <>
           <p className="strip">{fmtDay(data.weeks[0].periodStart)} ~ {fmtDay(data.weeks[data.weeks.length - 1].periodEnd - 1)} · {data.weeks.length}주 · 내 메시지 <b>{sum((w) => w.userTurnCount).toLocaleString()}</b></p>
           <div className="cards three">
-            <div className="card"><b>{flagged}</b><span>다시 말한 지시</span><small>확실함만 셉니다. 참고: 가능성 있음 {sum((w) => w.restatement.medium)} · 약함 {sum((w) => w.restatement.low)}</small></div>
-            <div className="card"><b>{judgeable ? ((100 * flagged) / judgeable).toFixed(1) : '0'}%</b><span>비교한 내 메시지 {judgeable}개 중</span></div>
-            <div className="card"><b>{sum((w) => w.restatement.tokenEstimate).toLocaleString()}</b><span>다시 친 분량 (토큰, 추정)</span></div>
+            <div className="card"><b>{convs}</b><span>대화</span><small>주마다 센 합계(여러 주에 걸친 대화는 주마다 셉니다)</small></div>
+            <div className="card"><b>{convs ? (ok / convs).toFixed(1) : '0'}개</b><span>대화당 내 메시지</span></div>
+            <div className="card"><b>{convs ? Math.round((100 * sum((w) => w.longConversationCount)) / convs) : 0}%</b><span>긴 대화(10개 이상)</span></div>
           </div>
           <p className="label">대화 종류</p>
           <ul className="bars">
@@ -84,6 +84,7 @@ export default function Viewer() {
       {data.trend && data.trend.beforeRange && data.trend.afterRange && (
         <>
           <p className="label">변화 (이전 → 최근 2주)</p>
+          <p className="detail">{habitText(data.trend.habits.before, data.trend.habits.after)}</p>
           <CompareTable cmp={data.trend} before="이전" after="최근" />
         </>
       )}

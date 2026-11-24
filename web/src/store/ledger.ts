@@ -1,5 +1,4 @@
 import { foldTask, type Prediction } from '../classify/classifier.ts'
-import { isCounted, type Candidate } from '../detect/detector.ts'
 import type { Utterance } from '../parser/normalize.ts'
 import type { Conversation } from '../parser/types.ts'
 
@@ -15,6 +14,8 @@ export interface AnalysisVersion {
   catalogVersion: string
   recommendationRuleVersion: string
 }
+// 다시 말한 지시 찾기를 제품에서 뺀 뒤(2026-11-24) detectorVersion 자리에 넣는 값
+export const DETECTOR_OFF = 'det-off'
 export const versionKey = (v: AnalysisVersion) => [v.parserVersion, v.normalizerVersion, v.modelVersion, v.classifierVersion, v.detectorVersion].join('|')
 
 export interface LedgerEntry {
@@ -28,10 +29,6 @@ export interface LedgerEntry {
   hasCode: boolean
   tokenEstimate: number
   taskType: string | null // ok 발화만
-  grade: Candidate['grade'] // 반복 의심 등급. 후보가 아니면 null
-  exclusion: Candidate['exclusion']
-  kind: Candidate['kind'] | null
-  complaint: boolean
   versionKey: string
   analyzedAt: number
 }
@@ -51,17 +48,14 @@ export function buildLedger(args: {
   utterances: Utterance[]
   okIds: string[]
   preds: Prediction[]
-  pairs: Candidate[]
   version: AnalysisVersion
   analyzedAt?: number
 }): LedgerEntry[] {
-  const { platform, utterances, okIds, preds, pairs, version } = args
+  const { platform, utterances, okIds, preds, version } = args
   const analyzedAt = args.analyzedAt ?? Date.now()
   const vk = versionKey(version)
   const typeById = new Map(okIds.map((id, i) => [id, preds[i]?.type ?? null]))
-  const pairById = new Map(pairs.map((p) => [p.messageId, p]))
   return utterances.map((u) => {
-    const p = pairById.get(u.messageId)
     const hash = contentHash(u.text)
     return {
       key: `${u.conversationId}#${u.messageId}#${hash}`,
@@ -74,10 +68,6 @@ export function buildLedger(args: {
       hasCode: u.hasCode,
       tokenEstimate: u.tokenEstimate,
       taskType: u.status === 'ok' ? (typeById.get(u.messageId) ?? null) : null,
-      grade: p?.grade ?? null,
-      exclusion: p?.exclusion ?? null,
-      kind: p?.kind ?? null,
-      complaint: p?.complaintMarker ?? false,
       versionKey: vk,
       analyzedAt,
     }
@@ -100,12 +90,10 @@ export interface PeriodSnapshot {
   platform: 'chatgpt' | 'claude'
   userTurnCount: number // 전체 사용자 발화(제외 포함)
   okCount: number
-  judgeable: number // 사용자 발화 2개 이상인 대화의 ok 발화
   conversationCount: number // 이 주에 발화가 있는 대화
   longConversationCount: number // 그중 전체 ok 발화 10개 이상
   codeCount: number
   taskCounts: Record<string, number>
-  restatement: { high: number; medium: number; low: number; tokenEstimate: number; ratio: number; perTask: Record<string, number>; repeatedQuestion: number; misunderstanding: number }
   hourHistogram: number[]
 }
 
@@ -128,7 +116,7 @@ export function aggregateWeekly(entries: LedgerEntry[], vk: string): PeriodSnaps
     const ws = weekStart(e.createdAt!)
     let w = weeks.get(ws)
     if (!w) {
-      w = { periodStart: ws, periodEnd: ws + 7 * 86400000, versionKey: vk, platform: e.platform, userTurnCount: 0, okCount: 0, judgeable: 0, conversationCount: 0, longConversationCount: 0, codeCount: 0, taskCounts: {}, restatement: { high: 0, medium: 0, low: 0, tokenEstimate: 0, ratio: 0, perTask: {}, repeatedQuestion: 0, misunderstanding: 0 }, hourHistogram: new Array(24).fill(0) }
+      w = { periodStart: ws, periodEnd: ws + 7 * 86400000, versionKey: vk, platform: e.platform, userTurnCount: 0, okCount: 0, conversationCount: 0, longConversationCount: 0, codeCount: 0, taskCounts: {}, hourHistogram: new Array(24).fill(0) }
       weeks.set(ws, w)
     }
     w.userTurnCount++
@@ -137,14 +125,6 @@ export function aggregateWeekly(entries: LedgerEntry[], vk: string): PeriodSnaps
     w.okCount++
     if (e.hasCode) w.codeCount++
     if (e.taskType) w.taskCounts[e.taskType] = (w.taskCounts[e.taskType] ?? 0) + 1
-    if ((okPerConv.get(e.conversationId) ?? 0) >= 2) w.judgeable++
-    if (e.grade) w.restatement[e.grade]++
-    if (isCounted(e.grade)) { // 분량·대화 종류별 수·비율은 확실함만
-      w.restatement.tokenEstimate += e.tokenEstimate
-      if (e.taskType) w.restatement.perTask[e.taskType] = (w.restatement.perTask[e.taskType] ?? 0) + 1
-    }
-    if (e.kind === 'question' && e.exclusion === 'not_instruction') w.restatement.repeatedQuestion++
-    if (e.complaint) w.restatement.misunderstanding++
   }
   // 대화 수·긴 대화 수
   const convsByWeek = new Map<number, Set<string>>()
@@ -153,7 +133,6 @@ export function aggregateWeekly(entries: LedgerEntry[], vk: string): PeriodSnaps
     const w = weeks.get(ws)!
     w.conversationCount = convs.size
     w.longConversationCount = [...convs].filter((c) => (okPerConv.get(c) ?? 0) >= 10).length
-    w.restatement.ratio = w.judgeable ? (100 * w.restatement.high) / w.judgeable : 0
   }
   return [...weeks.values()].sort((a, b) => a.periodStart - b.periodStart)
 }
@@ -167,20 +146,20 @@ export function mergeLedger(existing: LedgerEntry[], incoming: LedgerEntry[]): L
 
 export const conversationsOf = (entries: LedgerEntry[]) => new Set(entries.map((e) => e.conversationId)).size
 
-// 과업별 전후 비교: 주별 스냅샷을 "이전 기간"(앞쪽 주들)과 "최근 기간"(마지막 recentWeeks주)으로 나눠
-// 과업 유형별 발화 수·반복 의심 수·비율을 나란히 놓는다. 모델 응답 이행 여부와 무관한 집계 숫자.
+// 전후 비교: 주별 스냅샷을 "이전"(앞쪽 주들)과 "이후"로 나눠 대화 종류 비중과 대화 습관(대화당 메시지, 긴 대화 비율)을 나란히 놓는다.
+// 원인은 판정하지 않는다. ponytail: 여러 주에 걸친 대화는 주마다 한 번씩 센다(대화 수가 조금 부풀 수 있음).
 export interface TaskCompareRow {
   task: string
-  before: { ok: number; flagged: number; ratio: number | null; share: number | null }
-  after: { ok: number; flagged: number; ratio: number | null; share: number | null }
-  delta: number | null // after.ratio - before.ratio (퍼센트포인트). 한쪽이라도 표본이 없으면 null
+  before: { ok: number; share: number | null }
+  after: { ok: number; share: number | null }
   shareDelta: number | null // 그 종류가 전체 메시지에서 차지한 비중(%)의 변화(퍼센트포인트)
 }
+export interface Habits { ok: number; conversations: number; avgTurns: number | null; longShare: number | null } // longShare는 %
 export interface TaskCompare {
   beforeRange: [number, number] | null // [첫 주 시작, 마지막 주 끝)
   afterRange: [number, number] | null
   rows: TaskCompareRow[]
-  total: TaskCompareRow
+  habits: { before: Habits; after: Habits }
 }
 
 export function compareTasks(weeks: PeriodSnapshot[], recentWeeks = 2, minSamples = 5): TaskCompare {
@@ -192,27 +171,27 @@ export function compareTasks(weeks: PeriodSnapshot[], recentWeeks = 2, minSample
 // 두 묶음(예: 예전 결과 파일의 주들 vs 지금 분석의 주들)을 그대로 이전/이후로 놓고 비교
 export function compareSides(before: PeriodSnapshot[], after: PeriodSnapshot[], minSamples = 5): TaskCompare {
   const sum = (ws: PeriodSnapshot[]) => {
-    const ok: Record<string, number> = {}, flagged: Record<string, number> = {}
-    let okAll = 0, flaggedAll = 0
+    const ok: Record<string, number> = {}
+    let okAll = 0, convs = 0, long = 0
     for (const w of ws) {
       // 예전 분석(8가지 키)의 주가 섞여도 6가지로 합쳐 센다
       for (const [t0, n] of Object.entries(w.taskCounts)) { const t = foldTask(t0); ok[t] = (ok[t] ?? 0) + n; okAll += n }
-      for (const [t0, n] of Object.entries(w.restatement.perTask)) { const t = foldTask(t0); flagged[t] = (flagged[t] ?? 0) + n }
-      flaggedAll += w.restatement.high
+      convs += w.conversationCount; long += w.longConversationCount
     }
-    return { ok, flagged, okAll, flaggedAll }
+    const habits: Habits = { ok: okAll, conversations: convs, avgTurns: convs ? okAll / convs : null, longShare: convs >= minSamples ? (100 * long) / convs : null }
+    return { ok, okAll, habits }
   }
   const b = sum(before), a = sum(after)
-  // share: 그 쪽 전체 분류된 메시지 중 이 종류의 비중(%). 전체가 minSamples 미만이면 비운다
-  const side = (ok: number, flagged: number, all: number) => ({ ok, flagged, ratio: ok >= minSamples ? (100 * flagged) / ok : null, share: all >= minSamples ? (100 * ok) / all : null })
+  const share = (ok: number, all: number) => ({ ok, share: all >= minSamples ? (100 * ok) / all : null })
   const tasks = [...new Set([...Object.keys(b.ok), ...Object.keys(a.ok)])].sort((x, y) => (a.ok[y] ?? 0) + (b.ok[y] ?? 0) - ((a.ok[x] ?? 0) + (b.ok[x] ?? 0)))
-  const row = (task: string, bs: ReturnType<typeof side>, as: ReturnType<typeof side>): TaskCompareRow => ({
-    task, before: bs, after: as,
-    delta: bs.ratio != null && as.ratio != null ? as.ratio - bs.ratio : null,
-    shareDelta: bs.share != null && as.share != null ? as.share - bs.share : null,
+  const rows = tasks.map((task): TaskCompareRow => {
+    const bs = share(b.ok[task] ?? 0, b.okAll), as = share(a.ok[task] ?? 0, a.okAll)
+    return { task, before: bs, after: as, shareDelta: bs.share != null && as.share != null ? as.share - bs.share : null }
   })
-  const rows = tasks.map((t) => row(t, side(b.ok[t] ?? 0, b.flagged[t] ?? 0, b.okAll), side(a.ok[t] ?? 0, a.flagged[t] ?? 0, a.okAll)))
   const range = (ws: PeriodSnapshot[]): [number, number] | null => (ws.length ? [ws[0].periodStart, ws[ws.length - 1].periodEnd] : null)
-  return { beforeRange: range(before), afterRange: range(after), rows, total: row('all', side(b.okAll, b.flaggedAll, b.okAll), side(a.okAll, a.flaggedAll, a.okAll)) }
+  return { beforeRange: range(before), afterRange: range(after), rows, habits: { before: b.habits, after: a.habits } }
 }
+// 대화 습관 한 줄: "대화당 메시지 5.2 → 4.1개 · 긴 대화 30% → 22%". 좋고 나쁨은 판정하지 않는다
+export const habitText = (b: Habits, a: Habits) =>
+  `대화당 메시지 ${b.avgTurns?.toFixed(1) ?? '-'} → ${a.avgTurns?.toFixed(1) ?? '-'}개 · 긴 대화 ${b.longShare?.toFixed(0) ?? '-'}% → ${a.longShare?.toFixed(0) ?? '-'}%`
 export type { Conversation }
