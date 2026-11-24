@@ -344,3 +344,40 @@ select { border: 1px solid var(--line); border-radius: 10px; background: var(--c
   .facts > div { padding: 10px 14px; }
   .facts .wide { grid-column: 1 / -1; border-left: none; border-top: 1px solid var(--line); }
 }
+
+/* ===== 오와 열 맞추기(2026-11-24): 모든 줄을 같은 12칸 격자·같은 간격에 올린다 =====
+   세로 기준선: 4칸·8칸(요약·추천·플러그인 카드), 2·4·6칸(분석 범위), 6칸(분석 방식). 한 줄 안의 카드는 높이를 같게. */
+:root { --gap: 16px; }
+.modes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); margin: 8px 0 var(--gap); }
+.modes legend { grid-column: 1 / -1; }
+.drop { margin-bottom: var(--gap); }
+.facts, .summary, .rx-grid, .tp-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gap); margin: 0 0 var(--gap); align-items: stretch; }
+/* 분석 범위: 칸 하나하나를 카드로(2·2·2·6) */
+.facts { background: none; border: none; border-radius: 0; overflow: visible; }
+.facts > div { grid-column: span 2; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 18px; }
+.facts > div + div { border-left: 1px solid var(--line); }
+.facts > .wide { grid-column: span 6; }
+/* 요약 카드: 4·4·4 */
+.summary > .card { grid-column: span 4; margin: 0; }
+.summary .hot { margin: 0; width: auto; }
+/* 추천·플러그인 카드: 4·4·4, 같은 줄은 같은 높이, 버튼은 카드 바닥에 */
+.rx-grid > .rx, .tp-grid > .tp { grid-column: span 4; margin: 0; }
+.rx { display: flex; flex-direction: column; }
+.rx .actions { margin-top: auto; padding-top: 10px; }
+.rx .meta { flex-wrap: wrap; row-gap: 4px; }
+.rx .meta .tag, .rx .meta span { white-space: nowrap; }
+.tp-grid { margin-top: 8px; }
+/* 표는 전체 폭(오른쪽이 비면 열이 어긋나 보인다) */
+.panel table { max-width: none; width: 100%; }
+@media (max-width: 1000px) {
+  .rx-grid > .rx, .tp-grid > .tp { grid-column: span 6; }
+}
+@media (max-width: 720px) {
+  .facts > div { grid-column: span 4; padding: 10px 14px; }
+  .facts > .wide { grid-column: span 12; }
+  .summary > .card { grid-column: span 6; }
+  .summary > .hero { grid-column: span 12; }
+  .rx-grid > .rx, .tp-grid > .tp { grid-column: span 12; }
+  .modes { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) { .facts > .wide { border: 1px solid var(--line); } }
