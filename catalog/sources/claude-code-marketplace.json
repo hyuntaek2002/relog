@@ -90,7 +90,7 @@
       "source": {
         "source": "url",
         "url": "https://github.com/AikidoSec/aikido-claude-plugin.git",
-        "sha": "75e45f337568bf3e0f5d99bc1b41d8844492df19"
+        "sha": "e72df7749ff54736bc1a6b57acff0c7799c9bda7"
       },
       "homepage": "https://github.com/AikidoSec/aikido-claude-plugin"
     },
@@ -3483,7 +3483,7 @@
     {
       "name": "security-guidance",
       "description": "Security review for Claude-generated code. Pattern-based warnings on edits, LLM-powered diff review on Stop, and an agentic commit reviewer that catches injection, XSS, SSRF, hardcoded secrets, and 25+ other vulnerability classes.",
-      "version": "2.0.20",
+      "version": "2.0.21",
       "author": {
         "name": "Anthropic",
         "email": "support@anthropic.com"
@@ -3918,7 +3918,7 @@
     },
     {
       "name": "theme-examples",
-      "description": "An example plugin to read, copy and change: twenty animated backdrops behind the chat in the Claude desktop app, with frosted-glass panels, one per project or per session. Needs a version of Claude Desktop that draws a plugin's backdrop.",
+      "description": "An example plugin to read, copy and change: thirty-eight animated backdrops behind the chat in the Claude desktop app, with frosted-glass panels, one per project or per session. Needs a version of Claude Desktop that draws a plugin's backdrop.",
       "author": {
         "name": "Anthropic",
         "email": "support@anthropic.com"
@@ -4149,7 +4149,7 @@
       "source": {
         "source": "url",
         "url": "https://github.com/vercel/vercel-plugin.git",
-        "sha": "882e66c2698689324c341b7bb8fd8beb92c27bf6"
+        "sha": "50af4780eed8b2f69bc2290d20c670744f1e739c"
       },
       "homepage": "https://github.com/vercel/vercel-plugin"
     },
@@ -4202,7 +4202,7 @@
       "source": {
         "source": "url",
         "url": "https://github.com/wix/skills.git",
-        "sha": "8fc544d319c4a4dfc7ccf3ba4adf328e1fa9866f"
+        "sha": "e2bc48ebb04d355aaa413cfdd55574ed6d0df969"
       },
       "homepage": "https://dev.wix.com/docs/wix-cli/guides/development/about-wix-skills"
     },
@@ -4448,5 +4448,5 @@
       "homepage": "https://github.com/amzn/selling-partner-agentic-toolkit"
     }
   ],
-  "fetchedAt": "2026-11-20"
+  "fetchedAt": "2026-11-24"
 }
