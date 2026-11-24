@@ -229,6 +229,18 @@ const det = detectFeatures([conv('a', ['WebSearch', 'Bash', 'WebFetch']), conv('
 assert.deepEqual(det, [{ catalogId: 'cl_web_search', conversations: 2 }, { catalogId: 'cl_artifacts', conversations: 1 }, { catalogId: 'cl_skills', conversations: 1 }, { catalogId: 'cl_connectors_google', conversations: 1 }])
 console.log('detectFeatures ok')
 
+// ChatGPT: 도구 메시지 대신 대화 속성으로 감지(프로젝트·메모리·메시지 편집). 음성·플러그인은 비어 있으면 감지 안 함
+{
+  const u = (id, parent) => ({ id, parent, children: [], message: { id, author: { role: 'user' }, content: { content_type: 'text', parts: ['x'] } } })
+  const mapping = { r: { id: 'r', parent: null, children: ['a', 'b'] }, a: u('a', 'r'), b: u('b', 'r') }
+  const { conversations } = parseConversationsJson([{ id: 'g1', mapping, current_node: 'b', conversation_template_id: 'g-p-abc', memory_scope: 'global_enabled', voice: null, plugin_ids: null }])
+  assert.deepEqual(conversations[0].toolNames, ['chatgpt:project', 'chatgpt:memory', 'chatgpt:edit'])
+  assert.deepEqual(detectFeatures(conversations).map((d) => d.catalogId).sort(), ['cg_edit_message', 'cg_memory', 'cg_projects'])
+  const plain = parseConversationsJson([{ id: 'g2', mapping: { r: { id: 'r', parent: null, children: ['a'] }, a: u('a', 'r') }, current_node: 'a', memory_scope: 'disabled' }])
+  assert.deepEqual(plain.conversations[0].toolNames, [])
+  console.log('chatgpt feature traces ok')
+}
+
 {
 // 발화 대장·주 단위 집계: 해시 키, 편집 덮어쓰기, 주 버킷, 비율
 const { contentHash, buildLedger, aggregateWeekly, mergeLedger, weekStart, versionKey } = await import('../web/src/store/ledger.ts')

@@ -27,6 +27,23 @@ interface RawConversation {
   create_time?: number | null
   mapping?: Record<string, RawNode>
   current_node?: string
+  conversation_template_id?: string | null
+  memory_scope?: string | null
+  voice?: unknown
+  plugin_ids?: unknown[] | null
+}
+
+// 내보내기에는 도구 호출 메시지가 없어서(2026-11-11 실제 파일 확인) 대화 속성으로 쓴 기능을 추정한다. 본문은 보지 않는다.
+function featureTraces(raw: RawConversation): string[] {
+  const t: string[] = []
+  if (raw.conversation_template_id?.startsWith('g-p-')) t.push('chatgpt:project') // 프로젝트 안의 대화
+  if (raw.memory_scope === 'global_enabled') t.push('chatgpt:memory')
+  if (raw.voice) t.push('chatgpt:voice')
+  if (raw.plugin_ids?.length) t.push('chatgpt:plugins')
+  // 같은 부모 밑에 내 메시지가 둘 이상이면 메시지를 고쳐 다시 보낸 것
+  const m = raw.mapping ?? {}
+  if (Object.values(m).some((n) => (n.children ?? []).filter((k) => m[k]?.message?.author?.role === 'user').length > 1)) t.push('chatgpt:edit')
+  return t
 }
 
 // content_type별로 본문 추출. 이미지 등 비텍스트 파트는 건너뛴다.
@@ -83,7 +100,7 @@ export function parseConversation(raw: RawConversation): Conversation {
     title: raw.title ?? '',
     createdAt: raw.create_time ? Math.round(raw.create_time * 1000) : null,
     turns,
-    toolNames: [], // ChatGPT 내보내기의 도구 흔적은 실제 파일 확인 후 추가
+    toolNames: featureTraces(raw),
   }
 }
 
