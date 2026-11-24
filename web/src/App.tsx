@@ -390,7 +390,13 @@ export default function App() {
 
       {result && s && n && (
         <section>
-          <p className="strip">대화 <b>{s.conversations}</b> · 내 메시지 <b>{s.userTurns}</b> · 긴 대화 <b>{s.longConversations}</b> · {fmtDate(s.firstAt)} ~ {fmtDate(s.lastAt)}</p>
+          {/* 분석한 범위: 글 한 줄 대신 상자 하나에 칸으로(2026-11-24 사용자 요청) */}
+          <div className="facts">
+            <div><span>대화</span><b>{s.conversations.toLocaleString()}</b></div>
+            <div><span>내 메시지</span><b>{s.userTurns.toLocaleString()}</b></div>
+            <div><span>긴 대화<Help text="내 메시지가 10개 이상인 대화입니다." /></span><b>{s.longConversations.toLocaleString()}</b></div>
+            <div className="wide"><span>기간</span><b>{fmtDate(s.firstAt)} ~ {fmtDate(s.lastAt)}</b></div>
+          </div>
           {/* 요약 숫자는 탭 위에 늘 보이고, 나머지는 화면 폭과 상관없이 탭으로 하나씩 넓게 보여 준다(2026-11-18 사용자 요청) */}
           {cls && eff && (
             <div className="summary">

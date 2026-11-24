@@ -332,3 +332,15 @@ details.conv { border-radius: 14px; padding: 10px 16px; margin: 8px 0; }
 .panel th, .myrec th { background: var(--soft); }
 select { border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--fg); padding: 4px 8px; }
 @media (max-width: 720px) { .summary { grid-template-columns: 1fr 1fr; gap: 10px; } .summary .hero { grid-column: 1 / -1; } .summary .card b { font-size: 1.8rem; } .summary .hot b { font-size: 1.2rem; } }
+/* 분석한 범위(대화·내 메시지·긴 대화·기간): 상자 하나에 칸으로 */
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 2fr); background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); margin: 4px 0 14px; overflow: hidden; }
+.facts > div { padding: 12px 20px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.facts > div + div { border-left: 1px solid var(--line); }
+.facts span { color: var(--muted); font-size: 0.85rem; font-weight: 600; }
+.facts b { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; }
+.facts .wide b { font-size: 1.1rem; font-weight: 700; padding-top: 3px; }
+@media (max-width: 720px) {
+  .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .facts > div { padding: 10px 14px; }
+  .facts .wide { grid-column: 1 / -1; border-left: none; border-top: 1px solid var(--line); }
+}
