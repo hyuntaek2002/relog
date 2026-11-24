@@ -608,7 +608,7 @@ console.log('ledger ok')
   assert.equal(sinceLast(r1, { ...r2, versionKey: 'p2|n|m|c|d' }), 'version', '파서가 다르면 비교하지 않음')
   assert.equal(sinceLast(r1, { ...r2, conversations: 10 }), 'none', '새 대화 없음')
   assert.equal(sinceLast({ ...r1, conversations: undefined }, r2), 'legacy', '예전 방식 기록')
-  // 쓰고 있음 / 사용하지 않음 표시: 같은 표시를 다시 누르면 지우고, 서버 기록은 마지막 값이 이긴다
+  // 쓰고 있음 / 쓰고 있지 않음 표시: 같은 표시를 다시 누르면 지우고, 서버 기록은 마지막 값이 이긴다
   const { toggleMark, marksFromFeedback, mergeServerMarks, usingKeys } = await import('../web/src/store/marks.ts')
   assert.deepEqual(toggleMark({}, 'x', 'using'), { x: 'using' }); assert.deepEqual(toggleMark({ x: 'using' }, 'x', 'using'), {}); assert.deepEqual(toggleMark({ x: 'using' }, 'x', 'not_using'), { x: 'not_using' })
   const rows = [{ catalogId: 'a', value: 'already_using' }, { catalogId: 'b', value: 'using' }, { catalogId: 'b', value: 'unmarked' }, { catalogId: 'c', value: 'helpful' }, { catalogId: 'd', value: 'not_using' }]

@@ -17,12 +17,12 @@ const CATEGORY: Record<string, string> = { feature: '기능', plugin: '플러그
 // "1) … 2) … 3) …" 형식의 30초 사용법을 단계 배열로
 export const steps = (how: string) => how.split(/\s*\d\)\s*/).map((s) => s.trim()).filter(Boolean)
 
-// 쓰고 있음 / 사용하지 않음: 지금 내가 그 항목을 쓰는지 직접 표시한다. 다시 누르면 표시를 지운다.
+// 쓰고 있음 / 쓰고 있지 않음: 지금 내가 그 항목을 쓰는지 직접 표시한다. 다시 누르면 표시를 지운다.
 export function MarkButtons({ mark, onMark }: { mark?: Mark; onMark: (m: Mark) => void }) {
   return (
     <>
       <button className={mark === 'using' ? 'on' : ''} title="지금 쓰고 있으면 눌러 주세요. 기록에 남고, 습관·기능 추천에서는 빠집니다." onClick={() => onMark('using')}>{mark === 'using' ? '쓰고 있음 ✓' : '쓰고 있음'}</button>
-      <button className={mark === 'not_using' ? 'on' : ''} title="지금 쓰지 않으면 눌러 주세요. 기록에 남고 추천은 그대로 둡니다." onClick={() => onMark('not_using')}>{mark === 'not_using' ? '사용하지 않음 ✓' : '사용하지 않음'}</button>
+      <button className={mark === 'not_using' ? 'on' : ''} title="지금 쓰지 않으면 눌러 주세요. 기록에 남고 추천은 그대로 둡니다." onClick={() => onMark('not_using')}>{mark === 'not_using' ? '쓰고 있지 않음 ✓' : '쓰고 있지 않음'}</button>
     </>
   )
 }

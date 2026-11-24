@@ -17,7 +17,7 @@ const TOP = 3
 
 type MarkProps = { marks: Marks; onMark?: (key: string, m: Mark) => void }
 
-// 후보 한 줄: 순위 · 이름 · 태그 / 한 줄 설명 / 쓰고 있음·사용하지 않음
+// 후보 한 줄: 순위 · 이름 · 태그 / 한 줄 설명 / 쓰고 있음·쓰고 있지 않음
 function Row({ p, rank, installed, note, marks, onMark, showInstalls }: { p: PoolPlugin; rank?: number; installed: string[]; note?: RepeatNote; showInstalls?: boolean } & MarkProps) {
   const have = isInstalled(p.name, installed)
   return (

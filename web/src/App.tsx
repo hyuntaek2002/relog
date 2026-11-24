@@ -103,7 +103,7 @@ export default function App() {
   const [prevSel, setPrevSel] = useState(0) // 비교할 지난 기록(0 = 가장 최근)
   const [mode, setMode] = useState<AnalysisMode>(loadMode) // 정밀 / 빠른 분석
   function onMode(m: AnalysisMode) { setMode(m); try { localStorage.setItem(MODE_KEY, m) } catch { /* 무시 */ } }
-  // 쓰고 있음 / 사용하지 않음 표시. 이 브라우저에 두고, 로그인했으면 서버 피드백 기록에도 남긴다(같은 표시를 다시 누르면 지움)
+  // 쓰고 있음 / 쓰고 있지 않음 표시. 이 브라우저에 두고, 로그인했으면 서버 피드백 기록에도 남긴다(같은 표시를 다시 누르면 지움)
   const [marks, setMarks] = useState<Marks>(() => (DEMO_DATA ? {} : loadMarks()))
   function onMark(key: string, m: Mark) {
     const next = toggleMark(marks, key, m)

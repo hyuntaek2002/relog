@@ -382,7 +382,7 @@ select { border: 1px solid var(--line); border-radius: 10px; background: var(--c
 }
 @media (max-width: 720px) { .facts > .wide { border: 1px solid var(--line); } }
 
-/* 종류별 플러그인 1~3순위(2026-11-24): 순위 번호 · 이름 · 한 줄 · 쓰고 있음/사용하지 않음, 나머지는 전체 후보 창 */
+/* 종류별 플러그인 1~3순위(2026-11-24): 순위 번호 · 이름 · 한 줄 · 쓰고 있음/쓰고 있지 않음, 나머지는 전체 후보 창 */
 .tp > .tp-sec, .tp > .actions { padding: 10px 18px 0; margin: 0; }
 .tp > .actions { padding-bottom: 10px; }
 .tp > .tp-sec + .tp-sec { border-top: 1px dashed var(--line); margin-top: 10px; }

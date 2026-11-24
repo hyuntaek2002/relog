@@ -88,7 +88,7 @@ export const deleteServerRecords = () => call<{ deleted: number }>('/api/records
 
 export const sendFeedback = (catalogId: string, value: Feedback | Mark | 'unmarked' | 'ab_score', extra: { source?: string; abScore?: number; abOrder?: number } = {}) =>
   call<{ saved: number }>('/api/feedback', { method: 'POST', body: JSON.stringify([{ catalogId, value, ...extra }]) })
-// 내 피드백 기록 전부(시간순). 쓰고 있음/사용하지 않음 표시를 다른 기기에서 이어 받는 데 쓴다
+// 내 피드백 기록 전부(시간순). 쓰고 있음/쓰고 있지 않음 표시를 다른 기기에서 이어 받는 데 쓴다
 export const listFeedback = () => call<{ catalogId: string; value: string }[]>('/api/feedback')
 
 export const me = () => call<{ email: string; createdAt: string; snapshots: number; notify: boolean }>('/api/me')
